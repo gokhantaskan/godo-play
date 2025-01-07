@@ -7,9 +7,6 @@ import type { DashboardGame } from "@/lib/types/igdb";
 import { GAME_MODE_IDS } from "~~/shared/constants/gameModes";
 import { PLATFORMS } from "~~/shared/constants/platforms";
 
-import GameCategorySelector from "../components/Game/CategorySelector.vue";
-import GameCard from "../components/Game/GameCard.vue";
-
 type InitialQuery = {
   gameModes?: string; // Comma-separated list of game mode IDs
   playerPerspectives?: string; // Comma-separated list of player perspective IDs

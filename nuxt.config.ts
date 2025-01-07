@@ -24,9 +24,6 @@ export default defineNuxtConfig({
     "@nuxtjs/sitemap",
     "@nuxtjs/robots",
   ],
-  components: {
-    dirs: ["@/components/shared"],
-  },
   css: ["./app/assets/styles/tailwind.css", "./app/assets/styles/main.scss"],
   postcss: {
     plugins: {
