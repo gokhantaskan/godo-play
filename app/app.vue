@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { Analytics } from "@vercel/analytics/nuxt";
 
-const isDev = toRef(() => import.meta.env.DEV);
+const isProd = toRef(() => import.meta.env.PROD);
 
 useHead({
   htmlAttrs: {
@@ -29,7 +29,7 @@ useSeoMeta({
   <NuxtLayout>
     <NuxtPage />
   </NuxtLayout>
-  <template v-if="isDev">
+  <template v-if="isProd">
     <Analytics />
   </template>
 </template>
