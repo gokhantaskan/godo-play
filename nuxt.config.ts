@@ -21,8 +21,8 @@ export default defineNuxtConfig({
     "@nuxt/fonts",
     "@nuxt/image",
     "@nuxt/icon",
-    "@nuxtjs/sitemap",
-    "@nuxtjs/robots",
+    // "@nuxtjs/sitemap",
+    // "@nuxtjs/robots",
   ],
   components: {
     dirs: ["@/components/shared"],
