@@ -1,8 +1,6 @@
 <script setup lang="ts">
 import { debounce } from "lodash-es";
 
-import GameCategorySelector from "@/components/Game/CategorySelector.vue";
-import GameCard from "@/components/Game/GameCard.vue";
 import type { PlatformId } from "@/components/shared/PlatformSelect.vue";
 import IGDBService from "@/lib/services/igdb.service";
 import type { DashboardGame } from "@/lib/types/igdb";
