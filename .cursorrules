@@ -1,0 +1,9 @@
+- There is no "pending" in the Nuxt's fetch hook. Use `status === "pending"` instead.
+- Nuxt has `app` folder for pages, components, composables, etc. with the v4 compatibility.
+- Shared folder is used for shared types, utils, etc between the client and the server.
+- TailwindCSS v4 beta is used in the project.
+  - Use `tw:` prefix for tailwind classes in Vue components' HTML.
+  - Start with `--tw-` prefix for tailwind custom variables in the CSS files.
+- Pure functions should not be arrow functions and placed at the end.
+  - Put the functions at the end of the script tag or the parent function closure.
+- Root imports path should be `~~`, and the `app` folder imports should be `@`.

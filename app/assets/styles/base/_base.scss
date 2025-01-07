@@ -1,0 +1,30 @@
+@forward "../abstracts/variables";
+
+@layer theme {
+  :root {
+    accent-color: var(--tw-color-primary);
+  }
+}
+
+@layer base {
+  *,
+  *::before,
+  *::after {
+    border-color: var(--tw-color-border);
+  }
+
+  body {
+    background-color: var(--tw-color-bg);
+    color: var(--tw-color-fg);
+  }
+
+  :--heading {
+    color: var(--tw-color-text-dark);
+  }
+
+  input,
+  fieldset {
+    border-style: solid;
+    border-width: 1px;
+  }
+}

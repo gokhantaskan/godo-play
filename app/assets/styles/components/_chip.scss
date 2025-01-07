@@ -1,0 +1,76 @@
+@use "sass:map";
+
+$chip-colors: (
+  primary: (
+    bg: color-mix(in oklab, var(--tw-color-primary) 20%, white),
+    fg: color-mix(in oklab, var(--tw-color-primary) 50%, black),
+    border: color-mix(in oklab, var(--tw-color-primary) 20%, black 5%),
+  ),
+  "green": (
+    bg: color-mix(in oklab, var(--tw-color-green) 20%, white),
+    fg: color-mix(in oklab, var(--tw-color-green) 50%, black),
+    border: color-mix(in oklab, var(--tw-color-green) 20%, black 5%),
+  ),
+  "yellow": (
+    bg: color-mix(in oklab, var(--tw-color-yellow) 20%, white),
+    fg: color-mix(in oklab, var(--tw-color-yellow) 50%, black),
+    border: color-mix(in oklab, var(--tw-color-yellow) 20%, black 5%),
+  ),
+  "red": (
+    bg: color-mix(in oklab, var(--tw-color-red) 20%, white),
+    fg: color-mix(in oklab, var(--tw-color-red) 50%, black),
+    border: color-mix(in oklab, var(--tw-color-red) 20%, black 5%),
+  ),
+);
+
+.chip {
+  $root: &;
+  --radius: var(--tw-radius-sm);
+
+  color: var(--tw-chip-fg);
+  background-color: var(--tw-chip-bg);
+  border: 1px solid var(--tw-chip-border);
+  border-radius: var(--radius);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.75rem;
+  line-height: 1;
+
+  // Variants
+  @each $variant, $colors in $chip-colors {
+    &--#{$variant} {
+      --tw-chip-bg: #{map.get($chip-colors, $variant, bg)};
+      --tw-chip-fg: #{map.get($chip-colors, $variant, fg)};
+      --tw-chip-border: #{map.get($chip-colors, $variant, border)};
+    }
+  }
+
+  &__remove {
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  // Sizes
+  &--sm {
+    padding: 0.25rem 0.375rem;
+
+    #{$root}__remove {
+      inline-size: 1rem;
+      block-size: 1rem;
+    }
+  }
+
+  &--md {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.875rem;
+    line-height: 1.125;
+
+    #{$root}__remove {
+      inline-size: 1.25rem;
+      block-size: 1.25rem;
+    }
+  }
+}

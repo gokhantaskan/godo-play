@@ -1,0 +1,106 @@
+@use "sass:map";
+
+// Badges over the game card's cover image
+$type-badges: (
+  collection: (
+    bg: var(--tw-color-yellow),
+    fg: color-mix(in srgb, var(--tw-color-yellow) 50%, black),
+  ),
+  remake: (
+    bg: var(--tw-color-primary),
+    fg: color-mix(in srgb, var(--tw-color-primary) 12.5%, white),
+  ),
+  remaster: (
+    bg: var(--tw-color-primary),
+    fg: color-mix(in srgb, var(--tw-color-primary) 12.5%, white),
+  ),
+);
+
+.game-card {
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.2s ease;
+
+  &__cover {
+    --radius: var(--tw-radius-lg);
+    --bg: var(--tw-color-border);
+
+    position: relative;
+    aspect-ratio: 540 / 720;
+    overflow: hidden;
+    background-color: var(--bg);
+    color: var(--fg);
+    // border: 1px solid var(--tw-color-gray-300);
+    border-radius: var(--radius);
+    filter: drop-shadow(0 0 0.25rem rgba(0, 0, 0, 0.125));
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: top center;
+    }
+  }
+
+  &__badge {
+    --size: 1.5rem;
+    --font-size: 1rem;
+    --bg: black;
+    --fg: white;
+
+    font-size: var(--font-size);
+    background-color: var(--bg);
+    color: var(--fg);
+    padding: 0.5rem;
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 999rem;
+
+    @each $key, $value in $type-badges {
+      &--#{$key} {
+        --bg: #{map.get($value, "bg")};
+        --fg: #{map.get($value, "fg")};
+      }
+    }
+  }
+
+  &__no-cover {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.875rem;
+    color: var(--tw-color-gray-600);
+  }
+
+  &__content {
+    padding: 0.5rem 0.25rem;
+  }
+
+  &__title {
+    font-size: 1.125rem;
+    line-height: 1.25;
+    font-weight: 600;
+    margin-block-end: 0.5rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &__game-modes {
+    font-size: 0.75rem;
+    color: var(--tw-color-text-muted);
+  }
+
+  &__tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-block-start: 0.5rem;
+  }
+}

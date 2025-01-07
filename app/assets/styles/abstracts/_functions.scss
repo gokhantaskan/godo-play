@@ -1,0 +1,7 @@
+@function blend-white-srgb($color, $amount) {
+  @return color-mix(in srgb, $color $amount, white);
+}
+
+@function blend-black-srgb($color, $amount) {
+  @return color-mix(in srgb, $color $amount, black);
+}

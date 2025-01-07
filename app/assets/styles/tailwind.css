@@ -1,0 +1,36 @@
+/* https://tailwindcss.com/docs/v4-beta#css-configuration-in-depth */
+
+@layer theme, base, components, utilities;
+
+@import "tailwindcss/theme" layer(theme) prefix(tw);
+@import "tailwindcss/utilities" layer(utilities) prefix(tw);
+
+@theme {
+  --font-*: initial;
+  --font-body: "Inter";
+  --font-heading: "Lexend";
+  --font-mono: "Roboto Mono";
+
+  --color-*: initial;
+  --color-primary: oklch(64.9% 0.1809 249.78);
+  --color-green: oklch(74.67% 0.2304 137.94);
+  --color-yellow: oklch(85.89% 0.1630271818272443 86.6015690368686);
+  --color-red: oklch(64.5% 0.1848 32.36);
+  --color-bg: #fcf6f3;
+  --color-fg: #494d50;
+  --color-border: #c3c3c3;
+  --color-text-muted: #6d7478;
+  --color-text-dark: #303336;
+
+  --text-*: initial;
+  --text-xs: 0.75rem;
+  --text-sm: 0.875rem;
+  --text-base: 1rem;
+
+  --spacing: 0.25rem;
+}
+
+@utility container {
+  margin-inline: auto;
+  padding-inline: calc(var(--tw-spacing) * 4);
+}
