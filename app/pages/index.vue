@@ -1,13 +1,14 @@
 <script setup lang="ts">
 import { debounce } from "lodash-es";
 
-import GameCategorySelector from "@/components/Game/CategorySelector.vue";
-import GameCard from "@/components/Game/GameCard.vue";
 import type { PlatformId } from "@/components/shared/PlatformSelect.vue";
 import IGDBService from "@/lib/services/igdb.service";
 import type { DashboardGame } from "@/lib/types/igdb";
 import { GAME_MODE_IDS } from "~~/shared/constants/gameModes";
 import { PLATFORMS } from "~~/shared/constants/platforms";
+
+import GameCategorySelector from "../components/Game/CategorySelector.vue";
+import GameCard from "../components/Game/GameCard.vue";
 
 type InitialQuery = {
   gameModes?: string; // Comma-separated list of game mode IDs
