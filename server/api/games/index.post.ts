@@ -1,58 +1,108 @@
+import { GAME_MODE_IDS } from "~~/shared/constants/gameModes";
+import { SUPPORTED_PLATFORM_IDS } from "~~/shared/constants/platforms";
+
+interface RequestBody {
+  gameModes?: number[];
+  genres?: number[];
+  limit?: number;
+  platforms?: number[];
+  playerPerspectives?: number[];
+  search?: string;
+  sort?: string;
+  themes?: number[];
+}
+
 export default defineEventHandler(async event => {
   const {
     igdb: { endpoint: baseURL },
     tw: { clientId },
   } = useRuntimeConfig(event);
 
-  const body = await readBody(event);
+  const {
+    gameModes,
+    genres,
+    limit = 100,
+    platforms,
+    playerPerspectives,
+    search,
+    sort = "aggregated_rating desc",
+    themes,
+  } = await readBody<RequestBody>(event);
+
   const endpoint = `${baseURL}/games`;
   const tenYearsAgoUnix =
     new Date(new Date().getFullYear() - 10, 0, 1).getTime() / 1000;
-
-  // Set default values
-  const defaultBody = {
-    limit: 100,
-    sort: "aggregated_rating desc",
-    ...body,
-  };
 
   // Combine fixed conditions with dynamic where clause
   const fixedConditions = [
     "category=(0,3,8,9)",
     "version_parent=null",
+    "aggregated_rating_count > 5",
     `release_dates.date >= ${tenYearsAgoUnix}`,
   ];
 
-  if (defaultBody.where) {
-    defaultBody.where = `${fixedConditions.join(" & ")} & ${defaultBody.where}`;
+  const whereConditions = [];
+
+  if (platforms?.length) {
+    whereConditions.push(`platforms=[${platforms.join(",")}]`);
   } else {
-    defaultBody.where = fixedConditions.join(" & ");
+    whereConditions.push(`platforms=(${SUPPORTED_PLATFORM_IDS.join(",")})`);
   }
 
-  console.log(defaultBody);
+  if (gameModes?.length) {
+    whereConditions.push(`game_modes=[${gameModes.join(",")}]`);
+  } else {
+    whereConditions.push(`game_modes=(${GAME_MODE_IDS.join(",")})`);
+  }
 
-  // Set fixed fields for dashboard games
-  defaultBody.fields =
-    "name,slug,category,platforms.*,genres.*,player_perspectives.*,themes.*,cover.*,game_modes.*,multiplayer_modes.*,first_release_date,release_dates.*";
+  if (playerPerspectives?.length) {
+    whereConditions.push(
+      `player_perspectives=(${playerPerspectives.join(",")})`
+    );
+  }
 
-  // Convert the body to IGDB API format
-  const hasSearch = Boolean(defaultBody.search);
-  const parsedBody = Object.entries(defaultBody)
-    .filter(([key, value]) => {
-      if (hasSearch && key === "sort") {
-        return false;
-      }
-      return Boolean(value);
-    })
-    .map(([key, value]) => {
-      if (key === "search") {
-        return `search "${value}"`;
-      }
-      return `${key} ${value}`;
-    })
-    .join("; ")
-    .concat(";")
-    .trim();
+  if (genres?.length) {
+    whereConditions.push(`genres=(${genres.join(",")})`);
+  }
+
+  if (themes?.length) {
+    whereConditions.push(`themes=(${themes.join(",")})`);
+  }
+
+  if (search) {
+    whereConditions.push(`name ~ *"${search}"*`);
+  }
+
+  const where = [...fixedConditions, ...whereConditions].join(" & ");
+
+  const fields = [
+    "name",
+    "slug",
+    "category",
+    "platforms.*",
+    "genres.*",
+    "player_perspectives.*",
+    "themes.*",
+    "cover.*",
+    "game_modes.*",
+    "multiplayer_modes.*",
+    "first_release_date",
+    "release_dates.date",
+    "aggregated_rating",
+  ];
+
+  // Simplified body construction
+  const queryParts = [];
+
+  queryParts.push(`fields ${fields.join(",")}`);
+  queryParts.push(`where ${where}`);
+  queryParts.push(`limit ${limit}`);
+  queryParts.push(`sort ${sort}`);
+
+  // Construct the final query string
+  const parsedBody = queryParts.join("; ").concat(";");
+
+  console.log("IGDB Query:", parsedBody);
 
   try {
     const response = await fetch(endpoint, {

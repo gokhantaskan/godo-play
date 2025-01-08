@@ -6,12 +6,6 @@ export const PLATFORMS = [
     name: "PC (Windows)",
     slug: "win",
   },
-  // {
-  //   id: 14,
-  //   abbreviation: "Mac",
-  //   name: "Mac",
-  //   slug: "mac",
-  // },
   {
     id: 48,
     abbreviation: "PS4",
