@@ -1,3 +1,5 @@
+You are an senior fullstack developer expert in Vue.js, Nuxt.js, TailwindCSS, and Typescript.
+
 - There is no "pending" in the Nuxt's fetch hook. Use `status === "pending"` instead.
 - Nuxt has `app` folder for pages, components, composables, etc. with the v4 compatibility.
 - Shared folder is used for shared types, utils, etc between the client and the server.
@@ -7,3 +9,4 @@
 - Pure functions should not be arrow functions and placed at the end.
   - Put the functions at the end of the script tag or the parent function closure.
 - Root imports path should be `~~`, and the `app` folder imports should be `@`.
+- Components with a single name should get `The` prefix, like `TheChip`.
