@@ -1,16 +1,6 @@
 import { GAME_MODE_IDS } from "~~/shared/constants/gameModes";
 import { SUPPORTED_PLATFORM_IDS } from "~~/shared/constants/platforms";
-
-interface RequestBody {
-  gameModes?: number[];
-  genres?: number[];
-  limit?: number;
-  platforms?: number[];
-  playerPerspectives?: number[];
-  search?: string;
-  sort?: string;
-  themes?: number[];
-}
+import type { DashboardGamesRequestBody } from "~~/shared/types/queries";
 
 export default defineEventHandler(async event => {
   const {
@@ -27,7 +17,7 @@ export default defineEventHandler(async event => {
     search,
     sort = "aggregated_rating desc",
     themes,
-  } = await readBody<RequestBody>(event);
+  } = await readBody<DashboardGamesRequestBody>(event);
 
   const endpoint = `${baseURL}/games`;
   const tenYearsAgoUnix =
@@ -86,15 +76,14 @@ export default defineEventHandler(async event => {
     "cover.*",
     "game_modes.*",
     "multiplayer_modes.*",
-    "first_release_date",
     "release_dates.date",
     "aggregated_rating",
-  ];
+  ].join(",");
 
   // Simplified body construction
   const queryParts = [];
 
-  queryParts.push(`fields ${fields.join(",")}`);
+  queryParts.push(`fields ${fields}`);
   queryParts.push(`where ${where}`);
   queryParts.push(`limit ${limit}`);
   queryParts.push(`sort ${sort}`);
@@ -102,13 +91,15 @@ export default defineEventHandler(async event => {
   // Construct the final query string
   const parsedBody = queryParts.join("; ").concat(";");
 
-  console.log("IGDB Query:", parsedBody);
+  if (process.env.NODE_ENV === "development") {
+    console.log("IGDB Query:", parsedBody);
+  }
 
   try {
     const response = await fetch(endpoint, {
       method: "POST",
       headers: {
-        "Content-Type": "text/plain",
+        "Content-Type": "application/json",
         "Client-ID": clientId,
         Authorization: `Bearer ${tokenStorage.getSession()?.access_token}`,
       },

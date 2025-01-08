@@ -25,6 +25,9 @@ $type-badges: (
     --radius: var(--tw-radius-lg);
     --bg: var(--tw-color-border);
 
+    border: 0;
+    padding: 0;
+    margin: 0;
     position: relative;
     aspect-ratio: 540 / 720;
     overflow: hidden;

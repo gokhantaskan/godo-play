@@ -1,19 +1,30 @@
 <script setup lang="ts">
-import { Dialog, DialogPanel, DialogTitle } from "@headlessui/vue";
+import {
+  Dialog,
+  DialogDescription,
+  DialogPanel,
+  DialogTitle,
+} from "@headlessui/vue";
 
 interface Props {
   /** Title of the modal */
   title?: string;
+  /** Description of the modal */
+  description?: string;
   /** Whether to show the close button */
   showClose?: boolean;
   /** Width class for the modal panel */
   maxWidth?: string;
+  /** Whether to show the title */
+  showTitle?: boolean;
 }
 
 withDefaults(defineProps<Props>(), {
   title: "",
+  description: "",
   showClose: true,
   maxWidth: "100%",
+  showTitle: true,
 });
 
 const modelValue = defineModel<boolean>("open", {
@@ -43,16 +54,25 @@ function handleClose() {
           }"
         >
           <header
-            v-if="title || showClose"
+            v-if="showTitle || showClose"
             class="modal__header"
           >
-            <DialogTitle
-              v-if="title"
-              as="h3"
-              class="modal__title"
-            >
-              {{ title }}
-            </DialogTitle>
+            <div>
+              <DialogTitle
+                v-if="title"
+                as="h3"
+                class="modal__title"
+                :class="[!showTitle && 'tw:sr-only']"
+              >
+                {{ title }}
+              </DialogTitle>
+              <DialogDescription
+                v-if="description"
+                class="modal__description"
+              >
+                {{ description }}
+              </DialogDescription>
+            </div>
 
             <button
               v-if="showClose"

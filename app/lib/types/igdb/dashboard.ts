@@ -1,12 +1,4 @@
-export interface BaseEntity {
-  id: number;
-  created_at: number;
-  name: string;
-  slug: string;
-  updated_at: number;
-  url: string;
-  checksum: string;
-}
+import type { BaseEntity } from "~~/shared/types/igdb/globals";
 
 export interface DashboardGame extends BaseEntity {
   category: number;

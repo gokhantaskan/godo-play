@@ -16,8 +16,8 @@ interface InitialQuery {
 // Constants
 const DEFAULT_SORT = "aggregated_rating";
 const DEFAULT_SORT_ORDER = "desc" as const;
+const DEFAULT_LIMIT = 100;
 const DEBOUNCE_DELAY = 500;
-const GAMES_LIMIT = 100;
 
 // Composables
 const route = useRoute();
@@ -109,12 +109,13 @@ const requestBody = computed(() => ({
   themes: selectedFilters.themes.length ? selectedFilters.themes : undefined,
   search: debouncedSearch.value || undefined,
   sort: `${sortBy.value} ${sortOrder.value}`,
-  limit: GAMES_LIMIT,
+  limit: DEFAULT_LIMIT,
 }));
 
 const {
   status,
   data: games,
+  error: gamesError,
   execute,
 } = useFetch("/api/games", {
   method: "POST",
@@ -155,7 +156,7 @@ function refresh() {
       </button>
     </header>
 
-    <section class="tw:text-sm tw:text-gray-700 tw:max-w-[80ch]">
+    <section class="tw:text-sm tw:max-w-[80ch]">
       <p class="tw:mb-2">
         Inspired by the Japanese word Gōdō (合同), meaning "fusion" or "coming
         together," GōdōPlay is your go-to app for discovering co-op and
@@ -216,9 +217,9 @@ function refresh() {
 
     <section
       v-else-if="status === 'error'"
-      class="tw:text-red-500"
+      class="tw:text-red"
     >
-      Error fetching games
+      Error fetching games: {{ gamesError }}
     </section>
 
     <section
