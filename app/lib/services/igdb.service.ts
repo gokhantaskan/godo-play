@@ -14,7 +14,7 @@ export default {
 
     return await this.request("games", {
       fields:
-        "name,category,platforms.*,genres.*,player_perspectives.*,themes.*,cover.*,game_modes.*,multiplayer_modes.*,first_release_date,release_dates.*",
+        "name,slug,category,platforms.*,genres.*,player_perspectives.*,themes.*,cover.*,game_modes.*,multiplayer_modes.*,first_release_date,release_dates.*",
       limit,
       sort,
       ...rest,

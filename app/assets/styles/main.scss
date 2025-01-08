@@ -3,5 +3,7 @@
 @use "base/typography";
 
 // Components
-@use "components/game-card";
 @use "components/chip";
+@use "components/modal";
+@use "components/game-card";
+@use "components/game-details";
