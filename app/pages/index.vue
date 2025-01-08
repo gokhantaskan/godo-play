@@ -1,9 +1,7 @@
 <script setup lang="ts">
 import { debounce } from "lodash-es";
 
-import type { PlatformId } from "@/components/shared/PlatformSelect.vue";
-import IGDBService from "@/lib/services/igdb.service";
-import type { DashboardGame } from "@/lib/types/igdb";
+import type { PlatformId } from "@/components/PlatformSelect.vue";
 import { GAME_MODE_IDS } from "~~/shared/constants/gameModes";
 import { PLATFORMS } from "~~/shared/constants/platforms";
 
@@ -19,9 +17,6 @@ type InitialQuery = {
 const route = useRoute();
 const router = useRouter();
 const initialQuery = route.query as InitialQuery;
-
-const currentYear = new Date().getFullYear();
-const tenYearsAgoUnix = new Date(currentYear - 10, 0, 1).getTime() / 1000;
 
 // PLATFORMS
 const initialPlatforms = initialQuery.platforms?.split(",").map(Number);
@@ -80,7 +75,7 @@ const initialThemes = initialQuery.themes?.split(",").map(Number);
 const selectedThemes = ref<number[]>(initialThemes || []);
 
 // SORT
-const sortBy = ref<string>("release_dates.date");
+const sortBy = ref<string>("aggregated_rating");
 const sortOrder = ref<"asc" | "desc">("desc");
 
 // SEARCH
@@ -117,12 +112,7 @@ const platformsQuery = computed(() => {
 });
 
 const whereQuery = computed(() => {
-  const conditions = [
-    "category=(0,3,8,9)",
-    "version_parent=null",
-    `release_dates.date >= ${tenYearsAgoUnix}`,
-    `platforms=[${platformsQuery.value}]`,
-  ];
+  const conditions = [`platforms=[${platformsQuery.value}]`];
 
   if (search.value) {
     conditions.push(`name ~ *"${search.value}"*`);
@@ -181,26 +171,25 @@ const {
   status,
   data: games,
   execute,
-} = useAsyncData<DashboardGame[]>(
-  "dashboard-games",
-  () =>
-    IGDBService.allGames({
-      // sort: `${sortBy.value} ${sortOrder.value}`,
-      where: whereQuery.value,
-    }),
-  {
-    immediate: false,
-    watch: [
-      selectedPlatforms,
-      selectedGameModes,
-      selectedPlayerPerspectives,
-      selectedGenres,
-      selectedThemes,
-      sortBy,
-      sortOrder,
-    ],
-  }
-);
+} = useFetch("/api/games", {
+  method: "POST",
+  body: {
+    where: whereQuery.value,
+    sort: `${sortBy.value} ${sortOrder.value}`,
+    limit: 100,
+  },
+  immediate: false,
+  watch: [
+    selectedPlatforms,
+    selectedGameModes,
+    selectedPlayerPerspectives,
+    selectedGenres,
+    selectedThemes,
+    sortBy,
+    sortOrder,
+  ],
+});
+
 const pending = computed(() => status.value === "pending");
 
 // LIFE CYCLE HOOKS
