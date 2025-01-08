@@ -8,14 +8,14 @@ export default defineEventHandler(async event => {
   } = useRuntimeConfig(event);
 
   try {
-    const response = await tokenStorage.retrieveSession({
+    await tokenStorage.retrieveSession({
       clientId,
       clientSecret,
       grantType,
       oauthEndpoint,
     });
 
-    return response;
+    return;
   } catch (error) {
     if (error instanceof Error) {
       throw createError(error);
