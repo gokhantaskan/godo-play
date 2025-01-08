@@ -10,10 +10,10 @@ export interface GameDetails {
   cover: Image;
   game_modes: SmallEntity[];
   genres: SmallEntity[];
-  multiplayer_modes: MultiplayerMode[];
+  multiplayer_modes?: MultiplayerMode[];
   name: string;
   platforms: SmallEntity[];
-  player_perspectives: SmallEntity[];
+  player_perspectives?: SmallEntity[];
   screenshots: Image[];
   storyline: string;
   summary: string;
@@ -42,7 +42,7 @@ export interface MultiplayerMode {
   onlinecoop: boolean;
   onlinecoopmax: number;
   onlinemax: number;
-  platform: number;
+  platform?: number;
   splitscreen: boolean;
   checksum: string;
 }
