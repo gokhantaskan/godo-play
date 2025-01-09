@@ -14,9 +14,9 @@ interface InitialQuery {
 }
 
 // Constants
-const DEFAULT_SORT = "aggregated_rating";
-const DEFAULT_SORT_ORDER = "desc" as const;
-const DEFAULT_LIMIT = 100;
+// const DEFAULT_SORT = "aggregated_rating";
+// const DEFAULT_SORT_ORDER = "desc" as const;
+// const DEFAULT_LIMIT = 60;
 const DEBOUNCE_DELAY = 500;
 
 // Composables
@@ -85,8 +85,8 @@ watch(
 );
 
 // Sort and Search
-const sortBy = ref<string>(DEFAULT_SORT);
-const sortOrder = ref<"asc" | "desc">(DEFAULT_SORT_ORDER);
+// const sortBy = ref<string>(DEFAULT_SORT);
+// const sortOrder = ref<"asc" | "desc">(DEFAULT_SORT_ORDER);
 const search = ref<string>(initialQuery.search?.toString() || "");
 const debouncedSearch = refDebounced<string>(search, DEBOUNCE_DELAY);
 
@@ -122,17 +122,28 @@ const requestBody = computed(() => ({
   genres: selectedFilters.genres.length ? selectedFilters.genres : undefined,
   themes: selectedFilters.themes.length ? selectedFilters.themes : undefined,
   search: debouncedSearch.value || undefined,
-  sort: `${sortBy.value} ${sortOrder.value}`,
-  limit: DEFAULT_LIMIT,
 }));
+
+const queryParams = computed(() => {
+  return Object.fromEntries(
+    Object.entries(requestBody.value)
+      .filter(([_, value]) => Boolean(value))
+      .map(([key, value]) => [
+        key,
+        encodeURIComponent(
+          String(Array.isArray(value) ? value.join(",") : value)
+        ),
+      ])
+  );
+});
 
 const {
   status,
   data: games,
   error: gamesError,
 } = useFetch("/api/games", {
-  method: "POST",
-  body: requestBody,
+  method: "GET",
+  query: queryParams,
 });
 
 const pending = computed(() => status.value === "pending");
