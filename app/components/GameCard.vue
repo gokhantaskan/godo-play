@@ -47,7 +47,6 @@ const {
   status: gameDetailsStatus,
   execute: fetchGameDetails,
 } = useFetch(`/api/games/${props.game.slug}`, {
-  method: "POST",
   immediate: false,
   key: cacheKey.value,
   lazy: !!cachedGameDetails.value,
