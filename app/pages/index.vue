@@ -53,14 +53,6 @@ const availablePlatforms = reactive({
   p3: computed(() => getPlatformOptions(["p1", "p2"])),
 });
 
-function getPlatformOptions(
-  excludeKeys: Array<keyof typeof selectedPlatforms>
-) {
-  return PLATFORMS.filter(
-    platform => !excludeKeys.some(key => platform.id === selectedPlatforms[key])
-  );
-}
-
 // Filter Selections
 const selectedFilters = reactive({
   gameModes: initialQuery.gameModes?.split(",").map(Number) || [],
@@ -116,31 +108,25 @@ const {
   status,
   data: games,
   error: gamesError,
-  execute,
 } = useFetch("/api/games", {
   method: "POST",
   body: requestBody,
-  immediate: false,
 });
 
 const pending = computed(() => status.value === "pending");
 
-// Lifecycle and Utils
-onMounted(async () => {
-  await getTwAccess();
-  await execute();
-});
-
-async function getTwAccess() {
-  await $fetch("/api/auth/twitch", {
-    method: "POST",
-  });
-}
-
-function refresh() {
+function clearQueryAndRefreshPage() {
   if (import.meta.client) {
     window.location.href = window.location.origin;
   }
+}
+
+function getPlatformOptions(
+  excludeKeys: Array<keyof typeof selectedPlatforms>
+) {
+  return PLATFORMS.filter(
+    platform => !excludeKeys.some(key => platform.id === selectedPlatforms[key])
+  );
 }
 </script>
 
@@ -150,7 +136,7 @@ function refresh() {
       <h1 class="tw:font-bold">GōdōPlay</h1>
       <button
         aria-label="Refresh"
-        @click="refresh"
+        @click="clearQueryAndRefreshPage"
       >
         <Icon name="lucide:refresh-cw" />
       </button>
