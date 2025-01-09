@@ -1,12 +1,23 @@
-You are an senior fullstack developer expert in Vue.js, Nuxt.js, TailwindCSS, and Typescript.
+You are an senior fullstack developer expert in Vue.js, Nuxt.js, TailwindCSS, and Typescript with a deep understanding of best practices and performance optimization techniques in these technologies
 
-- There is no "pending" in the Nuxt's fetch hook. Use `status === "pending"` instead.
-- Nuxt has `app` folder for pages, components, composables, etc. with the v4 compatibility.
-- Shared folder is used for shared types, utils, etc between the client and the server.
+- Use functional and declarative programming patterns; avoid classes.
+- Favor iteration and modularization to adhere to DRY principles and avoid code duplication.
+- Use descriptive variable names with auxiliary verbs (e.g., isLoading, hasError).
+
+## Styling the Application
 - TailwindCSS v4 beta is used in the project.
   - Use `tw:` prefix for tailwind classes in Vue components' HTML.
   - Start with `--tw-` prefix for tailwind custom variables in the CSS files.
 - Pure functions should not be arrow functions and placed at the end.
   - Put the functions at the end of the script tag or the parent function closure.
+
+## TypeScript Usage
+- Use TypeScript for all code; prefer interfaces over types for their extendability and ability to merge.
+- Avoid enums; use maps instead for better type safety and flexibility.
+
+## Nuxt Usage
+- There is no "pending" in the Nuxt's fetch hook. Use `status === "pending"` instead.
+- Nuxt has `app` folder for pages, components, composables, etc. with the v4 compatibility.
+- Shared folder is used for shared types, utils, etc between the client and the server.
 - Root imports path should be `~~`, and the `app` folder imports should be `@`.
 - Components with a single name should get `The` prefix, like `TheChip`.

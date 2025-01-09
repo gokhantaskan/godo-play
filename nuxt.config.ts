@@ -16,6 +16,9 @@ export default defineNuxtConfig({
       oauthEndpoint: process.env.TW_OAUTH_ENDPOINT,
     },
   },
+  nitro: {
+    plugins: ["plugins/auth.ts"],
+  },
   modules: [
     "@nuxt/eslint",
     "@nuxt/fonts",

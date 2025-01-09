@@ -1,10 +1,5 @@
 export default defineEventHandler(async event => {
   try {
-    const {
-      igdb: { endpoint: baseURL },
-      tw: { clientId },
-    } = useRuntimeConfig(event);
-
     const slug = getRouterParam(event, "slug");
 
     const fields = [
@@ -25,17 +20,13 @@ export default defineEventHandler(async event => {
       "themes.name",
     ].join(",");
 
-    console.log("IGDB Query:", `fields ${fields}; where slug="${slug}";`);
-
-    const response = await fetch(`${baseURL}/games`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Client-ID": clientId,
-        Authorization: `Bearer ${tokenStorage.getSession()?.access_token}`,
-      },
-      body: `fields ${fields}; where slug="${slug}";`,
-    });
+    const response = await tokenStorage.makeAuthenticatedRequest(
+      event,
+      `/games`,
+      {
+        body: `fields ${fields}; where slug="${slug}";`,
+      }
+    );
 
     if (!response.ok) {
       throw createError({

@@ -5,7 +5,7 @@ import type { GameDetails } from "~~/shared/types/igdb/gameDetails";
 const props = withDefaults(
   defineProps<{
     details?: GameDetails;
-    isLoading: false;
+    isLoading: boolean;
   }>(),
   {
     details: undefined,

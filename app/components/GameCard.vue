@@ -40,6 +40,8 @@ const gameType = computed(() => {
   }
 });
 
+const cacheKey = computed(() => `game-${props.game.id}`);
+const { data: cachedGameDetails } = useNuxtData(cacheKey.value);
 const {
   data: gameDetails,
   status: gameDetailsStatus,
@@ -47,6 +49,8 @@ const {
 } = useFetch(`/api/games/${props.game.slug}`, {
   method: "POST",
   immediate: false,
+  key: cacheKey.value,
+  lazy: !!cachedGameDetails.value,
 });
 
 const pendingGameDetails = computed(() => {
@@ -133,7 +137,7 @@ async function openModal() {
     >
       <GameDetails
         :details="gameDetails"
-        :is-loading="pendingGameDetails"
+        :is-loading="!gameDetails && pendingGameDetails"
       />
     </TheModal>
   </div>
