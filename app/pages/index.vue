@@ -62,6 +62,28 @@ const selectedFilters = reactive({
   themes: initialQuery.themes?.split(",").map(Number) || [],
 });
 
+// Watch for filter changes and update URL
+watch(
+  selectedFilters,
+  newFilters => {
+    updateQueryParams({
+      gameModes: newFilters.gameModes.length
+        ? newFilters.gameModes.join(",")
+        : undefined,
+      playerPerspectives: newFilters.playerPerspectives.length
+        ? newFilters.playerPerspectives.join(",")
+        : undefined,
+      genres: newFilters.genres.length
+        ? newFilters.genres.join(",")
+        : undefined,
+      themes: newFilters.themes.length
+        ? newFilters.themes.join(",")
+        : undefined,
+    });
+  },
+  { deep: true }
+);
+
 // Sort and Search
 const sortBy = ref<string>(DEFAULT_SORT);
 const sortOrder = ref<"asc" | "desc">(DEFAULT_SORT_ORDER);
