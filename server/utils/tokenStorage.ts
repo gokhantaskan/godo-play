@@ -1,6 +1,6 @@
 import type { H3Event } from "h3";
 import { createError } from "h3";
-import merge from "lodash/merge";
+import merge from "lodash/merge.js";
 
 import { useStorage } from "#imports";
 import type {
