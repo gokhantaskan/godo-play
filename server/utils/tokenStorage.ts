@@ -1,23 +1,39 @@
+import type { H3Event } from "h3";
 import { createError } from "h3";
+import merge from "lodash-es/merge";
 
+import { useStorage } from "#imports";
 import type {
   AuthSession,
   TwitchAuthResponse,
 } from "~~/shared/types/igdb/globals";
 
+const storage = useStorage("twitch");
+let session: AuthSession | null = null;
+
 export default {
-  session: null as AuthSession | null,
-
-  setSession(session: AuthSession): void {
-    this.session = session;
+  async setSession(_session: AuthSession): Promise<void> {
+    session = _session;
+    await storage.setItem("twitch_session", _session);
   },
 
-  getSession(): AuthSession | null {
-    return this.session;
+  async getSession(): Promise<AuthSession | null> {
+    if (!session) {
+      session = await storage.getItem("twitch_session");
+    }
+
+    return session;
   },
 
-  clearSession(): void {
-    this.session = null;
+  async clearSession(): Promise<void> {
+    session = null;
+    await storage.removeItem("twitch_session");
+  },
+
+  isExpiringSoon(session: AuthSession): boolean {
+    const REFRESH_THRESHOLD = 30 * 60 * 1000; // 30 minutes
+    const isExpiring = session.expires_at <= Date.now() + REFRESH_THRESHOLD;
+    return isExpiring;
   },
 
   async retrieveSession(config: {
@@ -27,20 +43,17 @@ export default {
     oauthEndpoint: string;
   }): Promise<AuthSession> {
     try {
-      // First check if we have a valid session
-      const existingSession = this.getSession();
+      const existingSession = await this.getSession();
 
-      // 5 minutes before expiration
       if (
         existingSession &&
-        existingSession.expires_at > Date.now() + 5 * 60 * 1000
+        existingSession.expires_at > Date.now() &&
+        !this.isExpiringSoon(existingSession)
       ) {
         console.info("Returning existing session");
-
         return existingSession;
       }
 
-      // If no valid session, proceed with API call
       const params = new URLSearchParams({
         client_id: config.clientId,
         client_secret: config.clientSecret,
@@ -65,11 +78,10 @@ export default {
         expires_at: Date.now() + data.expires_in * 1000,
       };
 
-      this.setSession(res);
+      console.info("Returning new session");
 
-      // TODO: Remove this later
-      console.info("Retrieved new session");
-      return this.getSession()!;
+      await this.setSession(res);
+      return res;
     } catch (error) {
       if (error instanceof Error) {
         throw createError(error);
@@ -81,5 +93,54 @@ export default {
           "An unexpected error occurred while retrieving Twitch session",
       });
     }
+  },
+
+  async makeAuthenticatedRequest(
+    event: H3Event,
+    url: string,
+    options: RequestInit = {}
+  ): Promise<Response> {
+    const {
+      tw: { clientId, clientSecret, grantType, oauthEndpoint },
+      igdb: { endpoint },
+    } = useRuntimeConfig(event);
+
+    const session = await this.retrieveSession({
+      clientId,
+      clientSecret,
+      grantType,
+      oauthEndpoint,
+    });
+
+    if (!session) {
+      throw createError({
+        statusCode: 401,
+        statusMessage: "No valid authentication session",
+      });
+    }
+
+    options = merge({}, options, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Client-ID": clientId,
+        Authorization: `Bearer ${session.access_token}`,
+      },
+    });
+
+    if (url.startsWith("/")) {
+      url = url.slice(1);
+    }
+
+    const response = await fetch(`${endpoint}/${url}`, options);
+
+    if (!response.ok) {
+      throw createError({
+        statusCode: response.status,
+        statusMessage: response.statusText,
+      });
+    }
+
+    return response;
   },
 };

@@ -4,11 +4,6 @@ import type { DashboardGamesRequestBody } from "~~/shared/types/queries";
 
 export default defineEventHandler(async event => {
   const {
-    igdb: { endpoint: baseURL },
-    tw: { clientId },
-  } = useRuntimeConfig(event);
-
-  const {
     gameModes,
     genres,
     limit = 100,
@@ -19,7 +14,6 @@ export default defineEventHandler(async event => {
     themes,
   } = await readBody<DashboardGamesRequestBody>(event);
 
-  const endpoint = `${baseURL}/games`;
   const tenYearsAgoUnix =
     new Date(new Date().getFullYear() - 10, 0, 1).getTime() / 1000;
 
@@ -96,15 +90,22 @@ export default defineEventHandler(async event => {
   }
 
   try {
-    const response = await fetch(endpoint, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Client-ID": clientId,
-        Authorization: `Bearer ${tokenStorage.getSession()?.access_token}`,
-      },
-      body: parsedBody,
-    });
+    const session = await tokenStorage.getSession();
+
+    if (!session) {
+      throw createError({
+        statusCode: 401,
+        statusMessage: "No valid authentication session",
+      });
+    }
+
+    const response = await tokenStorage.makeAuthenticatedRequest(
+      event,
+      "/games",
+      {
+        body: parsedBody,
+      }
+    );
 
     if (!response.ok) {
       throw createError({
