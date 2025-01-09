@@ -28,8 +28,8 @@ const initialQuery = route.query as InitialQuery;
 const initialPlatforms = initialQuery.platforms?.split(",").map(Number);
 const selectedPlatforms = reactive({
   p1: initialPlatforms?.[0] ?? PLATFORMS[0]!.id,
-  p2: initialPlatforms?.[1] ?? undefined,
-  p3: initialPlatforms?.[2] ?? undefined,
+  p2: initialPlatforms?.[1] ?? null,
+  p3: initialPlatforms?.[2] ?? null,
 });
 
 // Watch for platform changes and update URL
@@ -47,10 +47,27 @@ watch(
   { deep: true }
 );
 
+function getPlatformOptions(
+  excludeKeys: Array<keyof typeof selectedPlatforms>
+): ((typeof PLATFORMS)[0] & { icon: string })[] {
+  return PLATFORMS.filter(
+    platform => !excludeKeys.some(key => platform.id === selectedPlatforms[key])
+  ).map(platform => ({
+    ...platform,
+    icon: platform.icon || "lucide:gamepad-2",
+  }));
+}
+
 const availablePlatforms = reactive({
-  p1: computed(() => getPlatformOptions(["p2", "p3"])),
-  p2: computed(() => getPlatformOptions(["p1", "p3"])),
-  p3: computed(() => getPlatformOptions(["p1", "p2"])),
+  p1: computed(() => [...getPlatformOptions(["p2", "p3"])]),
+  p2: computed(() => [
+    { id: null, name: "Any Platform", icon: "lucide:gamepad-2" },
+    ...getPlatformOptions(["p1", "p3"]),
+  ]),
+  p3: computed(() => [
+    { id: null, name: "Any Platform", icon: "lucide:gamepad-2" },
+    ...getPlatformOptions(["p1", "p2"]),
+  ]),
 });
 
 // Filter Selections
@@ -154,12 +171,11 @@ function clearQueryAndRefreshPage() {
   }
 }
 
-function getPlatformOptions(
-  excludeKeys: Array<keyof typeof selectedPlatforms>
-) {
-  return PLATFORMS.filter(
-    platform => !excludeKeys.some(key => platform.id === selectedPlatforms[key])
-  );
+function getPlatformIcon(platformId: number | null): string {
+  if (!platformId) return "lucide:gamepad-2";
+
+  const platform = PLATFORMS.find(p => p.id === platformId);
+  return platform?.icon || "lucide:gamepad-2";
 }
 </script>
 
@@ -189,25 +205,30 @@ function getPlatformOptions(
       </p>
     </section>
 
-    <section class="tw:flex tw:max-sm:flex-col tw:gap-4">
-      <PlatformSelect
+    <section class="tw:flex tw:max-sm:flex-col tw:gap-4 tw:max-w-2xl">
+      <TheSelect
         v-model="selectedPlatforms.p1"
-        :platforms="availablePlatforms.p1"
+        :options="availablePlatforms.p1"
+        :icon="getPlatformIcon(selectedPlatforms.p1)"
         label="Platform 1"
+        placeholder="Select platform"
         required
       />
 
-      <PlatformSelect
+      <TheSelect
         v-model="selectedPlatforms.p2"
-        :platforms="availablePlatforms.p2"
+        :options="availablePlatforms.p2"
+        :icon="getPlatformIcon(selectedPlatforms.p2)"
         label="Platform 2"
-        clearable
+        placeholder="Select platform"
       />
 
-      <PlatformSelect
+      <TheSelect
         v-model="selectedPlatforms.p3"
-        :platforms="availablePlatforms.p3"
+        :options="availablePlatforms.p3"
+        :icon="getPlatformIcon(selectedPlatforms.p3)"
         label="Platform 3"
+        placeholder="Select platform"
       />
     </section>
 
