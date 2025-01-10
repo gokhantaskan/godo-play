@@ -1,3 +1,5 @@
+import type { GameDetails } from "~~/shared/types/igdb/gameDetails";
+
 export default defineCachedEventHandler(
   async event => {
     try {
@@ -37,7 +39,7 @@ export default defineCachedEventHandler(
       }
 
       const [gameDetails] = await response.json();
-      return gameDetails;
+      return gameDetails as GameDetails;
     } catch (error) {
       if (error instanceof Error) {
         console.error("Error:", error);

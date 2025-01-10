@@ -3,8 +3,15 @@
 @use "base/typography";
 
 // Components
+@use "components/button";
 @use "components/chip";
 @use "components/modal";
 @use "components/select";
 @use "components/game-card";
 @use "components/game-details";
+
+// Layouts
+@use "layouts/prose";
+
+// Pages
+@use "pages/game";

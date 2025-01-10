@@ -3,6 +3,7 @@
 @layer theme {
   :root {
     accent-color: var(--tw-color-primary);
+    --navbar-height: 64px;
   }
 }
 
@@ -30,5 +31,15 @@
 
   button {
     cursor: pointer;
+  }
+
+  a {
+    text-decoration: underline;
+    color: var(--tw-color-primary);
+
+    &[href^="http"]:after {
+      content: " ↗";
+      font-size: 0.75em;
+    }
   }
 }

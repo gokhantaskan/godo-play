@@ -1,3 +1,5 @@
+import svgLoader from "vite-svg-loader";
+
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   compatibilityDate: "2024-11-01",
@@ -18,6 +20,17 @@ export default defineNuxtConfig({
   },
   nitro: {
     plugins: ["plugins/auth.ts"],
+  },
+  vite: {
+    plugins: [
+      svgLoader({
+        defaultImport: "component",
+        svgoConfig: {
+          // Keep viewbox to allow for responsive images
+          plugins: ["preset-default", "removeDimensions"],
+        },
+      }),
+    ],
   },
   modules: [
     "@nuxt/eslint",
@@ -47,6 +60,11 @@ export default defineNuxtConfig({
       key: "./localhost+2-key.pem",
     },
   },
+  app: {
+    head: {
+      link: [{ rel: "icon", type: "image/svg+xml", href: "/favicon.svg" }],
+    },
+  },
   fonts: {
     experimental: {
       processCSSVariables: true,
@@ -59,6 +77,10 @@ export default defineNuxtConfig({
       {
         prefix: "local",
         dir: "./app/assets/icons",
+      },
+      {
+        prefix: "platforms",
+        dir: "./app/assets/icons/platforms",
       },
     ],
   },

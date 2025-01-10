@@ -1,0 +1,91 @@
+@use "sass:map";
+@use "../abstracts/variables" as *;
+
+.game {
+  &__hero {
+    position: relative;
+    overflow: hidden;
+    padding: 2rem 0;
+
+    @media (min-width: map.get($breakpoints, md)) {
+      padding: 3rem 0;
+    }
+  }
+
+  &__hero-content {
+    position: relative;
+    z-index: 2;
+    display: grid;
+    grid-template-columns: min(25vw, 16rem) 1fr;
+    gap: 1.5rem;
+  }
+
+  &__hero-cover {
+    aspect-ratio: 3 / 4;
+    height: auto;
+    border-radius: 0.5rem;
+    box-shadow:
+      0 4px 6px -1px rgba(0, 0, 0, 0.1),
+      0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  }
+
+  &__hero-info {
+    @media (min-width: map.get($breakpoints, md)) {
+      padding-block: 1rem;
+    }
+  }
+
+  &__hero-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin: 0;
+    margin-block-end: 0.25rem;
+    color: #fff;
+
+    @media (min-width: map.get($breakpoints, md)) {
+      font-size: 2.5rem;
+    }
+  }
+
+  &__hero-summary {
+    color: var(--tw-color-bg);
+    font-size: 0.875rem;
+
+    @media (min-width: map.get($breakpoints, md)) {
+      font-size: 1rem;
+    }
+  }
+
+  &__hero-background {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+
+    &::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      background: linear-gradient(
+        to bottom,
+        rgba(0, 0, 0, 0.8),
+        rgba(0, 0, 0, 0.7)
+      );
+    }
+  }
+
+  &__hero-background-image {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: bottom;
+    filter: blur(12px);
+    pointer-events: none;
+  }
+
+  &__description {
+    padding: 2rem 0;
+    white-space: pre-wrap;
+  }
+}
