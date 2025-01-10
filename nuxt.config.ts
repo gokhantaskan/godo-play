@@ -39,6 +39,7 @@ export default defineNuxtConfig({
     "@nuxt/icon",
     "@nuxtjs/sitemap",
     "@nuxtjs/robots",
+    "nuxt-gtag",
   ],
   css: ["./app/assets/styles/tailwind.css", "./app/assets/styles/main.scss"],
   postcss: {
@@ -63,6 +64,16 @@ export default defineNuxtConfig({
   app: {
     head: {
       link: [{ rel: "icon", type: "image/svg+xml", href: "/favicon.svg" }],
+      script: [
+        {
+          type: "text/javascript",
+          "data-cmp-ab": "1",
+          src: "https://cdn.consentmanager.net/delivery/autoblocking/a2c96b2072522.js",
+          "data-cmp-host": "b.delivery.consentmanager.net",
+          "data-cmp-cdn": "cdn.consentmanager.net",
+          "data-cmp-codesrc": "16",
+        },
+      ],
     },
   },
   fonts: {
@@ -90,5 +101,8 @@ export default defineNuxtConfig({
   },
   robots: {
     disallow: ["/_ipx/", "/admin/"],
+  },
+  gtag: {
+    id: "G-P5JQWT4GJ3",
   },
 });
