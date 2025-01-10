@@ -37,7 +37,7 @@ const { data: game } = await useFetch(`/api/games/${slug}`);
 
     <div class="tw:container">
       <p class="game__description">{{ game?.storyline }}</p>
-      <pre>{{ game }}</pre>
+      <!-- <pre>{{ game }}</pre> -->
     </div>
   </div>
 </template>
