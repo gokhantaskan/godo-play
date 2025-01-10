@@ -47,9 +47,9 @@ export default defineEventHandler(async event => {
       method: "POST",
       baseURL,
       headers: {
-        "Content-Type": "text/plain",
+        "Content-Type": "application/json",
         "Client-ID": clientId,
-        Authorization: `Bearer ${tokenStorage.getSession()?.access_token}`,
+        Authorization: `Bearer ${(await tokenStorage.getSession())?.access_token}`,
       },
       body: parsedBody,
     });

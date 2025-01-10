@@ -1,1 +1,9 @@
 @custom-selector :--heading h1, h2, h3, h4, h5, h6;
+
+$breakpoints: (
+  sm: 40rem,
+  md: 48rem,
+  lg: 64rem,
+  xl: 80rem,
+  2xl: 96rem,
+);

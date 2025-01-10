@@ -1,9 +1,9 @@
 <script setup lang="ts">
 const menuItems = [
-  {
-    label: "Home",
-    to: "/",
-  },
+  // {
+  //   label: "Home",
+  //   to: "/",
+  // },
   {
     label: "Games",
     to: "/games",

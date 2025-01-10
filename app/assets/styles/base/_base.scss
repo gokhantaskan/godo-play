@@ -32,4 +32,14 @@
   button {
     cursor: pointer;
   }
+
+  a {
+    text-decoration: underline;
+    color: var(--tw-color-primary);
+
+    &[href^="http"]:after {
+      content: " ↗";
+      font-size: 0.75em;
+    }
+  }
 }

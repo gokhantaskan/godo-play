@@ -4,6 +4,10 @@ interface PlatformIcon {
   color: string;
 }
 
+const props = defineProps<{
+  useDefaultColor?: boolean;
+}>();
+
 const platformColors = {
   ps: "#0070d1", // PlayStation blue
   xbox: "#107c10", // Xbox green
@@ -11,7 +15,7 @@ const platformColors = {
   win: "#00a4ef", // Windows blue
 } as const;
 
-const iconImports = import.meta.glob("../assets/icons/*.svg", {
+const iconImports = import.meta.glob("../assets/icons/platforms/*.svg", {
   as: "raw",
 });
 
@@ -33,8 +37,10 @@ onMounted(async () => {
         platform,
         {
           svg: svgContent,
-          color:
-            platformColors[platform as keyof typeof platformColors] ?? "#888",
+          color: props.useDefaultColor
+            ? "var(--tw-color-text-muted)"
+            : (platformColors[platform as keyof typeof platformColors] ??
+              "#6d7478"),
         },
       ];
     })
@@ -54,7 +60,7 @@ const sortedIcons = computed(() => {
 
 <template>
   <!-- eslint-disable vue/no-v-html -->
-  <div class="tw:flex tw:gap-2">
+  <div class="tw:flex tw:gap-8">
     <div
       v-for="[platform, icon] in sortedIcons"
       :key="platform"

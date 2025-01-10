@@ -1,32 +1,81 @@
 <script setup lang="ts"></script>
 
 <template>
-  <main class="tw:container tw:space-y-4">
-    <header class="tw:flex tw:justify-between tw:items-center tw:gap-4">
-      <h1 class="tw:font-bold">GōdōPlay</h1>
+  <main>
+    <header class="hero">
+      <div class="hero__content">
+        <h1 class="hero__title">Find Games You Can Actually Play Together</h1>
+        <p class="hero__description">
+          Stop wondering which games work across platforms. GodoPlay helps you
+          find and filter multiplayer games that you and your friends can
+          actually play together, regardless of your gaming systems.
+        </p>
+        <NuxtLink
+          v-slot="{ navigate }"
+          to="/games"
+          custom
+        >
+          <TheButton
+            class="hero__cta"
+            @click="navigate"
+            >Start Discovering</TheButton
+          >
+        </NuxtLink>
+        <PlatformIcons
+          class="tw:mt-6"
+          use-default-color
+        />
+      </div>
     </header>
-
-    <section class="tw:text-sm tw:max-w-[80ch]">
-      <p class="tw:mb-2">
-        Inspired by the Japanese word Gōdō (合同), meaning "fusion" or "coming
-        together," GōdōPlay is your go-to app for discovering co-op and
-        multiplayer games across PC, PlayStation, Xbox, and Nintendo Switch.
-      </p>
-      <p>
-        Whether you're teaming up with friends for unforgettable adventures or
-        diving into intense multiplayer battles, GōdōPlay seamlessly brings
-        gamers together. Explore the best cross-platform games and connect with
-        ease—because gaming is better when shared.
-      </p>
-      <NuxtLink
-        v-slot="{ navigate }"
-        to="/games"
-        custom
-      >
-        <button @click="navigate">
-          Find the best co-op and multiplayer games
-        </button>
-      </NuxtLink>
-    </section>
   </main>
 </template>
+
+<style scoped lang="scss">
+@use "sass:map";
+@use "@/assets/styles/abstracts/variables" as *;
+
+$breakpoint-md: map.get($breakpoints, "md");
+
+.hero {
+  padding-block: 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  &__content {
+    text-align: center;
+    max-width: 60ch;
+    padding-inline: 1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+
+  &__title {
+    font-size: 2rem;
+    line-height: 105%;
+    margin-block-end: 1.5rem;
+    font-weight: 600;
+
+    @media (min-width: $breakpoint-md) {
+      font-size: 3rem;
+    }
+  }
+
+  &__description {
+    font-size: 1.125rem;
+    line-height: 1.25;
+    font-weight: 300;
+
+    @media (min-width: $breakpoint-md) {
+      font-size: 1.25rem;
+    }
+  }
+
+  &__cta {
+    margin-block-start: 1rem;
+  }
+}
+</style>

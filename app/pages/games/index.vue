@@ -167,7 +167,10 @@ const pending = computed(() => status.value === "pending");
 
 function clearQueryAndRefreshPage() {
   if (import.meta.client) {
-    window.location.href = window.location.origin;
+    const url = new URL(window.location.href);
+    const baseUrl = `${url.origin}${url.pathname}`;
+
+    window.location.href = `${baseUrl}?`;
   }
 }
 
@@ -182,13 +185,18 @@ function getPlatformIcon(platformId: number | null): string {
 <template>
   <main class="tw:container tw:space-y-4">
     <header class="tw:flex tw:justify-between tw:items-center tw:gap-4">
-      <h1 class="tw:font-bold">Find the best co-op and multiplayer games</h1>
-      <button
+      <h1 class="title">Find the best co-op and multiplayer games</h1>
+      <TheButton
+        variant="secondary"
+        size="sm"
         aria-label="Refresh"
         @click="clearQueryAndRefreshPage"
       >
-        <Icon name="lucide:refresh-cw" />
-      </button>
+        <Icon
+          name="lucide:refresh-cw"
+          class="tw:size-4"
+        />
+      </TheButton>
     </header>
 
     <section class="tw:flex tw:max-sm:flex-col tw:gap-4 tw:max-w-2xl">
@@ -221,6 +229,7 @@ function getPlatformIcon(platformId: number | null): string {
     <section>
       <SearchInput
         v-model="search"
+        class="tw:max-sm:w-full tw:max-sm:mt-4"
         placeholder="Search by name"
       />
     </section>
@@ -252,7 +261,7 @@ function getPlatformIcon(platformId: number | null): string {
       v-else-if="status === 'success' && !games?.length"
       class="tw:text-gray-600"
     >
-      No games found
+      No games found for this combination
     </section>
 
     <section
@@ -268,3 +277,17 @@ function getPlatformIcon(platformId: number | null): string {
     </section>
   </main>
 </template>
+
+<style scoped lang="scss">
+@use "sass:map";
+@use "@/assets/styles/abstracts/variables" as *;
+
+.title {
+  font-size: 1.5rem;
+  font-weight: 700;
+
+  @media (min-width: map.get($breakpoints, "sm")) {
+    font-size: 2.5rem;
+  }
+}
+</style>

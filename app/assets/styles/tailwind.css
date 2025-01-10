@@ -16,7 +16,7 @@
   --color-green: oklch(74.67% 0.2304 137.94);
   --color-yellow: oklch(85.89% 0.1630271818272443 86.6015690368686);
   --color-red: oklch(64.5% 0.1848 32.36);
-  --color-bg: color-mix(in oklab, #fcf6f3 98%, var(--tw-color-primary));
+  --color-bg: #fcf6f3;
   --color-fg: #494d50;
   --color-border: #c3c3c3;
   --color-text-muted: #6d7478;
