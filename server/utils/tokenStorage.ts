@@ -60,11 +60,21 @@ export default {
         grant_type: config.grantType,
       });
 
-      const response = await fetch(`${config.oauthEndpoint}?${params}`, {
+      const url = new URL(config.oauthEndpoint);
+      url.search = params.toString();
+
+      const response = await fetch(url.toString(), {
         method: "POST",
       });
 
       if (!response.ok) {
+        if (response.status === 401 && existingSession) {
+          // Clear invalid session and retry once
+          console.info("Clearing invalid session and retrying");
+          await this.clearSession();
+          return this.retrieveSession(config);
+        }
+
         throw createError({
           statusCode: response.status,
           statusMessage: response.statusText,

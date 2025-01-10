@@ -26,14 +26,14 @@ useSeoMeta({
 });
 
 onMounted(async () => {
-  console.log(
-    await $fetch(`/api/igdb/age_ratings`, {
-      method: "post",
-      body: {
-        fields: "*",
-      },
-    })
-  );
+  // console.log(
+  //   await $fetch(`/api/igdb/age_ratings`, {
+  //     method: "post",
+  //     body: {
+  //       fields: "*",
+  //     },
+  //   })
+  // );
 });
 </script>
 
