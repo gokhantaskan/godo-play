@@ -1,6 +1,7 @@
 @use "base/reset";
 @use "base/base";
 @use "base/typography";
+@use "base/forms";
 
 // Components
 @use "components/button";
@@ -9,6 +10,7 @@
 @use "components/modal";
 @use "components/drawer";
 @use "components/select";
+@use "components/input";
 @use "components/game-card";
 @use "components/game-details";
 

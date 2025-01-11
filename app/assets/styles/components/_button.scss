@@ -14,9 +14,10 @@ $button-variants: (
 );
 
 .button {
-  --radius: var(--tw-radius-sm);
-  --padding-inline: 0.75rem;
-  --padding-block: 0.5rem;
+  --radius: var(--form-radius);
+  --padding-inline: var(--form-padding-inline-md);
+  --padding-block: var(--form-padding-block-md);
+  --height: var(--form-height-md);
 
   display: inline-flex;
   align-items: center;
@@ -25,6 +26,7 @@ $button-variants: (
   border-radius: var(--radius);
   padding-inline: var(--padding-inline);
   padding-block: var(--padding-block);
+  height: var(--height);
   font-weight: 500;
   min-width: fit-content;
   transition:
@@ -47,28 +49,31 @@ $button-variants: (
       }
 
       &:active:not(:is(:disabled, .button--disabled)) {
-        border-color: var(--tw-color-primary);
+        border-color: var(--form-border-color-focus);
       }
     }
   }
 
   // Sizes
   &--sm {
-    --padding-inline: 0.5rem;
-    --padding-block: 0.25rem;
-    font-size: var(--tw-text-sm);
+    --padding-inline: var(--form-padding-inline-sm);
+    --padding-block: var(--form-padding-block-sm);
+    --height: var(--form-height-sm);
+    font-size: var(--form-text-sm);
   }
 
   &--md {
-    --padding-inline: 0.75rem;
-    --padding-block: 0.5rem;
-    font-size: var(--tw-text-base);
+    --padding-inline: var(--form-padding-inline-md);
+    --padding-block: var(--form-padding-block-md);
+    --height: var(--form-height-md);
+    font-size: var(--form-text-md);
   }
 
   &--lg {
-    --padding-inline: 1rem;
-    --padding-block: 0.75rem;
-    font-size: var(--tw-text-base);
+    --padding-inline: var(--form-padding-inline-lg);
+    --padding-block: var(--form-padding-block-lg);
+    --height: var(--form-height-lg);
+    font-size: var(--form-text-lg);
   }
 
   &__prefix,
