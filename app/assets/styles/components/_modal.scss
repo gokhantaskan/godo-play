@@ -1,3 +1,8 @@
+@use "sass:map";
+@use "../abstracts/variables" as *;
+
+$breakpoint-md: map.get($breakpoints, "md");
+
 .modal {
   --header-lh: 1.5;
   --header-fs: 1.25rem;
@@ -30,6 +35,12 @@
     justify-content: center;
     min-height: 100%;
     padding: 1rem;
+
+    @media (max-width: $breakpoint-md) {
+      padding-inline: 0;
+      padding-block-end: 0;
+      align-items: flex-end;
+    }
   }
 
   &__panel {

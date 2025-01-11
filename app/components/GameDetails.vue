@@ -58,9 +58,25 @@ const availableMultiplayerModes = computed(() => {
         />
       </div>
 
-      <div class="game-details__content">
+      <div class="game-details__metadata">
         <div class="game-details__section">
-          <h3 class="game-details__section-title">Companies</h3>
+          <div class="game-details__section-content">
+            <p>{{ details.game_modes.map(mode => mode.name).join(", ") }}</p>
+            <div
+              v-if="allCategories.length"
+              class="tw:flex tw:flex-wrap tw:gap-1 tw:[margin-block-start:0.5rem]"
+            >
+              <TheChip
+                v-for="category in allCategories"
+                :key="category.id"
+                :label="category.name"
+              />
+            </div>
+          </div>
+        </div>
+
+        <div class="game-details__section">
+          <h3 class="game-details__section-title">Developers</h3>
           <p class="game-details__section-content">
             <template v-if="details.involved_companies">
               {{
@@ -74,22 +90,10 @@ const availableMultiplayerModes = computed(() => {
         </div>
 
         <div class="game-details__section">
-          <h3 class="game-details__section-title">Game Modes</h3>
-          <p class="game-details__section-content tw:mb-2">
-            {{ details.game_modes.map(mode => mode.name).join(", ") }}
-          </p>
-          <div class="game-details__section-content">
-            <GameDetailsMultiplayerMode
-              v-for="mode in availableMultiplayerModes"
-              :key="mode.id"
-              :multiplayer-mode="mode"
-            />
-          </div>
-        </div>
-
-        <div class="game-details__section">
           <h3 class="game-details__section-title">Available Platforms</h3>
-          <div class="tw:flex tw:flex-wrap tw:gap-1">
+          <div
+            class="game-details__section-content tw:flex tw:flex-wrap tw:gap-1"
+          >
             <TheChip
               v-for="platform in details.platforms.toSorted((a, b) =>
                 a.name.localeCompare(b.name)
@@ -100,16 +104,21 @@ const availableMultiplayerModes = computed(() => {
             />
           </div>
         </div>
+      </div>
+    </div>
 
-        <div class="game-details__section">
-          <h3 class="game-details__section-title">Categories</h3>
-          <div class="tw:flex tw:flex-wrap tw:gap-1">
-            <TheChip
-              v-for="category in allCategories"
-              :key="category.id"
-              :label="category.name"
-            />
-          </div>
+    <div
+      v-if="availableMultiplayerModes.length"
+      class="game-details__section"
+    >
+      <h3 class="game-details__section-title">Multiplayer Modes</h3>
+      <div class="game-details__section-content">
+        <div class="game-details__section-content">
+          <GameDetailsMultiplayerMode
+            v-for="mode in availableMultiplayerModes"
+            :key="mode.id"
+            :multiplayer-mode="mode"
+          />
         </div>
       </div>
     </div>
