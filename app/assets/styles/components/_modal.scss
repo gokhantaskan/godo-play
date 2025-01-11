@@ -72,17 +72,10 @@
     margin-block-start: 0.25rem;
   }
 
-  &__close {
-    flex-shrink: 0;
+  .close-button {
     margin-inline-start: auto;
-    transition: color 0.2s ease;
     inline-size: calc(var(--header-fs) * var(--header-lh));
     block-size: calc(var(--header-fs) * var(--header-lh));
-    border: 0;
-    border-radius: 999rem;
-    background: color-mix(in oklch, var(--tw-color-border) 50%, transparent);
-    color: var(--tw-color-text-fg);
-    cursor: pointer;
   }
 
   &__content {

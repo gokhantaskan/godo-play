@@ -22,6 +22,20 @@ export default defineNuxtConfig({
   },
   nitro: {
     plugins: ["plugins/auth.ts"],
+    devStorage: {
+      local: {
+        driver: "fs",
+        base: "./data/dev",
+      },
+    },
+  },
+  devServer: {
+    host: "0.0.0.0",
+    port: 3000,
+    https: {
+      cert: "./localhost+2.pem",
+      key: "./localhost+2-key.pem",
+    },
   },
   vite: {
     plugins: [
@@ -55,12 +69,6 @@ export default defineNuxtConfig({
           "custom-selectors": { preserve: false },
         },
       },
-    },
-  },
-  devServer: {
-    https: {
-      cert: "./localhost+2.pem",
-      key: "./localhost+2-key.pem",
     },
   },
   app: {

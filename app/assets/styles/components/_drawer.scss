@@ -1,0 +1,138 @@
+.drawer {
+  --header-lh: 1.5;
+  --header-fs: 1.25rem;
+  --panel-padding-factor: 6;
+
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+
+  &__backdrop {
+    position: fixed;
+    inset: 0;
+    background-color: var(--tw-color-overlay);
+    backdrop-filter: blur(2px);
+  }
+
+  &__container {
+    position: fixed;
+    inset: 0;
+    overflow: hidden;
+  }
+
+  &__panel {
+    position: fixed;
+    background-color: var(--tw-color-bg);
+    block-size: 100%;
+    display: flex;
+    flex-direction: column;
+
+    // Position modifiers
+    &--left {
+      inset-block: 0;
+      inset-inline-start: 0;
+    }
+
+    &--right {
+      inset-block: 0;
+      inset-inline-end: 0;
+    }
+
+    &--top {
+      inset-block-start: 0;
+      inset-inline: 0;
+    }
+
+    &--bottom {
+      inset-block-end: 0;
+      inset-inline: 0;
+    }
+  }
+
+  &__header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    padding: calc(var(--tw-spacing) * var(--panel-padding-factor));
+    padding-block-end: calc(var(--tw-spacing) * 4);
+    border-block-end: 1px solid var(--tw-color-border);
+    line-height: var(--header-lh);
+  }
+
+  &__title {
+    font-family: var(--tw-font-heading);
+    font-size: var(--header-fs);
+    font-weight: 500;
+    color: var(--tw-color-text-dark);
+    line-height: inherit;
+  }
+
+  &__description {
+    color: var(--tw-color-text-muted);
+    margin-block-start: 0.25rem;
+  }
+
+  .close-button {
+    margin-inline-start: auto;
+    inline-size: calc(var(--header-fs) * var(--header-lh));
+    block-size: calc(var(--header-fs) * var(--header-lh));
+  }
+
+  &__content {
+    flex: 1;
+    overflow-y: auto;
+    padding: calc(var(--tw-spacing) * var(--panel-padding-factor));
+  }
+
+  &__footer {
+    padding: calc(var(--tw-spacing) * var(--panel-padding-factor));
+    padding-block-start: calc(var(--tw-spacing) * 4);
+    border-block-start: 1px solid var(--tw-color-border);
+  }
+}
+
+// Backdrop transitions
+.drawer__backdrop {
+  &--enter-active {
+    transition: opacity 0.3s ease-out;
+  }
+
+  &--leave-active {
+    transition: opacity 0.2s ease-in;
+  }
+
+  &--enter-from,
+  &--leave-to {
+    opacity: 0;
+  }
+}
+
+// Panel transitions
+.drawer__panel {
+  &--enter-active {
+    transition: transform 0.3s ease-out;
+  }
+
+  &--leave-active {
+    transition: transform 0.2s ease-in;
+  }
+
+  &--enter-from,
+  &--leave-to {
+    &.drawer__panel--left {
+      transform: translateX(-100%);
+    }
+
+    &.drawer__panel--right {
+      transform: translateX(100%);
+    }
+
+    &.drawer__panel--top {
+      transform: translateY(-100%);
+    }
+
+    &.drawer__panel--bottom {
+      transform: translateY(100%);
+    }
+  }
+}

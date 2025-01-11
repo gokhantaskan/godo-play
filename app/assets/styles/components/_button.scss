@@ -7,16 +7,17 @@ $button-variants: (
     border: transparent,
   ),
   secondary: (
-    bg: transparent,
+    bg: white,
     fg: var(--tw-color-text-dark),
     border: var(--tw-color-border),
   ),
 );
 
 .button {
-  --radius: var(--tw-radius-sm);
-  --padding-inline: 0.75rem;
-  --padding-block: 0.5rem;
+  --radius: var(--form-radius);
+  --padding-inline: var(--form-padding-inline-md);
+  --padding-block: var(--form-padding-block-md);
+  --height: var(--form-height-md);
 
   display: inline-flex;
   align-items: center;
@@ -25,7 +26,9 @@ $button-variants: (
   border-radius: var(--radius);
   padding-inline: var(--padding-inline);
   padding-block: var(--padding-block);
+  height: var(--height);
   font-weight: 500;
+  min-width: fit-content;
   transition:
     background-color 0.2s ease-in-out,
     border-color 0.2s ease-in-out,
@@ -37,48 +40,49 @@ $button-variants: (
       color: map.get($properties, "fg");
       border: 1px solid map.get($properties, "border");
 
-      &:hover {
+      &:hover:not(:is(:disabled, .button--disabled)) {
         background-color: color-mix(
-          in oklch,
-          map.get($properties, "bg") 85%,
+          in srgb,
+          map.get($properties, "bg") 93%,
           black
         );
       }
 
-      &:focus {
-        outline: none;
-        border-color: map.get($properties, "bg");
-        box-shadow: 0
-          0
-          0
-          2px
-          color-mix(in oklch, map.get($properties, "bg") 25%, white);
-      }
-
-      &:disabled {
-        color: map.get($properties, "fg-muted");
-        border-color: map.get($properties, "border-muted");
-        cursor: not-allowed;
+      &:active:not(:is(:disabled, .button--disabled)) {
+        border-color: var(--form-border-color-focus);
       }
     }
   }
 
   // Sizes
   &--sm {
-    --padding-inline: 0.5rem;
-    --padding-block: 0.25rem;
-    font-size: var(--tw-text-sm);
+    --padding-inline: var(--form-padding-inline-sm);
+    --padding-block: var(--form-padding-block-sm);
+    --height: var(--form-height-sm);
+    font-size: var(--form-text-sm);
   }
 
   &--md {
-    --padding-inline: 0.75rem;
-    --padding-block: 0.5rem;
-    font-size: var(--tw-text-base);
+    --padding-inline: var(--form-padding-inline-md);
+    --padding-block: var(--form-padding-block-md);
+    --height: var(--form-height-md);
+    font-size: var(--form-text-md);
   }
 
   &--lg {
-    --padding-inline: 1rem;
-    --padding-block: 0.75rem;
-    font-size: var(--tw-text-base);
+    --padding-inline: var(--form-padding-inline-lg);
+    --padding-block: var(--form-padding-block-lg);
+    --height: var(--form-height-lg);
+    font-size: var(--form-text-lg);
+  }
+
+  &__prefix,
+  &__suffix {
+    flex-shrink: 0;
+  }
+
+  &--disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
   }
 }

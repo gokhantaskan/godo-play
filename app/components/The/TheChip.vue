@@ -33,7 +33,9 @@ const chipClasses = computed(() => [
       :aria-label="`Remove ${label}`"
       @click="$emit('remove')"
     >
-      <slot name="remove-icon">&times;</slot>
+      <slot name="remove-icon">
+        <Icon name="lucide:x" />
+      </slot>
     </button>
   </div>
 </template>
