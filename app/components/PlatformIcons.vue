@@ -8,19 +8,17 @@ const props = defineProps<{
   useDefaultColor?: boolean;
 }>();
 
+const icons = ref<Record<string, PlatformIcon>>({});
+const iconImports = import.meta.glob("@/assets/icons/platforms/*.svg", {
+  query: "?raw",
+  import: "default",
+});
 const platformColors = {
   ps: "#0070d1", // PlayStation blue
   xbox: "#107c10", // Xbox green
   switch: "#e60012", // Nintendo red
   win: "#00a4ef", // Windows blue
 } as const;
-
-const iconImports = import.meta.glob("../assets/icons/platforms/*.svg", {
-  as: "raw",
-});
-
-const icons = ref<Record<string, PlatformIcon>>({});
-
 const platformOrder = {
   win: 1,
   ps: 2,

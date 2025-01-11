@@ -74,18 +74,10 @@ function handleClose() {
               </DialogDescription>
             </div>
 
-            <button
+            <CloseButton
               v-if="showClose"
-              type="button"
-              class="modal__close"
               @click="handleClose"
-            >
-              <span class="tw:sr-only">Close</span>
-              <Icon
-                name="lucide:x"
-                class="tw:size-6"
-              />
-            </button>
+            />
           </header>
 
           <div class="modal__content">

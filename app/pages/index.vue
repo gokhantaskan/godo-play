@@ -6,9 +6,8 @@
       <div class="hero__content">
         <h1 class="hero__title">Find Games You Can Actually Play Together</h1>
         <p class="hero__description">
-          Stop wondering which games work across platforms. GodoPlay helps you
-          find and filter multiplayer games that you and your friends can
-          actually play together, regardless of your gaming systems.
+          Stop wondering which games work across platforms. GōdōPlay helps you
+          find and filter multiplayer games regardless of your gaming systems.
         </p>
         <NuxtLink
           v-slot="{ navigate }"
@@ -17,9 +16,12 @@
         >
           <TheButton
             class="hero__cta"
+            size="lg"
+            right-icon="lucide:arrow-right"
             @click="navigate"
-            >Start Discovering</TheButton
           >
+            Start Discovering
+          </TheButton>
         </NuxtLink>
         <PlatformIcons
           class="tw:mt-6"

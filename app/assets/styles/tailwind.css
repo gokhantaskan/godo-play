@@ -21,6 +21,11 @@
   --color-border: #c3c3c3;
   --color-text-muted: #6d7478;
   --color-text-dark: #303336;
+  --color-overlay: color-mix(
+    in oklch,
+    var(--tw-color-text-dark) 50%,
+    transparent
+  );
 
   --text-*: initial;
   --text-xs: 0.75rem;

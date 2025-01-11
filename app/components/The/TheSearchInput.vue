@@ -69,6 +69,7 @@ function handleClear() {
     color: var(--tw-color-text-muted);
     inline-size: 1.125rem;
     block-size: 1.125rem;
+    flex-shrink: 0;
   }
 
   &__input {
@@ -76,7 +77,11 @@ function handleClear() {
     outline: none;
     flex: 1;
     field-sizing: content;
-    min-width: 15rem;
+    inline-size: 100%;
+
+    @media (min-width: 768px) {
+      min-inline-size: 15rem;
+    }
 
     // Remove search icon from input
     &::-webkit-search-decoration,
