@@ -17,12 +17,13 @@ useSeoMeta({
   ogTitle: "GodoPlay - The Ultimate Fusion for Co-Op and Multiplayer Gaming",
   ogDescription:
     "Find the best cross-platform games for PC, PlayStation, Xbox, and Nintendo Switch.",
-  // ogImage: "/og-image.jpg",
+  ogImage: "/og_img.jpg",
+  ogUrl: "https://godoplay.com",
   twitterCard: "summary_large_image",
   twitterTitle: "GodoPlay - Find Cross-Platform Multiplayer Games",
   twitterDescription:
     "Discover the best multiplayer and co-op games across PC, PlayStation, Xbox, and Nintendo Switch.",
-  // twitterImage: "/og-image.jpg",
+  twitterImage: "/og_img.jpg",
 });
 
 onMounted(async () => {

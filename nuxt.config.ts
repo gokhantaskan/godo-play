@@ -123,6 +123,6 @@ export default defineNuxtConfig({
   },
   gtag: {
     enabled: isProduction,
-    id: "G-P5JQWT4GJ3",
+    id: process.env.NUXT_PUBLIC_GTAG_ID,
   },
 });
