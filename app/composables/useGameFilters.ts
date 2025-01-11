@@ -9,7 +9,11 @@ import {
 } from "~~/shared/constants/filters";
 import { PLATFORMS } from "~~/shared/constants/platforms";
 
-// Types
+/**
+ * Types for the game filters functionality
+ */
+
+// Query parameters structure from the URL
 interface InitialQuery {
   gameModes?: string;
   playerPerspectives?: string;
@@ -19,12 +23,14 @@ interface InitialQuery {
   search?: string;
 }
 
+// Structure for selected platform combinations
 interface SelectedPlatforms {
-  p1: number;
-  p2: number | null;
-  p3: number | null;
+  p1: number; // Primary platform (required)
+  p2: number | null; // Optional second platform
+  p3: number | null; // Optional third platform
 }
 
+// Structure for all filter categories
 interface SelectedFilters {
   gameModes: number[];
   playerPerspectives: number[];
@@ -32,19 +38,22 @@ interface SelectedFilters {
   themes: number[];
 }
 
+// Platform option structure with icon support
 interface Platform {
   id: number | null;
   name: string;
   icon: string;
-  [key: string]: any; // Allow additional properties
+  [key: string]: any; // For compatibility with TheSelect component
 }
 
+// Available platform options for each slot
 interface AvailablePlatforms {
   p1: ComputedRef<Platform[]>;
   p2: ComputedRef<Platform[]>;
   p3: ComputedRef<Platform[]>;
 }
 
+// Structure for API request body
 interface RequestBody {
   platforms: number[];
   gameModes?: number[];
@@ -54,12 +63,14 @@ interface RequestBody {
   search?: string;
 }
 
+// Structure for filter chips display
 interface FilterChip {
   id: number;
   name: string;
   type: "gameMode" | "playerPerspective" | "genre" | "theme";
 }
 
+// Return type for the composable
 interface GameFiltersReturn {
   // Platform Selection
   selectedPlatforms: SelectedPlatforms;
@@ -85,15 +96,23 @@ interface GameFiltersReturn {
   removeFilter: (chip: FilterChip) => void;
 }
 
+/**
+ * Composable for managing game filters state and functionality
+ * Handles platform selection, filter categories, search, and URL synchronization
+ */
 export function useGameFilters(): GameFiltersReturn {
   const DEBOUNCE_DELAY = 500;
 
-  // Route and Router
+  // Initialize route and router for URL management
   const route = useRoute();
   const router = useRouter();
   const initialQuery = route.query as InitialQuery;
 
-  // Platform Selection Logic
+  /**
+   * Platform Selection Management
+   * - Initializes from URL query or defaults to first platform
+   * - Maintains state across navigation using useState
+   */
   const initialPlatforms = initialQuery.platforms?.split(",").map(Number);
   const selectedPlatforms = useState<SelectedPlatforms>(
     "game-platforms",
@@ -104,21 +123,10 @@ export function useGameFilters(): GameFiltersReturn {
     })
   );
 
-  // Watch for platform changes and update URL
-  watch(
-    selectedPlatforms,
-    newPlatforms => {
-      const platforms = [newPlatforms.p1, newPlatforms.p2, newPlatforms.p3]
-        .filter(Boolean)
-        .join(",");
-
-      updateQueryParams({
-        platforms: platforms || undefined,
-      });
-    },
-    { deep: true }
-  );
-
+  /**
+   * Gets available platform options excluding already selected ones
+   * Used to prevent selecting the same platform multiple times
+   */
   function getPlatformOptions(
     excludeKeys: Array<keyof typeof selectedPlatforms.value>
   ): Platform[] {
@@ -131,6 +139,11 @@ export function useGameFilters(): GameFiltersReturn {
     }));
   }
 
+  /**
+   * Computed platform options for each slot
+   * - P1: All platforms except those selected in P2 and P3
+   * - P2/P3: All platforms except those selected in other slots, plus "Any Platform" option
+   */
   const availablePlatforms: AvailablePlatforms = {
     p1: computed(() => [...getPlatformOptions(["p2", "p3"])]),
     p2: computed(() => [
@@ -143,7 +156,11 @@ export function useGameFilters(): GameFiltersReturn {
     ]),
   };
 
-  // Filter Selections
+  /**
+   * Filter Categories Management
+   * - Initializes from URL query
+   * - Maintains state across navigation using useState
+   */
   const selectedFilters = useState<SelectedFilters>("game-filters", () => ({
     gameModes: initialQuery.gameModes?.split(",").map(Number) || [],
     playerPerspectives:
@@ -152,40 +169,20 @@ export function useGameFilters(): GameFiltersReturn {
     themes: initialQuery.themes?.split(",").map(Number) || [],
   }));
 
-  // Watch for filter changes and update URL
-  watch(
-    selectedFilters,
-    newFilters => {
-      updateQueryParams({
-        gameModes: newFilters.gameModes.length
-          ? newFilters.gameModes.join(",")
-          : undefined,
-        playerPerspectives: newFilters.playerPerspectives.length
-          ? newFilters.playerPerspectives.join(",")
-          : undefined,
-        genres: newFilters.genres.length
-          ? newFilters.genres.join(",")
-          : undefined,
-        themes: newFilters.themes.length
-          ? newFilters.themes.join(",")
-          : undefined,
-      });
-    },
-    { deep: true }
-  );
-
-  // Search
+  /**
+   * Search Management
+   * - Uses debounced input to prevent excessive API calls
+   * - Maintains state across navigation using useState
+   */
   const search = useState<string>(
     "game-search",
     () => initialQuery.search?.toString() || ""
   );
   const debouncedSearch = refDebounced<string>(search, DEBOUNCE_DELAY);
 
-  // URL Updates
-  watch(debouncedSearch, newValue => {
-    updateQueryParams({ search: newValue || undefined });
-  });
-
+  /**
+   * Updates URL query parameters while preserving unrelated parameters
+   */
   function updateQueryParams(
     params: Partial<Record<string, string | undefined>>
   ) {
@@ -197,7 +194,39 @@ export function useGameFilters(): GameFiltersReturn {
     });
   }
 
-  // Data Fetching
+  /**
+   * Watches all filter states and syncs with URL
+   * - Runs immediately on mount to sync URL with persisted state
+   * - Deep watches objects to catch nested changes
+   */
+  watch(
+    [selectedPlatforms, selectedFilters, search],
+    ([platforms, filters, searchValue]) => {
+      const platformsList = [platforms.p1, platforms.p2, platforms.p3]
+        .filter(Boolean)
+        .join(",");
+
+      updateQueryParams({
+        platforms: platformsList || undefined,
+        gameModes: filters.gameModes.length
+          ? filters.gameModes.join(",")
+          : undefined,
+        playerPerspectives: filters.playerPerspectives.length
+          ? filters.playerPerspectives.join(",")
+          : undefined,
+        genres: filters.genres.length ? filters.genres.join(",") : undefined,
+        themes: filters.themes.length ? filters.themes.join(",") : undefined,
+        search: searchValue || undefined,
+      });
+    },
+    { immediate: true, deep: true }
+  );
+
+  /**
+   * Prepares request body for API calls
+   * - Filters out empty arrays and undefined values
+   * - Formats data according to API requirements
+   */
   const requestBody = computed<RequestBody>(() => ({
     platforms: [
       selectedPlatforms.value.p1,
@@ -219,6 +248,11 @@ export function useGameFilters(): GameFiltersReturn {
     search: debouncedSearch.value || undefined,
   }));
 
+  /**
+   * Formats query parameters for API requests
+   * - Encodes values for URL safety
+   * - Joins arrays with commas
+   */
   const queryParams = computed(() => {
     return Object.fromEntries(
       Object.entries(requestBody.value)
@@ -232,6 +266,10 @@ export function useGameFilters(): GameFiltersReturn {
     );
   });
 
+  /**
+   * Utility to clear all filters and refresh the page
+   * Only works on client-side
+   */
   function clearQueryAndRefreshPage() {
     if (import.meta.client) {
       const url = new URL(window.location.href);
@@ -241,6 +279,10 @@ export function useGameFilters(): GameFiltersReturn {
     }
   }
 
+  /**
+   * Gets the platform icon for display
+   * Falls back to default gamepad icon if not found
+   */
   function getPlatformIcon(platformId: number | null): string {
     if (!platformId) return "lucide:gamepad-2";
 
@@ -248,7 +290,11 @@ export function useGameFilters(): GameFiltersReturn {
     return platform?.icon || "lucide:gamepad-2";
   }
 
-  // Active Filters
+  /**
+   * Active Filter Chips Management
+   * - Converts selected filter IDs to displayable chips
+   * - Groups by filter type for organized display
+   */
   const activeFilterChips = computed<FilterChip[]>(() => {
     const chips: FilterChip[] = [];
 
@@ -305,6 +351,10 @@ export function useGameFilters(): GameFiltersReturn {
     return chips;
   });
 
+  /**
+   * Removes a filter when its chip is closed
+   * Updates the appropriate filter array based on the chip type
+   */
   function removeFilter(chip: FilterChip) {
     switch (chip.type) {
       case "gameMode":
@@ -328,6 +378,7 @@ export function useGameFilters(): GameFiltersReturn {
     }
   }
 
+  // Return all necessary values and functions
   return {
     // Platform Selection
     selectedPlatforms: selectedPlatforms.value,
