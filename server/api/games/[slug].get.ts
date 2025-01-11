@@ -15,6 +15,7 @@ export default defineCachedEventHandler(
         "storyline",
         "summary",
         "websites.*",
+        "involved_companies.company.name",
         // With names
         "game_modes.name",
         "genres.name",
@@ -56,5 +57,6 @@ export default defineCachedEventHandler(
   {
     // 5 minutes in production, 5 seconds in dev
     maxAge: process.env.NODE_ENV === "production" ? 5 * 60 : 5,
+    swr: true,
   }
 );

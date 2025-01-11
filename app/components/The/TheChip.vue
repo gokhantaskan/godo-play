@@ -1,7 +1,7 @@
 <script setup lang="ts">
 interface Props {
   label: string;
-  variant?: "primary" | "green" | "yellow" | "red";
+  variant?: "primary" | "green" | "yellow" | "red" | "gray";
   size?: "sm" | "md";
   removable?: boolean;
 }
