@@ -14,6 +14,7 @@ export interface GameDetails {
   name: string;
   platforms: SmallEntity[];
   player_perspectives?: SmallEntity[];
+  involved_companies: InvolvedCompanies[];
   screenshots: Image[];
   storyline: string;
   summary: string;
@@ -66,4 +67,12 @@ export interface Image {
   url: string;
   width: number;
   checksum: string;
+}
+
+export interface InvolvedCompanies {
+  id: number;
+  company: {
+    id: number;
+    name: string;
+  };
 }

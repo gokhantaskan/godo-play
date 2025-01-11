@@ -60,6 +60,27 @@ const availableMultiplayerModes = computed(() => {
 
       <div class="game-details__content">
         <div class="game-details__section">
+          <h3 class="game-details__section-title">Companies</h3>
+          <p class="game-details__section-content">
+            <template v-if="details.involved_companies">
+              <!-- eslint-disable -->
+              <span
+                v-for="(company, idx) in details.involved_companies"
+                :key="company.id"
+                class="tw:inline-block"
+              >
+                {{ company.company.name
+                }}<span v-if="idx < details.involved_companies.length - 1"
+                  >,&nbsp;</span
+                >
+              </span>
+              <!-- eslint-enable -->
+            </template>
+            <span v-else>No data</span>
+          </p>
+        </div>
+
+        <div class="game-details__section">
           <h3 class="game-details__section-title">Game Modes</h3>
           <p class="game-details__section-content">
             {{ details.game_modes.map(mode => mode.name).join(", ") }}
@@ -82,7 +103,7 @@ const availableMultiplayerModes = computed(() => {
               )"
               :key="platform.id"
               :label="platform.name"
-              variant="primary"
+              variant="gray"
             />
           </div>
         </div>

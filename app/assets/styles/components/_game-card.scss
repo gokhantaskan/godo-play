@@ -2,7 +2,11 @@
 
 // Badges over the game card's cover image
 $type-badges: (
-  collection: (
+  main_game: (
+    bg: var(--tw-color-green),
+    fg: color-mix(in srgb, var(--tw-color-green) 12.5%, white),
+  ),
+  bundle: (
     bg: var(--tw-color-yellow),
     fg: color-mix(in srgb, var(--tw-color-yellow) 50%, black),
   ),

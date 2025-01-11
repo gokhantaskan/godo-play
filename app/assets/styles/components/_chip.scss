@@ -64,7 +64,10 @@ $chip-colors: (
   // Sizes
   &--sm {
     padding: 0.25rem 0.375rem;
-    padding-inline-start: calc(0.25rem + 0.375rem);
+
+    &:has(#{$root}__remove) {
+      padding-inline-start: calc(0.25rem + 0.375rem);
+    }
 
     #{$root}__remove {
       inline-size: 1rem;
@@ -77,6 +80,10 @@ $chip-colors: (
     padding-inline-start: calc(0.25rem + 0.5rem);
     font-size: 0.875rem;
     line-height: 1.125;
+
+    &:has(#{$root}__remove) {
+      padding-inline-start: calc(0.25rem + 0.5rem + 0.25rem);
+    }
 
     #{$root}__remove {
       inline-size: 1.25rem;

@@ -1,17 +1,23 @@
 import { refDebounced } from "@vueuse/core";
 
 import {
-  type FilterOption,
   GAME_MODES,
   GENRES,
   PLAYER_PERSPECTIVES,
   THEMES,
-} from "~~/shared/constants/filters";
+} from "~~/shared/constants/";
 import { PLATFORMS } from "~~/shared/constants/platforms";
 
 /**
  * Types for the game filters functionality
  */
+
+// Filter option structure
+interface FilterOption {
+  id: number;
+  name: string;
+  icon?: string;
+}
 
 // Query parameters structure from the URL
 interface InitialQuery {

@@ -59,18 +59,18 @@ function handleClose() {
           >
             <div>
               <DialogTitle
-                v-if="title"
+                v-if="title || $slots.title"
                 as="h3"
                 class="modal__title"
                 :class="[!showTitle && 'tw:sr-only']"
               >
-                {{ title }}
+                <slot name="title">{{ title }}</slot>
               </DialogTitle>
               <DialogDescription
-                v-if="description"
+                v-if="description || $slots.description"
                 class="modal__description"
               >
-                {{ description }}
+                <slot name="description">{{ description }}</slot>
               </DialogDescription>
             </div>
 

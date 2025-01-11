@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { GAME_TYPES } from "~~/shared/constants";
 import type { DashboardGames } from "~~/shared/types/igdb/dashboardGames";
 
 interface Props {
@@ -28,16 +29,7 @@ const categories = computed(() => {
 });
 
 const gameType = computed(() => {
-  switch (props.game.category) {
-    case 3:
-      return { label: "Bundle", icon: "lucide:combine", type: "collection" };
-    case 8:
-      return { label: "Remake", icon: "lucide:refresh-cw", type: "remake" };
-    case 9:
-      return { label: "Remaster", icon: "lucide:refresh-cw", type: "remaster" };
-    default:
-      return { label: "Main Game", icon: "lucide:gamepad", type: "main" };
-  }
+  return GAME_TYPES[props.game.category];
 });
 
 const cacheKey = computed(() => `game-${props.game.id}`);
@@ -91,14 +83,17 @@ async function openModal() {
       >
         No Image
       </div>
-      <div
-        v-if="game.category !== 0"
-        class="game-card__badge"
-        :class="`game-card__badge--${gameType.type}`"
-        :title="gameType.label"
-      >
-        <Icon :name="gameType.icon" />
-      </div>
+      <!-- Game Type CircleBadge -->
+      <template v-if="gameType">
+        <div
+          v-if="game.category !== 0"
+          class="game-card__badge"
+          :class="`game-card__badge--${gameType.slug}`"
+          :title="gameType.label"
+        >
+          <Icon :name="gameType.icon" />
+        </div>
+      </template>
     </button>
     <div class="game-card__content">
       <!-- Game name -->
@@ -122,7 +117,7 @@ async function openModal() {
             v-for="category in categories"
             :key="category"
             :label="category"
-            :color="gameType.type"
+            :color="gameType?.slug"
           />
         </template>
       </div>
@@ -134,6 +129,18 @@ async function openModal() {
       :title="game.name"
       max-width="48rem"
     >
+      <template #description>
+        <div
+          v-if="gameType"
+          class="tw:flex tw:items-center tw:gap-2"
+        >
+          <Icon
+            :name="gameType.icon"
+            class="tw:text-xl"
+          />
+          <span>{{ gameType.label }}</span>
+        </div>
+      </template>
       <GameDetails
         :details="gameDetails"
         :is-loading="!gameDetails && pendingGameDetails"
