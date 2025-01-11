@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import type { PLATFORMS } from "~~/shared/constants/platforms";
+import type { SUPPORTED_PLATFORMS } from "~~/shared/constants/platforms";
 
-export type SimplePlatform = (typeof PLATFORMS)[number];
+export type SimplePlatform = (typeof SUPPORTED_PLATFORMS)[number];
 export type PlatformId = SimplePlatform["id"];
 
 defineProps<{

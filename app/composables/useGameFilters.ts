@@ -6,7 +6,7 @@ import {
   PLAYER_PERSPECTIVES,
   THEMES,
 } from "~~/shared/constants/";
-import { PLATFORMS } from "~~/shared/constants/platforms";
+import { SUPPORTED_PLATFORMS } from "~~/shared/constants/platforms";
 
 /**
  * Types for the game filters functionality
@@ -123,7 +123,7 @@ export function useGameFilters(): GameFiltersReturn {
   const selectedPlatforms = useState<SelectedPlatforms>(
     "game-platforms",
     () => ({
-      p1: initialPlatforms?.[0] ?? PLATFORMS[0]!.id,
+      p1: initialPlatforms?.[0] ?? SUPPORTED_PLATFORMS[0]!.id,
       p2: initialPlatforms?.[1] ?? null,
       p3: initialPlatforms?.[2] ?? null,
     })
@@ -136,7 +136,7 @@ export function useGameFilters(): GameFiltersReturn {
   function getPlatformOptions(
     excludeKeys: Array<keyof typeof selectedPlatforms.value>
   ): Platform[] {
-    return PLATFORMS.filter(
+    return SUPPORTED_PLATFORMS.filter(
       platform =>
         !excludeKeys.some(key => platform.id === selectedPlatforms.value[key])
     ).map(platform => ({
@@ -292,7 +292,7 @@ export function useGameFilters(): GameFiltersReturn {
   function getPlatformIcon(platformId: number | null): string {
     if (!platformId) return "lucide:gamepad-2";
 
-    const platform = PLATFORMS.find(p => p.id === platformId);
+    const platform = SUPPORTED_PLATFORMS.find(p => p.id === platformId);
     return platform?.icon || "lucide:gamepad-2";
   }
 

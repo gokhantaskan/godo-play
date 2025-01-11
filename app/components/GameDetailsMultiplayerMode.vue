@@ -1,6 +1,5 @@
 <script setup lang="ts">
-import { Icon } from "#components";
-import { PLATFORMS } from "~~/shared/constants/platforms";
+import { SUPPORTED_PLATFORMS } from "~~/shared/constants/platforms";
 import type { MultiplayerMode } from "~~/shared/types/igdb/gameDetails";
 
 interface Props {
@@ -9,11 +8,8 @@ interface Props {
 
 const props = defineProps<Props>();
 
-const YesIcon = h(Icon, { name: "i-lucide-check", class: "tw:text-green" });
-const NoIcon = h(Icon, { name: "i-lucide-x", class: "tw:text-red" });
-
 const platform = computed(() => {
-  return PLATFORMS.find(
+  return SUPPORTED_PLATFORMS.find(
     platform => platform.id === props.multiplayerMode.platform
   );
 });
@@ -29,32 +25,35 @@ const platform = computed(() => {
     </h4>
     <div>
       <dl>
+        <dt>Drop-in</dt>
+        <dd>
+          <TheBooleanIndicator :value="multiplayerMode.dropin" />
+        </dd>
         <dt>Campaign Co-op</dt>
         <dd>
-          <template v-if="multiplayerMode.campaigncoop">
-            <YesIcon />
-          </template>
-          <template v-else>
-            <NoIcon />
-          </template>
+          <TheBooleanIndicator :value="multiplayerMode.campaigncoop" />
         </dd>
         <dt>Online Co-op</dt>
         <dd>
-          <template v-if="multiplayerMode.onlinecoop">
-            <YesIcon />
-          </template>
-          <template v-else>
-            <NoIcon />
-          </template>
+          <TheBooleanIndicator :value="multiplayerMode.onlinecoop" />
+          <span v-if="multiplayerMode.onlinecoopmax"
+            >Up to {{ multiplayerMode.onlinecoopmax }}</span
+          >
         </dd>
         <dt>Offline Co-op</dt>
         <dd>
-          <template v-if="multiplayerMode.offlinecoop">
-            <YesIcon />
-          </template>
-          <template v-else>
-            <NoIcon />
-          </template>
+          <TheBooleanIndicator :value="multiplayerMode.offlinecoop" />
+          <span v-if="multiplayerMode.offlinecoopmax"
+            >Up to {{ multiplayerMode.offlinecoopmax }}</span
+          >
+        </dd>
+        <dt>LAN Co-op</dt>
+        <dd>
+          <TheBooleanIndicator :value="multiplayerMode.lancoop" />
+        </dd>
+        <dt>Split-screen</dt>
+        <dd>
+          <TheBooleanIndicator :value="multiplayerMode.splitscreen" />
         </dd>
       </dl>
     </div>
@@ -77,5 +76,8 @@ dt {
 
 dd {
   grid-column: 2;
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
 }
 </style>

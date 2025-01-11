@@ -45,13 +45,15 @@
   }
 
   &__section {
-    display: flex;
-    flex-direction: column;
-    gap: 0.25rem;
+    & > * + * {
+      margin-block-start: 0.125rem;
+    }
 
     &-title {
-      font-size: 1.125rem;
-      font-weight: 500;
+      font-size: 1.25rem;
+      font-weight: 600;
+      font-variant-caps: all-petite-caps;
+      margin-block-end: 0.125rem;
     }
 
     &-content {

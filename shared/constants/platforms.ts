@@ -1,5 +1,5 @@
 // IGDB Platforms
-export const PLATFORMS = [
+export const SUPPORTED_PLATFORMS = [
   {
     id: 6,
     abbreviation: "PC",
@@ -37,4 +37,6 @@ export const PLATFORMS = [
   },
 ];
 
-export const SUPPORTED_PLATFORM_IDS = PLATFORMS.map(platform => platform.id);
+export const SUPPORTED_PLATFORM_IDS = SUPPORTED_PLATFORMS.map(
+  platform => platform.id
+);
