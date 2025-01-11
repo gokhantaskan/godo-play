@@ -11,6 +11,9 @@ importers:
       '@headlessui/vue':
         specifier: ^1.7.23
         version: 1.7.23(vue@3.5.13(typescript@5.7.3))
+      '@hotjar/browser':
+        specifier: ^1.0.9
+        version: 1.0.9
       '@nuxt/eslint':
         specifier: 0.7.4
         version: 0.7.4(@vue/compiler-sfc@3.5.13)(eslint@9.18.0(jiti@2.4.2))(magicast@0.3.5)(rollup@4.29.1)(typescript@5.7.3)(vite@6.0.7(@types/node@22.10.5)(jiti@2.4.2)(lightningcss@1.28.2)(sass-embedded@1.83.1)(terser@5.37.0)(yaml@2.7.0))
@@ -894,6 +897,9 @@ packages:
     engines: {node: '>=10'}
     peerDependencies:
       vue: ^3.2.0
+
+  '@hotjar/browser@1.0.9':
+    resolution: {integrity: sha512-n9akDMod8BLGpYEQCrHwlYWWd63c1HlhUSXNIDfClZtKYXbUjIUOFlNZNNcUxgHTCsi4l2i+SWKsGsO0t93S8w==}
 
   '@humanfs/core@0.19.1':
     resolution: {integrity: sha512-5DyQ4+1JEUzejeK1JGICcideyfUbGixgS9jNgex5nqkW+cY7WZhxBigmieN5Qnw9ZosSNVC9KQKyb+GUaGyKUA==}
@@ -6169,6 +6175,8 @@ snapshots:
     dependencies:
       '@tanstack/vue-virtual': 3.11.2(vue@3.5.13(typescript@5.7.3))
       vue: 3.5.13(typescript@5.7.3)
+
+  '@hotjar/browser@1.0.9': {}
 
   '@humanfs/core@0.19.1': {}
 

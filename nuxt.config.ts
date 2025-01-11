@@ -19,6 +19,11 @@ export default defineNuxtConfig({
       grantType: process.env.TW_GRANT_TYPE,
       oauthEndpoint: process.env.TW_OAUTH_ENDPOINT,
     },
+    public: {
+      hotjar: {
+        siteId: process.env.NUXT_HOTJAR_ID,
+      },
+    },
   },
   nitro: {
     plugins: ["plugins/auth.ts"],
