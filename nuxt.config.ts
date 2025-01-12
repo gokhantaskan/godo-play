@@ -10,6 +10,14 @@ export default defineNuxtConfig({
     compatibilityVersion: 4,
   },
   runtimeConfig: {
+    upstash: {
+      redis: {
+        rest: {
+          url: process.env.UPSTASH_REDIS_REST_URL,
+          token: process.env.UPSTASH_REDIS_REST_TOKEN,
+        },
+      },
+    },
     igdb: {
       endpoint: process.env.IGDB_ENDPOINT,
     },
@@ -27,10 +35,14 @@ export default defineNuxtConfig({
   },
   nitro: {
     plugins: ["plugins/auth.ts"],
-    devStorage: {
-      local: {
-        driver: "fs",
-        base: "./data/dev",
+    storage: {
+      redis: {
+        driver: "redis",
+        host: process.env.REDIS_HOST,
+        port: Number(process.env.REDIS_PORT),
+        username: process.env.REDIS_USERNAME,
+        password: process.env.REDIS_PASSWORD,
+        db: Number(process.env.REDIS_DB),
       },
     },
   },

@@ -2,14 +2,14 @@ import type { H3Event } from "h3";
 import { createError } from "h3";
 import merge from "lodash/merge.js";
 
-// @ts-ignore - `vue-tsc` doesn't support it yet
-import { useStorage } from "#imports";
 import type {
   AuthSession,
   TwitchAuthResponse,
 } from "~~/shared/types/igdb/globals";
 
-const storage = useStorage("twitch");
+import { redisStorage } from "./redis";
+
+const storage = redisStorage;
 let session: AuthSession | null = null;
 
 async function setSession(_session: AuthSession): Promise<void> {
@@ -19,7 +19,10 @@ async function setSession(_session: AuthSession): Promise<void> {
 
 async function getSession(): Promise<AuthSession | null> {
   if (!session) {
-    session = await storage.getItem("twitch_session");
+    const storedSession = await storage.getItem<AuthSession>("twitch_session");
+    if (storedSession) {
+      session = storedSession;
+    }
   }
 
   return session;
