@@ -10,6 +10,9 @@ export default defineNuxtConfig({
     compatibilityVersion: 4,
   },
   runtimeConfig: {
+    redis: {
+      url: process.env.REDIS_URL,
+    },
     igdb: {
       endpoint: process.env.IGDB_ENDPOINT,
     },

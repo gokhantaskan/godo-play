@@ -1,39 +1,53 @@
 import type { H3Event } from "h3";
 import { createError } from "h3";
+import Redis from "ioredis";
 import merge from "lodash/merge.js";
 
-// @ts-ignore - `vue-tsc` doesn't support it yet
-import { useStorage } from "#imports";
 import type {
   AuthSession,
   TwitchAuthResponse,
 } from "~~/shared/types/igdb/globals";
 
-const storage = useStorage("twitch");
-let session: AuthSession | null = null;
+const REDIS_KEY_PREFIX = "godoplay:twitch:";
+const SESSION_KEY = `${REDIS_KEY_PREFIX}session`;
+const REFRESH_THRESHOLD = 30 * 60 * 1000; // 30 minutes
 
-async function setSession(_session: AuthSession): Promise<void> {
-  session = _session;
-  await storage.setItem("twitch_session", _session);
-}
+const redis = new Redis(useRuntimeConfig().redis.url);
 
 async function getSession(): Promise<AuthSession | null> {
-  if (!session) {
-    session = await storage.getItem("twitch_session");
-  }
+  try {
+    const storedSession = await redis.get(SESSION_KEY);
+    if (!storedSession) return null;
 
-  return session;
+    return JSON.parse(storedSession) as AuthSession;
+  } catch (error) {
+    console.error("Error getting session from Redis:", error);
+    return null;
+  }
+}
+
+async function setSession(_session: AuthSession): Promise<void> {
+  try {
+    await redis.set(SESSION_KEY, JSON.stringify(_session));
+  } catch (error) {
+    console.error("Error setting session in Redis:", error);
+    throw createError({
+      statusCode: 500,
+      statusMessage: "Failed to store session in Redis",
+    });
+  }
 }
 
 async function clearSession(): Promise<void> {
-  session = null;
-  await storage.removeItem("twitch_session");
-}
-
-function isExpiringSoon(session: AuthSession): boolean {
-  const REFRESH_THRESHOLD = 30 * 60 * 1000; // 30 minutes
-  const isExpiring = session.expires_at <= Date.now() + REFRESH_THRESHOLD;
-  return isExpiring;
+  try {
+    await redis.del(SESSION_KEY);
+  } catch (error) {
+    console.error("Error clearing session from Redis:", error);
+    throw createError({
+      statusCode: 500,
+      statusMessage: "Failed to clear session from Redis",
+    });
+  }
 }
 
 async function retrieveSession(config: {
@@ -47,8 +61,7 @@ async function retrieveSession(config: {
 
     if (
       existingSession &&
-      existingSession.expires_at > Date.now() &&
-      !isExpiringSoon(existingSession)
+      existingSession.expires_at > Date.now() + REFRESH_THRESHOLD
     ) {
       console.info("Returning existing session");
       return existingSession;
@@ -89,7 +102,6 @@ async function retrieveSession(config: {
     };
 
     console.info("Returning new session");
-
     await setSession(res);
     return res;
   } catch (error) {
@@ -155,10 +167,7 @@ async function makeAuthenticatedRequest(
 }
 
 export default {
-  setSession,
   getSession,
-  clearSession,
-  isExpiringSoon,
   retrieveSession,
   makeAuthenticatedRequest,
 };
