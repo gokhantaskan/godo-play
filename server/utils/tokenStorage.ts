@@ -96,8 +96,13 @@ async function retrieveSession(config: {
       return existingSession;
     }
 
-    if (existingSession && isExpiringSoon(existingSession)) {
-      console.info("[Auth] Current session is expiring soon, refreshing...");
+    if (existingSession) {
+      console.info(
+        `[Auth] Session ${
+          isExpiringSoon(existingSession) ? "is expiring soon" : "has expired"
+        }, refreshing...`
+      );
+      await clearSession();
     }
 
     const params = new URLSearchParams({
@@ -112,15 +117,15 @@ async function retrieveSession(config: {
     console.info("[Auth] Requesting new token from Twitch...");
     const response = await fetch(url.toString(), {
       method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
     });
 
     if (!response.ok) {
-      if (response.status === 401 && existingSession) {
-        console.info("[Auth] Invalid session detected, clearing...");
-        await clearSession();
-      }
-
       const errorText = await response.text();
+      console.error("[Auth] Failed to get token");
+
       throw createError({
         statusCode: response.status,
         statusMessage: `Twitch authentication failed: ${response.statusText}`,
@@ -133,25 +138,28 @@ async function retrieveSession(config: {
     }
 
     const data: TwitchAuthResponse = await response.json();
+    console.info("[Auth] Received response from Twitch");
 
     if (!data.access_token) {
+      console.error("[Auth] Invalid response from Twitch");
       throw createError({
         statusCode: 500,
         statusMessage: "Invalid response from Twitch: missing access token",
-        data,
       });
     }
 
     const newSession: AuthSession = {
       access_token: data.access_token,
-      token_type: data.token_type,
-      expires_at: Date.now() + data.expires_in * 1000,
+      token_type: data.token_type || "bearer",
+      expires_at: Date.now() + (data.expires_in || 3600) * 1000,
     };
 
     console.info("[Auth] Successfully obtained new token");
     await setSession(newSession);
     return newSession;
   } catch (error) {
+    console.error("[Auth] Error retrieving session");
+
     if (error instanceof Error) {
       throw createError({
         statusCode: error instanceof H3Error ? error.statusCode : 500,
@@ -170,7 +178,8 @@ async function retrieveSession(config: {
 async function makeAuthenticatedRequest(
   event: H3Event,
   url: string,
-  options: RequestInit = {}
+  options: RequestInit = {},
+  retryCount = 0
 ): Promise<Response> {
   const {
     tw: { clientId, clientSecret, grantType, oauthEndpoint },
@@ -205,22 +214,25 @@ async function makeAuthenticatedRequest(
       url = url.slice(1);
     }
 
-    console.info(`[IGDB] Making request to ${endpoint}/${url}`);
-    const response = await fetch(`${endpoint}/${url}`, options);
+    const requestUrl = `${endpoint}/${url}`;
+    console.info(`[IGDB] Making request to ${requestUrl}`);
+    const response = await fetch(requestUrl, options);
 
     if (!response.ok) {
-      if (response.status === 401) {
-        console.info("[IGDB] Token expired, clearing session...");
+      const errorText = await response.text();
+
+      if (response.status === 401 && retryCount === 0) {
+        console.info("[IGDB] Token expired, clearing session and retrying...");
         await clearSession();
+        return makeAuthenticatedRequest(event, url, options, retryCount + 1);
       }
 
-      const errorText = await response.text();
       throw createError({
         statusCode: response.status,
         statusMessage: `IGDB request failed: ${response.statusText}`,
         data: {
           error: errorText,
-          endpoint: `${endpoint}/${url}`,
+          endpoint: requestUrl,
         },
       });
     }
