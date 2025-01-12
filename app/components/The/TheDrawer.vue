@@ -33,7 +33,9 @@ const {
 const close = () => {
   if (beforeClose) {
     beforeClose(cancel => {
-      if (cancel) return;
+      if (cancel) {
+        return;
+      }
       isOpen.value = false;
     });
     return;
