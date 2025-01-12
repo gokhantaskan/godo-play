@@ -9,7 +9,9 @@ import type {
   TwitchAuthResponse,
 } from "~~/shared/types/igdb/globals";
 
-const storage = useStorage("twitch");
+// Use Redis only in production
+const storage = useStorage("redis");
+
 let session: AuthSession | null = null;
 
 async function setSession(_session: AuthSession): Promise<void> {
