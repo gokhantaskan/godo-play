@@ -35,16 +35,6 @@ export default defineNuxtConfig({
   },
   nitro: {
     plugins: ["plugins/auth.ts"],
-    storage: {
-      redis: {
-        driver: "redis",
-        host: process.env.REDIS_HOST,
-        port: Number(process.env.REDIS_PORT),
-        username: process.env.REDIS_USERNAME,
-        password: process.env.REDIS_PASSWORD,
-        db: Number(process.env.REDIS_DB),
-      },
-    },
   },
   devServer: {
     host: "0.0.0.0",
