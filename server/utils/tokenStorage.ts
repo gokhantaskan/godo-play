@@ -11,11 +11,39 @@ import type {
 const SESSION_KEY = `godoplay:twitch:session`;
 const REFRESH_THRESHOLD = 30 * 60 * 1000; // 30 minutes
 
-const redis = new Redis(process.env.REDIS_URL!);
+let redis: Redis | null = null;
+
+function getRedisClient(): Redis {
+  if (!redis) {
+    redis = new Redis(process.env.REDIS_URL!, {
+      maxRetriesPerRequest: 3,
+      retryStrategy(times) {
+        const delay = Math.min(times * 50, 2000);
+        return delay;
+      },
+      reconnectOnError(err) {
+        const targetError = "READONLY";
+
+        if (err.message.includes(targetError)) {
+          return true;
+        }
+
+        return false;
+      },
+    });
+
+    redis.on("error", error => {
+      console.error("Redis connection error:", error);
+      redis = null;
+    });
+  }
+  return redis;
+}
 
 async function getSession(): Promise<AuthSession | null> {
   try {
-    const storedSession = await redis.get(SESSION_KEY);
+    const client = getRedisClient();
+    const storedSession = await client.get(SESSION_KEY);
     if (!storedSession) {
       return null;
     }
@@ -29,7 +57,8 @@ async function getSession(): Promise<AuthSession | null> {
 
 async function setSession(_session: AuthSession): Promise<void> {
   try {
-    await redis.set(SESSION_KEY, JSON.stringify(_session));
+    const client = getRedisClient();
+    await client.set(SESSION_KEY, JSON.stringify(_session));
   } catch (error) {
     console.error("Error setting session in Redis:", error);
     throw createError({
@@ -41,7 +70,8 @@ async function setSession(_session: AuthSession): Promise<void> {
 
 async function clearSession(): Promise<void> {
   try {
-    await redis.del(SESSION_KEY);
+    const client = getRedisClient();
+    await client.del(SESSION_KEY);
   } catch (error) {
     console.error("Error clearing session from Redis:", error);
     throw createError({
