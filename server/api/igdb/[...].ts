@@ -3,13 +3,16 @@ import { $fetch } from "ofetch";
 export default defineEventHandler(async event => {
   assertMethod(event, "POST");
 
-  const {
-    igdb: { endpoint: baseURL },
-    tw: { clientId },
-  } = useRuntimeConfig(event);
-
+  const config = useRuntimeConfig(event);
   const url = event.context.params?._;
   const body = await readBody(event);
+
+  if (!url) {
+    throw createError({
+      statusCode: 400,
+      statusMessage: "Missing URL parameter",
+    });
+  }
 
   // Convert the body to IGDB API format
   const hasSearch = Boolean(body.search);
@@ -36,35 +39,38 @@ export default defineEventHandler(async event => {
   console.log(parsedBody);
 
   try {
-    if (!url) {
+    // Ensure we have a valid token before making the request
+    await tokenStorage.retrieveSession({
+      clientId: config.tw.clientId,
+      clientSecret: config.tw.clientSecret,
+      grantType: config.tw.grantType,
+      oauthEndpoint: config.tw.oauthEndpoint,
+    });
+
+    // Rest of your existing code...
+    const session = await tokenStorage.getSession();
+
+    if (!session?.access_token) {
       throw createError({
-        statusCode: 400,
-        statusMessage: "Missing or invalid URL",
+        statusCode: 401,
+        statusMessage: "No valid authentication token",
       });
     }
 
     const response = await $fetch(url, {
       method: "POST",
-      baseURL,
+      baseURL: config.igdb.endpoint,
       headers: {
         "Content-Type": "application/json",
-        "Client-ID": clientId,
-        Authorization: `Bearer ${(await tokenStorage.getSession())?.access_token}`,
+        "Client-ID": config.tw.clientId,
+        Authorization: `Bearer ${session.access_token}`,
       },
       body: parsedBody,
     });
 
     return response;
   } catch (error) {
-    if (error instanceof Error) {
-      console.error("Error:", error);
-      throw createError(error);
-    }
-
-    console.error("Unknown Error:", error);
-    throw createError({
-      statusCode: 500,
-      statusMessage: "Internal Server Error",
-    });
+    console.error("IGDB API Error:", error);
+    throw error;
   }
 });
