@@ -125,6 +125,7 @@ async function openModal() {
 
     <!-- Game Details Modal -->
     <TheModal
+      :key="game.id"
       v-model:open="isModalOpen"
       :title="game.name"
       max-width="48rem"

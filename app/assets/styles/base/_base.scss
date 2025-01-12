@@ -9,9 +9,11 @@
 
 @layer base {
   *,
-  *::before,
-  *::after {
-    border-color: var(--tw-color-border);
+  ::after,
+  ::before,
+  ::backdrop,
+  ::file-selector-button {
+    border-color: var(--tw-color-border, currentColor);
   }
 
   body {
@@ -27,6 +29,7 @@
   fieldset {
     border-style: solid;
     border-width: 1px;
+    border-radius: 0.25rem;
   }
 
   button {

@@ -44,9 +44,10 @@ const close = () => {
 const isVertical = computed(() => side === "top" || side === "bottom");
 const panelStyle = computed(() => {
   if (isVertical.value) {
-    return { height: size };
+    return { width: "100%", maxHeight: size };
   }
-  return { width: size };
+
+  return { width: "100%", maxWidth: size };
 });
 </script>
 

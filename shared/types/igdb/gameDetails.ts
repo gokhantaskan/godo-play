@@ -1,4 +1,4 @@
-export interface SmallEntity {
+interface SmallEntity {
   id: number;
   name: string;
 }
@@ -8,13 +8,14 @@ export interface GameDetails {
   age_ratings: AgeRating[];
   category: number;
   cover: Image;
+  first_release_date: number;
   game_modes: SmallEntity[];
   genres: SmallEntity[];
   multiplayer_modes?: MultiplayerMode[];
   name: string;
   platforms: SmallEntity[];
   player_perspectives?: SmallEntity[];
-  involved_companies: InvolvedCompanies[];
+  involved_companies: InvolvedCompany[];
   screenshots: Image[];
   storyline: string;
   summary: string;
@@ -69,10 +70,18 @@ export interface Image {
   checksum: string;
 }
 
-export interface InvolvedCompanies {
+export interface InvolvedCompany {
   id: number;
   company: {
     id: number;
     name: string;
   };
+  created_at: number;
+  developer: boolean;
+  game: number;
+  porting: boolean;
+  publisher: boolean;
+  supporting: boolean;
+  updated_at: number;
+  checksum: string;
 }

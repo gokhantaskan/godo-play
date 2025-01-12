@@ -2,6 +2,7 @@ import type { H3Event } from "h3";
 import { createError } from "h3";
 import merge from "lodash/merge.js";
 
+// @ts-ignore - `vue-tsc` doesn't support it yet
 import { useStorage } from "#imports";
 import type {
   AuthSession,

@@ -4,9 +4,9 @@ import {
   GAME_MODES,
   GENRES,
   PLAYER_PERSPECTIVES,
+  SUPPORTED_PLATFORMS,
   THEMES,
 } from "~~/shared/constants/";
-import { SUPPORTED_PLATFORMS } from "~~/shared/constants/platforms";
 
 /**
  * Types for the game filters functionality

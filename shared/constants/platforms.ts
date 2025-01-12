@@ -1,5 +1,11 @@
 // IGDB Platforms
-export const SUPPORTED_PLATFORMS = [
+export const SUPPORTED_PLATFORMS: {
+  id: number;
+  abbreviation: string;
+  name: string;
+  slug: string;
+  icon: string;
+}[] = [
   {
     id: 6,
     abbreviation: "PC",

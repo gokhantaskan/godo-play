@@ -69,7 +69,7 @@ const pending = computed(() => status.value === "pending");
       <div class="tw:flex tw:gap-4">
         <TheSearchInput
           v-model="search"
-          class="tw:max-sm:w-full"
+          class="tw:max-md:w-full"
           placeholder="Search by name"
         />
         <GameCategorySelector

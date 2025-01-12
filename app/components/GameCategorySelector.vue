@@ -136,8 +136,8 @@ function isArrayEqual(arr1: number[], arr2: number[]) {
     <TheDrawer
       v-model:open="isDrawerOpen"
       :before-close="handleBeforeClose"
-      size="400px"
       title="Categories"
+      size="30rem"
       :description="
         hasDraftSelections
           ? `${totalDraftCount} ${totalDraftCount === 1 ? 'category' : 'categories'} selected`

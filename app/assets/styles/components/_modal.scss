@@ -60,6 +60,11 @@ $breakpoint-md: map.get($breakpoints, "md");
       0 2px 4px -2px
         color-mix(in oklch, var(--tw-color-text-dark) 10%, transparent);
     transition: all 0.2s ease-out;
+
+    @media (max-width: $breakpoint-md) {
+      border-bottom-left-radius: 0;
+      border-bottom-right-radius: 0;
+    }
   }
 
   &__header {

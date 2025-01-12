@@ -1,11 +1,21 @@
 .game-details {
+  --subtitle-font-size: 1rem;
+  --subtitle-line-height: 1.25;
+  --subtitle-font-weight: 500;
+  --subtitle-color: var(--tw-color-text-dark);
+
+  --content-font-size: 0.875rem;
+  --content-line-height: 1.25;
+  --content-font-weight: 400;
+  --content-color: var(--tw-color-text-muted);
+
   display: flex;
   flex-direction: column;
-  gap: 2rem;
+  gap: 1.5rem;
 
   &__main {
     display: grid;
-    grid-template-columns: minmax(5vw, 10rem) auto;
+    grid-template-columns: minmax(4vw, 8rem) auto;
     gap: 1rem;
     align-items: start;
   }
@@ -17,6 +27,7 @@
     overflow: hidden;
     aspect-ratio: 540 / 720;
     background-color: var(--tw-color-border);
+    filter: drop-shadow(0 0 0.25rem rgba(0, 0, 0, 0.125));
 
     img {
       width: 100%;
@@ -44,16 +55,16 @@
     }
 
     &-title {
-      font-size: 1.25rem;
-      line-height: 1.25;
-      font-weight: 500;
-      font-variant-caps: all-petite-caps;
+      font-size: var(--subtitle-font-size, 1.25rem);
+      line-height: var(--subtitle-line-height, 1.25);
+      font-weight: var(--subtitle-font-weight, 500);
+      color: var(--subtitle-color);
     }
 
     &-content {
-      font-size: 0.875rem;
-      line-height: 1.25;
-      color: var(--tw-neutral-300);
+      font-size: var(--content-font-size, 0.875rem);
+      line-height: var(--content-line-height, 1.25);
+      color: var(--content-color);
     }
   }
 

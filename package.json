@@ -8,6 +8,7 @@
     "dev:clean": "nuxt cleanup && nuxt dev",
     "generate": "nuxt generate",
     "preview": "cross-env NODE_ENV=development nuxt preview",
+    "typecheck": "nuxt typecheck",
     "clean": "nuxt cleanup",
     "lint": "eslint . --fix",
     "format": "prettier --write '**/*.{json,md,css,scss}' -l -u",
@@ -35,7 +36,8 @@
     "nuxt-gtag": "3.0.2",
     "tailwindcss": "4.0.0-beta.8",
     "vue": "latest",
-    "vue-router": "latest"
+    "vue-router": "latest",
+    "vue-tsc": "~2.1.6"
   },
   "devDependencies": {
     "@iconify-json/lucide": "^1.2.22",

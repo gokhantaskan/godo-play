@@ -1,4 +1,4 @@
-export const ageRatingCategories = {
+export const AGE_RATING_CATEGORIES = {
   ESRB: 1,
   PEGI: 2,
   CERO: 3,
@@ -8,7 +8,7 @@ export const ageRatingCategories = {
   ACB: 7,
 } as const;
 
-export const ageRatingRatings = {
+export const AGE_RATING_RATINGS = {
   Three: 1,
   Seven: 2,
   Twelve: 3,

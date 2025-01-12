@@ -8,6 +8,9 @@ export default defineCachedEventHandler(
       const fields = [
         "name",
         "age_ratings.*",
+        "age_ratings.content_descriptions.*",
+        "language_supports.language.*",
+        "language_supports.language_support_type",
         "category",
         "cover.*",
         "multiplayer_modes.*",
@@ -15,7 +18,10 @@ export default defineCachedEventHandler(
         "storyline",
         "summary",
         "websites.*",
+        "involved_companies.*",
         "involved_companies.company.name",
+        "first_release_date",
+        "release_dates.*",
         // With names
         "game_modes.name",
         "genres.name",
@@ -24,11 +30,17 @@ export default defineCachedEventHandler(
         "themes.name",
       ].join(",");
 
+      const parsedBody = `fields ${fields}; where slug="${slug}";`;
+
+      if (process.env.NODE_ENV === "development") {
+        console.log("IGDB Query:", parsedBody);
+      }
+
       const response = await tokenStorage.makeAuthenticatedRequest(
         event,
         `/games`,
         {
-          body: `fields ${fields}; where slug="${slug}";`,
+          body: parsedBody,
         }
       );
 

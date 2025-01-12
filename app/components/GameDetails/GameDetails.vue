@@ -52,7 +52,7 @@ const availableMultiplayerModes = computed(() => {
       <div class="game-details__cover">
         <NuxtImg
           :src="`https://images.igdb.com/igdb/image/upload/t_720p/${details.cover.image_id}.jpg`"
-          :alt="`Cover of ${details.name}`"
+          :alt="`Cover image of ${details.name}`"
           :width="details.cover.width"
           :height="details.cover.height"
         />
@@ -76,20 +76,6 @@ const availableMultiplayerModes = computed(() => {
         </div>
 
         <div class="game-details__section">
-          <h3 class="game-details__section-title">Developers</h3>
-          <p class="game-details__section-content">
-            <template v-if="details.involved_companies">
-              {{
-                details.involved_companies
-                  .map(({ company }) => company.name)
-                  .join(", ")
-              }}
-            </template>
-            <span v-else>No data</span>
-          </p>
-        </div>
-
-        <div class="game-details__section">
           <h3 class="game-details__section-title">Available Platforms</h3>
           <div
             class="game-details__section-content tw:flex tw:flex-wrap tw:gap-1"
@@ -107,6 +93,16 @@ const availableMultiplayerModes = computed(() => {
       </div>
     </div>
 
+    <div class="game-details__section">
+      <h3 class="game-details__section-title tw:sr-only">Companies</h3>
+      <p class="game-details__section-content">
+        <GameDetailsCompanies
+          :companies="details.involved_companies"
+          :first-release-date="details.first_release_date"
+        />
+      </p>
+    </div>
+
     <div
       v-if="availableMultiplayerModes.length"
       class="game-details__section"
@@ -114,10 +110,8 @@ const availableMultiplayerModes = computed(() => {
       <h3 class="game-details__section-title">Multiplayer Modes</h3>
       <div class="game-details__section-content">
         <div class="game-details__section-content">
-          <GameDetailsMultiplayerMode
-            v-for="mode in availableMultiplayerModes"
-            :key="mode.id"
-            :multiplayer-mode="mode"
+          <GameDetailsMultiplayerModes
+            :multiplayer-modes="availableMultiplayerModes"
           />
         </div>
       </div>
@@ -132,10 +126,10 @@ const availableMultiplayerModes = computed(() => {
         >
           <NuxtImg
             :src="`https://images.igdb.com/igdb/image/upload/t_screenshot_big/${sc.image_id}.jpg`"
-            :alt="''"
+            :alt="`Screenshot of ${details.name}`"
             :width="sc.width"
             :height="sc.height"
-            class="tw:aspect-video tw:max-w-80"
+            class="tw:aspect-video tw:max-w-75"
           />
         </template>
       </div>
