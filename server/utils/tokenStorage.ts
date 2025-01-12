@@ -7,30 +7,69 @@ import type {
   TwitchAuthResponse,
 } from "~~/shared/types/igdb/globals";
 
-import { redisStorage } from "./redis";
+import { getStorage, initStorage as initRedisStorage } from "./redisStorage";
 
-const storage = redisStorage;
+const SESSION_KEY = "twitch_session";
 let session: AuthSession | null = null;
 
+async function initStorage(config: {
+  url: string;
+  token: string;
+}): Promise<void> {
+  try {
+    await initRedisStorage(config);
+  } catch (error) {
+    throw createError({
+      statusCode: 500,
+      statusMessage: "Failed to initialize token storage",
+      cause: error instanceof Error ? error : undefined,
+    });
+  }
+}
+
 async function setSession(_session: AuthSession): Promise<void> {
-  session = _session;
-  await storage.setItem("twitch_session", _session);
+  try {
+    session = _session;
+    await getStorage().setItem(SESSION_KEY, _session);
+  } catch (error) {
+    throw createError({
+      statusCode: 500,
+      statusMessage: "Failed to set session in storage",
+      cause: error instanceof Error ? error : undefined,
+    });
+  }
 }
 
 async function getSession(): Promise<AuthSession | null> {
-  if (!session) {
-    const storedSession = await storage.getItem<AuthSession>("twitch_session");
-    if (storedSession) {
-      session = storedSession;
+  try {
+    if (!session) {
+      const storedSession =
+        await getStorage().getItem<AuthSession>(SESSION_KEY);
+      if (storedSession) {
+        session = storedSession;
+      }
     }
+    return session;
+  } catch (error) {
+    throw createError({
+      statusCode: 500,
+      statusMessage: "Failed to get session from storage",
+      cause: error instanceof Error ? error : undefined,
+    });
   }
-
-  return session;
 }
 
 async function clearSession(): Promise<void> {
-  session = null;
-  await storage.removeItem("twitch_session");
+  try {
+    session = null;
+    await getStorage().removeItem(SESSION_KEY);
+  } catch (error) {
+    throw createError({
+      statusCode: 500,
+      statusMessage: "Failed to clear session from storage",
+      cause: error instanceof Error ? error : undefined,
+    });
+  }
 }
 
 function isExpiringSoon(session: AuthSession): boolean {
@@ -158,6 +197,7 @@ async function makeAuthenticatedRequest(
 }
 
 export default {
+  initStorage,
   setSession,
   getSession,
   clearSession,
