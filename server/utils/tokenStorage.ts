@@ -1,5 +1,5 @@
 import type { H3Event } from "h3";
-import { createError } from "h3";
+import { createError, H3Error } from "h3";
 import merge from "lodash/merge.js";
 
 import type {
@@ -92,8 +92,12 @@ async function retrieveSession(config: {
       existingSession.expires_at > Date.now() &&
       !isExpiringSoon(existingSession)
     ) {
-      console.info("Returning existing session");
+      console.info("[Auth] Using existing valid session");
       return existingSession;
+    }
+
+    if (existingSession && isExpiringSoon(existingSession)) {
+      console.info("[Auth] Current session is expiring soon, refreshing...");
     }
 
     const params = new URLSearchParams({
@@ -105,44 +109,60 @@ async function retrieveSession(config: {
     const url = new URL(config.oauthEndpoint);
     url.search = params.toString();
 
+    console.info("[Auth] Requesting new token from Twitch...");
     const response = await fetch(url.toString(), {
       method: "POST",
     });
 
     if (!response.ok) {
       if (response.status === 401 && existingSession) {
-        // Clear invalid session and retry once
-        console.info("Clearing invalid session and retrying");
+        console.info("[Auth] Invalid session detected, clearing...");
         await clearSession();
-        return retrieveSession(config);
       }
 
+      const errorText = await response.text();
       throw createError({
         statusCode: response.status,
-        statusMessage: response.statusText,
+        statusMessage: `Twitch authentication failed: ${response.statusText}`,
+        data: {
+          error: errorText,
+          endpoint: config.oauthEndpoint,
+          grantType: config.grantType,
+        },
       });
     }
 
     const data: TwitchAuthResponse = await response.json();
-    const res: AuthSession = {
+
+    if (!data.access_token) {
+      throw createError({
+        statusCode: 500,
+        statusMessage: "Invalid response from Twitch: missing access token",
+        data,
+      });
+    }
+
+    const newSession: AuthSession = {
       access_token: data.access_token,
       token_type: data.token_type,
       expires_at: Date.now() + data.expires_in * 1000,
     };
 
-    console.info("Returning new session");
-
-    await setSession(res);
-    return res;
+    console.info("[Auth] Successfully obtained new token");
+    await setSession(newSession);
+    return newSession;
   } catch (error) {
     if (error instanceof Error) {
-      throw createError(error);
+      throw createError({
+        statusCode: error instanceof H3Error ? error.statusCode : 500,
+        statusMessage: "Failed to retrieve Twitch session",
+        cause: error,
+      });
     }
 
     throw createError({
       statusCode: 500,
-      statusMessage:
-        "An unexpected error occurred while retrieving Twitch session",
+      statusMessage: "Unknown error while retrieving Twitch session",
     });
   }
 }
@@ -157,43 +177,69 @@ async function makeAuthenticatedRequest(
     igdb: { endpoint },
   } = useRuntimeConfig(event);
 
-  const session = await retrieveSession({
-    clientId,
-    clientSecret,
-    grantType,
-    oauthEndpoint,
-  });
+  try {
+    const session = await retrieveSession({
+      clientId,
+      clientSecret,
+      grantType,
+      oauthEndpoint,
+    });
 
-  if (!session) {
+    if (!session?.access_token) {
+      throw createError({
+        statusCode: 401,
+        statusMessage: "No valid authentication session",
+      });
+    }
+
+    options = merge({}, options, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Client-ID": clientId,
+        Authorization: `Bearer ${session.access_token}`,
+      },
+    });
+
+    if (url.startsWith("/")) {
+      url = url.slice(1);
+    }
+
+    console.info(`[IGDB] Making request to ${endpoint}/${url}`);
+    const response = await fetch(`${endpoint}/${url}`, options);
+
+    if (!response.ok) {
+      if (response.status === 401) {
+        console.info("[IGDB] Token expired, clearing session...");
+        await clearSession();
+      }
+
+      const errorText = await response.text();
+      throw createError({
+        statusCode: response.status,
+        statusMessage: `IGDB request failed: ${response.statusText}`,
+        data: {
+          error: errorText,
+          endpoint: `${endpoint}/${url}`,
+        },
+      });
+    }
+
+    return response;
+  } catch (error) {
+    if (error instanceof Error) {
+      throw createError({
+        statusCode: error instanceof H3Error ? error.statusCode : 500,
+        statusMessage: "Failed to make authenticated request to IGDB",
+        cause: error,
+      });
+    }
+
     throw createError({
-      statusCode: 401,
-      statusMessage: "No valid authentication session",
+      statusCode: 500,
+      statusMessage: "Unknown error while making request to IGDB",
     });
   }
-
-  options = merge({}, options, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "Client-ID": clientId,
-      Authorization: `Bearer ${session.access_token}`,
-    },
-  });
-
-  if (url.startsWith("/")) {
-    url = url.slice(1);
-  }
-
-  const response = await fetch(`${endpoint}/${url}`, options);
-
-  if (!response.ok) {
-    throw createError({
-      statusCode: response.status,
-      statusMessage: response.statusText,
-    });
-  }
-
-  return response;
 }
 
 export default {
