@@ -19,6 +19,12 @@ export default defineNuxtConfig({
       grantType: process.env.TW_GRANT_TYPE,
       oauthEndpoint: process.env.TW_OAUTH_ENDPOINT,
     },
+    redis: {
+      username: process.env.REDIS_USERNAME,
+      password: process.env.REDIS_PASSWORD,
+      host: process.env.REDIS_HOST,
+      port: process.env.REDIS_PORT,
+    },
     public: {
       hotjar: {
         siteId: process.env.NUXT_HOTJAR_ID,
@@ -26,11 +32,10 @@ export default defineNuxtConfig({
     },
   },
   nitro: {
-    plugins: ["plugins/auth.ts"],
     devStorage: {
-      local: {
+      db: {
         driver: "fs",
-        base: "./data/dev",
+        base: "./data/db",
       },
     },
   },
