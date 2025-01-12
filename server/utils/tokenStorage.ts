@@ -8,16 +8,17 @@ import type {
   TwitchAuthResponse,
 } from "~~/shared/types/igdb/globals";
 
-const REDIS_KEY_PREFIX = "godoplay:twitch:";
-const SESSION_KEY = `${REDIS_KEY_PREFIX}session`;
+const SESSION_KEY = `godoplay:twitch:session`;
 const REFRESH_THRESHOLD = 30 * 60 * 1000; // 30 minutes
 
-const redis = new Redis(useRuntimeConfig().redis.url);
+const redis = new Redis(process.env.REDIS_URL!);
 
 async function getSession(): Promise<AuthSession | null> {
   try {
     const storedSession = await redis.get(SESSION_KEY);
-    if (!storedSession) return null;
+    if (!storedSession) {
+      return null;
+    }
 
     return JSON.parse(storedSession) as AuthSession;
   } catch (error) {

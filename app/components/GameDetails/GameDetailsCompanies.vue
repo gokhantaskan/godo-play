@@ -21,7 +21,9 @@ const developers = toRef(() => {
 });
 
 const humanDate = toRef(() => {
-  if (!props.firstReleaseDate) return null;
+  if (!props.firstReleaseDate) {
+    return null;
+  }
 
   return Intl.DateTimeFormat(navigator.language || "en-US", {
     year: "numeric",

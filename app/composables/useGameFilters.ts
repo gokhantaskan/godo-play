@@ -290,7 +290,9 @@ export function useGameFilters(): GameFiltersReturn {
    * Falls back to default gamepad icon if not found
    */
   function getPlatformIcon(platformId: number | null): string {
-    if (!platformId) return "lucide:gamepad-2";
+    if (!platformId) {
+      return "lucide:gamepad-2";
+    }
 
     const platform = SUPPORTED_PLATFORMS.find(p => p.id === platformId);
     return platform?.icon || "lucide:gamepad-2";

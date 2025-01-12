@@ -20,4 +20,4 @@ export default withNuxt({
     "vue/html-self-closing": "off",
     curly: ["error", "all"],
   },
-}).append(eslintPluginPrettierRecommended);
+}).prepend(eslintPluginPrettierRecommended);
