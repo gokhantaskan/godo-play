@@ -129,7 +129,7 @@ const availableMultiplayerModes = computed(() => {
             :alt="`Screenshot of ${details.name}`"
             :width="sc.width"
             :height="sc.height"
-            class="tw:aspect-video tw:max-w-75"
+            class="tw:aspect-video tw:max-w-80"
           />
         </template>
       </div>

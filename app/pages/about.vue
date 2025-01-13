@@ -1,3 +1,9 @@
+<script setup lang="ts">
+useHead({
+  title: "About",
+});
+</script>
+
 <template>
   <main class="tw:py-8">
     <div class="tw:container">

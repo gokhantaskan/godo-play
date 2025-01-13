@@ -87,20 +87,7 @@ export default defineNuxtConfig({
   app: {
     head: {
       link: [{ rel: "icon", type: "image/svg+xml", href: "/favicon.svg" }],
-      script: [
-        ...(isProduction
-          ? [
-              {
-                type: "text/javascript",
-                "data-cmp-ab": "1",
-                src: "https://cdn.consentmanager.net/delivery/autoblocking/a2c96b2072522.js",
-                "data-cmp-host": "b.delivery.consentmanager.net",
-                "data-cmp-cdn": "cdn.consentmanager.net",
-                "data-cmp-codesrc": "16",
-              },
-            ]
-          : []),
-      ],
+      script: [...(isProduction ? [] : [])],
     },
   },
   fonts: {

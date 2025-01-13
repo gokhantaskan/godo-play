@@ -14,7 +14,6 @@ const {
 
 // Data Fetching
 const { status, data: games } = useFetch("/api/games", {
-  method: "GET",
   query: queryParams,
 });
 

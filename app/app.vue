@@ -8,6 +8,11 @@ useHead({
   htmlAttrs: {
     lang: "en",
   },
+  titleTemplate: titleChunk => {
+    return titleChunk
+      ? `${titleChunk} - GodoPlay`
+      : "GodoPlay - The Ultimate Fusion for Co-Op and Multiplayer Gaming";
+  },
 });
 
 useSeoMeta({
