@@ -42,6 +42,8 @@
     "vue-tsc": "~2.1.6"
   },
   "devDependencies": {
+    "@iconify-json/fa-solid": "^1.2.1",
+    "@iconify-json/fa6-brands": "^1.2.5",
     "@iconify-json/lucide": "^1.2.22",
     "@tailwindcss/postcss": "4.0.0-beta.8",
     "@types/lodash": "^4.17.14",

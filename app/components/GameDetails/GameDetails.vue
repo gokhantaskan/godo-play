@@ -144,20 +144,8 @@ const availableMultiplayerModes = computed(() => {
         The links provided are sourced from a third-party API. Please proceed
         with caution and only click on them if you trust the source.
       </p>
-      <ul class="game-details__websites">
-        <li
-          v-for="website in trustedWebsites"
-          :key="website.id"
-        >
-          <NuxtLink
-            :to="website.url"
-            target="_blank"
-            class="tw:inline-flex tw:items-center tw:gap-1"
-          >
-            {{ website.url }}
-          </NuxtLink>
-        </li>
-      </ul>
+
+      <GameDetailsWebsites :websites="trustedWebsites" />
     </div>
   </div>
 </template>

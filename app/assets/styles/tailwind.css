@@ -11,7 +11,7 @@
   --font-heading: "Lexend";
   --font-mono: "Roboto Mono";
 
-  --color-*: initial;
+  /* --color-*: initial; */
   --color-primary: oklch(64.9% 0.1809 249.78);
   --color-green: oklch(74.67% 0.2304 137.94);
   --color-yellow: oklch(85.89% 0.1630271818272443 86.6015690368686);

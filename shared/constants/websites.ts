@@ -1,70 +1,89 @@
 export const WEBSITES = {
   twitch: {
-    url: "https://www.twitch.tv",
+    url: ["twitch.tv"],
     icon: "fa6-brands:twitch",
+    label: "Twitch",
   },
   youtube: {
-    url: "https://www.youtube.com",
+    url: ["youtube.com"],
     icon: "fa6-brands:youtube",
+    label: "YouTube",
   },
   tiktok: {
-    url: "https://www.tiktok.com",
+    url: ["tiktok.com"],
     icon: "fa6-brands:tiktok",
+    label: "TikTok",
   },
   instagram: {
-    url: "https://www.instagram.com",
+    url: ["instagram.com"],
     icon: "fa6-brands:instagram",
+    label: "Instagram",
   },
   twitter: {
-    url: "https://www.twitter.com",
+    url: ["twitter.com", "x.com"],
     icon: "fa6-brands:x-twitter",
-  },
-  x: {
-    url: "https://www.twitter.com",
-    icon: "fa6-brands:x-twitter",
+    label: "X (Formerly Twitter)",
   },
   reddit: {
-    url: "https://www.reddit.com",
+    url: ["reddit.com"],
     icon: "fa6-brands:reddit",
+    label: "Reddit",
   },
   discord: {
-    url: "https://www.discord.com",
+    url: ["discord.com", "discord.gg"],
     icon: "fa6-brands:discord",
+    label: "Discord",
   },
   wikipedia: {
-    url: "https://www.wikipedia.org",
+    url: ["wikipedia.org"],
     icon: "fa6-brands:wikipedia-w",
+    label: "Wikipedia",
   },
   steam: {
-    url: "https://www.steam.com",
+    url: ["steampowered.com", "store.steampowered.com"],
     icon: "fa6-brands:steam",
+    label: "Steam",
   },
   facebook: {
-    url: "https://www.facebook.com",
+    url: ["facebook.com"],
     icon: "fa6-brands:facebook",
+    label: "Facebook",
   },
   epicgames: {
-    url: "https://www.epicgames.com",
-    icon: "fa6-brands:epic-games",
+    url: ["epicgames.com", "store.epicgames.com"],
+    icon: "lucide:globe",
+    label: "Epic Games",
   },
   apple: {
-    url: "https://www.apple.com",
+    url: ["apple.com"],
     icon: "fa6-brands:apple",
+    label: "Apple",
+    subdomains: {
+      itunes: {
+        subdomain: "itunes",
+        icon: "fa6-brands:apple",
+        label: "iTunes",
+      },
+      appStore: {
+        url: "apps",
+        icon: "fa6-brands:app-store",
+        label: "App Store",
+      },
+    },
   },
   playStore: {
-    url: "https://play.google.com",
+    url: ["play.google.com"],
     icon: "fa6-brands:google-play",
-  },
-  appStore: {
-    url: "https://apps.apple.com",
-    icon: "fa6-brands:apple",
+    label: "Google Play",
   },
   itch: {
-    url: "https://www.itch.io",
+    url: ["itch.io"],
     icon: "fa6-brands:itch-io",
+    label: "Itch.io",
   },
   gog: {
-    url: "https://www.gog.com",
-    icon: "fa6-brands:gog",
+    url: ["gog.com"],
+    icon: "lucide:globe",
+    label: "GOG",
   },
 };
