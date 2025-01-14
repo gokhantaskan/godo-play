@@ -29,6 +29,16 @@
         />
       </div>
     </header>
+
+    <!-- <iframe
+      src="https://docs.google.com/forms/d/e/1FAIpQLScVuXJKXDOsFyd9k-OXpWV2K1EY0sN2d8QhOb9VpT_iy3TSSw/viewform?embedded=true"
+      width="640"
+      height="1084"
+      frameborder="0"
+      marginheight="0"
+      marginwidth="0"
+      >Yükleniyor…</iframe
+    > -->
   </main>
 </template>
 

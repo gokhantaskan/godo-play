@@ -1,6 +1,6 @@
 import svgLoader from "vite-svg-loader";
 
-const isProduction = process.env.NODE_ENV === "production";
+const IS_PROD = process.env.NODE_ENV === "production";
 
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
@@ -27,7 +27,10 @@ export default defineNuxtConfig({
     },
     public: {
       hotjar: {
-        siteId: process.env.NUXT_HOTJAR_ID,
+        siteId: "",
+      },
+      gtag: {
+        id: "",
       },
     },
   },
@@ -69,6 +72,7 @@ export default defineNuxtConfig({
     "@nuxtjs/sitemap",
     "@nuxtjs/robots",
     "nuxt-gtag",
+    "@nuxt/scripts",
   ],
   css: ["./app/assets/styles/tailwind.css", "./app/assets/styles/main.scss"],
   postcss: {
@@ -87,7 +91,7 @@ export default defineNuxtConfig({
   app: {
     head: {
       link: [{ rel: "icon", type: "image/svg+xml", href: "/favicon.svg" }],
-      script: [...(isProduction ? [] : [])],
+      script: [...(IS_PROD ? [] : [])],
     },
   },
   fonts: {
@@ -117,7 +121,20 @@ export default defineNuxtConfig({
     disallow: ["/_ipx/", "/admin/"],
   },
   gtag: {
-    enabled: isProduction,
     id: process.env.NUXT_PUBLIC_GTAG_ID,
+    initCommands: [
+      // Setup up consent mode
+      [
+        "consent",
+        "default",
+        {
+          ad_user_data: "denied",
+          ad_personalization: "denied",
+          ad_storage: "denied",
+          analytics_storage: "denied",
+          wait_for_update: 500,
+        },
+      ],
+    ],
   },
 });
