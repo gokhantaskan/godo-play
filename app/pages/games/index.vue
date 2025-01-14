@@ -56,9 +56,9 @@ const pending = computed(() => status.value === "pending");
         </template>
 
         <p id="cross-play-warning">
-          This list offers useful information but may not guarantee
-          cross-platform play yet. For the latest updates, check official
-          sources. Stay tuned for the latest updates.
+          While this list provides useful information, it doesn’t guarantee
+          cross-platform play. For the latest details, please check official
+          sources and stay tuned for updates.
         </p>
       </TheAlert>
     </section>
