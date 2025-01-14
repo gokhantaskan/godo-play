@@ -1,8 +1,12 @@
 <script setup lang="ts">
 import { Analytics } from "@vercel/analytics/nuxt";
-import { SpeedInsights } from "@vercel/speed-insights/nuxt";
+
+import { useCookieConsent } from "@/composables/useCookieConsent";
+import { useScripts } from "@/composables/useScripts";
 
 const isProd = toRef(() => import.meta.env.PROD);
+const { initCookieConsent } = useCookieConsent();
+const { initScripts } = useScripts();
 
 useHead({
   htmlAttrs: {
@@ -31,25 +35,21 @@ useSeoMeta({
   twitterImage: "/og_img.jpg",
 });
 
-onMounted(async () => {
-  // console.log(
-  //   await $fetch(`/api/igdb/age_ratings`, {
-  //     method: "post",
-  //     body: {
-  //       fields: "*",
-  //     },
-  //   })
-  // );
+onMounted(() => {
+  initCookieConsent();
+  initScripts();
 });
 </script>
 
 <template>
-  <NuxtLoadingIndicator />
-  <NuxtLayout>
-    <NuxtPage />
-  </NuxtLayout>
-  <template v-if="isProd">
-    <Analytics />
-    <SpeedInsights />
-  </template>
+  <div>
+    <NuxtLoadingIndicator />
+    <NuxtLayout>
+      <NuxtPage />
+    </NuxtLayout>
+    <template v-if="isProd">
+      <Analytics />
+    </template>
+    <TheCookieBanner />
+  </div>
 </template>
