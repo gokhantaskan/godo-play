@@ -12,6 +12,7 @@ export default defineCachedEventHandler(
       gameModes,
       genres,
       limit = 60,
+      offset = 0,
       platforms,
       playerPerspectives,
       search,
@@ -34,16 +35,22 @@ export default defineCachedEventHandler(
 
     // Combine fixed conditions with dynamic where clause
     const fixedConditions = [
-      "category=(0,3,8,9)",
+      "category=(0,3,8,9)", // 0: main game, 3: bundle, 8: remake, 9: remaster
       "version_parent=null",
+      "aggregated_rating > 70",
       "aggregated_rating_count > 5",
+      "age_ratings.category=(2)", // PEGI
       `release_dates.date >= ${tenYearsAgoUnix}`,
+      // `first_release_date >= ${tenYearsAgoUnix}`,
     ];
 
     const whereConditions = [];
 
     if (platforms?.length) {
       whereConditions.push(`platforms=[${platforms.join(",")}]`);
+      if (platforms.length > 1) {
+        whereConditions.push("multiplayer_modes.onlinemax != null");
+      }
     } else {
       whereConditions.push(`platforms=(${SUPPORTED_PLATFORM_IDS.join(",")})`);
     }
@@ -75,9 +82,10 @@ export default defineCachedEventHandler(
     const where = [...fixedConditions, ...whereConditions].join(" & ");
 
     const fields = [
+      // "aggregated_rating",
       "name",
       "slug",
-      "category",
+      "category", // 0: main game, 3: bundle, 8: remake, 9: remaster
       "platforms.*",
       "genres.*",
       "player_perspectives.*",
@@ -85,8 +93,7 @@ export default defineCachedEventHandler(
       "cover.*",
       "game_modes.*",
       "multiplayer_modes.*",
-      "release_dates.date",
-      "aggregated_rating",
+      // "release_dates.date",
     ].join(",");
 
     // Simplified body construction
@@ -95,6 +102,7 @@ export default defineCachedEventHandler(
     queryParts.push(`fields ${fields}`);
     queryParts.push(`where ${where}`);
     queryParts.push(`limit ${limit}`);
+    queryParts.push(`offset ${offset}`);
     queryParts.push(`sort ${sort}`);
 
     // Construct the final query string

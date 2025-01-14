@@ -1,4 +1,12 @@
 <script setup lang="ts">
+definePageMeta({
+  name: "GamesPage",
+});
+
+useHead({
+  title: "Games",
+});
+
 // Composables
 const {
   selectedPlatforms,
@@ -36,6 +44,24 @@ const pending = computed(() => status.value === "pending");
         />
       </TheButton>
     </header>
+
+    <section>
+      <TheAlert
+        aria-describedby="cross-play-warning"
+        aria-live="polite"
+        variant="warning"
+      >
+        <template #icon>
+          <Icon name="lucide:info" />
+        </template>
+
+        <p id="cross-play-warning">
+          This list offers useful information but may not guarantee
+          cross-platform play yet. For the latest updates, check official
+          sources. Stay tuned for the latest updates.
+        </p>
+      </TheAlert>
+    </section>
 
     <section class="tw:flex tw:max-sm:flex-col tw:gap-4 tw:max-w-2xl">
       <TheSelect

@@ -3,7 +3,7 @@
   --footer-spacing-inline: clamp(1rem, 3vw, 2rem);
   --footer-nav-gap: clamp(1.5rem, 4vw, 3rem);
   --footer-bg: var(--tw-color-text-dark);
-  --footer-fg: color-mix(in oklch, var(--tw-color-border) 13%, transparent);
+  --footer-fg: color-mix(in oklch, var(--tw-color-bg) 98%, black);
 
   padding-block: var(--footer-spacing-block);
   color: var(--footer-bg);

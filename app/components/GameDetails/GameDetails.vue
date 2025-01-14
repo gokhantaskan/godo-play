@@ -74,22 +74,23 @@ const availableMultiplayerModes = computed(() => {
             </div>
           </div>
         </div>
+      </div>
+    </div>
 
-        <div class="game-details__section">
-          <h3 class="game-details__section-title">Available Platforms</h3>
-          <div
-            class="game-details__section-content tw:flex tw:flex-wrap tw:gap-1"
-          >
-            <TheChip
-              v-for="platform in details.platforms.toSorted((a, b) =>
-                a.name.localeCompare(b.name)
-              )"
-              :key="platform.id"
-              :label="platform.name"
-              variant="gray"
-            />
-          </div>
-        </div>
+    <GameDetailsAgeRatings
+      v-if="details.age_ratings?.length"
+      :age-ratings="details.age_ratings"
+    />
+
+    <div class="game-details__section">
+      <h3 class="game-details__section-title">Available Platforms</h3>
+      <div class="game-details__section-content tw:flex tw:flex-wrap tw:gap-1">
+        {{
+          details.platforms
+            .toSorted((a, b) => a.name.localeCompare(b.name))
+            .map(platform => platform.name)
+            .join(", ")
+        }}
       </div>
     </div>
 

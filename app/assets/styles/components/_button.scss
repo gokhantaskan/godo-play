@@ -28,7 +28,9 @@ $button-variants: (
   padding-block: var(--padding-block);
   height: var(--height);
   font-weight: 500;
-  min-width: fit-content;
+  min-width: calc(
+    1lh + (var(--padding-inline) * 2) - var(--padding-block) - var(--tw-spacing)
+  );
   transition:
     background-color 0.2s ease-in-out,
     border-color 0.2s ease-in-out,

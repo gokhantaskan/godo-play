@@ -1,11 +1,9 @@
 <script setup lang="ts">
 import { Analytics } from "@vercel/analytics/nuxt";
 
-import { useCookieConsent } from "@/composables/useCookieConsent";
 import { useScripts } from "@/composables/useScripts";
 
 const isProd = toRef(() => import.meta.env.PROD);
-const { initCookieConsent } = useCookieConsent();
 const { initScripts } = useScripts();
 
 useHead({
@@ -36,7 +34,6 @@ useSeoMeta({
 });
 
 onMounted(() => {
-  initCookieConsent();
   initScripts();
 });
 </script>

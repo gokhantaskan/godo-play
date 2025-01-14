@@ -1,45 +1,64 @@
 import { agreedToCookiesScriptConsent } from "@/utils/cookie";
-import { useState } from "#imports";
+import { useCookie, useState } from "#imports";
 
 import { useScripts } from "./useScripts";
 
 const COOKIE_CONSENT_KEY = "cookie-consent";
 
+const COOKIE_EXPIRY = {
+  ACCEPTED: 60 * 60 * 24 * 365, // 1 year
+  REJECTED: 60 * 60 * 24 * 2, // 2 days
+} as const;
+
 export function useCookieConsent() {
-  const cookieConsent = useState<boolean | null>("cookieConsent", () => null);
-  const isLoading = useState("cookieConsentLoading", () => true);
+  const cookie = useCookie<boolean | null>(COOKIE_CONSENT_KEY);
+
+  const isLoading = useState("cookieConsentLoading", () => false);
+  const cookieConsent = useState<boolean | null>("cookieConsent", () =>
+    cookie.value === true ? true : cookie.value === false ? false : null
+  );
 
   const { updateGtagConsent } = useScripts();
 
-  const consentCookie = useCookie<boolean>(COOKIE_CONSENT_KEY, {
-    maxAge: 60 * 60 * 24 * 365, // 1 year
-    sameSite: "lax",
-    secure: true,
-  });
+  function setCookieConsent(value: boolean) {
+    cookie.value = value;
+    cookieConsent.value = value;
+
+    if (value) {
+      agreedToCookiesScriptConsent.accept();
+      updateGtagConsent(true);
+    } else {
+      updateGtagConsent(false);
+    }
+  }
 
   function acceptCookies() {
-    cookieConsent.value = true;
-    consentCookie.value = true;
-    agreedToCookiesScriptConsent.accept();
-    updateGtagConsent(true);
+    const cookieOptions = {
+      maxAge: COOKIE_EXPIRY.ACCEPTED,
+      sameSite: "lax" as const,
+      secure: true,
+    };
+
+    cookie.value = true;
+    Object.assign(cookie, cookieOptions);
+    setCookieConsent(true);
   }
 
   function rejectCookies() {
-    cookieConsent.value = false;
-    consentCookie.value = false;
-    updateGtagConsent(false);
+    const cookieOptions = {
+      maxAge: COOKIE_EXPIRY.REJECTED,
+      sameSite: "lax" as const,
+      secure: true,
+    };
+
+    cookie.value = false;
+    Object.assign(cookie, cookieOptions);
+    setCookieConsent(false);
   }
 
-  function initCookieConsent() {
-    cookieConsent.value = consentCookie.value ?? null;
-
-    if (cookieConsent.value === true) {
-      agreedToCookiesScriptConsent.accept();
-      updateGtagConsent(true);
-    }
-
-    // Mark as loaded after initialization
-    isLoading.value = false;
+  // Initialize consent state if cookie exists
+  if (import.meta.client && cookie.value === true) {
+    setCookieConsent(true);
   }
 
   return {
@@ -47,6 +66,5 @@ export function useCookieConsent() {
     isLoading,
     acceptCookies,
     rejectCookies,
-    initCookieConsent,
   };
 }

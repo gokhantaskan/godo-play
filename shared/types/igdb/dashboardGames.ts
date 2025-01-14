@@ -2,20 +2,20 @@ import type { BaseEntity } from "./globals";
 
 export interface DashboardGames {
   id: number;
-  aggregated_rating: number;
-  category: number;
+  // aggregated_rating: number;
+  category: number; // 0: main game, 3: bundle, 8: remake, 9: remaster
   cover: Cover;
-  first_release_date: number;
+  // first_release_date: number;
   game_modes: BaseEntity[];
   genres: BaseEntity[];
   multiplayer_modes?: MultiplayerMode[];
   name: string;
   platforms: Platform[];
   player_perspectives?: BaseEntity[];
-  release_dates: {
-    id: number;
-    date?: number;
-  }[];
+  // release_dates: {
+  //   id: number;
+  //   date?: number;
+  // }[];
   slug: string;
   themes?: BaseEntity[];
 }

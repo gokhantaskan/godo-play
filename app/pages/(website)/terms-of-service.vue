@@ -1,4 +1,8 @@
 <script setup lang="ts">
+definePageMeta({
+  name: "TermsOfServicePage",
+});
+
 useHead({
   title: "Terms of Service",
   meta: [

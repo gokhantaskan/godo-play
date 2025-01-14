@@ -57,7 +57,7 @@ const multiplayerModes = toRef(
               v-if="mode.onlinecoopmax"
               class="multiplayer-modes__player-count"
             >
-              Up to {{ mode.onlinecoopmax }} players
+              Up to {{ mode.onlinecoopmax }} player(s)
             </span>
           </dd>
           <dt class="multiplayer-modes__mode-label">Offline Co-op</dt>
@@ -67,7 +67,7 @@ const multiplayerModes = toRef(
               v-if="mode.offlinecoopmax"
               class="multiplayer-modes__player-count"
             >
-              Up to {{ mode.offlinecoopmax }} players
+              Up to {{ mode.offlinecoopmax }} player(s)
             </span>
           </dd>
           <dt class="multiplayer-modes__mode-label">LAN Co-op</dt>
@@ -101,7 +101,7 @@ const multiplayerModes = toRef(
   overflow-x: auto;
   scrollbar-gutter: stable;
   scroll-snap-type: x mandatory;
-  scroll-padding-inline: 1.5rem;
+  padding-block-end: 1rem;
 
   &__platform {
     display: flex;

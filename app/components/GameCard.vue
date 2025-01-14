@@ -15,7 +15,9 @@ const gameModesAsString = computed(() => {
 
 const categories = computed(() => {
   return [
+    // Genres
     ...(props.game.genres?.map(genre => genre.name) || []),
+    // Themes
     ...(props.game.themes?.map(theme => {
       if (theme.name.toLowerCase().startsWith("4x")) {
         return "4X";
@@ -23,8 +25,9 @@ const categories = computed(() => {
 
       return theme.name;
     }) || []),
-    ...(props.game.player_perspectives?.map(perspective => perspective.name) ||
-      []),
+    // Player Perspectives
+    // ...(props.game.player_perspectives?.map(perspective => perspective.name) ||
+    //   []),
   ];
 });
 

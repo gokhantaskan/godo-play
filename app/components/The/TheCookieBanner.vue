@@ -1,119 +1,148 @@
 <script setup lang="ts">
 import { useCookieConsent } from "@/composables/useCookieConsent";
 
+interface LegalPath {
+  name: string;
+}
+
+const LEGAL_PATHS: LegalPath[] = [
+  { name: "PrivacyPolicyPage" },
+  { name: "TermsOfServicePage" },
+];
+
+const route = useRoute();
+const dialogRef = ref<HTMLDialogElement | null>(null);
+
 const { cookieConsent, isLoading, acceptCookies, rejectCookies } =
   useCookieConsent();
 
-const isVisible = computed(
-  () => !isLoading.value && cookieConsent.value === null
+const isLegalPage = computed(() =>
+  LEGAL_PATHS.some(path => route.name === path.name)
 );
 
-// Handle escape key to reject cookies
-function handleKeydown(event: KeyboardEvent) {
-  if (event.key === "Escape" && isVisible.value) {
-    rejectCookies();
+const shouldShow = computed(() => {
+  // Don't show while loading or after user interaction
+  if (isLoading.value) {
+    return false;
   }
-}
 
-// Add and remove event listener
-onMounted(() => {
-  document.addEventListener("keydown", handleKeydown);
+  // Show on non-legal pages if no consent is set
+  if (cookieConsent.value === null) {
+    return !isLegalPage.value;
+  }
+
+  // Show on legal pages if consent is set
+  return isLegalPage.value;
 });
 
-onUnmounted(() => {
-  document.removeEventListener("keydown", handleKeydown);
+function handleAccept() {
+  acceptCookies();
+}
+
+function handleReject() {
+  rejectCookies();
+}
+
+function preventDefaultCancel(e: Event) {
+  e.preventDefault();
+}
+
+onMounted(() => {
+  dialogRef.value?.addEventListener("cancel", preventDefaultCancel);
+});
+
+onBeforeUnmount(() => {
+  dialogRef.value?.removeEventListener("cancel", preventDefaultCancel);
+});
+
+watchEffect(() => {
+  if (!dialogRef.value) {
+    return;
+  }
+
+  if (shouldShow.value) {
+    dialogRef.value.showModal();
+  } else {
+    dialogRef.value.close();
+  }
 });
 </script>
 
 <template>
-  <Transition
-    enter-active-class="tw:transition tw:duration-200 tw:ease-out"
-    enter-from-class="tw:translate-y-full"
-    enter-to-class="tw:translate-y-0"
-    leave-active-class="tw:transition tw:duration-200 tw:ease-in"
-    leave-from-class="tw:translate-y-0"
-    leave-to-class="tw:translate-y-full"
+  <dialog
+    ref="dialogRef"
+    class="cookie-banner"
+    @click="e => e.target === dialogRef"
+    @keydown.esc.prevent
   >
-    <div
-      v-if="isVisible"
-      class="cookie-banner"
-      role="alertdialog"
-      aria-modal="true"
-      aria-live="polite"
-      aria-labelledby="cookie-banner-title"
-      aria-describedby="cookie-banner-description"
-    >
-      <div class="cookie-banner__content">
-        <div class="cookie-banner__text">
-          <h2
-            id="cookie-banner-title"
-            class="cookie-banner__title"
-          >
-            Cookie Policy
-          </h2>
-          <p
-            id="cookie-banner-description"
-            class="cookie-banner__description"
-          >
-            We use cookies to analyze our traffic and enhance your experience.
-            You can choose to accept or reject these cookies. For more
-            information, please read our
-            <NuxtLink
-              to="/privacy-policy"
-              class="tw:text-primary tw:underline tw:underline-offset-4"
-            >
-              Privacy Policy </NuxtLink
-            >.
-          </p>
-        </div>
-        <div class="cookie-banner__actions">
-          <TheButton
-            size="sm"
-            variant="secondary"
-            aria-label="Reject all cookies and hide banner"
-            @click="rejectCookies"
-          >
-            Reject All
-          </TheButton>
-          <TheButton
-            size="sm"
-            aria-label="Accept all cookies and hide banner"
-            @click="acceptCookies"
-          >
-            Accept All
-          </TheButton>
-        </div>
+    <div class="cookie-banner__content tw:shadow-md">
+      <div class="cookie-banner__text">
+        <h2 class="cookie-banner__title">Cookie Policy</h2>
+        <p class="cookie-banner__description">
+          We use cookies to analyze our traffic and enhance your experience. You
+          can choose to accept or reject these cookies. For more information,
+          please read our
+          <NuxtLink to="/privacy-policy">Privacy Policy</NuxtLink>.
+        </p>
+      </div>
+      <div class="cookie-banner__actions">
+        <TheButton
+          size="sm"
+          @click="handleAccept"
+        >
+          Accept
+        </TheButton>
+        <TheButton
+          size="sm"
+          variant="secondary"
+          @click="handleReject"
+        >
+          Decline
+        </TheButton>
       </div>
     </div>
-  </Transition>
+  </dialog>
 </template>
 
 <style lang="scss">
 @use "sass:map";
 @use "@/assets/styles/abstracts/_variables.scss" as *;
 
-$breakpoint-md: map.get($breakpoints, "md");
-
 .cookie-banner {
-  position: fixed;
-  inset-block-end: 0;
-  inset-inline: 0;
-  z-index: 50;
-  padding: 1rem;
-  background: var(--tw-color-bg);
-  border-block-start: 1px solid var(--tw-color-border);
+  --edge-offset: 1rem;
+  padding: var(--edge-offset);
+  width: 100%;
+  max-width: 100%;
+  height: 100%;
+  max-height: 100%;
+  background: transparent;
+  border: none;
+
+  &::backdrop {
+    background: color-mix(in srgb, var(--tw-color-text-dark) 10%, transparent);
+    pointer-events: none;
+    border: none;
+  }
 
   &__content {
+    position: fixed;
+    inset-inline: 0;
+    inset-block-end: 0;
+    max-width: map.get($breakpoints, "md");
     margin-inline: auto;
-    max-width: 80rem;
+    padding: 1.5rem;
+    border-radius: var(--tw-radius-lg) var(--tw-radius-lg) 0 0;
     display: flex;
     flex-direction: column;
-    gap: 1rem;
+    gap: var(--edge-offset);
+    background: white;
 
-    @media (min-width: $breakpoint-md) {
+    @media (min-width: map.get($breakpoints, "md")) {
       flex-direction: row;
       align-items: center;
       justify-content: space-between;
+      border-radius: var(--tw-radius-lg);
+      inset: auto var(--edge-offset) var(--edge-offset);
     }
   }
 
@@ -122,20 +151,36 @@ $breakpoint-md: map.get($breakpoints, "md");
   }
 
   &__title {
-    font-size: 1.25rem;
+    font-size: 1.125rem;
     font-weight: 600;
     margin-block-end: 0.5rem;
   }
 
   &__description {
     font-size: 0.875rem;
-    color: var(--tw-color-text-muted);
   }
 
   &__actions {
     display: flex;
+    flex-direction: row-reverse;
     gap: 0.5rem;
     flex-shrink: 0;
+  }
+
+  &__button--flash {
+    animation: flash 0.3s ease 2;
+  }
+}
+
+@keyframes flash {
+  0%,
+  100% {
+    opacity: 1;
+    scale: 1;
+  }
+  50% {
+    opacity: 0.88;
+    scale: 0.98;
   }
 }
 </style>

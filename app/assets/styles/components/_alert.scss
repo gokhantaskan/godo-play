@@ -1,0 +1,87 @@
+@use "sass:map";
+@use "../abstracts/_variables.scss" as *;
+
+$breakpoint-md: map.get($breakpoints, "md");
+
+$alert-colors: (
+  "gray": (
+    bg: color-mix(in oklab, var(--tw-color-text-muted) 20%, white),
+    fg: color-mix(in oklab, var(--tw-color-text-muted) 50%, black),
+    border: color-mix(in oklab, var(--tw-color-text-muted) 20%, black 5%),
+  ),
+  warning: (
+    bg: color-mix(in oklab, var(--tw-color-yellow) 20%, white),
+    fg: color-mix(in oklab, var(--tw-color-yellow) 50%, black),
+    border: color-mix(in oklab, var(--tw-color-yellow) 20%, black 5%),
+  ),
+);
+
+.alert {
+  $root: &;
+
+  --padding: 1rem;
+  --title-font-size: 1.125rem;
+  --title-line-height: 1.125;
+  --title-margin-bottom: 0.5rem;
+  --message-font-size: 0.9375rem;
+  --message-line-height: 1.25;
+
+  display: flex;
+  align-items: flex-start;
+  gap: var(--padding);
+  border-radius: var(--tw-radius-md);
+  padding: var(--padding);
+  border: 1px solid;
+
+  @each $color, $value in $alert-colors {
+    &--#{$color} {
+      --fg: map.get($value, "fg");
+
+      background-color: map.get($value, "bg");
+      color: map.get($value, "fg");
+      border-color: map.get($value, "border");
+    }
+  }
+
+  &__icon {
+    flex-shrink: 0;
+    width: calc(var(--message-line-height) * var(--message-font-size));
+    height: calc(var(--message-line-height) * var(--message-font-size));
+    color: var(--fg);
+
+    svg {
+      width: 100%;
+      height: 100%;
+    }
+  }
+
+  &:has(#{$root}__title) &__icon {
+    width: calc(var(--title-line-height) * var(--title-font-size));
+    height: calc(var(--title-line-height) * var(--title-font-size));
+  }
+
+  &__title {
+    font-size: var(--title-font-size);
+    font-weight: 700;
+    line-height: var(--title-line-height);
+    margin-block-end: var(--title-margin-bottom);
+    color: var(--fg);
+  }
+
+  &__message {
+    font-size: calc(var(--message-font-size) * 0.9375);
+    line-height: var(--message-line-height);
+    color: var(--fg);
+
+    @media (min-width: $breakpoint-md) {
+      font-size: var(--message-font-size);
+    }
+  }
+
+  &__footer {
+    display: flex;
+    flex-direction: column;
+    gap: var(--padding);
+    margin-block-start: var(--padding);
+  }
+}

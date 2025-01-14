@@ -1,4 +1,8 @@
 <script setup lang="ts">
+definePageMeta({
+  name: "PrivacyPolicyPage",
+});
+
 useHead({
   title: "Privacy Policy",
   meta: [

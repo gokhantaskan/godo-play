@@ -39,6 +39,7 @@ $breakpoint-md: map.get($breakpoints, "md");
     @media (max-width: $breakpoint-md) {
       padding-inline: 0;
       padding-block-end: 0;
+      padding: 2rem 0 0;
       align-items: flex-end;
     }
   }
@@ -72,6 +73,7 @@ $breakpoint-md: map.get($breakpoints, "md");
     align-items: flex-start;
     justify-content: space-between;
     margin-bottom: 1rem;
+    gap: 0.5rem;
     line-height: var(--header-lh);
   }
 

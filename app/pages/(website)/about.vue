@@ -1,4 +1,8 @@
 <script setup lang="ts">
+definePageMeta({
+  name: "AboutPage",
+});
+
 useHead({
   title: "About",
 });

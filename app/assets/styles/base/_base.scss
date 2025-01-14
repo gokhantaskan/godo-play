@@ -16,6 +16,11 @@
     border-color: var(--tw-color-border, currentColor);
   }
 
+  ::selection {
+    background-color: var(--tw-color-primary);
+    color: white;
+  }
+
   body {
     background-color: var(--tw-color-bg);
     color: var(--tw-color-fg);
