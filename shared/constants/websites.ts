@@ -1,4 +1,19 @@
-export const WEBSITES = {
+export const WEBSITES: {
+  [key: string]: {
+    url: string[];
+    icon: string;
+    label: string;
+    subdomains?:
+      | {
+          [key: string]: {
+            subdomain: string;
+            icon: string;
+            label: string;
+          };
+        }
+      | true;
+  };
+} = {
   twitch: {
     url: ["twitch.tv"],
     icon: "fa6-brands:twitch",
@@ -38,6 +53,7 @@ export const WEBSITES = {
     url: ["wikipedia.org"],
     icon: "fa6-brands:wikipedia-w",
     label: "Wikipedia",
+    subdomains: true,
   },
   steam: {
     url: ["steampowered.com", "store.steampowered.com"],
@@ -65,7 +81,7 @@ export const WEBSITES = {
         label: "iTunes",
       },
       appStore: {
-        url: "apps",
+        subdomain: "apps",
         icon: "fa6-brands:app-store",
         label: "App Store",
       },

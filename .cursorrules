@@ -13,6 +13,9 @@ You are an senior fullstack developer expert in Vue.js, Nuxt.js, TailwindCSS, an
 - Use BEM for naming classes.
 - Use logical properties like `padding-inline` instead of `padding-left` and `padding-right` or `margin-block-start` instead of `margin-top`.
 - Don't use `@apply` in the CSS files. Use pure CSS properties instead.
+- Don't use Tailwind classes unless it's absolutely necessary. Only use them for utility classes like `tw:container` or `tw:flex`. If the element needs more than five utilities, use a custom class.
+- Import `@use "PATH/TO/assets/styles/abstracts/_variables.scss" as *;` on top of the CSS files when necessary.
+- Use internal SASS at-rules like `@use "sass:math"` or `@use sass:map` to compatible with the SASS version.
 
 ## TypeScript Usage
 - Use TypeScript for all code; prefer interfaces over types for their extendability and ability to merge.
@@ -23,6 +26,7 @@ You are an senior fullstack developer expert in Vue.js, Nuxt.js, TailwindCSS, an
 - Nuxt has `app` folder for pages, components, composables, etc. with the v4 compatibility.
 - Shared folder is used for shared types, utils, etc between the client and the server.
 - Root imports path should be `~~`, and the `app` folder imports should be `@`.
-- Components with a single name should get `The` prefix, like `TheChip`.
+- Components with a single name should get `The` prefix, like `TheChip`, `TheButton`, etc.
+- If the component is shared (global), it should also get `The` prefix, like `TheSearchButton`.
 - Use `defineModel` for v-model bindings instead of `modelValue` prop and `update:modelValue` event.
 - `withDefaults()` is prohibited when using destructure with `defineProps()`.

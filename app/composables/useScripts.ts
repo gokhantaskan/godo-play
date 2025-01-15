@@ -18,6 +18,21 @@ export function useScripts() {
     onHotjarLoaded(() => {
       console.info("hj loaded");
     });
+
+    // Initialize Inspectlet
+    const { onLoaded: onInspectletLoaded } = useScript(
+      {
+        key: "inspectlet",
+        src: "/scripts/inspectlet.js",
+      },
+      {
+        trigger: agreedToCookiesScriptConsent,
+      }
+    );
+
+    onInspectletLoaded(() => {
+      console.info("inspectlet loaded");
+    });
   }
 
   function updateGtagConsent(granted: boolean) {

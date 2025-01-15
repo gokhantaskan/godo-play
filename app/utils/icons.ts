@@ -9,7 +9,5 @@ export const PLATFORM_ICONS = {
 };
 
 export const getPlatformIcon = (slug: string) => {
-  console.log(slug);
-  console.log(PLATFORM_ICONS[slug as keyof typeof PLATFORM_ICONS]);
   return PLATFORM_ICONS[slug as keyof typeof PLATFORM_ICONS];
 };
