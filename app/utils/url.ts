@@ -1,19 +1,5 @@
 import { WEBSITES } from "~~/shared/constants/websites";
 
-interface SubdomainInfo {
-  subdomain?: string;
-  url?: string;
-  icon: string;
-  label: string;
-}
-
-interface WebsiteInfo {
-  url: string[];
-  icon: string;
-  label: string;
-  subdomains?: Record<string, SubdomainInfo>;
-}
-
 /**
  * Finds matching website information from predefined `WEBSITES` constant based on URL
  */
@@ -23,16 +9,28 @@ export function getWebsiteInfo(websiteUrl: string) {
     .replace(/^(?:https?:\/\/)?(?:www\.)?/i, ""); // Remove protocol and www
 
   // First try to match subdomains
-  for (const site of Object.values(WEBSITES) as WebsiteInfo[]) {
-    if (site.subdomains) {
-      for (const subdomain of Object.values(site.subdomains)) {
-        const mainDomain = site.url[0];
-        const subdomainPrefix = subdomain.subdomain || subdomain.url;
-        if (normalizedUrl.startsWith(`${subdomainPrefix}.${mainDomain}`)) {
+  for (const site of Object.values(WEBSITES)) {
+    if (site.subdomains && site.url[0]) {
+      const mainDomain = site.url[0];
+      if (typeof site.subdomains === "object") {
+        for (const subdomain of Object.values(site.subdomains)) {
+          if (
+            normalizedUrl.startsWith(`${subdomain.subdomain}.${mainDomain}`)
+          ) {
+            return {
+              url: site.url,
+              icon: subdomain.icon,
+              label: subdomain.label,
+            };
+          }
+        }
+      } else if (site.subdomains === true) {
+        // If subdomains is true and URL matches any subdomain of the main domain
+        if (normalizedUrl.includes(mainDomain)) {
           return {
             url: site.url,
-            icon: subdomain.icon,
-            label: subdomain.label,
+            icon: site.icon,
+            label: site.label,
           };
         }
       }
