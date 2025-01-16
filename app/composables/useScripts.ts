@@ -6,6 +6,10 @@ export function useScripts() {
   const { gtag } = useGtag();
 
   function initScripts() {
+    if (IS_DEV) {
+      return;
+    }
+
     // Initialize Hotjar
     const { onLoaded: onHotjarLoaded } = useScriptHotjar({
       id: Number(config.public.hotjar.siteId),
@@ -20,19 +24,21 @@ export function useScripts() {
     });
 
     // Initialize Inspectlet
-    const { onLoaded: onInspectletLoaded } = useScript(
-      {
-        key: "inspectlet",
-        src: "/scripts/inspectlet.js",
-      },
-      {
-        trigger: agreedToCookiesScriptConsent,
-      }
-    );
+    if (IS_PROD) {
+      const { onLoaded: onInspectletLoaded } = useScript(
+        {
+          key: "insp",
+          src: "/scripts/insp.js",
+        },
+        {
+          trigger: agreedToCookiesScriptConsent,
+        }
+      );
 
-    onInspectletLoaded(() => {
-      console.info("inspectlet loaded");
-    });
+      onInspectletLoaded(() => {
+        console.info("insp loaded");
+      });
+    }
   }
 
   function updateGtagConsent(granted: boolean) {
