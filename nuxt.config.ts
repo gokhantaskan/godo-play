@@ -1,6 +1,6 @@
 import svgLoader from "vite-svg-loader";
 
-const IS_PROD = process.env.NODE_ENV === "production";
+import { repositoryName } from "./slicemachine.config.json";
 
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
@@ -34,14 +34,6 @@ export default defineNuxtConfig({
       },
     },
   },
-  nitro: {
-    devStorage: {
-      db: {
-        driver: "fs",
-        base: "./data/db",
-      },
-    },
-  },
   devServer: {
     host: "0.0.0.0",
     port: 3000,
@@ -55,7 +47,7 @@ export default defineNuxtConfig({
       svgLoader({
         defaultImport: "component",
         svgoConfig: {
-          // Keep viewbox to allow for responsive images
+          // Keep viewbox to allow responsive svgs
           plugins: ["preset-default", "removeDimensions"],
         },
       }),
@@ -73,6 +65,7 @@ export default defineNuxtConfig({
     "@nuxtjs/robots",
     "nuxt-gtag",
     "@nuxt/scripts",
+    "@nuxtjs/prismic",
   ],
   css: ["./app/assets/styles/tailwind.css", "./app/assets/styles/main.scss"],
   postcss: {
@@ -86,12 +79,6 @@ export default defineNuxtConfig({
           "custom-selectors": { preserve: false },
         },
       },
-    },
-  },
-  app: {
-    head: {
-      link: [{ rel: "icon", type: "image/svg+xml", href: "/favicon.svg" }],
-      script: [...(IS_PROD ? [] : [])],
     },
   },
   fonts: {
@@ -136,5 +123,8 @@ export default defineNuxtConfig({
         },
       ],
     ],
+  },
+  prismic: {
+    endpoint: repositoryName,
   },
 });

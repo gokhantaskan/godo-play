@@ -12,7 +12,8 @@
     "clean": "nuxt cleanup",
     "lint": "eslint . --fix",
     "format": "prettier --write '**/*.{json,md,css,scss}' -l -u",
-    "postinstall": "nuxt prepare"
+    "postinstall": "nuxt prepare",
+    "slicemachine": "start-slicemachine"
   },
   "packageManager": "pnpm@9.15.4",
   "engines": {
@@ -27,6 +28,8 @@
     "@nuxt/scripts": "0.9.5",
     "@nuxtjs/robots": "5.1.0",
     "@nuxtjs/sitemap": "7.0.1",
+    "@prismicio/client": "^7.15.0",
+    "@prismicio/vue": "^4.3.1",
     "@vercel/analytics": "^1.4.1",
     "@vueuse/core": "^12.4.0",
     "eslint": "^9.18.0",
@@ -44,10 +47,13 @@
     "@iconify-json/fa-solid": "^1.2.1",
     "@iconify-json/fa6-brands": "^1.2.5",
     "@iconify-json/lucide": "^1.2.23",
+    "@nuxtjs/prismic": "^3.3.0",
+    "@slicemachine/adapter-nuxt": "^0.3.63",
     "@tailwindcss/postcss": "4.0.0-beta.8",
     "@types/lodash": "^4.17.14",
     "@types/lodash-es": "^4.17.12",
     "cross-env": "^7.0.3",
+    "eslint-config-flat-gitignore": "^1.0.0",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-import": "^2.31.0",
     "eslint-plugin-prettier": "^5.2.1",
@@ -56,6 +62,7 @@
     "prettier": "^3.4.2",
     "rimraf": "^6.0.1",
     "sass-embedded": "^1.83.4",
+    "slice-machine-ui": "^2.12.1",
     "typescript": "^5.7.3",
     "vite-svg-loader": "^5.1.0"
   }

@@ -1,11 +1,17 @@
 // @ts-check
 
+import gitignore from "eslint-config-flat-gitignore";
 import eslintPluginPrettierRecommended from "eslint-plugin-prettier/recommended";
 import simpleImportSort from "eslint-plugin-simple-import-sort";
 
 import withNuxt from "./.nuxt/eslint.config.mjs";
 
 export default withNuxt({
+  ignores: [
+    // Generated Slice Machine files
+    "app/components/slices/*.ts",
+    "prismicio-types.d.ts",
+  ],
   plugins: {
     "simple-import-sort": simpleImportSort,
   },
@@ -20,4 +26,9 @@ export default withNuxt({
     "vue/html-self-closing": "off",
     curly: ["error", "all"],
   },
-}).prepend(eslintPluginPrettierRecommended);
+}).prepend([
+  gitignore({
+    files: [".gitignore"],
+  }),
+  eslintPluginPrettierRecommended,
+]);

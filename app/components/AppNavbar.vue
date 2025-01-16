@@ -16,7 +16,7 @@ const menuItems = [
 </script>
 
 <template>
-  <div class="navbar">
+  <nav class="navbar">
     <div class="navbar__wrapper tw:container">
       <div class="navbar__brand">
         <NuxtLink to="/">
@@ -42,7 +42,7 @@ const menuItems = [
         </ul>
       </div>
     </div>
-  </div>
+  </nav>
 </template>
 
 <style scoped lang="scss">
