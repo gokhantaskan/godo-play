@@ -1,38 +1,34 @@
 <script setup lang="ts">
 import { useCookieConsent } from "@/composables/useCookieConsent";
 
-interface LegalPath {
-  name: string;
-}
-
-const LEGAL_PATHS: LegalPath[] = [
-  { name: "PrivacyPolicyPage" },
-  { name: "TermsOfServicePage" },
-];
-
 const route = useRoute();
 const dialogRef = ref<HTMLDialogElement | null>(null);
 
 const { cookieConsent, isLoading, acceptCookies, rejectCookies } =
   useCookieConsent();
 
-const isLegalPage = computed(() =>
-  LEGAL_PATHS.some(path => route.name === path.name)
-);
+const isLegalPage = computed(() => {
+  const legalRoutes = [
+    "/privacy-policy",
+    "/terms-of-service",
+    "/cookie-policy",
+  ];
+  return legalRoutes.includes(route.path);
+});
 
 const shouldShow = computed(() => {
+  // Don't show on legal pages
+  if (isLegalPage.value) {
+    return false;
+  }
+
   // Don't show while loading or after user interaction
   if (isLoading.value) {
     return false;
   }
 
-  // Show on non-legal pages if no consent is set
-  if (cookieConsent.value === null) {
-    return !isLegalPage.value;
-  }
-
-  // Show on legal pages if consent is set
-  return isLegalPage.value;
+  // Only show if no consent is set
+  return cookieConsent.value === null;
 });
 
 function handleAccept() {
