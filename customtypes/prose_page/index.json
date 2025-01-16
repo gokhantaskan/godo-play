@@ -1,17 +1,23 @@
 {
   "format": "page",
-  "id": "home_page",
-  "label": "Home Page",
-  "repeatable": false,
+  "id": "prose_page",
+  "label": "Prose Page",
+  "repeatable": true,
   "status": true,
   "json": {
     "Main": {
+      "uid": {
+        "type": "UID",
+        "config": {
+          "label": "UID"
+        }
+      },
       "slices": {
         "type": "Slices",
         "fieldset": "Slice Zone",
         "config": {
           "choices": {
-            "hero_section": {
+            "prose_block": {
               "type": "SharedSlice"
             }
           }

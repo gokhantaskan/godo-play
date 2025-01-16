@@ -4,7 +4,7 @@ import type * as prismic from "@prismicio/client";
 
 type Simplify<T> = { [KeyType in keyof T]: T[KeyType] };
 
-type HomePageDocumentDataSlicesSlice = never;
+type HomePageDocumentDataSlicesSlice = HeroSectionSlice;
 
 /**
  * Content for Home Page documents
@@ -69,50 +69,72 @@ export type HomePageDocument<Lang extends string = string> =
     Lang
   >;
 
+type ProsePageDocumentDataSlicesSlice = ProseBlockSlice;
+
 /**
- * Content for Page Prose documents
+ * Content for Prose Page documents
  */
-interface PageProseDocumentData {
+interface ProsePageDocumentData {
   /**
-   * Title field in *Page Prose*
+   * Slice Zone field in *Prose Page*
+   *
+   * - **Field Type**: Slice Zone
+   * - **Placeholder**: *None*
+   * - **API ID Path**: prose_page.slices[]
+   * - **Tab**: Main
+   * - **Documentation**: https://prismic.io/docs/field#slices
+   */
+  slices: prismic.SliceZone<ProsePageDocumentDataSlicesSlice> /**
+   * Meta Title field in *Prose Page*
    *
    * - **Field Type**: Text
-   * - **Placeholder**: Page title with prose like legal pages etc.
-   * - **API ID Path**: page_prose.title
-   * - **Tab**: Main
+   * - **Placeholder**: A title of the page used for social media and search engines
+   * - **API ID Path**: prose_page.meta_title
+   * - **Tab**: SEO & Metadata
    * - **Documentation**: https://prismic.io/docs/field#key-text
-   */
-  title: prismic.KeyTextField;
+   */;
+  meta_title: prismic.KeyTextField;
 
   /**
-   * Content field in *Page Prose*
+   * Meta Description field in *Prose Page*
    *
-   * - **Field Type**: Rich Text
-   * - **Placeholder**: Prose content
-   * - **API ID Path**: page_prose.content
-   * - **Tab**: Main
-   * - **Documentation**: https://prismic.io/docs/field#rich-text-title
+   * - **Field Type**: Text
+   * - **Placeholder**: A brief summary of the page
+   * - **API ID Path**: prose_page.meta_description
+   * - **Tab**: SEO & Metadata
+   * - **Documentation**: https://prismic.io/docs/field#key-text
    */
-  content: prismic.RichTextField;
+  meta_description: prismic.KeyTextField;
+
+  /**
+   * Meta Image field in *Prose Page*
+   *
+   * - **Field Type**: Image
+   * - **Placeholder**: *None*
+   * - **API ID Path**: prose_page.meta_image
+   * - **Tab**: SEO & Metadata
+   * - **Documentation**: https://prismic.io/docs/field#image
+   */
+  meta_image: prismic.ImageField<never>;
 }
 
 /**
- * Page Prose document from Prismic
+ * Prose Page document from Prismic
  *
- * - **API ID**: `page_prose`
+ * - **API ID**: `prose_page`
  * - **Repeatable**: `true`
  * - **Documentation**: https://prismic.io/docs/custom-types
  *
  * @typeParam Lang - Language API ID of the document.
  */
-export type PageProseDocument<Lang extends string = string> =
+export type ProsePageDocument<Lang extends string = string> =
   prismic.PrismicDocumentWithUID<
-    Simplify<PageProseDocumentData>,
-    "page_prose",
+    Simplify<ProsePageDocumentData>,
+    "prose_page",
     Lang
   >;
 
-export type AllDocumentTypes = HomePageDocument | PageProseDocument;
+export type AllDocumentTypes = HomePageDocument | ProsePageDocument;
 
 /**
  * Primary content in *HeroSection → Default → Primary*
@@ -239,6 +261,129 @@ export type HeroSectionSlice = prismic.SharedSlice<
   HeroSectionSliceVariation
 >;
 
+/**
+ * Primary content in *ProseSection → Default → Primary*
+ */
+export interface ProseBlockSliceDefaultPrimary {
+  /**
+   * Title field in *ProseSection → Default → Primary*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: Prose title for the page or post
+   * - **API ID Path**: prose_block.default.primary.title
+   * - **Documentation**: https://prismic.io/docs/field#key-text
+   */
+  title: prismic.KeyTextField;
+
+  /**
+   * Description field in *ProseSection → Default → Primary*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: Prose description for the page or post (optional)
+   * - **API ID Path**: prose_block.default.primary.description
+   * - **Documentation**: https://prismic.io/docs/field#key-text
+   */
+  description: prismic.KeyTextField;
+
+  /**
+   * Content field in *ProseSection → Default → Primary*
+   *
+   * - **Field Type**: Rich Text
+   * - **Placeholder**: Page content
+   * - **API ID Path**: prose_block.default.primary.content
+   * - **Documentation**: https://prismic.io/docs/field#rich-text-title
+   */
+  content: prismic.RichTextField;
+}
+
+/**
+ * Default variation for ProseSection Slice
+ *
+ * - **API ID**: `default`
+ * - **Description**: Default
+ * - **Documentation**: https://prismic.io/docs/slice
+ */
+export type ProseBlockSliceDefault = prismic.SharedSliceVariation<
+  "default",
+  Simplify<ProseBlockSliceDefaultPrimary>,
+  never
+>;
+
+/**
+ * Primary content in *ProseSection → Legal → Primary*
+ */
+export interface ProseBlockSliceLegalPrimary {
+  /**
+   * Title field in *ProseSection → Legal → Primary*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: Prose title for the page or post
+   * - **API ID Path**: prose_block.legal.primary.title
+   * - **Documentation**: https://prismic.io/docs/field#key-text
+   */
+  title: prismic.KeyTextField;
+
+  /**
+   * Description field in *ProseSection → Legal → Primary*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: Prose description for the page or post (optional)
+   * - **API ID Path**: prose_block.legal.primary.description
+   * - **Documentation**: https://prismic.io/docs/field#key-text
+   */
+  description: prismic.KeyTextField;
+
+  /**
+   * Content field in *ProseSection → Legal → Primary*
+   *
+   * - **Field Type**: Rich Text
+   * - **Placeholder**: Page content
+   * - **API ID Path**: prose_block.legal.primary.content
+   * - **Documentation**: https://prismic.io/docs/field#rich-text-title
+   */
+  content: prismic.RichTextField;
+
+  /**
+   * Effective Date field in *ProseSection → Legal → Primary*
+   *
+   * - **Field Type**: Date
+   * - **Placeholder**: *None*
+   * - **API ID Path**: prose_block.legal.primary.effective_date
+   * - **Documentation**: https://prismic.io/docs/field#date
+   */
+  effective_date: prismic.DateField;
+}
+
+/**
+ * Legal variation for ProseSection Slice
+ *
+ * - **API ID**: `legal`
+ * - **Description**: Default
+ * - **Documentation**: https://prismic.io/docs/slice
+ */
+export type ProseBlockSliceLegal = prismic.SharedSliceVariation<
+  "legal",
+  Simplify<ProseBlockSliceLegalPrimary>,
+  never
+>;
+
+/**
+ * Slice variation for *ProseSection*
+ */
+type ProseBlockSliceVariation = ProseBlockSliceDefault | ProseBlockSliceLegal;
+
+/**
+ * ProseSection Shared Slice
+ *
+ * - **API ID**: `prose_block`
+ * - **Description**: ProseBlock
+ * - **Documentation**: https://prismic.io/docs/slice
+ */
+export type ProseBlockSlice = prismic.SharedSlice<
+  "prose_block",
+  ProseBlockSliceVariation
+>;
+
 declare module "@prismicio/client" {
   interface CreateClient {
     (
@@ -260,18 +405,25 @@ declare module "@prismicio/client" {
 
   namespace Content {
     export type {
-      AllDocumentTypes,
-      HeroSectionSlice,
-      HeroSectionSliceDefault,
-      HeroSectionSliceDefaultPrimary,
-      HeroSectionSliceVariation,
-      HeroSectionSliceWithBgImage,
-      HeroSectionSliceWithBgImagePrimary,
       HomePageDocument,
       HomePageDocumentData,
       HomePageDocumentDataSlicesSlice,
-      PageProseDocument,
-      PageProseDocumentData,
+      ProsePageDocument,
+      ProsePageDocumentData,
+      ProsePageDocumentDataSlicesSlice,
+      AllDocumentTypes,
+      HeroSectionSlice,
+      HeroSectionSliceDefaultPrimary,
+      HeroSectionSliceWithBgImagePrimary,
+      HeroSectionSliceVariation,
+      HeroSectionSliceDefault,
+      HeroSectionSliceWithBgImage,
+      ProseBlockSlice,
+      ProseBlockSliceDefaultPrimary,
+      ProseBlockSliceLegalPrimary,
+      ProseBlockSliceVariation,
+      ProseBlockSliceDefault,
+      ProseBlockSliceLegal,
     };
   }
 }

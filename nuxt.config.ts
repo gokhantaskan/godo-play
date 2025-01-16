@@ -2,17 +2,13 @@ import svgLoader from "vite-svg-loader";
 
 import { repositoryName } from "./slicemachine.config.json";
 
-const IS_PROD = process.env.NODE_ENV === "production";
-
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   compatibilityDate: "2024-11-01",
   devtools: { enabled: true },
-
   future: {
     compatibilityVersion: 4,
   },
-
   runtimeConfig: {
     igdb: {
       endpoint: process.env.IGDB_ENDPOINT,
@@ -38,16 +34,6 @@ export default defineNuxtConfig({
       },
     },
   },
-
-  nitro: {
-    devStorage: {
-      db: {
-        driver: "fs",
-        base: "./data/db",
-      },
-    },
-  },
-
   devServer: {
     host: "0.0.0.0",
     port: 3000,
@@ -56,23 +42,20 @@ export default defineNuxtConfig({
       key: "./localhost+2-key.pem",
     },
   },
-
   vite: {
     plugins: [
       svgLoader({
         defaultImport: "component",
         svgoConfig: {
-          // Keep viewbox to allow for responsive images
+          // Keep viewbox to allow responsive svgs
           plugins: ["preset-default", "removeDimensions"],
         },
       }),
     ],
   },
-
   typescript: {
     typeCheck: true,
   },
-
   modules: [
     "@nuxt/eslint",
     "@nuxt/fonts",
@@ -84,9 +67,7 @@ export default defineNuxtConfig({
     "@nuxt/scripts",
     "@nuxtjs/prismic",
   ],
-
   css: ["./app/assets/styles/tailwind.css", "./app/assets/styles/main.scss"],
-
   postcss: {
     plugins: {
       "@tailwindcss/postcss": {},
@@ -100,20 +81,11 @@ export default defineNuxtConfig({
       },
     },
   },
-
-  app: {
-    head: {
-      link: [{ rel: "icon", type: "image/svg+xml", href: "/favicon.svg" }],
-      script: [...(IS_PROD ? [] : [])],
-    },
-  },
-
   fonts: {
     experimental: {
       processCSSVariables: true,
     },
   },
-
   icon: {
     mode: "svg",
     size: "inherit",
@@ -128,16 +100,13 @@ export default defineNuxtConfig({
       },
     ],
   },
-
   site: {
     url: "https://godo-play.com",
     name: "GōdōPlay",
   },
-
   robots: {
     disallow: ["/_ipx/", "/admin/"],
   },
-
   gtag: {
     id: process.env.NUXT_PUBLIC_GTAG_ID,
     initCommands: [

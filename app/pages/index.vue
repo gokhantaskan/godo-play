@@ -1,12 +1,14 @@
 <script setup lang="ts">
 import { components } from "~/slices";
+import type { HomePageDocument } from "~~/prismicio-types";
 
 const prismic = usePrismic();
-const { data: page } = useAsyncData("PrismicHomePage", () =>
-  prismic.client.getSingle("home_page")
+
+const { data: page } = await useAsyncData("PrismicHomePage", () =>
+  prismic.client.getSingle<HomePageDocument>("home_page")
 );
 
-useServerSeoMeta({
+useSeoMeta({
   title: page.value?.data.meta_title,
   ogTitle: page.value?.data.meta_title,
   description: page.value?.data.meta_description,

@@ -1,17 +1,14 @@
 <template>
-  <div>
-    <h1>Slice Simulator</h1>
-  </div>
-  <!-- <SliceSimulator v-slot="{ slices }">
+  <SliceSimulator v-slot="{ slices }">
     <SliceZone
       :slices="slices"
       :components="components"
     />
-  </SliceSimulator> -->
+  </SliceSimulator>
 </template>
 
 <script setup lang="ts">
-// import { SliceSimulator } from "@slicemachine/adapter-nuxt/simulator";
+import { SliceSimulator } from "@slicemachine/adapter-nuxt/simulator";
 
-// import { components } from "~/slices";
+import { components } from "@/slices";
 </script>

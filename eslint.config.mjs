@@ -10,6 +10,7 @@ export default withNuxt({
   ignores: [
     // Generated Slice Machine files
     "app/components/slices/*.ts",
+    "prismicio-types.d.ts",
   ],
   plugins: {
     "simple-import-sort": simpleImportSort,

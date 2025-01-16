@@ -7,16 +7,30 @@ const { initScripts } = useScripts();
 
 useHead({
   htmlAttrs: {
-    lang: "en",
+    lang: "en-us",
   },
   titleTemplate: titleChunk => {
     return titleChunk
       ? `${titleChunk} - GodoPlay`
       : "GodoPlay - The Ultimate Fusion for Co-Op and Multiplayer Gaming";
   },
+  link: [
+    {
+      rel: "icon",
+      type: "image/svg+xml",
+      href: "/favicon.svg",
+    },
+  ],
+  script: [
+    {
+      src: "https://static.cdn.prismic.io/prismic.js?new=true&repo=godoplay",
+      async: true,
+      defer: true,
+    },
+  ],
 });
 
-useServerSeoMeta({
+useSeoMeta({
   title: "GodoPlay - The Ultimate Fusion for Co-Op and Multiplayer Gaming",
   description:
     "Discover multiplayer and co-op games for PC, PlayStation, Xbox, and Nintendo Switch, perfect for playing together or competing against friends, regardless of your platform.",
