@@ -36,7 +36,9 @@ export default defineEventHandler(async event => {
     .concat(";")
     .trim();
 
-  console.log(parsedBody);
+  if (process.env.NODE_ENV === "development") {
+    console.log("IGDB Query:", parsedBody);
+  }
 
   try {
     // Ensure we have a valid token before making the request

@@ -22,13 +22,23 @@ const shouldShow = computed(() => {
     return false;
   }
 
-  // Don't show while loading or after user interaction
+  // Always hide while loading
   if (isLoading.value) {
     return false;
   }
 
   // Only show if no consent is set
   return cookieConsent.value === null;
+});
+
+// Add mounted state to prevent flash
+const isMounted = ref(false);
+onMounted(() => {
+  dialogRef.value?.addEventListener("cancel", preventDefaultCancel);
+  // Set mounted after a tick to ensure cookie is checked
+  nextTick(() => {
+    isMounted.value = true;
+  });
 });
 
 function handleAccept() {
@@ -43,16 +53,12 @@ function preventDefaultCancel(e: Event) {
   e.preventDefault();
 }
 
-onMounted(() => {
-  dialogRef.value?.addEventListener("cancel", preventDefaultCancel);
-});
-
 onBeforeUnmount(() => {
   dialogRef.value?.removeEventListener("cancel", preventDefaultCancel);
 });
 
 watchEffect(() => {
-  if (!dialogRef.value) {
+  if (!dialogRef.value || !isMounted.value) {
     return;
   }
 
