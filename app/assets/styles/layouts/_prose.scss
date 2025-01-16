@@ -1,17 +1,30 @@
+@use "sass:math";
+@use "sass:map";
+@use "../abstracts/_variables.scss" as *;
+
+$breakpoint-md: map.get($breakpoints, "md");
+
 .prose {
+  --scale-ratio-large: 1.25; // Major third
+  --scale-ratio-small: 1.2; // Minor third
+  --font-scale: var(--scale-ratio-small);
+
   max-width: 80ch;
   color: var(--tw-color-fg);
   font-family: var(--tw-font-body);
 
-  h1,
-  h2,
-  h3 {
+  @media (min-width: $breakpoint-md) {
+    --font-scale: var(--scale-ratio-large);
+  }
+
+  :--heading {
     font-family: var(--tw-font-heading);
     color: var(--tw-color-text-dark);
   }
 
   h1 {
-    font-size: calc(var(--tw-text-base) * 2.5);
+    // pow(scale, 4) for h1
+    font-size: calc(var(--tw-text-base) * pow(var(--font-scale), 4));
     font-weight: 700;
     line-height: 1.2;
     margin-block-start: 0;
@@ -19,7 +32,8 @@
   }
 
   h2 {
-    font-size: calc(var(--tw-text-base) * 1.75);
+    // pow(scale, 3) for h2
+    font-size: calc(var(--tw-text-base) * pow(var(--font-scale), 3));
     font-weight: 600;
     line-height: 1.3;
     margin-block-start: calc(var(--tw-spacing) * 8);
@@ -27,11 +41,18 @@
   }
 
   h3 {
-    font-size: calc(var(--tw-text-base) * 1.375);
+    // pow(scale, 2) for h3
+    font-size: calc(var(--tw-text-base) * pow(var(--font-scale), 2));
     font-weight: 600;
     line-height: 1.3;
     margin-block-start: calc(var(--tw-spacing) * 6);
     margin-block-end: calc(var(--tw-spacing) * 3);
+  }
+
+  &__description {
+    font-size: calc(var(--tw-text-sm) * var(--font-scale));
+    line-height: 1.375;
+    color: var(--tw-color-text-muted);
   }
 
   p {
@@ -52,10 +73,16 @@
     color: var(--tw-color-primary);
     text-decoration: underline;
     text-underline-offset: 0.1em;
+    display: inline-block;
 
     &:hover {
       color: color-mix(in oklch, var(--tw-color-primary) 80%, black);
     }
+  }
+
+  time {
+    font-size: 0.875rem;
+    color: var(--tw-color-text-muted);
   }
 
   strong {

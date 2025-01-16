@@ -23,13 +23,16 @@ defineProps(
     :data-slice-variation="slice.variation"
   >
     <header v-if="slice.primary.title || slice.primary.description">
-      <h1 v-if="slice.primary.title">
+      <h1
+        v-if="slice.primary.title"
+        class="prose__title"
+      >
         {{ slice.primary.title }}
       </h1>
       <time
         v-if="slice.variation === 'legal' && slice.primary.effective_date"
         :datetime="slice.primary.effective_date"
-        class="tw:text-sm tw:text-gray-600"
+        class="prose__effective-date"
       >
         Effective Date:
         {{
@@ -40,7 +43,10 @@ defineProps(
           })
         }}
       </time>
-      <p v-if="slice.primary.description">
+      <p
+        v-if="slice.primary.description"
+        class="prose__description"
+      >
         {{ slice.primary.description }}
       </p>
     </header>
