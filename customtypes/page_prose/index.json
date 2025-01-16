@@ -1,0 +1,33 @@
+{
+  "format": "custom",
+  "id": "page_prose",
+  "label": "Page Prose",
+  "repeatable": true,
+  "status": true,
+  "json": {
+    "Main": {
+      "uid": {
+        "type": "UID",
+        "config": {
+          "label": "UID"
+        }
+      },
+      "title": {
+        "type": "Text",
+        "config": {
+          "label": "Title",
+          "placeholder": "Page title with prose like legal pages etc."
+        }
+      },
+      "content": {
+        "type": "StructuredText",
+        "config": {
+          "label": "Content",
+          "placeholder": "Prose content",
+          "allowTargetBlank": true,
+          "multi": "heading2,heading3,heading4,list-item,o-list-item,em,strong,hyperlink,paragraph,image"
+        }
+      }
+    }
+  }
+}

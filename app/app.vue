@@ -3,7 +3,6 @@ import { Analytics } from "@vercel/analytics/nuxt";
 
 import { useScripts } from "@/composables/useScripts";
 
-const isProd = toRef(() => import.meta.env.PROD);
 const { initScripts } = useScripts();
 
 useHead({
@@ -17,19 +16,19 @@ useHead({
   },
 });
 
-useSeoMeta({
+useServerSeoMeta({
   title: "GodoPlay - The Ultimate Fusion for Co-Op and Multiplayer Gaming",
   description:
-    "Find the best cross-platform games for PC, PlayStation, Xbox, and Nintendo Switch. Discover multiplayer, cooperative, and competitive games to play together or against friends, no matter your platform.",
+    "Discover multiplayer and co-op games for PC, PlayStation, Xbox, and Nintendo Switch, perfect for playing together or competing against friends, regardless of your platform.",
   ogTitle: "GodoPlay - The Ultimate Fusion for Co-Op and Multiplayer Gaming",
   ogDescription:
-    "Find the best cross-platform games for PC, PlayStation, Xbox, and Nintendo Switch.",
+    "Discover multiplayer and co-op games for PC, PlayStation, Xbox, and Nintendo Switch, perfect for playing together or competing against friends, regardless of your platform.",
   ogImage: "/og_img.jpg",
   ogUrl: "https://godoplay.com",
   twitterCard: "summary_large_image",
   twitterTitle: "GodoPlay - Find Cross-Platform Multiplayer Games",
   twitterDescription:
-    "Discover the best multiplayer and co-op games across PC, PlayStation, Xbox, and Nintendo Switch.",
+    "Discover multiplayer and co-op games for PC, PlayStation, Xbox, and Nintendo Switch, perfect for playing together or competing against friends, regardless of your platform.",
   twitterImage: "/og_img.jpg",
 });
 
@@ -44,7 +43,7 @@ onMounted(() => {
     <NuxtLayout>
       <NuxtPage />
     </NuxtLayout>
-    <template v-if="isProd">
+    <template v-if="IS_PROD">
       <Analytics />
     </template>
     <TheCookieBanner />
