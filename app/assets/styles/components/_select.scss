@@ -23,7 +23,7 @@
 
   &__button {
     width: 100%;
-    height: var(--height);
+    min-height: var(--height);
     border-radius: var(--radius);
     padding-inline: var(--padding-inline);
     padding-block: var(--padding-block);

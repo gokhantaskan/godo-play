@@ -1,4 +1,6 @@
-export const autoCompletePt = {
+import type { AutoCompletePassThroughOptions } from "primevue/autocomplete";
+
+export const autoCompletePt: AutoCompletePassThroughOptions = {
   root: {
     class: "combobox",
   },
@@ -27,6 +29,9 @@ export const autoCompletePt = {
   },
   option: {
     class: "combobox__dropdown-list-item",
+    focus: {
+      class: "combobox__dropdown-list-item--focus",
+    },
   },
   emptyMessage: {
     class: "combobox__empty-message",

@@ -89,8 +89,8 @@
     gap: 0.5rem;
     font-size: var(--form-text-md);
 
-    &:hover,
-    &--active {
+    &.p-focus,
+    &--focus {
       background-color: color-mix(
         in oklch,
         var(--tw-color-primary) 10%,

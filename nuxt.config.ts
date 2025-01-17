@@ -25,9 +25,13 @@ export default defineNuxtConfig({
       host: process.env.REDIS_HOST,
       port: process.env.REDIS_PORT,
     },
+    google: {},
     public: {
       hotjar: {
         siteId: "",
+      },
+      google: {
+        recaptchaSiteKey: "",
       },
       gtag: {
         id: "",

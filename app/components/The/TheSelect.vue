@@ -33,10 +33,18 @@ const props = withDefaults(defineProps<SelectProps>(), {
   multiple: false,
 });
 
-const modelValue = defineModel<SelectOption["value"]>();
+const modelValue = defineModel<SelectOption["value"] | any[]>();
 
-const selectedOption = computed(() => {
-  return props.options.find(option => option.value === modelValue.value);
+const selectedOptions = computed(() => {
+  if (!props.multiple) {
+    const option = props.options.find(
+      option => option.value === modelValue.value
+    );
+    return option ? [option] : [];
+  }
+  return props.options.filter(option =>
+    (modelValue.value as SelectOption["value"][])?.includes(option.value)
+  );
 });
 </script>
 
@@ -65,21 +73,52 @@ const selectedOption = computed(() => {
       class="select__button"
       :class="{ 'select__button--disabled': disabled }"
     >
-      <span
-        v-if="$slots.icon || icon"
-        class="select__button-leading"
+      <div
+        v-if="!multiple"
+        class="tw:flex tw:items-center tw:gap-2 tw:min-w-0"
       >
-        <slot name="icon">
-          <Icon :name="icon" />
-        </slot>
-      </span>
-
-      <span
-        class="select__button-text"
-        :class="{ 'select__button-text--placeholder': !selectedOption }"
+        <span
+          v-if="$slots.icon || icon"
+          class="select__button-leading"
+        >
+          <slot name="icon">
+            <Icon :name="icon" />
+          </slot>
+        </span>
+        <span
+          class="select__button-text tw:truncate"
+          :class="{
+            'select__button-text--placeholder': !selectedOptions.length,
+          }"
+        >
+          {{ selectedOptions[0]?.label || placeholder }}
+        </span>
+      </div>
+      <div
+        v-else
+        class="tw:flex tw:flex-wrap tw:items-center tw:gap-1.5"
       >
-        {{ selectedOption?.label || placeholder }}
-      </span>
+        <template v-if="selectedOptions.length">
+          <span
+            v-for="option in selectedOptions"
+            :key="option.value ?? ''"
+            class="tw:inline-flex tw:items-center tw:gap-1 tw:px-1.5 tw:py-0.5 tw:text-sm tw:rounded-sm tw:bg-gray-200"
+          >
+            <Icon
+              v-if="option.icon"
+              :name="option.icon"
+              class="tw:size-4"
+            />
+            {{ option.label }}
+          </span>
+        </template>
+        <span
+          v-else
+          class="select__button-text tw:truncate select__button-text--placeholder"
+        >
+          {{ placeholder }}
+        </span>
+      </div>
 
       <span class="select__button-icon">
         <Icon
@@ -91,39 +130,46 @@ const selectedOption = computed(() => {
     </ListboxButton>
 
     <ListboxOptions class="select__options">
-      <ListboxOption
-        v-for="option in options"
-        :key="option.value ?? 'null'"
-        v-slot="{ active, selected }"
-        :value="option.value"
-        as="template"
-      >
-        <li
-          :class="[
-            'select__option',
-            active && 'select__option--active',
-            selected && 'select__option--selected',
-          ]"
+      <template v-if="options.length">
+        <ListboxOption
+          v-for="option in options"
+          :key="option.value ?? 'null'"
+          v-slot="{ active, selected }"
+          :value="option.value"
+          as="template"
         >
-          <Icon
-            v-if="option.icon"
-            :name="option.icon"
-            class="select__option-icon"
-            aria-hidden="true"
-          />
-          {{ option.label }}
-          <span
-            v-if="selected"
-            class="select__option-check"
+          <li
+            :class="[
+              'select__option',
+              active && 'select__option--active',
+              selected && 'select__option--selected',
+            ]"
           >
             <Icon
-              name="lucide:check"
-              class="tw:size-5"
+              v-if="option.icon"
+              :name="option.icon"
+              class="select__option-icon"
               aria-hidden="true"
             />
-          </span>
-        </li>
-      </ListboxOption>
+            {{ option.label }}
+            <span
+              v-if="selected"
+              class="select__option-check"
+            >
+              <Icon
+                name="lucide:check"
+                class="tw:size-5"
+                aria-hidden="true"
+              />
+            </span>
+          </li>
+        </ListboxOption>
+      </template>
+      <template v-else>
+        <div class="tw:text-center tw:text-sm tw:text-gray-500 tw:py-2">
+          Empty
+        </div>
+      </template>
     </ListboxOptions>
   </Listbox>
 </template>
