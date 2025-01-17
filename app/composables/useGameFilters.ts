@@ -1,5 +1,6 @@
 import { refDebounced } from "@vueuse/core";
 
+import type { SelectOption } from "~/components/The/TheSelect.vue";
 import {
   GAME_MODES,
   GENRES,
@@ -8,15 +9,11 @@ import {
   THEMES,
 } from "~~/shared/constants/";
 
-/**
- * Types for the game filters functionality
- */
-
-// Filter option structure
-interface FilterOption {
-  id: number;
-  name: string;
-  icon?: string;
+// Platform option structure
+interface PlatformOption extends SelectOption {
+  value: number | null;
+  label: string;
+  icon: string;
 }
 
 // Query parameters structure from the URL
@@ -44,19 +41,11 @@ interface SelectedFilters {
   themes: number[];
 }
 
-// Platform option structure with icon support
-interface Platform {
-  id: number | null;
-  name: string;
-  icon: string;
-  [key: string]: any; // For compatibility with TheSelect component
-}
-
 // Available platform options for each slot
 interface AvailablePlatforms {
-  p1: ComputedRef<Platform[]>;
-  p2: ComputedRef<Platform[]>;
-  p3: ComputedRef<Platform[]>;
+  p1: ComputedRef<PlatformOption[]>;
+  p2: ComputedRef<PlatformOption[]>;
+  p3: ComputedRef<PlatformOption[]>;
 }
 
 // Structure for API request body
@@ -135,12 +124,13 @@ export function useGameFilters(): GameFiltersReturn {
    */
   function getPlatformOptions(
     excludeKeys: Array<keyof typeof selectedPlatforms.value>
-  ): Platform[] {
+  ): PlatformOption[] {
     return SUPPORTED_PLATFORMS.filter(
       platform =>
         !excludeKeys.some(key => platform.id === selectedPlatforms.value[key])
     ).map(platform => ({
-      ...platform,
+      value: platform.id,
+      label: platform.name,
       icon: platform.icon || "lucide:gamepad-2",
     }));
   }
@@ -153,11 +143,11 @@ export function useGameFilters(): GameFiltersReturn {
   const availablePlatforms: AvailablePlatforms = {
     p1: computed(() => [...getPlatformOptions(["p2", "p3"])]),
     p2: computed(() => [
-      { id: null, name: "Any Platform", icon: "lucide:gamepad-2" },
+      { value: null, label: "Any Platform", icon: "lucide:gamepad-2" },
       ...getPlatformOptions(["p1", "p3"]),
     ]),
     p3: computed(() => [
-      { id: null, name: "Any Platform", icon: "lucide:gamepad-2" },
+      { value: null, label: "Any Platform", icon: "lucide:gamepad-2" },
       ...getPlatformOptions(["p1", "p2"]),
     ]),
   };
@@ -308,7 +298,7 @@ export function useGameFilters(): GameFiltersReturn {
 
     // Game Modes
     selectedFilters.value.gameModes.forEach(id => {
-      const mode = GAME_MODES.find((m: FilterOption) => m.id === id);
+      const mode = GAME_MODES.find(m => m.id === id);
       if (mode) {
         chips.push({
           id,
@@ -320,9 +310,7 @@ export function useGameFilters(): GameFiltersReturn {
 
     // Player Perspectives
     selectedFilters.value.playerPerspectives.forEach(id => {
-      const perspective = PLAYER_PERSPECTIVES.find(
-        (p: FilterOption) => p.id === id
-      );
+      const perspective = PLAYER_PERSPECTIVES.find(p => p.id === id);
       if (perspective) {
         chips.push({
           id,
@@ -334,7 +322,7 @@ export function useGameFilters(): GameFiltersReturn {
 
     // Genres
     selectedFilters.value.genres.forEach(id => {
-      const genre = GENRES.find((g: FilterOption) => g.id === id);
+      const genre = GENRES.find(g => g.id === id);
       if (genre) {
         chips.push({
           id,
@@ -346,7 +334,7 @@ export function useGameFilters(): GameFiltersReturn {
 
     // Themes
     selectedFilters.value.themes.forEach(id => {
-      const theme = THEMES.find((t: FilterOption) => t.id === id);
+      const theme = THEMES.find(t => t.id === id);
       if (theme) {
         chips.push({
           id,

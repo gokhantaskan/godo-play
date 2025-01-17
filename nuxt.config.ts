@@ -66,6 +66,7 @@ export default defineNuxtConfig({
     "nuxt-gtag",
     "@nuxt/scripts",
     "@nuxtjs/prismic",
+    "@primevue/nuxt-module",
   ],
   css: ["./app/assets/styles/tailwind.css", "./app/assets/styles/main.scss"],
   postcss: {
@@ -126,5 +127,17 @@ export default defineNuxtConfig({
   },
   prismic: {
     endpoint: repositoryName,
+  },
+  primevue: {
+    usePrimeVue: true,
+    autoImport: false,
+    loadStyles: false,
+    components: {
+      prefix: "P",
+      include: ["AutoComplete"],
+    },
+    options: {
+      theme: "none",
+    },
   },
 });

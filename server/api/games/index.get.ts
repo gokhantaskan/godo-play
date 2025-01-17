@@ -48,9 +48,9 @@ export default defineCachedEventHandler(
 
     if (platforms?.length) {
       whereConditions.push(`platforms=[${platforms.join(",")}]`);
-      if (platforms.length > 1) {
-        whereConditions.push("multiplayer_modes.onlinemax != null");
-      }
+      // if (platforms.length > 1) {
+      //   whereConditions.push("multiplayer_modes.onlinemax != null");
+      // }
     } else {
       whereConditions.push(`platforms=(${SUPPORTED_PLATFORM_IDS.join(",")})`);
     }

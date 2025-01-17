@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { GAME_TYPES } from "~~/shared/constants";
-import type { DashboardGames } from "~~/shared/types/igdb/dashboardGames";
+import type { DashboardGame } from "~~/shared/types/igdb/dashboardGames";
 
 interface Props {
-  game: DashboardGames;
+  game: DashboardGame;
 }
 
 const props = defineProps<Props>();

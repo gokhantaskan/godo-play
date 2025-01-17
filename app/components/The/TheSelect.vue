@@ -7,42 +7,46 @@ import {
   ListboxOptions,
 } from "@headlessui/vue";
 
-interface Option {
-  id: number | string | null;
-  name: string;
+export interface SelectOption {
+  label: string;
+  value: string | number | null;
   icon?: string;
+  [key: string]: any;
 }
 
-interface Props {
-  options: Option[];
+export interface SelectProps {
+  options: SelectOption[];
   label?: string;
   required?: boolean;
   placeholder?: string;
   disabled?: boolean;
-  icon?: string; // Nuxt Icon component name
+  icon?: string;
+  multiple?: boolean;
 }
 
-const props = withDefaults(defineProps<Props>(), {
+const props = withDefaults(defineProps<SelectProps>(), {
   label: "",
   required: false,
   placeholder: "Select an option",
   disabled: false,
   icon: "",
+  multiple: false,
 });
 
-const modelValue = defineModel<Option["id"]>();
+const modelValue = defineModel<SelectOption["value"]>();
 
 const selectedOption = computed(() => {
-  return props.options.find(option => option.id === modelValue.value);
+  return props.options.find(option => option.value === modelValue.value);
 });
 </script>
 
 <template>
   <Listbox
     v-model="modelValue"
-    :disabled="disabled"
-    as="div"
     class="select"
+    as="div"
+    :disabled="disabled"
+    :multiple="multiple"
   >
     <ListboxLabel
       v-if="label"
@@ -57,7 +61,10 @@ const selectedOption = computed(() => {
       </span>
     </ListboxLabel>
 
-    <ListboxButton class="select__button">
+    <ListboxButton
+      class="select__button"
+      :class="{ 'select__button--disabled': disabled }"
+    >
       <span
         v-if="$slots.icon || icon"
         class="select__button-leading"
@@ -71,7 +78,7 @@ const selectedOption = computed(() => {
         class="select__button-text"
         :class="{ 'select__button-text--placeholder': !selectedOption }"
       >
-        {{ selectedOption?.name || placeholder }}
+        {{ selectedOption?.label || placeholder }}
       </span>
 
       <span class="select__button-icon">
@@ -83,46 +90,40 @@ const selectedOption = computed(() => {
       </span>
     </ListboxButton>
 
-    <transition
-      leave-active-class="tw:transition tw:duration-100 tw:ease-in"
-      leave-from-class="tw:opacity-100"
-      leave-to-class="tw:opacity-0"
-    >
-      <ListboxOptions class="select__options">
-        <ListboxOption
-          v-for="option in options"
-          :key="option.id ?? 'null'"
-          v-slot="{ active, selected }"
-          :value="option.id"
-          as="template"
+    <ListboxOptions class="select__options">
+      <ListboxOption
+        v-for="option in options"
+        :key="option.value ?? 'null'"
+        v-slot="{ active, selected }"
+        :value="option.value"
+        as="template"
+      >
+        <li
+          :class="[
+            'select__option',
+            active && 'select__option--active',
+            selected && 'select__option--selected',
+          ]"
         >
-          <li
-            :class="[
-              'select__option',
-              active && 'select__option--active',
-              selected && 'select__option--selected',
-            ]"
+          <Icon
+            v-if="option.icon"
+            :name="option.icon"
+            class="select__option-icon"
+            aria-hidden="true"
+          />
+          {{ option.label }}
+          <span
+            v-if="selected"
+            class="select__option-check"
           >
             <Icon
-              v-if="option.icon"
-              :name="option.icon"
-              class="select__option-icon"
+              name="lucide:check"
+              class="tw:size-5"
               aria-hidden="true"
             />
-            {{ option.name }}
-            <span
-              v-if="selected"
-              class="select__option-check"
-            >
-              <Icon
-                name="lucide:check"
-                class="tw:size-5"
-                aria-hidden="true"
-              />
-            </span>
-          </li>
-        </ListboxOption>
-      </ListboxOptions>
-    </transition>
+          </span>
+        </li>
+      </ListboxOption>
+    </ListboxOptions>
   </Listbox>
 </template>
