@@ -35,6 +35,14 @@ export const pcStorePlatforms = pgTable("pc_store_platforms", {
   ...defaultInsertTimestamps,
 });
 
+export const gameSubmissionsRelations = relations(
+  gameSubmissions,
+  ({ many }) => ({
+    platformGroups: many(platformGroups),
+    pcStorePlatforms: many(pcStorePlatforms),
+  })
+);
+
 export const platformGroupsRelations = relations(platformGroups, ({ one }) => ({
   submission: one(gameSubmissions, {
     fields: [platformGroups.submissionId],
