@@ -25,28 +25,32 @@ const modelValue = defineModel<
   SupportedPlatform["id"][] | SupportedPlatform["id"]
 >();
 
-const allOptions = computed<SelectOption[]>(() => [
-  ...SUPPORTED_PLATFORMS.map(platform => ({
-    label: platform.name,
-    value: platform.id,
-    icon: platform.icon,
-  })),
-  ...(props.allowEmpty
-    ? [{ value: null, label: "Any Platform", icon: "lucide:gamepad-2" }]
-    : []),
-]);
+const allOptions = computed<SelectOption[]>(() => {
+  return [
+    ...SUPPORTED_PLATFORMS.map(platform => ({
+      label: platform.name,
+      value: platform.id,
+      icon: platform.icon,
+    })),
+    ...(props.allowEmpty
+      ? [{ value: null, label: "Any Platform", icon: "lucide:gamepad-2" }]
+      : []),
+  ];
+});
 
 const availableOptions = computed(() =>
-  allOptions.value.filter(
-    option =>
-      props.includePlatforms.includes(
-        option.value as SupportedPlatform["id"]
-      ) &&
-      !props.excludePlatforms.includes(
-        option.value as SupportedPlatform["id"]
-      ) &&
-      (props.allowEmpty || option.value !== null)
-  )
+  allOptions.value
+    .filter(
+      option =>
+        props.includePlatforms.includes(
+          option.value as SupportedPlatform["id"]
+        ) &&
+        !props.excludePlatforms.includes(
+          option.value as SupportedPlatform["id"]
+        ) &&
+        (props.allowEmpty || option.value !== null)
+    )
+    .sort((a, b) => a.label.localeCompare(b.label))
 );
 </script>
 

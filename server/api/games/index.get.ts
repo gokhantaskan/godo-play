@@ -37,8 +37,8 @@ export default defineCachedEventHandler(
     const fixedConditions = [
       "category=(0,3,8,9)", // 0: main game, 3: bundle, 8: remake, 9: remaster
       "version_parent=null",
-      "aggregated_rating > 70",
-      "aggregated_rating_count > 5",
+      "aggregated_rating > 50",
+      "aggregated_rating_count > 2",
       "age_ratings.category=(2)", // PEGI
       `release_dates.date >= ${tenYearsAgoUnix}`,
       // `first_release_date >= ${tenYearsAgoUnix}`,

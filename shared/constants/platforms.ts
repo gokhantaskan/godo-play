@@ -1,17 +1,18 @@
 // IGDB Platforms
-export const SUPPORTED_PLATFORMS: {
-  id: number;
-  abbreviation: string;
-  name: string;
-  slug: string;
-  icon: string;
-}[] = [
+export const SUPPORTED_PLATFORMS = [
   {
     id: 6,
     abbreviation: "PC",
     name: "PC (Windows)",
     slug: "win",
     icon: "platforms:win",
+  },
+  {
+    id: 14,
+    abbreviation: "Mac",
+    name: "MacOS",
+    slug: "mac",
+    icon: "platforms:mac",
   },
   {
     id: 48,
@@ -28,6 +29,13 @@ export const SUPPORTED_PLATFORMS: {
     icon: "platforms:ps",
   },
   {
+    id: 49,
+    abbreviation: "XONE",
+    name: "Xbox One",
+    slug: "xboxone",
+    icon: "platforms:xbox",
+  },
+  {
     id: 169,
     abbreviation: "Series X|S",
     name: "Xbox Series X|S",
@@ -41,7 +49,7 @@ export const SUPPORTED_PLATFORMS: {
     slug: "switch",
     icon: "platforms:switch",
   },
-];
+] as const;
 
 export const SUPPORTED_PLATFORM_IDS = SUPPORTED_PLATFORMS.map(
   platform => platform.id

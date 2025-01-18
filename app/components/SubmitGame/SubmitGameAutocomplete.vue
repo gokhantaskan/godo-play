@@ -64,10 +64,7 @@ async function searchGames(event: { query: string }) {
 </script>
 
 <template>
-  <label
-    for="game-search"
-    class="tw:block tw:mb-2"
-  >
+  <label for="game-search">
     <span class="tw:font-medium">Game</span>
     <PAutoComplete
       v-model="value"

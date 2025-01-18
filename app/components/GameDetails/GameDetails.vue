@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { PlatformId } from "~/types/crossPlay";
 import { SUPPORTED_PLATFORM_IDS } from "~~/shared/constants/platforms";
 import type { GameDetails } from "~~/shared/types/igdb/gameDetails";
 
@@ -37,7 +38,8 @@ const availableMultiplayerModes = computed(() => {
   }
 
   return multiplayerModes.filter(
-    mode => SUPPORTED_PLATFORM_IDS.indexOf(mode.platform!) !== -1
+    mode =>
+      SUPPORTED_PLATFORM_IDS.indexOf((mode.platform as PlatformId)!) !== -1
   );
 });
 </script>

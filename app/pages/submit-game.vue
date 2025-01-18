@@ -1,92 +1,62 @@
 <script setup lang="ts">
-import type { GameOption } from "~/components/SubmitGame/SubmitGameAutocomplete.vue";
-import { SUPPORTED_PLATFORM_IDS } from "~~/shared/constants";
+import type { SubmitGamePayload } from "~/types/submit-game";
+import { SUPPORTED_PC_STORES } from "~~/shared/constants";
 
-// window.grecaptcha is only available in the browser on this page
-declare global {
-  interface Window {
-    grecaptcha?: Record<string, any>;
-  }
-}
+const {
+  selectedGame,
+  selectedPlatformGroups,
+  selectedPcStores,
+  selectedPcStoresPlatforms,
+  isSubmitting,
+  error: formError,
+  platformsWithPC,
+  allSelected,
+  isValidForm,
+  getExcludedPlatforms,
+  addPlatformGroup,
+  removePlatformGroup,
+  updatePcStorePlatforms,
+} = useSubmitGameForm();
 
-const { recaptchaSiteKey } = useRuntimeConfig().public.google;
-
-useHead({
-  script: [
-    {
-      src: `https://www.google.com/recaptcha/api.js?render=${recaptchaSiteKey}`,
-    },
-  ],
-});
-
-interface SubmitGameForm {
-  game: GameOption | null;
-  platformGroups: number[][];
-}
-
-const form = reactive<SubmitGameForm>({
-  game: null,
-  platformGroups: [[]],
-});
-
-const allSelected = computed(() => {
-  return form.platformGroups.flat().length === SUPPORTED_PLATFORM_IDS.length;
-});
-
-const isValidForm = computed(() => {
-  return form.game && form.platformGroups.some(group => group.length > 0);
-});
-
-function getExcludedPlatforms(currentGroupIndex: number) {
-  return form.platformGroups.reduce((acc: number[], group, index) => {
-    if (index !== currentGroupIndex) {
-      acc.push(...group);
-    }
-    return acc;
-  }, []);
-}
-
-function addPlatformGroup() {
-  form.platformGroups.push([]);
-}
-
-function removePlatformGroup(index: number) {
-  form.platformGroups.splice(index, 1);
-
-  if (form.platformGroups.length === 0) {
-    form.platformGroups.push([]);
-  }
-}
+const { getToken } = useRecaptcha();
 
 async function submit() {
   if (!isValidForm.value) {
     return;
   }
 
-  try {
-    // Get reCAPTCHA token
-    const token = await window.grecaptcha?.execute(recaptchaSiteKey, {
-      action: "submit",
-    });
+  isSubmitting.value = true;
 
-    // TODO: Send form data to API
-    console.log("submit", {
-      game: form.game,
-      platformGroups: form.platformGroups,
-      token,
-    });
+  try {
+    const token = await getToken("submit");
+    if (!token) {
+      return;
+    }
+
+    const payload: SubmitGamePayload = {
+      game: selectedGame.value!,
+      platformGroups: selectedPlatformGroups.value,
+      pcStoresPlatforms: selectedPcStoresPlatforms.value,
+    };
 
     await $fetch("/api/submit-game", {
       method: "POST",
       body: {
-        game: form.game,
-        platformGroups: form.platformGroups,
+        ...payload,
+        token,
       },
     });
 
-    navigateTo("/");
+    // Reset form after successful submission
+    selectedGame.value = null;
+    selectedPlatformGroups.value = [[]];
+    selectedPcStores.value = [];
+    selectedPcStoresPlatforms.value = {};
   } catch (error) {
-    console.error("Failed to submit form:", error);
+    formError.value = "Failed to submit the form. Please try again.";
+    console.error("Submit game error:", error);
+  } finally {
+    isSubmitting.value = false;
   }
 }
 </script>
@@ -103,46 +73,92 @@ async function submit() {
       class="tw:space-y-4"
       @submit.prevent="submit"
     >
-      <SubmitGameAutocomplete v-model="form.game" />
+      <SubmitGameAutocomplete
+        v-model="selectedGame"
+        class="tw:w-full"
+      />
 
       <fieldset>
-        <legend>Cross-play Groups</legend>
+        <legend>Platforms</legend>
         <p class="tw:text-sm tw:text-text-muted tw:mb-4">
-          Specify the platforms that can play together. Each group represents a
-          set of platforms that can interact with one another. If platforms
-          belong to separate groups, they cannot play together.
+          Choose compatible platforms for the game. Groups specify which
+          platforms can play together.
+          <strong class="tw:inline-block"
+            >If the game doesn't support cross-play, list each platform in its
+            own group.</strong
+          >
         </p>
         <div
-          v-for="(_, groupIndex) in form.platformGroups"
+          v-for="(_, groupIndex) in selectedPlatformGroups"
           :key="groupIndex"
           class="tw:flex tw:items-center tw:gap-2 tw:mb-4 tw:last-of-type:mb-0"
         >
           <PlatformSelect
-            v-model="form.platformGroups[groupIndex]"
+            v-model="selectedPlatformGroups[groupIndex]"
             :label="`Group ${groupIndex + 1}`"
             multiple
             :exclude-platforms="getExcludedPlatforms(groupIndex)"
           />
           <CloseButton
-            v-if="form.platformGroups.length > 1"
+            v-if="selectedPlatformGroups.length > 1"
             size="lg"
             @click="removePlatformGroup(groupIndex)"
           />
         </div>
 
         <TheButton
-          v-if="!allSelected"
           class="tw:mt-4"
           type="button"
           size="sm"
           variant="secondary"
           :disabled="
-            form.platformGroups[form.platformGroups.length - 1]?.length === 0
+            selectedPlatformGroups[selectedPlatformGroups.length - 1]
+              ?.length === 0 || allSelected
           "
           @click="addPlatformGroup"
         >
           Add Platform Group
         </TheButton>
+      </fieldset>
+
+      <fieldset :disabled="!platformsWithPC?.length">
+        <legend class="tw:text-lg tw:font-medium tw:mb-2">PC Stores</legend>
+        <p class="tw:text-sm tw:text-text-muted tw:mb-4">
+          Select PC stores where the game is available and specify which
+          platforms can play with each store's version.
+        </p>
+        <div class="tw:space-y-4">
+          <div
+            v-for="store in SUPPORTED_PC_STORES"
+            :key="store.slug"
+            class="tw:space-y-1"
+          >
+            <label class="tw:flex tw:items-center tw:gap-2">
+              <input
+                :id="store.slug"
+                v-model="selectedPcStores"
+                type="checkbox"
+                class="checkbox"
+                :value="store.slug"
+              />
+              <span>{{ store.label }}</span>
+            </label>
+
+            <div v-if="selectedPcStores.includes(store.slug)">
+              <PlatformSelect
+                :model-value="
+                  selectedPcStoresPlatforms[store.slug]?.crossplayPlatforms
+                "
+                :label="`Select platforms that ${store.label} version can play with`"
+                multiple
+                :include-platforms="
+                  platformsWithPC?.filter(platform => platform !== 6)
+                "
+                @update:model-value="updatePcStorePlatforms(store.slug, $event)"
+              />
+            </div>
+          </div>
+        </div>
       </fieldset>
 
       <div class="tw:mt-4">

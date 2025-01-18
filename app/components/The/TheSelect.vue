@@ -51,22 +51,19 @@ const selectedOptions = computed(() => {
 <template>
   <Listbox
     v-model="modelValue"
-    class="select"
+    class="select form-group"
     as="div"
     :disabled="disabled"
     :multiple="multiple"
   >
     <ListboxLabel
       v-if="label"
-      class="select__label"
+      class="form-group__label"
+      :class="{
+        'form-group__label--required': required,
+      }"
     >
       {{ label }}
-      <span
-        v-if="required"
-        class="select__label-required"
-      >
-        *
-      </span>
     </ListboxLabel>
 
     <ListboxButton
