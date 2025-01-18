@@ -12,6 +12,15 @@ export default defineNitroPlugin(async () => {
       host: config.redis.host,
       port: Number(config.redis.port),
       password: config.redis.password,
+      connectTimeout: 10000,
+      maxRetriesPerRequest: 3,
+      retryStrategy: (times: number) => {
+        if (times > 3) {
+          console.error("Redis connection failed after 3 retries");
+          return null;
+        }
+        return Math.min(times * 1000, 3000);
+      },
     }),
   });
 

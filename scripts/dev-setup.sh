@@ -2,7 +2,6 @@
 
 set -a
 source .env
-source .env.local
 set +a
 
 echo "🚀 Starting development environment setup..."
@@ -23,7 +22,7 @@ docker-compose up -d
 
 # Wait for PostgreSQL to be ready
 echo "⏳ Waiting for PostgreSQL to be ready..."
-until docker exec afet-bildirim-postgres pg_isready -U $DATABASE_USER -d $DATABASE_NAME -q; do
+until docker exec godoplay-postgres pg_isready -U $DATABASE_USER -d $DATABASE_NAME -q; do
   echo "PostgreSQL is unavailable - sleeping"
   sleep 1
 done
@@ -39,7 +38,7 @@ read -r choice
 if [ "$choice" == "y" ]; then
   echo "📥 Starting database dump inside Docker container..."
   # Execute pg_dump inside the Docker container
-  docker exec afet-bildirim-postgres \
+  docker exec godoplay-postgres \
     pg_dump "$REMOTE_DATABASE_URL" \
     --clean \
     --if-exists \
@@ -52,13 +51,13 @@ if [ "$choice" == "y" ]; then
     
     echo "📤 Importing dump into Docker container..."
     # Copy the dump file into the container and import it
-    docker cp "$DUMP_FILE" afet-bildirim-postgres:/tmp/dump.sql
-    docker exec afet-bildirim-postgres psql -U $DATABASE_USER -d $DATABASE_NAME -f /tmp/dump.sql
+    docker cp "$DUMP_FILE" godoplay-postgres:/tmp/dump.sql
+    docker exec godoplay-postgres psql -U $DATABASE_USER -d $DATABASE_NAME -f /tmp/dump.sql
     
     if [ $? -eq 0 ]; then
       echo "✅ Database import completed successfully"
       # Clean up the temporary file in the container
-      docker exec afet-bildirim-postgres rm /tmp/dump.sql
+      docker exec godoplay-postgres rm /tmp/dump.sql
     else
       echo "❌ Error during database import"
       exit 1

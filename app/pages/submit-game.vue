@@ -16,6 +16,7 @@ const {
   addPlatformGroup,
   removePlatformGroup,
   updatePcStorePlatforms,
+  resetForm,
 } = useSubmitGameForm();
 
 const { getToken } = useRecaptcha();
@@ -26,10 +27,12 @@ async function submit() {
   }
 
   isSubmitting.value = true;
+  formError.value = null;
 
   try {
     const token = await getToken("submit");
     if (!token) {
+      formError.value = "Failed to get reCAPTCHA token. Please try again.";
       return;
     }
 
@@ -39,7 +42,7 @@ async function submit() {
       pcStoresPlatforms: selectedPcStoresPlatforms.value,
     };
 
-    await $fetch("/api/submit-game", {
+    const { success } = await $fetch("/api/submit-game", {
       method: "POST",
       body: {
         ...payload,
@@ -47,13 +50,12 @@ async function submit() {
       },
     });
 
-    // Reset form after successful submission
-    selectedGame.value = null;
-    selectedPlatformGroups.value = [[]];
-    selectedPcStores.value = [];
-    selectedPcStoresPlatforms.value = {};
-  } catch (error) {
-    formError.value = "Failed to submit the form. Please try again.";
+    if (success) {
+      resetForm();
+    }
+  } catch (error: any) {
+    formError.value =
+      error?.data?.message || "Failed to submit the form. Please try again.";
     console.error("Submit game error:", error);
   } finally {
     isSubmitting.value = false;
@@ -147,26 +149,40 @@ async function submit() {
             <div v-if="selectedPcStores.includes(store.slug)">
               <PlatformSelect
                 :model-value="
-                  selectedPcStoresPlatforms[store.slug]?.crossplayPlatforms
+                  selectedPcStoresPlatforms[store.slug]?.crossplayPlatforms ??
+                  []
                 "
                 :label="`Select platforms that ${store.label} version can play with`"
                 multiple
                 :include-platforms="
                   platformsWithPC?.filter(platform => platform !== 6)
                 "
-                @update:model-value="updatePcStorePlatforms(store.slug, $event)"
+                @update:model-value="
+                  updatePcStorePlatforms(
+                    store.slug,
+                    Array.isArray($event) ? $event : [$event]
+                  )
+                "
               />
             </div>
           </div>
         </div>
       </fieldset>
 
+      <div
+        v-if="formError"
+        class="tw:text-sm tw:text-error"
+      >
+        {{ formError }}
+      </div>
+
       <div class="tw:mt-4">
         <TheButton
           type="submit"
-          :disabled="!isValidForm"
+          :loading="isSubmitting"
+          :disabled="!isValidForm || isSubmitting"
         >
-          Submit
+          {{ isSubmitting ? "Submitting..." : "Submit" }}
         </TheButton>
       </div>
     </form>

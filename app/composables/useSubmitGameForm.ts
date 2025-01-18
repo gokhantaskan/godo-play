@@ -41,7 +41,7 @@ export function useSubmitGameForm() {
     return selectedPcStores.value.every(store => {
       const platforms =
         selectedPcStoresPlatforms.value[store]?.crossplayPlatforms;
-      return Array.isArray(platforms) && platforms.length > 0;
+      return Array.isArray(platforms);
     });
   });
 
@@ -49,7 +49,7 @@ export function useSubmitGameForm() {
     const hasValidGroups = selectedPlatformGroups.value.some(
       group => group.length > 0
     );
-    const hasValidGame = Boolean(selectedGame.value);
+    const hasValidGame = typeof selectedGame.value === "object";
 
     return (
       hasValidGame &&
@@ -87,14 +87,18 @@ export function useSubmitGameForm() {
 
   function updatePcStorePlatforms(
     store: PCStore["slug"],
-    platforms: PlatformId | PlatformId[]
-  ): void {
-    selectedPcStoresPlatforms.value = {
-      ...selectedPcStoresPlatforms.value,
-      [store]: {
-        crossplayPlatforms: Array.isArray(platforms) ? platforms : [platforms],
-      },
+    platforms: PlatformId[]
+  ) {
+    selectedPcStoresPlatforms.value[store] = {
+      crossplayPlatforms: platforms,
     };
+  }
+
+  function resetForm() {
+    selectedGame.value = null;
+    selectedPlatformGroups.value = [[]];
+    selectedPcStores.value = [];
+    selectedPcStoresPlatforms.value = {};
   }
 
   watch(
@@ -160,5 +164,6 @@ export function useSubmitGameForm() {
     addPlatformGroup,
     removePlatformGroup,
     updatePcStorePlatforms,
+    resetForm,
   };
 }
