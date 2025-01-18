@@ -25,7 +25,11 @@ export default defineNuxtConfig({
       host: process.env.REDIS_HOST,
       port: process.env.REDIS_PORT,
     },
-    google: {},
+    google: {
+      recaptcha: {
+        secretKey: process.env.GOOGLE_RECAPTCHA_SECRET_KEY,
+      },
+    },
     public: {
       hotjar: {
         siteId: "",
@@ -56,6 +60,9 @@ export default defineNuxtConfig({
         },
       }),
     ],
+  },
+  build: {
+    transpile: ["drizzle-orm"],
   },
   typescript: {
     typeCheck: true,
