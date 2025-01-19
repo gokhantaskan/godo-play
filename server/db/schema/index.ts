@@ -1,2 +1,5 @@
-export * from "./game-submissions";
-export * from "./helpers/defaults";
+export * from "./relations";
+export * from "./tables/gameSubmissions";
+export * from "./tables/pcStorePlatforms";
+export * from "./tables/platformGroups";
+export * from "./tables/platforms";

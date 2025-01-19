@@ -25,9 +25,9 @@ export const SUPPORTED_PC_STORES = [
   },
   {
     id: null,
-    slug: "battle_net",
+    slug: "battlenet",
     label: "Battle.net",
-    icon: "stores:battle_net",
+    icon: "stores:battlenet",
   },
   {
     id: null,

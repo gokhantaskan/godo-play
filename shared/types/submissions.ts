@@ -1,3 +1,29 @@
+export interface GameSubmissionPlatform {
+  id: number;
+  name: string;
+  slug: string;
+}
+
+export interface GameSubmissionPlatformGroupPlatform {
+  platform: GameSubmissionPlatform;
+}
+
+export interface GameSubmissionPlatformGroup {
+  id: number;
+  groupName: string;
+  platformGroupPlatforms: GameSubmissionPlatformGroupPlatform[];
+}
+
+export interface GameSubmissionCrossplayEntry {
+  platform: GameSubmissionPlatform;
+}
+
+export interface GameSubmissionPCStorePlatform {
+  id: number;
+  storeSlug: string;
+  crossplayEntries: GameSubmissionCrossplayEntry[];
+}
+
 export interface GameSubmission {
   id: number;
   gameId: string;
@@ -7,23 +33,6 @@ export interface GameSubmission {
   status: "pending" | "approved" | "rejected";
   createdAt: string;
   updatedAt: string;
-  platformGroups: PlatformGroup[];
-  pcStorePlatforms: PCStorePlatform[];
-}
-
-export interface PlatformGroup {
-  id: number;
-  submissionId: number;
-  platforms: number[];
-  createdAt: string;
-  updatedAt: string;
-}
-
-export interface PCStorePlatform {
-  id: number;
-  submissionId: number;
-  storeSlug: string;
-  crossplayPlatforms: number[];
-  createdAt: string;
-  updatedAt: string;
+  platformGroups: GameSubmissionPlatformGroup[];
+  pcStorePlatforms: GameSubmissionPCStorePlatform[];
 }

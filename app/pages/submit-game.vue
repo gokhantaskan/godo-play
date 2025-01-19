@@ -42,7 +42,7 @@ async function submit() {
       pcStoresPlatforms: selectedPcStoresPlatforms.value,
     };
 
-    const { success } = await $fetch("/api/submit-game", {
+    const { success } = await $fetch("/api/submissions", {
       method: "POST",
       body: {
         ...payload,

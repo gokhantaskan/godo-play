@@ -9,6 +9,11 @@ export default defineNuxtConfig({
   future: {
     compatibilityVersion: 4,
   },
+  nitro: {
+    experimental: {
+      tasks: true,
+    },
+  },
   runtimeConfig: {
     igdb: {
       endpoint: process.env.IGDB_ENDPOINT,
@@ -35,7 +40,9 @@ export default defineNuxtConfig({
         siteId: "",
       },
       google: {
-        recaptchaSiteKey: "",
+        recaptcha: {
+          siteKey: "",
+        },
       },
       gtag: {
         id: "",

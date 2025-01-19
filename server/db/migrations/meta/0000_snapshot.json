@@ -1,0 +1,425 @@
+{
+  "id": "bb4fe3c0-e8d5-43ff-a225-754851e6ae15",
+  "prevId": "00000000-0000-0000-0000-000000000000",
+  "version": "7",
+  "dialect": "postgresql",
+  "tables": {
+    "public.game_submissions": {
+      "name": "game_submissions",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "game_id": {
+          "name": "game_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "game_name": {
+          "name": "game_name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "game_slug": {
+          "name": "game_slug",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "game_image_id": {
+          "name": "game_image_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "status": {
+          "name": "status",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'pending'"
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.pc_store_crossplay_platforms": {
+      "name": "pc_store_crossplay_platforms",
+      "schema": "",
+      "columns": {
+        "pc_store_platform_id": {
+          "name": "pc_store_platform_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "platform_id": {
+          "name": "platform_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "pc_store_crossplay_platforms_pc_store_platform_id_pc_store_platforms_id_fk": {
+          "name": "pc_store_crossplay_platforms_pc_store_platform_id_pc_store_platforms_id_fk",
+          "tableFrom": "pc_store_crossplay_platforms",
+          "tableTo": "pc_store_platforms",
+          "columnsFrom": [
+            "pc_store_platform_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "pc_store_crossplay_platforms_platform_id_platforms_id_fk": {
+          "name": "pc_store_crossplay_platforms_platform_id_platforms_id_fk",
+          "tableFrom": "pc_store_crossplay_platforms",
+          "tableTo": "platforms",
+          "columnsFrom": [
+            "platform_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {
+        "pc_store_crossplay_platforms_pc_store_platform_id_platform_id_pk": {
+          "name": "pc_store_crossplay_platforms_pc_store_platform_id_platform_id_pk",
+          "columns": [
+            "pc_store_platform_id",
+            "platform_id"
+          ]
+        }
+      },
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.pc_store_platform_groups": {
+      "name": "pc_store_platform_groups",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "submission_id": {
+          "name": "submission_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "group_name": {
+          "name": "group_name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "pc_store_platform_groups_submission_id_game_submissions_id_fk": {
+          "name": "pc_store_platform_groups_submission_id_game_submissions_id_fk",
+          "tableFrom": "pc_store_platform_groups",
+          "tableTo": "game_submissions",
+          "columnsFrom": [
+            "submission_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.pc_store_platforms": {
+      "name": "pc_store_platforms",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "submission_id": {
+          "name": "submission_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "store_slug": {
+          "name": "store_slug",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "pc_store_platforms_submission_id_game_submissions_id_fk": {
+          "name": "pc_store_platforms_submission_id_game_submissions_id_fk",
+          "tableFrom": "pc_store_platforms",
+          "tableTo": "game_submissions",
+          "columnsFrom": [
+            "submission_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.platform_group_platforms": {
+      "name": "platform_group_platforms",
+      "schema": "",
+      "columns": {
+        "platform_group_id": {
+          "name": "platform_group_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "platform_id": {
+          "name": "platform_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "platform_group_platforms_platform_group_id_platform_groups_id_fk": {
+          "name": "platform_group_platforms_platform_group_id_platform_groups_id_fk",
+          "tableFrom": "platform_group_platforms",
+          "tableTo": "platform_groups",
+          "columnsFrom": [
+            "platform_group_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "platform_group_platforms_platform_id_platforms_id_fk": {
+          "name": "platform_group_platforms_platform_id_platforms_id_fk",
+          "tableFrom": "platform_group_platforms",
+          "tableTo": "platforms",
+          "columnsFrom": [
+            "platform_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {
+        "platform_group_platforms_platform_group_id_platform_id_pk": {
+          "name": "platform_group_platforms_platform_group_id_platform_id_pk",
+          "columns": [
+            "platform_group_id",
+            "platform_id"
+          ]
+        }
+      },
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.platform_groups": {
+      "name": "platform_groups",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "submission_id": {
+          "name": "submission_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "group_name": {
+          "name": "group_name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "platform_groups_submission_id_game_submissions_id_fk": {
+          "name": "platform_groups_submission_id_game_submissions_id_fk",
+          "tableFrom": "platform_groups",
+          "tableTo": "game_submissions",
+          "columnsFrom": [
+            "submission_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.platforms": {
+      "name": "platforms",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "name": {
+          "name": "name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "slug": {
+          "name": "slug",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    }
+  },
+  "enums": {},
+  "schemas": {},
+  "sequences": {},
+  "roles": {},
+  "policies": {},
+  "views": {},
+  "_meta": {
+    "columns": {},
+    "schemas": {},
+    "tables": {}
+  }
+}

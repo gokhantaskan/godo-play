@@ -5,20 +5,20 @@ declare global {
 }
 
 export function useRecaptcha() {
-  const { recaptchaSiteKey } = useRuntimeConfig().public.google;
+  const { siteKey } = useRuntimeConfig().public.google.recaptcha;
   const error = ref<string | null>(null);
 
   useHead({
     script: [
       {
-        src: `https://www.google.com/recaptcha/api.js?render=${recaptchaSiteKey}`,
+        src: `https://www.google.com/recaptcha/api.js?render=${siteKey}`,
       },
     ],
   });
 
   async function getToken(action: string): Promise<string | null> {
     try {
-      return await window.grecaptcha?.execute(recaptchaSiteKey, { action });
+      return await window.grecaptcha?.execute(siteKey, { action });
     } catch (err) {
       console.error(err);
       error.value = "Failed to verify reCAPTCHA";

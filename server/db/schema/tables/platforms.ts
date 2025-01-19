@@ -1,0 +1,14 @@
+import { pgTable, serial, text } from "drizzle-orm/pg-core";
+import { createInsertSchema, createSelectSchema } from "drizzle-zod";
+
+import { defaultInsertTimestamps } from "../helpers/defaults";
+
+export const platforms = pgTable("platforms", {
+  id: serial("id").primaryKey(),
+  name: text("name").notNull(),
+  slug: text("slug").notNull(),
+  ...defaultInsertTimestamps,
+});
+
+export const insertPlatformSchema = createInsertSchema(platforms);
+export const selectPlatformSchema = createSelectSchema(platforms);

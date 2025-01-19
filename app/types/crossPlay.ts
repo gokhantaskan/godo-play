@@ -12,7 +12,7 @@ export type PCStore =
   | "epic_game_store"
   | "microsoft"
   | "gog"
-  | "battle_net"
+  | "battlenet"
   | "origin";
 
 // Cross-progression data structure

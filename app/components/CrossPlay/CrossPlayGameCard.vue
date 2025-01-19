@@ -1,16 +1,17 @@
 <script setup lang="ts">
 import { Icon } from "#components";
-import { SUPPORTED_PC_STORES, SUPPORTED_PLATFORMS } from "~~/shared/constants";
-import type { GameSubmission } from "~~/shared/types/submissions";
+import { SUPPORTED_PC_STORES } from "~~/shared/constants";
+import type {
+  GameSubmission,
+  GameSubmissionPlatform,
+} from "~~/shared/types/submissions";
 
 defineProps<{
   game: GameSubmission;
 }>();
 
-function getPlatformName(platformId: number): string {
-  return (
-    SUPPORTED_PLATFORMS.find(platform => platform.id === platformId)?.name ?? ""
-  );
+function getPlatformName(platform: GameSubmissionPlatform): string {
+  return platform.name;
 }
 
 function getStoreName(storeSlug: string): string {
@@ -61,7 +62,12 @@ function getStoreIcon(storeSlug: string): string {
               size="md"
             >
               <span>
-                {{ group.platforms.map(getPlatformName).sort().join(", ") }}
+                {{
+                  group.platformGroupPlatforms
+                    .map(p => getPlatformName(p.platform))
+                    .sort()
+                    .join(", ")
+                }}
               </span>
             </TheChip>
           </div>
@@ -89,8 +95,9 @@ function getStoreIcon(storeSlug: string): string {
                 class="tw:text-sm tw:[padding-inline-start:calc(1rem+var(--tw-spacing)*1)]"
               >
                 {{
-                  store.crossplayPlatforms?.map(getPlatformName).join(", ") ??
-                  "N/A"
+                  store.crossplayEntries
+                    ?.map(entry => getPlatformName(entry.platform))
+                    .join(", ") ?? "N/A"
                 }}
               </p>
             </div>
