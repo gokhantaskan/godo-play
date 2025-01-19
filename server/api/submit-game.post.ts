@@ -3,7 +3,9 @@ import { z } from "zod";
 import { db } from "../db";
 import {
   gameSubmissions,
+  pcStoreCrossplayPlatforms,
   pcStorePlatforms,
+  platformGroupPlatforms,
   platformGroups,
 } from "../db/schema";
 
@@ -91,23 +93,47 @@ export default defineEventHandler(async event => {
 
       // Insert platform groups
       await Promise.all(
-        validatedData.platformGroups.map((platforms: number[]) =>
-          tx.insert(platformGroups).values({
-            submissionId: submission.id,
-            platforms,
-          })
-        )
+        validatedData.platformGroups.map(async (platforms: number[]) => {
+          const [group] = await tx
+            .insert(platformGroups)
+            .values({
+              submissionId: submission.id,
+              groupName: "Standard Platforms",
+            })
+            .returning();
+
+          if (platforms.length > 0) {
+            await tx.insert(platformGroupPlatforms).values(
+              platforms.map(platformId => ({
+                platformGroupId: group.id,
+                platformId,
+              }))
+            );
+          }
+        })
       );
 
       // Insert PC store platforms
       await Promise.all(
         Object.entries(validatedData.pcStoresPlatforms).map(
-          ([storeSlug, { crossplayPlatforms }]) =>
-            tx.insert(pcStorePlatforms).values({
-              submissionId: submission.id,
-              storeSlug,
-              crossplayPlatforms,
-            })
+          async ([storeSlug, { crossplayPlatforms }]) => {
+            const [pcStore] = await tx
+              .insert(pcStorePlatforms)
+              .values({
+                submissionId: submission.id,
+                storeSlug,
+              })
+              .returning();
+
+            if (crossplayPlatforms.length > 0) {
+              await tx.insert(pcStoreCrossplayPlatforms).values(
+                crossplayPlatforms.map(platformId => ({
+                  pcStorePlatformId: pcStore.id,
+                  platformId,
+                }))
+              );
+            }
+          }
         )
       );
 
