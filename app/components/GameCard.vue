@@ -25,9 +25,6 @@ const categories = computed(() => {
 
       return theme.name;
     }) || []),
-    // Player Perspectives
-    // ...(props.game.player_perspectives?.map(perspective => perspective.name) ||
-    //   []),
   ];
 });
 
@@ -55,27 +52,10 @@ function getImageUrl(imageId: string) {
   return `https://images.igdb.com/igdb/image/upload/t_720p/${imageId}.jpg`;
 }
 
-function closeModal() {
-  isModalOpen.value = false;
-}
-
 async function openModal() {
   isModalOpen.value = true;
   await fetchGameDetails();
-  history.pushState({ modal: true }, "");
 }
-
-onMounted(() => {
-  window.addEventListener("popstate", () => {
-    if (isModalOpen.value) {
-      closeModal();
-    }
-  });
-});
-
-onUnmounted(() => {
-  window.removeEventListener("popstate", closeModal);
-});
 </script>
 
 <template>
