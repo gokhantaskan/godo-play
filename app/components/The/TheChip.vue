@@ -1,12 +1,13 @@
 <script setup lang="ts">
 interface Props {
-  label: string;
+  label?: string;
   variant?: "primary" | "green" | "yellow" | "red" | "gray";
   size?: "sm" | "md";
   removable?: boolean;
 }
 
 const props = withDefaults(defineProps<Props>(), {
+  label: "",
   variant: "primary",
   size: "sm",
   removable: false,
@@ -25,7 +26,9 @@ const chipClasses = computed(() => [
 
 <template>
   <div :class="chipClasses">
-    <span>{{ label }}</span>
+    <slot>
+      <span>{{ label }}</span>
+    </slot>
     <button
       v-if="removable"
       type="button"

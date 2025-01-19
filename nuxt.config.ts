@@ -110,6 +110,10 @@ export default defineNuxtConfig({
         prefix: "platforms",
         dir: "./app/assets/icons/platforms",
       },
+      {
+        prefix: "stores",
+        dir: "./app/assets/icons/stores",
+      },
     ],
   },
   site: {
@@ -145,7 +149,7 @@ export default defineNuxtConfig({
     loadStyles: false,
     components: {
       prefix: "P",
-      include: ["AutoComplete"],
+      include: ["AutoComplete", "Toast"],
     },
     options: {
       theme: "none",
