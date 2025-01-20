@@ -1,3 +1,4 @@
+import type { InferSelectModel } from "drizzle-orm";
 import { pgTable, serial, text } from "drizzle-orm/pg-core";
 import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 
@@ -12,3 +13,5 @@ export const platforms = pgTable("platforms", {
 
 export const insertPlatformSchema = createInsertSchema(platforms);
 export const selectPlatformSchema = createSelectSchema(platforms);
+
+export type Platform = InferSelectModel<typeof platforms>;

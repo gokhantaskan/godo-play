@@ -1,3 +1,4 @@
+import type { InferSelectModel } from "drizzle-orm";
 import { pgTable, serial, text } from "drizzle-orm/pg-core";
 import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 
@@ -12,3 +13,5 @@ export const pcStores = pgTable("pc_stores", {
 
 export const insertPcStoreSchema = createInsertSchema(pcStores);
 export const selectPcStoreSchema = createSelectSchema(pcStores);
+
+export type GameStore = InferSelectModel<typeof pcStores>;

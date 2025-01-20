@@ -4,8 +4,9 @@ import {
   SUPPORTED_PLATFORM_IDS,
   SUPPORTED_PLATFORMS,
 } from "~~/shared/constants";
+import type { PlatformHardcoded } from "~~/shared/types/globals";
 
-type SupportedPlatform = (typeof SUPPORTED_PLATFORMS)[number];
+type SupportedPlatform = PlatformHardcoded;
 
 interface PlatformSelectProps {
   allowEmpty?: boolean;
@@ -40,16 +41,22 @@ const allOptions = computed<SelectOption[]>(() => {
 
 const availableOptions = computed(() =>
   allOptions.value
-    .filter(
-      option =>
+    .filter(option => {
+      // Always allow "Any Platform" option if allowEmpty is true
+      if (option.value === null) {
+        return props.allowEmpty;
+      }
+
+      // For platform options, check include/exclude lists
+      return (
         props.includePlatforms.includes(
           option.value as SupportedPlatform["id"]
         ) &&
         !props.excludePlatforms.includes(
           option.value as SupportedPlatform["id"]
-        ) &&
-        (props.allowEmpty || option.value !== null)
-    )
+        )
+      );
+    })
     .sort((a, b) => a.label.localeCompare(b.label))
 );
 </script>

@@ -1,8 +1,10 @@
+import type { PlatformHardcoded } from "~~/shared/types/globals";
+
 // IGDB Platforms
-export const SUPPORTED_PLATFORMS = [
+export const SUPPORTED_PLATFORMS: PlatformHardcoded[] = [
   {
     id: 6,
-    name: "PC (Windows)",
+    name: "PC",
     slug: "win",
     icon: "platforms:win",
   },
@@ -32,7 +34,7 @@ export const SUPPORTED_PLATFORMS = [
   },
   {
     id: 169,
-    name: "Xbox Series X|S",
+    name: "Xbox Series S|X",
     slug: "series-x-s",
     icon: "platforms:xbox",
   },
@@ -42,8 +44,7 @@ export const SUPPORTED_PLATFORMS = [
     slug: "switch",
     icon: "platforms:switch",
   },
-] as const;
+];
 
-export const SUPPORTED_PLATFORM_IDS = SUPPORTED_PLATFORMS.map(
-  platform => platform.id
-);
+export const SUPPORTED_PLATFORM_IDS: PlatformHardcoded["id"][] =
+  SUPPORTED_PLATFORMS.map(platform => platform.id);
