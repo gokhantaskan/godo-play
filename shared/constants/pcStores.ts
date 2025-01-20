@@ -1,3 +1,4 @@
+// IGDB PC Stores + Local Stores
 export const SUPPORTED_PC_STORES = [
   {
     id: 1,
@@ -19,18 +20,19 @@ export const SUPPORTED_PC_STORES = [
   },
   {
     id: 26,
-    slug: "epic_game_store",
+    slug: "epic_game_store", // Keep it as epic_game_store as it is in IGDB
     label: "Epic Games Store",
     icon: "stores:egs",
   },
+  // Local Stores
   {
-    id: null,
+    id: 1000,
     slug: "battlenet",
     label: "Battle.net",
     icon: "stores:battlenet",
   },
   {
-    id: null,
+    id: 1001,
     slug: "origin",
     label: "Origin",
     icon: "stores:origin",

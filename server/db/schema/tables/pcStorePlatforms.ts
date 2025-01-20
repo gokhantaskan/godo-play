@@ -31,7 +31,7 @@ export const pcStorePlatforms = pgTable("pc_store_platforms", {
   submissionId: integer("submission_id")
     .references(() => gameSubmissions.id)
     .notNull(),
-  storeSlug: text("store_slug").notNull(), // e.g., "steam", "epic"
+  storeSlug: text("store_slug").notNull(),
   ...defaultInsertTimestamps,
 });
 

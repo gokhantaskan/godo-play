@@ -11,10 +11,6 @@ import {
 } from "../tables/platformGroups";
 import { platforms } from "../tables/platforms";
 
-/**
- * Define relations using Drizzle's "relations" helper.
- * This clarifies how tables connect for your ORM queries.
- */
 export const gameSubmissionsRelations = relations(
   gameSubmissions,
   ({ many }) => ({

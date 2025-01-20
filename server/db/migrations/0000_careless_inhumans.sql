@@ -31,6 +31,15 @@ CREATE TABLE "pc_store_platforms" (
 	"updated_at" timestamp DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
+CREATE TABLE "pc_stores" (
+	"id" serial PRIMARY KEY NOT NULL,
+	"name" text NOT NULL,
+	"slug" text NOT NULL,
+	"created_at" timestamp DEFAULT now() NOT NULL,
+	"updated_at" timestamp DEFAULT now() NOT NULL,
+	CONSTRAINT "pc_stores_slug_unique" UNIQUE("slug")
+);
+--> statement-breakpoint
 CREATE TABLE "platform_group_platforms" (
 	"platform_group_id" integer NOT NULL,
 	"platform_id" integer NOT NULL,
@@ -50,7 +59,8 @@ CREATE TABLE "platforms" (
 	"name" text NOT NULL,
 	"slug" text NOT NULL,
 	"created_at" timestamp DEFAULT now() NOT NULL,
-	"updated_at" timestamp DEFAULT now() NOT NULL
+	"updated_at" timestamp DEFAULT now() NOT NULL,
+	CONSTRAINT "platforms_slug_unique" UNIQUE("slug")
 );
 --> statement-breakpoint
 ALTER TABLE "pc_store_crossplay_platforms" ADD CONSTRAINT "pc_store_crossplay_platforms_pc_store_platform_id_pc_store_platforms_id_fk" FOREIGN KEY ("pc_store_platform_id") REFERENCES "public"."pc_store_platforms"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint

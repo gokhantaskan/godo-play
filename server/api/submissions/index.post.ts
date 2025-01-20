@@ -26,6 +26,7 @@ const submitGameSchema = z.object({
       message: "Each platform group must contain at least one platform",
     }),
   pcStoresPlatforms: z.record(
+    z.string(),
     z.object({
       crossplayPlatforms: z.array(z.number()).default([]),
     })
@@ -196,7 +197,7 @@ export default defineEventHandler(async event => {
               .insert(pcStorePlatforms)
               .values({
                 submissionId: submission.id,
-                storeSlug: storeSlug,
+                storeSlug,
               })
               .returning();
 

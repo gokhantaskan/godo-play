@@ -81,6 +81,17 @@ export default defineEventHandler(async () => {
       ...submission,
       createdAt: new Date(submission.createdAt),
       updatedAt: new Date(submission.updatedAt),
+      pcStorePlatforms: submission.pcStorePlatforms.map(store => ({
+        id: store.id,
+        storeSlug: store.storeSlug,
+        crossplayEntries: store.crossplayEntries.map(entry => ({
+          platform: {
+            id: entry.platform.id,
+            name: entry.platform.name,
+            slug: entry.platform.slug,
+          },
+        })),
+      })),
     }));
 
     const response: SubmissionResponse = { submissions };

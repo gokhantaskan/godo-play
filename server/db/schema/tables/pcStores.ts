@@ -3,12 +3,12 @@ import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 
 import { defaultInsertTimestamps } from "../helpers/defaults";
 
-export const platforms = pgTable("platforms", {
+export const pcStores = pgTable("pc_stores", {
   id: serial("id").primaryKey(),
   name: text("name").notNull(),
   slug: text("slug").notNull().unique(),
   ...defaultInsertTimestamps,
 });
 
-export const insertPlatformSchema = createInsertSchema(platforms);
-export const selectPlatformSchema = createSelectSchema(platforms);
+export const insertPcStoreSchema = createInsertSchema(pcStores);
+export const selectPcStoreSchema = createSelectSchema(pcStores);
