@@ -8,6 +8,13 @@
       "when": 1737440428583,
       "tag": "0000_conscious_junta",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1737464356254,
+      "tag": "0001_bent_sumo",
+      "breakpoints": true
     }
   ]
 }

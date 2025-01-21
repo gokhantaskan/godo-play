@@ -28,7 +28,7 @@ export const pcStorePlatformGroups = pgTable("pc_store_platform_groups", {
 export const pcStorePlatforms = pgTable("pc_store_platforms", {
   id: serial("id").primaryKey(),
   submissionId: integer("submission_id")
-    .references(() => gameSubmissions.id)
+    .references(() => gameSubmissions.id, { onDelete: "cascade" })
     .notNull(),
   storeSlug: text("store_slug").notNull(),
   ...defaultInsertTimestamps,
@@ -43,7 +43,7 @@ export const pcStoreCrossplayPlatforms = pgTable(
   "pc_store_crossplay_platforms",
   {
     pcStorePlatformId: integer("pc_store_platform_id")
-      .references(() => pcStorePlatforms.id)
+      .references(() => pcStorePlatforms.id, { onDelete: "cascade" })
       .notNull(),
     platformId: integer("platform_id")
       .references(() => platforms.id)

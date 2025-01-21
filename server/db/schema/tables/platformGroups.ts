@@ -13,7 +13,7 @@ import { platforms } from "./platforms";
 export const platformGroups = pgTable("platform_groups", {
   id: serial("id").primaryKey(),
   submissionId: integer("submission_id")
-    .references(() => gameSubmissions.id)
+    .references(() => gameSubmissions.id, { onDelete: "cascade" })
     .notNull(),
   ...defaultInsertTimestamps,
 });
@@ -26,7 +26,7 @@ export const platformGroupPlatforms = pgTable(
   "platform_group_platforms",
   {
     platformGroupId: integer("platform_group_id")
-      .references(() => platformGroups.id)
+      .references(() => platformGroups.id, { onDelete: "cascade" })
       .notNull(),
     platformId: integer("platform_id")
       .references(() => platforms.id)
