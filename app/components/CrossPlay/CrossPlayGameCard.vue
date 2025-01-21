@@ -25,8 +25,15 @@ const getStoreName = (storeSlug: string) =>
 const getStoreIcon = (storeSlug: string) =>
   SUPPORTED_PC_STORES_BY_SLUG[storeSlug]?.icon ?? "";
 
-const hasCrossplaySupport = (crossplayLength: number) =>
-  crossplayLength === (groupPlatformsWithPC?.value?.length ?? 0) - 1;
+const hasCrossplaySupport = (crossplayLength: number) => {
+  const platformsInGroup = groupPlatformsWithPC.value;
+  // If there's only one platform (PC) in the group, return false
+  if (!platformsInGroup || platformsInGroup.length <= 1) {
+    return false;
+  }
+  // Check if the number of crossplay entries matches the number of other platforms
+  return crossplayLength === platformsInGroup.length - 1;
+};
 </script>
 
 <template>

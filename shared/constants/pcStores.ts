@@ -36,8 +36,14 @@ export const SUPPORTED_PC_STORES: GameStoreHardcoded[] = [
   {
     id: 1001,
     slug: "origin",
-    name: "Origin",
+    name: "EA Play (Origin)",
     icon: "stores:origin",
+  },
+  {
+    id: 1002,
+    slug: "uconnect",
+    name: "Ubisoft Connect",
+    icon: "stores:uconnect",
   },
 ];
 
