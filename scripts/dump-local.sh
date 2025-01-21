@@ -6,11 +6,11 @@ source .env
 set +a
 
 # Create backups directory if it doesn't exist
-mkdir -p backups
+mkdir -p backups/local
 
 # Generate timestamp for the filename
 TIMESTAMP=$(date +%Y%m%d_%H%M%S)
-DUMP_FILE="backups/godoplay_db_${TIMESTAMP}.sql"
+DUMP_FILE="backups/local/${TIMESTAMP}.sql"
 
 echo "📥 Starting database dump..."
 echo "👉 Using database: $POSTGRES_NAME"

@@ -11,6 +11,10 @@ interface SelectedPlatforms {
   p3: SupportedPlatform["id"] | null;
 }
 
+definePageMeta({
+  name: "CrossPlayGamesPage",
+});
+
 // Platform Selection Management
 const selectedPlatforms = useState<SelectedPlatforms>(
   "submission-platforms",
