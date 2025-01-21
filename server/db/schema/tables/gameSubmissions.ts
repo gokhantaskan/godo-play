@@ -1,4 +1,4 @@
-import { pgTable, serial, text } from "drizzle-orm/pg-core";
+import { integer, pgTable, serial, text } from "drizzle-orm/pg-core";
 import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 
 import { defaultInsertTimestamps } from "../helpers/defaults";
@@ -9,10 +9,10 @@ import { defaultInsertTimestamps } from "../helpers/defaults";
  */
 export const gameSubmissions = pgTable("game_submissions", {
   id: serial("id").primaryKey(),
-  gameId: text("game_id").notNull(),
+  gameId: integer("game_id").unique().notNull(),
   gameName: text("game_name").notNull(),
-  gameSlug: text("game_slug").notNull(),
-  gameImageId: text("game_image_id"),
+  gameSlug: text("game_slug").unique().notNull(),
+  gameImageId: text("game_image_id").unique(),
   status: text("status", { enum: ["pending", "approved", "rejected"] })
     .default("pending")
     .notNull(),

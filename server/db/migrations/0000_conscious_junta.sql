@@ -1,12 +1,15 @@
 CREATE TABLE "game_submissions" (
 	"id" serial PRIMARY KEY NOT NULL,
-	"game_id" text NOT NULL,
+	"game_id" integer NOT NULL,
 	"game_name" text NOT NULL,
 	"game_slug" text NOT NULL,
 	"game_image_id" text,
 	"status" text DEFAULT 'pending' NOT NULL,
 	"created_at" timestamp DEFAULT now() NOT NULL,
-	"updated_at" timestamp DEFAULT now() NOT NULL
+	"updated_at" timestamp DEFAULT now() NOT NULL,
+	CONSTRAINT "game_submissions_game_id_unique" UNIQUE("game_id"),
+	CONSTRAINT "game_submissions_game_slug_unique" UNIQUE("game_slug"),
+	CONSTRAINT "game_submissions_game_image_id_unique" UNIQUE("game_image_id")
 );
 --> statement-breakpoint
 CREATE TABLE "pc_store_crossplay_platforms" (
@@ -18,7 +21,6 @@ CREATE TABLE "pc_store_crossplay_platforms" (
 CREATE TABLE "pc_store_platform_groups" (
 	"id" serial PRIMARY KEY NOT NULL,
 	"submission_id" integer NOT NULL,
-	"group_name" text NOT NULL,
 	"created_at" timestamp DEFAULT now() NOT NULL,
 	"updated_at" timestamp DEFAULT now() NOT NULL
 );
@@ -49,7 +51,6 @@ CREATE TABLE "platform_group_platforms" (
 CREATE TABLE "platform_groups" (
 	"id" serial PRIMARY KEY NOT NULL,
 	"submission_id" integer NOT NULL,
-	"group_name" text NOT NULL,
 	"created_at" timestamp DEFAULT now() NOT NULL,
 	"updated_at" timestamp DEFAULT now() NOT NULL
 );
@@ -57,6 +58,7 @@ CREATE TABLE "platform_groups" (
 CREATE TABLE "platforms" (
 	"id" serial PRIMARY KEY NOT NULL,
 	"name" text NOT NULL,
+	"abbreviation" text NOT NULL,
 	"slug" text NOT NULL,
 	"created_at" timestamp DEFAULT now() NOT NULL,
 	"updated_at" timestamp DEFAULT now() NOT NULL,

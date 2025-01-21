@@ -21,7 +21,7 @@ const {
 
 const { getToken } = useRecaptcha();
 
-async function submit() {
+async function handleSubmit() {
   if (!isValidForm.value) {
     return;
   }
@@ -73,12 +73,44 @@ async function submit() {
 
     <form
       class="tw:space-y-4"
-      @submit.prevent="submit"
+      @submit.prevent="handleSubmit"
     >
       <SubmitGameAutocomplete
         v-model="selectedGame"
         class="tw:w-full"
       />
+
+      <div v-if="selectedGame">
+        <div
+          class="tw:grid tw:grid-cols-[clamp(4rem,8vw,12rem)_minmax(0,1fr)] tw:gap-2"
+        >
+          <div
+            class="tw:rounded-lg tw:overflow-hidden tw:h-fit tw:shadow-sm tw:bg-border"
+          >
+            <NuxtImg
+              :src="`https://images.igdb.com/igdb/image/upload/t_cover_big/${selectedGame.imageId}.jpg`"
+              :alt="selectedGame.name"
+              lazy
+            />
+          </div>
+          <div class="tw:space-y-2">
+            <h2 class="tw:text-lg tw:font-medium">{{ selectedGame.name }}</h2>
+            <ul class="tw:ps-4 tw:m-0">
+              <li class="tw:text-sm">
+                {{
+                  selectedGame.platforms
+                    .map(platform => platform.name)
+                    .toSorted()
+                    .join(", ")
+                }}
+              </li>
+              <li class="tw:text-sm">
+                {{ selectedGame.gameModes.map(mode => mode.name).join(", ") }}
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
 
       <fieldset>
         <legend>Platforms</legend>
@@ -128,6 +160,10 @@ async function submit() {
         <p class="tw:text-sm tw:text-text-muted tw:mb-4">
           Select PC stores where the game is available and specify which
           platforms can play with each store's version.
+          <strong class="tw:inline-block"
+            >If the store doesn't support cross-play, leave the box
+            empty.</strong
+          >
         </p>
         <div class="tw:space-y-4">
           <div
@@ -143,7 +179,7 @@ async function submit() {
                 class="checkbox"
                 :value="store.slug"
               />
-              <span>{{ store.label }}</span>
+              <span>{{ store.name }}</span>
             </label>
 
             <div v-if="selectedPcStores.includes(store.slug)">
@@ -152,7 +188,7 @@ async function submit() {
                   selectedPcStoresPlatforms[store.slug]?.crossplayPlatforms ??
                   []
                 "
-                :label="`Select platforms that ${store.label} version can play with`"
+                :label="`Select platforms that ${store.name} version can play with`"
                 multiple
                 :include-platforms="
                   platformsWithPC?.filter(platform => platform !== 6)

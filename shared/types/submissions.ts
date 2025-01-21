@@ -10,7 +10,6 @@ export interface GameSubmissionPlatformGroupPlatform {
 
 export interface GameSubmissionPlatformGroup {
   id: number;
-  groupName: string;
   platformGroupPlatforms: GameSubmissionPlatformGroupPlatform[];
 }
 

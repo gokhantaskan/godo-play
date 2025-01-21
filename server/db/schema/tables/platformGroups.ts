@@ -1,10 +1,4 @@
-import {
-  integer,
-  pgTable,
-  primaryKey,
-  serial,
-  text,
-} from "drizzle-orm/pg-core";
+import { integer, pgTable, primaryKey, serial } from "drizzle-orm/pg-core";
 import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 
 import { defaultInsertTimestamps } from "../helpers/defaults";
@@ -21,7 +15,6 @@ export const platformGroups = pgTable("platform_groups", {
   submissionId: integer("submission_id")
     .references(() => gameSubmissions.id)
     .notNull(),
-  groupName: text("group_name").notNull(),
   ...defaultInsertTimestamps,
 });
 

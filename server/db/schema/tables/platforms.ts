@@ -7,6 +7,7 @@ import { defaultInsertTimestamps } from "../helpers/defaults";
 export const platforms = pgTable("platforms", {
   id: serial("id").primaryKey(),
   name: text("name").notNull(),
+  abbreviation: text("abbreviation").notNull(),
   slug: text("slug").notNull().unique(),
   ...defaultInsertTimestamps,
 });

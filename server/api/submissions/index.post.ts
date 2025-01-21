@@ -39,7 +39,7 @@ const SubmissionResponseSchema = z.object({
   message: z.string(),
   data: z.object({
     id: z.number(),
-    gameId: z.string(),
+    gameId: z.number(),
     gameName: z.string(),
     gameSlug: z.string(),
     gameImageId: z.string().nullable(),
@@ -102,7 +102,7 @@ export default defineEventHandler(async event => {
       const [submission] = await tx
         .insert(gameSubmissions)
         .values({
-          gameId: String(validatedData.game.id),
+          gameId: validatedData.game.id,
           gameName: validatedData.game.name,
           gameSlug: validatedData.game.slug,
           gameImageId: validatedData.game.imageId,
@@ -159,7 +159,6 @@ export default defineEventHandler(async event => {
             .insert(platformGroups)
             .values({
               submissionId: submission.id,
-              groupName: "Standard Platforms",
             })
             .returning();
 

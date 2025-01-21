@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import type { PlatformId } from "~/types/crossPlay";
-import { SUPPORTED_PLATFORMS } from "~~/shared/constants";
+import type { SUPPORTED_PLATFORMS } from "~~/shared/constants";
 import type { GameSubmission } from "~~/shared/types/submissions";
 
 type SupportedPlatform = (typeof SUPPORTED_PLATFORMS)[number];
 
 interface SelectedPlatforms {
-  p1: SupportedPlatform["id"];
+  p1: SupportedPlatform["id"] | null;
   p2: SupportedPlatform["id"] | null;
   p3: SupportedPlatform["id"] | null;
 }
@@ -15,7 +15,7 @@ interface SelectedPlatforms {
 const selectedPlatforms = useState<SelectedPlatforms>(
   "submission-platforms",
   () => ({
-    p1: SUPPORTED_PLATFORMS[0]!.id,
+    p1: null,
     p2: null,
     p3: null,
   })
@@ -33,7 +33,7 @@ const filteredSubmissions = computed(() => {
     selectedPlatforms.value.p3,
   ].filter((p): p is PlatformId => p !== null);
 
-  if (platforms.length === 0) {
+  if (!platforms.length) {
     return data.value.submissions;
   }
 
@@ -61,7 +61,7 @@ const { data, error, refresh } = await useFetch<{
 </script>
 
 <template>
-  <div class="tw:container">
+  <main class="tw:container tw:space-y-4">
     <header>
       <h1>Cross-Play Games</h1>
       <TheButton @click="refresh">
@@ -71,12 +71,13 @@ const { data, error, refresh } = await useFetch<{
 
     <section class="tw:flex tw:max-sm:flex-col tw:gap-4 tw:max-w-2xl">
       <PlatformSelect
-        v-model="selectedPlatforms.p1"
+        v-model="selectedPlatforms.p1 as SupportedPlatform['id']"
         :exclude-platforms="
           [selectedPlatforms.p2, selectedPlatforms.p3].filter(
             (p): p is SupportedPlatform['id'] => p !== null
           )
         "
+        allow-empty
         label="Platform 1"
       />
 
@@ -120,7 +121,7 @@ const { data, error, refresh } = await useFetch<{
     </div>
 
     <p v-else>No submissions found.</p>
-  </div>
+  </main>
 </template>
 
 <style scoped lang="scss">

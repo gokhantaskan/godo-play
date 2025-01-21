@@ -16,7 +16,6 @@ export const pcStorePlatformGroups = pgTable("pc_store_platform_groups", {
   submissionId: integer("submission_id")
     .references(() => gameSubmissions.id)
     .notNull(),
-  groupName: text("group_name").notNull(),
   ...defaultInsertTimestamps,
 });
 

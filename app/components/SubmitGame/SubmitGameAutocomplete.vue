@@ -6,6 +6,8 @@ export interface GameOption {
   id: number;
   name: string;
   slug: string;
+  platforms: DashboardGame["platforms"];
+  gameModes: DashboardGame["game_modes"];
   imageId?: string;
 }
 
@@ -52,6 +54,8 @@ async function searchGames(event: { query: string }) {
       id: game.id,
       name: game.name,
       slug: game.slug,
+      platforms: game.platforms,
+      gameModes: game.game_modes,
       imageId: game.cover?.image_id ?? "",
     }));
   } catch (error) {

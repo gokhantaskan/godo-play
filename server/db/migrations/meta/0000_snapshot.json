@@ -1,5 +1,5 @@
 {
-  "id": "16294264-e83b-475a-aa58-15f23966c347",
+  "id": "8a133f5c-fef8-41e2-a641-abf0a8920200",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -16,7 +16,7 @@
         },
         "game_id": {
           "name": "game_id",
-          "type": "text",
+          "type": "integer",
           "primaryKey": false,
           "notNull": true
         },
@@ -63,7 +63,29 @@
       "indexes": {},
       "foreignKeys": {},
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {},
+      "uniqueConstraints": {
+        "game_submissions_game_id_unique": {
+          "name": "game_submissions_game_id_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "game_id"
+          ]
+        },
+        "game_submissions_game_slug_unique": {
+          "name": "game_submissions_game_slug_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "game_slug"
+          ]
+        },
+        "game_submissions_game_image_id_unique": {
+          "name": "game_submissions_game_image_id_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "game_image_id"
+          ]
+        }
+      },
       "policies": {},
       "checkConstraints": {},
       "isRLSEnabled": false
@@ -141,12 +163,6 @@
         "submission_id": {
           "name": "submission_id",
           "type": "integer",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "group_name": {
-          "name": "group_name",
-          "type": "text",
           "primaryKey": false,
           "notNull": true
         },
@@ -375,12 +391,6 @@
           "primaryKey": false,
           "notNull": true
         },
-        "group_name": {
-          "name": "group_name",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true
-        },
         "created_at": {
           "name": "created_at",
           "type": "timestamp",
@@ -430,6 +440,12 @@
         },
         "name": {
           "name": "name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "abbreviation": {
+          "name": "abbreviation",
           "type": "text",
           "primaryKey": false,
           "notNull": true

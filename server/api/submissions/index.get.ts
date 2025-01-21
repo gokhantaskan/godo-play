@@ -8,7 +8,7 @@ const SubmissionResponseSchema = z.object({
   submissions: z.array(
     z.object({
       id: z.number(),
-      gameId: z.string(),
+      gameId: z.number(),
       gameName: z.string(),
       gameSlug: z.string(),
       gameImageId: z.string().nullable(),
@@ -18,7 +18,6 @@ const SubmissionResponseSchema = z.object({
       platformGroups: z.array(
         z.object({
           id: z.number(),
-          groupName: z.string(),
           platformGroupPlatforms: z.array(
             z.object({
               platform: z.object({

@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup lang="ts" generic="T extends SelectOption['value']">
 import {
   Listbox,
   ListboxButton,
@@ -22,6 +22,8 @@ export interface SelectProps {
   disabled?: boolean;
   icon?: string;
   multiple?: boolean;
+  valueKey?: string;
+  labelKey?: string;
 }
 
 const props = withDefaults(defineProps<SelectProps>(), {
@@ -31,19 +33,21 @@ const props = withDefaults(defineProps<SelectProps>(), {
   disabled: false,
   icon: "",
   multiple: false,
+  valueKey: "value",
+  labelKey: "label",
 });
 
-const modelValue = defineModel<SelectOption["value"] | any[]>();
+const modelValue = defineModel<T | T[]>();
 
 const selectedOptions = computed(() => {
   if (!props.multiple) {
     const option = props.options.find(
-      option => option.value === modelValue.value
+      option => option[props.valueKey] === modelValue.value
     );
     return option ? [option] : [];
   }
   return props.options.filter(option =>
-    (modelValue.value as SelectOption["value"][])?.includes(option.value)
+    (modelValue.value as T[])?.includes(option[props.valueKey])
   );
 });
 </script>
