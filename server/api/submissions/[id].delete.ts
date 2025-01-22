@@ -1,0 +1,58 @@
+import { eq } from "drizzle-orm";
+
+import { db } from "~~/server/db";
+import { gameSubmissions } from "~~/server/db/schema";
+import { isH3ErrorLike } from "~~/server/utils/errorHandler";
+
+export default defineEventHandler(async event => {
+  const submissionId = parseInt(event.context.params?.id as string);
+
+  if (isNaN(submissionId)) {
+    throw createError({
+      statusCode: 400,
+      message: "Invalid submission ID",
+    });
+  }
+
+  try {
+    const result = await db.transaction(async tx => {
+      // Check if submission exists and is approved
+      const submission = await tx.query.gameSubmissions.findFirst({
+        where: eq(gameSubmissions.id, submissionId),
+      });
+
+      if (!submission) {
+        throw createError({
+          statusCode: 404,
+          message: "Submission not found",
+        });
+      }
+
+      if (submission.status !== "approved") {
+        throw createError({
+          statusCode: 400,
+          message: "Only approved submissions can be deleted",
+        });
+      }
+
+      // Delete the submission (cascading will handle related records)
+      await tx
+        .delete(gameSubmissions)
+        .where(eq(gameSubmissions.id, submissionId));
+
+      return submission;
+    });
+
+    return result;
+  } catch (error: unknown) {
+    if (isH3ErrorLike(error)) {
+      throw error;
+    }
+
+    throw createError({
+      statusCode: 500,
+      message: "Failed to delete game submission",
+      data: process.env.NODE_ENV === "development" ? error : undefined,
+    });
+  }
+});

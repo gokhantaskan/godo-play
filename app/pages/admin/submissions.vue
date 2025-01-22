@@ -6,7 +6,7 @@ import type {
   SubmissionResponse,
 } from "~~/shared/schemas/submission";
 
-const { data: submissions } =
+const { data: submissions, refresh } =
   await useFetch<SubmissionResponse>("/api/submissions");
 
 const tabs = [
@@ -65,31 +65,13 @@ const groupedSubmissions = computed(() => {
           :key="tab.status"
           class="submissions__panel"
         >
-          <div
+          <SubmissionListItem
             v-for="submission in groupedSubmissions[tab.status]"
             :key="submission.id"
-            class="submission-card"
-          >
-            <div class="submission-card__image">
-              <NuxtImg
-                :src="`https://images.igdb.com/igdb/image/upload/t_cover_small/${submission.gameImageId}.jpg`"
-                :alt="submission.gameName"
-              />
-            </div>
-            <div class="submission-card__content">
-              <h2 class="submission-card__title">{{ submission.gameName }}</h2>
-              <p class="submission-card__meta">ID: {{ submission.id }}</p>
-              <p class="submission-card__meta">
-                Submitted:
-                {{
-                  new Intl.DateTimeFormat("en-US", {
-                    dateStyle: "medium",
-                    timeStyle: "short",
-                  }).format(new Date(submission.createdAt))
-                }}
-              </p>
-            </div>
-          </div>
+            :submission="submission"
+            :is-pending="tab.status === 'pending'"
+            @refresh="refresh"
+          />
 
           <p
             v-if="groupedSubmissions[tab.status]?.length === 0"
@@ -160,49 +142,6 @@ const groupedSubmissions = computed(() => {
     text-align: center;
     color: var(--tw-color-text-muted);
     font-size: 0.875rem;
-  }
-}
-
-.submission-card {
-  --card-spacing: 0.75rem;
-  --image-width: 4rem;
-
-  display: grid;
-  grid-template-columns: auto 1fr;
-  gap: var(--card-spacing);
-  padding: var(--card-spacing);
-  background-color: white;
-  border-radius: var(--tw-radius-md);
-  border: 1px solid var(--tw-color-border);
-
-  &__image {
-    img {
-      aspect-ratio: 3/4;
-      // width: 100%;
-      // height: auto;
-      object-fit: cover;
-      border-radius: var(--tw-radius-sm);
-      box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.1);
-    }
-  }
-
-  &__content {
-    display: flex;
-    flex-direction: column;
-    gap: 0.25rem;
-  }
-
-  &__title {
-    font-size: 1rem;
-    font-weight: 500;
-    color: var(--tw-color-text);
-    line-height: 1.25;
-  }
-
-  &__meta {
-    font-size: 0.875rem;
-    color: var(--tw-color-text-muted);
-    line-height: 1.25;
   }
 }
 </style>

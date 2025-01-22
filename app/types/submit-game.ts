@@ -27,3 +27,9 @@ export interface SubmitGamePayload {
   pcStoresPlatforms: PCStoreData;
   token: string;
 }
+
+export interface SubmitGameFormData {
+  platformGroups: PlatformGroups;
+  pcStores: PCStore["slug"][];
+  pcStorePlatforms: PCStoreData;
+}

@@ -1,0 +1,196 @@
+import { eq } from "drizzle-orm";
+import { z } from "zod";
+
+import { db } from "~~/server/db";
+import {
+  gameSubmissions,
+  pcStoreCrossplayPlatforms,
+  pcStorePlatforms,
+  platformGroupPlatforms,
+  platformGroups,
+} from "~~/server/db/schema";
+import { isH3ErrorLike } from "~~/server/utils/errorHandler";
+import {
+  InsertPcStoreCrossplayPlatformSchema,
+  InsertPcStorePlatformSchema,
+} from "~~/shared/schemas/pcStorePlatform";
+import {
+  InsertPlatformGroupPlatformsSchema,
+  InsertPlatformGroupSchema,
+} from "~~/shared/schemas/platformGroup";
+
+// Validate the request body
+const updateSubmissionSchema = z.object({
+  platformGroups: z
+    .array(z.array(z.number()))
+    .min(1, "At least one platform group is required")
+    .refine(groups => groups.every(group => group.length > 0), {
+      message: "Each platform group must contain at least one platform",
+    }),
+  pcStoresPlatforms: z.record(
+    z.string(),
+    z.object({
+      crossplayPlatforms: z.array(z.number()).default([]),
+    })
+  ),
+});
+
+type RequestBody = z.infer<typeof updateSubmissionSchema>;
+
+export default defineEventHandler(async event => {
+  const submissionId = parseInt(event.context.params?.id as string);
+
+  if (isNaN(submissionId)) {
+    throw createError({
+      statusCode: 400,
+      message: "Invalid submission ID",
+    });
+  }
+
+  let body: RequestBody;
+  try {
+    body = await readBody<RequestBody>(event);
+    updateSubmissionSchema.parse(body);
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      throw createError({
+        statusCode: 400,
+        message: "Invalid request data",
+        data: {
+          errors: error.errors.reduce(
+            (acc, err) => {
+              acc[err.path.join(".")] = err.message;
+              return acc;
+            },
+            {} as Record<string, string>
+          ),
+        },
+      });
+    }
+    throw createError({
+      statusCode: 400,
+      message: "Invalid request data",
+    });
+  }
+
+  try {
+    const result = await db.transaction(async tx => {
+      // Check if submission exists
+      const submission = await tx.query.gameSubmissions.findFirst({
+        where: eq(gameSubmissions.id, submissionId),
+      });
+
+      if (!submission) {
+        throw createError({
+          statusCode: 404,
+          message: "Submission not found",
+        });
+      }
+
+      // Delete existing platform groups and PC store platforms
+      await tx
+        .delete(platformGroups)
+        .where(eq(platformGroups.submissionId, submissionId));
+      await tx
+        .delete(pcStorePlatforms)
+        .where(eq(pcStorePlatforms.submissionId, submissionId));
+
+      // Insert new platform groups and their platforms
+      await Promise.all(
+        body.platformGroups.map(async (groupPlatforms: number[]) => {
+          const [group] = await tx
+            .insert(platformGroups)
+            .values(
+              InsertPlatformGroupSchema.parse({
+                submissionId,
+              })
+            )
+            .returning();
+
+          if (!group) {
+            throw createError({
+              statusCode: 500,
+              message: "Failed to create platform group",
+            });
+          }
+
+          if (groupPlatforms.length > 0) {
+            try {
+              await tx.insert(platformGroupPlatforms).values(
+                groupPlatforms.map(platformId =>
+                  InsertPlatformGroupPlatformsSchema.parse({
+                    platformGroupId: group.id,
+                    platformId,
+                  })
+                )
+              );
+            } catch (error) {
+              throw createError({
+                statusCode: 500,
+                message: "Failed to associate platforms with group",
+                data: error,
+              });
+            }
+          }
+        })
+      );
+
+      // Insert new PC store platforms and their crossplay platforms
+      await Promise.all(
+        Object.entries(body.pcStoresPlatforms).map(
+          async ([storeSlug, { crossplayPlatforms }]) => {
+            const [pcStore] = await tx
+              .insert(pcStorePlatforms)
+              .values(
+                InsertPcStorePlatformSchema.parse({
+                  submissionId,
+                  storeSlug,
+                })
+              )
+              .returning();
+
+            if (!pcStore) {
+              throw createError({
+                statusCode: 500,
+                message: "Failed to create PC store platform",
+              });
+            }
+
+            if (crossplayPlatforms.length > 0) {
+              try {
+                await tx.insert(pcStoreCrossplayPlatforms).values(
+                  crossplayPlatforms.map(platformId =>
+                    InsertPcStoreCrossplayPlatformSchema.parse({
+                      pcStorePlatformId: pcStore.id,
+                      platformId,
+                    })
+                  )
+                );
+              } catch (error) {
+                throw createError({
+                  statusCode: 500,
+                  message: "Failed to associate crossplay platforms",
+                  data: error,
+                });
+              }
+            }
+          }
+        )
+      );
+
+      return submission;
+    });
+
+    return result;
+  } catch (error: unknown) {
+    if (isH3ErrorLike(error)) {
+      throw error;
+    }
+
+    throw createError({
+      statusCode: 500,
+      message: "Failed to update game submission",
+      data: process.env.NODE_ENV === "development" ? error : undefined,
+    });
+  }
+});
