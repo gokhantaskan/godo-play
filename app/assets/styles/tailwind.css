@@ -12,10 +12,10 @@
   --font-mono: "Roboto Mono";
 
   /* --color-*: initial; */
-  --color-primary: oklch(64.9% 0.1809 249.78);
-  --color-green: oklch(74.67% 0.2304 137.94);
-  --color-yellow: oklch(85.89% 0.1630271818272443 86.6015690368686);
-  --color-red: oklch(64.5% 0.1848 32.36);
+  --color-primary: #0792f7;
+  --color-green: #55cc00;
+  --color-yellow: #ffc833;
+  --color-red: #e8573d;
   --color-bg: #fcf6f3;
   --color-fg: #494d50;
   --color-border: #c3c3c3;

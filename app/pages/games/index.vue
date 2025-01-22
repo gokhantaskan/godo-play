@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import type { DashboardGame } from "~~/shared/types/igdb/dashboardGames";
+
 definePageMeta({
   name: "GamesPage",
 });
@@ -21,7 +23,7 @@ const {
 } = useGameFilters();
 
 // Data Fetching
-const { status, data: games } = useFetch("/api/games", {
+const { status, data: games } = useFetch<DashboardGame[]>("/api/games", {
   query: queryParams,
 });
 
@@ -56,7 +58,7 @@ const pending = computed(() => status.value === "pending");
         </template>
 
         <p id="cross-play-warning">
-          While this list provides useful information, it doesn’t guarantee
+          While this list provides useful information, it doesn't guarantee
           cross-platform play. For the latest details, please check official
           sources and stay tuned for updates.
         </p>

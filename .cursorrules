@@ -30,3 +30,24 @@ You are an senior fullstack developer expert in Vue.js, Nuxt.js, TailwindCSS, an
 - If the component is shared (global), it should also get `The` prefix, like `TheSearchButton`.
 - Use `defineModel` for v-model bindings instead of `modelValue` prop and `update:modelValue` event.
 - `withDefaults()` is prohibited when using destructure with `defineProps()`.
+
+## Database
+- Use camelCase in pgTable keys, references and relations like `findMany` and `findFirst`.
+  - Example:
+      ```ts
+      export const gameSubmissions = pgTable("game_submissions", {
+        gameId: text("game_id").notNull(), // <== camelCase
+        gameName: text("game_name").notNull(), // <== camelCase
+        ...
+      });
+
+      ...
+
+      const submissions = await db.query.gameSubmissions.findMany({
+        with: {
+          platformGroups: true, // <== camelCase
+          pcStorePlatforms: true, // <== camelCase
+        },
+        orderBy: [desc(gameSubmissions.updated_at)],
+      });
+      ```

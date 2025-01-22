@@ -77,7 +77,10 @@ watchEffect(() => {
     @click="e => e.target === dialogRef"
     @keydown.esc.prevent
   >
-    <div class="cookie-banner__content tw:shadow-md">
+    <div
+      tabindex="0"
+      class="cookie-banner__content tw:shadow-md"
+    >
       <div class="cookie-banner__text">
         <h2 class="cookie-banner__title">Cookie Policy</h2>
         <p class="cookie-banner__description">

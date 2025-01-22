@@ -28,15 +28,23 @@ async function setSession(_session: AuthSession): Promise<void> {
 
 async function getSession(): Promise<AuthSession | null> {
   try {
-    if (!session) {
-      session = await storage.getItem("twitch_session");
+    if (session) {
+      // Check if cached session is expired
+      if (session.expires_at <= Date.now()) {
+        await clearSession();
+        return null;
+      }
+      return session;
     }
+
+    // Try to get session from storage if not cached
+    session = await storage.getItem("twitch_session");
 
     if (!session) {
       return null;
     }
 
-    // Check if session is expired
+    // Check if stored session is expired
     if (session.expires_at <= Date.now()) {
       await clearSession();
       return null;

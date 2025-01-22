@@ -9,6 +9,11 @@ export default defineNuxtConfig({
   future: {
     compatibilityVersion: 4,
   },
+  nitro: {
+    experimental: {
+      tasks: true,
+    },
+  },
   runtimeConfig: {
     igdb: {
       endpoint: process.env.IGDB_ENDPOINT,
@@ -25,9 +30,19 @@ export default defineNuxtConfig({
       host: process.env.REDIS_HOST,
       port: process.env.REDIS_PORT,
     },
+    google: {
+      recaptcha: {
+        secretKey: process.env.GOOGLE_RECAPTCHA_SECRET_KEY,
+      },
+    },
     public: {
       hotjar: {
         siteId: "",
+      },
+      google: {
+        recaptcha: {
+          siteKey: "",
+        },
       },
       gtag: {
         id: "",
@@ -53,6 +68,9 @@ export default defineNuxtConfig({
       }),
     ],
   },
+  build: {
+    transpile: ["drizzle-orm"],
+  },
   typescript: {
     typeCheck: true,
   },
@@ -66,6 +84,7 @@ export default defineNuxtConfig({
     "nuxt-gtag",
     "@nuxt/scripts",
     "@nuxtjs/prismic",
+    "@primevue/nuxt-module",
   ],
   css: ["./app/assets/styles/tailwind.css", "./app/assets/styles/main.scss"],
   postcss: {
@@ -98,6 +117,10 @@ export default defineNuxtConfig({
         prefix: "platforms",
         dir: "./app/assets/icons/platforms",
       },
+      {
+        prefix: "stores",
+        dir: "./app/assets/icons/stores",
+      },
     ],
   },
   site: {
@@ -126,5 +149,17 @@ export default defineNuxtConfig({
   },
   prismic: {
     endpoint: repositoryName,
+  },
+  primevue: {
+    usePrimeVue: true,
+    autoImport: false,
+    loadStyles: false,
+    components: {
+      prefix: "P",
+      include: ["AutoComplete", "Toast"],
+    },
+    options: {
+      theme: "none",
+    },
   },
 });

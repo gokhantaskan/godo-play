@@ -67,7 +67,7 @@ export const WEBSITES: {
   },
   epicgames: {
     url: ["epicgames.com", "store.epicgames.com"],
-    icon: "lucide:globe",
+    icon: "stores:egs",
     label: "Epic Games",
   },
   apple: {

@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { GAME_TYPES } from "~~/shared/constants";
-import type { DashboardGames } from "~~/shared/types/igdb/dashboardGames";
+import type { DashboardGame } from "~~/shared/types/igdb/dashboardGames";
 
 interface Props {
-  game: DashboardGames;
+  game: DashboardGame;
 }
 
 const props = defineProps<Props>();
@@ -25,9 +25,6 @@ const categories = computed(() => {
 
       return theme.name;
     }) || []),
-    // Player Perspectives
-    // ...(props.game.player_perspectives?.map(perspective => perspective.name) ||
-    //   []),
   ];
 });
 
@@ -55,27 +52,10 @@ function getImageUrl(imageId: string) {
   return `https://images.igdb.com/igdb/image/upload/t_720p/${imageId}.jpg`;
 }
 
-function closeModal() {
-  isModalOpen.value = false;
-}
-
 async function openModal() {
   isModalOpen.value = true;
   await fetchGameDetails();
-  history.pushState({ modal: true }, "");
 }
-
-onMounted(() => {
-  window.addEventListener("popstate", () => {
-    if (isModalOpen.value) {
-      closeModal();
-    }
-  });
-});
-
-onUnmounted(() => {
-  window.removeEventListener("popstate", closeModal);
-});
 </script>
 
 <template>

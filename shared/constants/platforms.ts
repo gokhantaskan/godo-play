@@ -1,48 +1,77 @@
+import type { PlatformHardcoded } from "~~/shared/types/globals";
+
 // IGDB Platforms
-export const SUPPORTED_PLATFORMS: {
-  id: number;
-  abbreviation: string;
-  name: string;
-  slug: string;
-  icon: string;
-}[] = [
+export const SUPPORTED_PLATFORMS: PlatformHardcoded[] = [
   {
     id: 6,
-    abbreviation: "PC",
-    name: "PC (Windows)",
+    name: "PC (Win)",
     slug: "win",
     icon: "platforms:win",
+    abbreviation: "PC",
+  },
+  {
+    id: 14,
+    name: "MacOS",
+    slug: "mac",
+    icon: "platforms:mac",
+    abbreviation: "Mac",
   },
   {
     id: 48,
-    abbreviation: "PS4",
     name: "PlayStation 4",
     slug: "ps4--1",
-    icon: "platforms:ps",
+    icon: "platforms:ps4",
+    abbreviation: "PS4",
   },
   {
     id: 167,
-    abbreviation: "PS5",
     name: "PlayStation 5",
     slug: "ps5",
-    icon: "platforms:ps",
+    icon: "platforms:ps5",
+    abbreviation: "PS5",
+  },
+  {
+    id: 49,
+    name: "Xbox One",
+    slug: "xboxone",
+    icon: "platforms:xboxone",
+    abbreviation: "XONE",
   },
   {
     id: 169,
-    abbreviation: "Series X|S",
     name: "Xbox Series X|S",
     slug: "series-x-s",
-    icon: "platforms:xbox",
+    icon: "platforms:series-x-s",
+    abbreviation: "XSX",
   },
   {
     id: 130,
-    abbreviation: "Switch",
     name: "Nintendo Switch",
     slug: "switch",
     icon: "platforms:switch",
+    abbreviation: "Switch",
   },
 ];
 
-export const SUPPORTED_PLATFORM_IDS = SUPPORTED_PLATFORMS.map(
-  platform => platform.id
+export const SUPPORTED_PLATFORMS_BY_ID = SUPPORTED_PLATFORMS.reduce(
+  (acc, platform) => {
+    acc[platform.id] = platform;
+    return acc;
+  },
+  {} as Record<PlatformHardcoded["id"], PlatformHardcoded>
 );
+
+export const PLATFORM_ICONS = SUPPORTED_PLATFORMS.reduce(
+  (acc, platform) => {
+    acc[platform.slug] =
+      `platforms:${platform.slug === "ps4--1" ? "ps4" : platform.slug}`;
+    return acc;
+  },
+  {
+    ps: "platforms:ps",
+    xbox: "platforms:xbox",
+  } as Record<PlatformHardcoded["slug"], string>
+);
+
+export const SUPPORTED_PLATFORM_IDS: PlatformHardcoded["id"][] =
+  SUPPORTED_PLATFORMS.map(platform => platform.id);

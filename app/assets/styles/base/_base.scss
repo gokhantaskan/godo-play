@@ -37,6 +37,14 @@
     border-radius: 0.25rem;
   }
 
+  label,
+  legend {
+    display: inline-block;
+    font-weight: 500;
+    font-size: 0.9375rem;
+    line-height: 1.125;
+  }
+
   button {
     cursor: pointer;
   }
@@ -44,10 +52,5 @@
   a {
     text-decoration: underline;
     color: var(--tw-color-primary);
-
-    // &[href^="http"]:after {
-    //   content: " ↗";
-    //   font-size: 0.75em;
-    // }
   }
 }
