@@ -57,20 +57,10 @@ const hasCrossplaySupport = (crossplayLength: number) => {
       <div class="sections">
         <!-- Platform Groups -->
         <div v-if="game.platformGroups?.length">
-          <div
-            class="platform-groups"
-            role="list"
-          >
-            <template
-              v-for="group in game.platformGroups"
-              :key="group.id"
-            >
-              <CrossPlayGameCardPlatformGroup
-                role="listitem"
-                :platform-group="group"
-              />
-            </template>
-          </div>
+          <CrossPlayGameCardPlatformGroups
+            role="listitem"
+            :platform-groups="game.platformGroups"
+          />
         </div>
 
         <!-- PC Stores -->
@@ -179,12 +169,6 @@ const hasCrossplaySupport = (crossplayLength: number) => {
     display: flex;
     flex-direction: column;
     gap: 1.5rem;
-  }
-
-  .platform-groups {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem;
   }
 
   .stores-section {

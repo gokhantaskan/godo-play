@@ -68,9 +68,11 @@ const { data, error, refresh } = await useFetch<{
   <main class="tw:container tw:space-y-4">
     <header>
       <h1>Cross-Play Games</h1>
-      <TheButton @click="refresh">
-        <Icon name="lucide:refresh-cw" />
-      </TheButton>
+      <template v-if="IS_DEV">
+        <TheButton @click="refresh">
+          <Icon name="lucide:refresh-cw" />
+        </TheButton>
+      </template>
     </header>
 
     <section class="tw:flex tw:max-sm:flex-col tw:gap-4 tw:max-w-2xl">
