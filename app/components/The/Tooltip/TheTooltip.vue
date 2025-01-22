@@ -30,7 +30,7 @@ const props = withDefaults(defineProps<TooltipProps>(), {
   alignOffset: 4,
   arrowWidth: 11,
   arrowHeight: 5,
-  delayDuration: 300,
+  delayDuration: 50,
 });
 
 const emits = defineEmits<TooltipRootEmits>();

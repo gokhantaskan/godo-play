@@ -1,62 +1,90 @@
 <script setup lang="ts">
-import type { SubmitGamePayload } from "~/types/submit-game";
-import { SUPPORTED_PC_STORES } from "~~/shared/constants";
-
-const {
-  selectedGame,
-  selectedPlatformGroups,
-  selectedPcStores,
-  selectedPcStoresPlatforms,
-  isSubmitting,
-  error: formError,
-  platformsWithPC,
-  allSelected,
-  isValidForm,
-  getExcludedPlatforms,
-  addPlatformGroup,
-  removePlatformGroup,
-  updatePcStorePlatforms,
-  resetForm,
-} = useSubmitGameForm();
+import type { GameOption } from "~/components/SubmitGame/SubmitGameAutocomplete.vue";
+import type {
+  PCStore,
+  PCStoreData,
+  PlatformGroups,
+  SubmitGamePayload,
+} from "~/types/submit-game";
+import type { Platform } from "~~/shared/types/igdb/dashboardGames";
+import type { BaseEntity } from "~~/shared/types/igdb/globals";
 
 const { getToken } = useRecaptcha();
 
+// Form state
+const selectedGame = ref<GameOption | null>(null);
+const selectedPlatformGroups = ref<PlatformGroups>([[]]);
+const selectedPcStores = ref<PCStore["slug"][]>([]);
+const selectedPcStoresPlatforms = ref<PCStoreData>({});
+const isSubmitting = ref(false);
+const formError = ref<string | null>(null);
+
+// Computed
+const isValidForm = computed(() => {
+  const hasValidGame = selectedGame.value !== null;
+  const hasValidGroups = selectedPlatformGroups.value.some(
+    group => group.length > 0
+  );
+
+  return hasValidGame && hasValidGroups && !isSubmitting.value;
+});
+
+// Methods
+function resetForm() {
+  selectedGame.value = null;
+  selectedPlatformGroups.value = [[]];
+  selectedPcStores.value = [];
+  selectedPcStoresPlatforms.value = {};
+  formError.value = null;
+}
+
 async function handleSubmit() {
-  if (!isValidForm.value) {
+  if (!selectedGame.value || !isValidForm.value) {
     return;
   }
 
-  isSubmitting.value = true;
-  formError.value = null;
-
   try {
+    isSubmitting.value = true;
+    formError.value = null;
+
     const token = await getToken("submit");
+
     if (!token) {
-      formError.value = "Failed to get reCAPTCHA token. Please try again.";
+      formError.value = "Failed to get reCAPTCHA token";
       return;
     }
 
     const payload: SubmitGamePayload = {
-      game: selectedGame.value!,
+      game: {
+        id: selectedGame.value.id,
+        name: selectedGame.value.name,
+        slug: selectedGame.value.slug,
+        imageId: selectedGame.value.imageId,
+      },
       platformGroups: selectedPlatformGroups.value,
       pcStoresPlatforms: selectedPcStoresPlatforms.value,
+      token,
     };
 
-    const { success } = await $fetch("/api/submissions", {
+    const response = await $fetch("/api/submissions", {
       method: "POST",
-      body: {
-        ...payload,
-        token,
-      },
+      body: payload,
     });
 
-    if (success) {
+    if (response) {
       resetForm();
+      // navigateTo("/admin/submissions");
+    } else {
+      formError.value = "Failed to submit game";
     }
-  } catch (error: any) {
-    formError.value =
-      error?.data?.message || "Failed to submit the form. Please try again.";
-    console.error("Submit game error:", error);
+  } catch (error) {
+    if (error && typeof error === "object" && "data" in error) {
+      formError.value =
+        (error.data as { message?: string })?.message ||
+        "Failed to submit game";
+    } else {
+      formError.value = "Failed to submit game";
+    }
   } finally {
     isSubmitting.value = false;
   }
@@ -64,155 +92,71 @@ async function handleSubmit() {
 </script>
 
 <template>
-  <div class="tw:max-w-2xl tw:mx-auto tw:p-4 tw:space-y-2">
-    <h1>Submit a Crossplay Support</h1>
-    <p>
+  <div class="submit-game">
+    <h1 class="submit-game__title">Submit a Crossplay Support</h1>
+    <p class="submit-game__description">
       Help us identify games and their supported crossplay platforms. Specify
       which platforms can play together in groups.
     </p>
 
     <form
-      class="tw:space-y-4"
+      class="submit-game__form"
       @submit.prevent="handleSubmit"
     >
       <SubmitGameAutocomplete
         v-model="selectedGame"
-        class="tw:w-full"
+        class="submit-game__autocomplete"
       />
 
-      <div v-if="selectedGame">
-        <div
-          class="tw:grid tw:grid-cols-[clamp(4rem,8vw,12rem)_minmax(0,1fr)] tw:gap-2"
-        >
-          <div
-            class="tw:rounded-lg tw:overflow-hidden tw:h-fit tw:shadow-sm tw:bg-border"
-          >
+      <div
+        v-if="selectedGame"
+        class="submit-game__game-info"
+      >
+        <div class="game-info">
+          <div class="game-info__cover">
             <NuxtImg
               :src="`https://images.igdb.com/igdb/image/upload/t_cover_big/${selectedGame.imageId}.jpg`"
               :alt="selectedGame.name"
               lazy
             />
           </div>
-          <div class="tw:space-y-2">
-            <h2 class="tw:text-lg tw:font-medium">{{ selectedGame.name }}</h2>
-            <ul class="tw:ps-4 tw:m-0">
-              <li class="tw:text-sm">
+          <div class="game-info__details">
+            <h2 class="game-info__title">{{ selectedGame.name }}</h2>
+            <ul class="game-info__list">
+              <li class="game-info__list-item">
                 {{
                   selectedGame.platforms
-                    .map(platform => platform.name)
+                    .map((platform: Platform) => platform.name)
                     .toSorted()
                     .join(", ")
                 }}
               </li>
-              <li class="tw:text-sm">
-                {{ selectedGame.gameModes.map(mode => mode.name).join(", ") }}
+              <li class="game-info__list-item">
+                {{
+                  selectedGame.gameModes
+                    .map((mode: BaseEntity) => mode.name)
+                    .join(", ")
+                }}
               </li>
             </ul>
           </div>
         </div>
       </div>
 
-      <fieldset>
-        <legend>Platforms</legend>
-        <p class="tw:text-sm tw:text-text-muted tw:mb-4">
-          Choose compatible platforms for the game. Groups specify which
-          platforms can play together.
-          <strong class="tw:inline-block"
-            >If the game doesn't support cross-play, list each platform in its
-            own group.</strong
-          >
-        </p>
-        <div
-          v-for="(_, groupIndex) in selectedPlatformGroups"
-          :key="groupIndex"
-          class="tw:flex tw:items-center tw:gap-2 tw:mb-4 tw:last-of-type:mb-0"
-        >
-          <PlatformSelect
-            v-model="selectedPlatformGroups[groupIndex]"
-            :label="`Group ${groupIndex + 1}`"
-            multiple
-            :exclude-platforms="getExcludedPlatforms(groupIndex)"
-          />
-          <CloseButton
-            v-if="selectedPlatformGroups.length > 1"
-            size="lg"
-            @click="removePlatformGroup(groupIndex)"
-          />
-        </div>
-
-        <TheButton
-          class="tw:mt-4"
-          type="button"
-          size="sm"
-          variant="secondary"
-          :disabled="
-            selectedPlatformGroups[selectedPlatformGroups.length - 1]
-              ?.length === 0 || allSelected
-          "
-          @click="addPlatformGroup"
-        >
-          Add Platform Group
-        </TheButton>
-      </fieldset>
-
-      <fieldset :disabled="!platformsWithPC?.length">
-        <legend class="tw:text-lg tw:font-medium tw:mb-2">PC Stores</legend>
-        <p class="tw:text-sm tw:text-text-muted tw:mb-4">
-          Select PC stores where the game is available and specify which
-          platforms can play with each store's version.
-          <strong class="tw:inline-block"
-            >If the store doesn't support cross-play, leave the box
-            empty.</strong
-          >
-        </p>
-        <div class="tw:space-y-4">
-          <div
-            v-for="store in SUPPORTED_PC_STORES"
-            :key="store.slug"
-            class="tw:space-y-1"
-          >
-            <label class="tw:flex tw:items-center tw:gap-2">
-              <input
-                :id="store.slug"
-                v-model="selectedPcStores"
-                type="checkbox"
-                class="checkbox"
-                :value="store.slug"
-              />
-              <span>{{ store.name }}</span>
-            </label>
-
-            <div v-if="selectedPcStores.includes(store.slug)">
-              <PlatformSelect
-                :model-value="
-                  selectedPcStoresPlatforms[store.slug]?.crossplayPlatforms ??
-                  []
-                "
-                :label="`Select platforms that ${store.name} version can play with`"
-                multiple
-                :include-platforms="
-                  platformsWithPC?.filter(platform => platform !== 6)
-                "
-                @update:model-value="
-                  updatePcStorePlatforms(
-                    store.slug,
-                    Array.isArray($event) ? $event : [$event]
-                  )
-                "
-              />
-            </div>
-          </div>
-        </div>
-      </fieldset>
+      <SubmitGameForm
+        v-model:platform-groups="selectedPlatformGroups"
+        v-model:pc-stores="selectedPcStores"
+        v-model:pc-store-platforms="selectedPcStoresPlatforms"
+      />
 
       <div
         v-if="formError"
-        class="tw:text-sm tw:text-error"
+        class="submit-game__error"
       >
         {{ formError }}
       </div>
 
-      <div class="tw:mt-4">
+      <div class="submit-game__actions">
         <TheButton
           type="submit"
           :loading="isSubmitting"
@@ -224,3 +168,67 @@ async function handleSubmit() {
     </form>
   </div>
 </template>
+
+<style lang="scss">
+@use "sass:math";
+@use "~/assets/styles/abstracts/_variables.scss" as *;
+
+.submit-game {
+  max-inline-size: 32rem;
+  margin-inline: auto;
+  padding: 1rem;
+
+  &__title {
+    margin-block-end: 0.5rem;
+  }
+
+  &__description {
+    margin-block-end: 1rem;
+  }
+
+  &__form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  &__error {
+    font-size: 0.875rem;
+    color: var(--tw-error);
+  }
+}
+
+.game-info {
+  display: grid;
+  grid-template-columns: clamp(4rem, 8vw, 12rem) minmax(0, 1fr);
+  gap: 0.5rem;
+
+  &__cover {
+    border-radius: 0.5rem;
+    overflow: hidden;
+    height: fit-content;
+    box-shadow: var(--tw-shadow-sm);
+    background-color: var(--tw-border);
+  }
+
+  &__details {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  &__title {
+    font-size: 1.125rem;
+    font-weight: 500;
+  }
+
+  &__list {
+    padding-inline-start: 1rem;
+    margin: 0;
+  }
+
+  &__list-item {
+    font-size: 0.875rem;
+  }
+}
+</style>

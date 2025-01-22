@@ -126,7 +126,10 @@ const platformGroups = computed(() => {
         :key="slug"
       >
         <span class="platform-group__name tw:sr-only">{{ platform.name }}</span>
-        <TheTooltip :content="platform.name">
+        <TheTooltip
+          :content="platform.name"
+          trigger="hover"
+        >
           <div class="platform-group__item">
             <Icon
               :name="platform.icon"
@@ -142,22 +145,21 @@ const platformGroups = computed(() => {
 
 <style scoped lang="scss">
 .platform-groups {
+  --gap: 0.25rem;
+
   display: flex;
   flex-wrap: wrap;
-  gap: 0.5rem;
+  gap: var(--gap);
 }
 
 .platform-group {
-  --gap: 0.5rem;
-  --group-spacing: calc(var(--gap) / 1.5);
-
   display: flex;
   flex-wrap: wrap;
   gap: var(--gap);
   background: white;
   border: 1px solid var(--tw-color-border);
-  border-radius: var(--tw-radius-md);
-  padding: 0.25rem;
+  border-radius: var(--tw-radius-sm);
+  padding: var(--gap);
   font-size: 0.875rem;
   font-weight: 500;
   line-height: 1.125;
@@ -165,23 +167,23 @@ const platformGroups = computed(() => {
   &__item {
     display: flex;
     align-items: center;
-    gap: var(--group-spacing);
+    gap: var(--gap);
 
     & + & {
-      margin-inline-start: var(--group-spacing);
+      margin-inline-start: var(--gap);
       position: relative;
 
       &::before {
         content: "+";
-        margin-inline-end: var(--group-spacing);
+        margin-inline-end: var(--gap);
         color: var(--tw-color-text-muted);
       }
     }
   }
 
   &__icon {
-    width: 1.5lh;
-    height: 1.5lh;
+    width: 1lh;
+    height: 1lh;
     flex-shrink: 0;
   }
 

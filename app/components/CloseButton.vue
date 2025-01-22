@@ -7,9 +7,7 @@ const { size = "md " } = defineProps<Props>();
 
 const sizeClass = computed(() => {
   return {
-    "close-button--sm": size === "sm",
-    "close-button--md": size === "md",
-    "close-button--lg": size === "lg",
+    "close-button--${size}": size,
   };
 });
 </script>
@@ -18,6 +16,7 @@ const sizeClass = computed(() => {
   <button
     class="close-button"
     :class="sizeClass"
+    type="button"
   >
     <Icon name="lucide:x" />
   </button>

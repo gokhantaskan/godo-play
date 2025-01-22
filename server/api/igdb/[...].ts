@@ -1,78 +1,46 @@
-import { $fetch } from "ofetch";
+import { getIGDBClient } from "~~/server/utils/igdb";
+
+interface H3ErrorLike {
+  statusCode: number;
+  message: string;
+}
 
 export default defineEventHandler(async event => {
-  assertMethod(event, "POST");
-
-  const config = useRuntimeConfig(event);
-  const url = event.context.params?._;
-  const body = await readBody(event);
-
-  if (!url) {
-    throw createError({
-      statusCode: 400,
-      statusMessage: "Missing URL parameter",
-    });
-  }
-
-  // Convert the body to IGDB API format
-  const hasSearch = Boolean(body.search);
-  const parsedBody = Object.entries(body)
-    .filter(([key, value]) => {
-      // If there is a search, don't include the sort field
-      if (hasSearch && key === "sort") {
-        return false;
-      }
-
-      return Boolean(value);
-    })
-    .map(([key, value]) => {
-      if (key === "search") {
-        return `search "${value}"`;
-      }
-
-      return `${key} ${value}`;
-    })
-    .join("; ")
-    .concat(";")
-    .trim();
-
-  if (process.env.NODE_ENV === "development") {
-    console.log("IGDB Query:", parsedBody);
-  }
-
   try {
-    // Ensure we have a valid token before making the request
-    await tokenStorage.retrieveSession({
-      clientId: config.tw.clientId,
-      clientSecret: config.tw.clientSecret,
-      grantType: config.tw.grantType,
-      oauthEndpoint: config.tw.oauthEndpoint,
-    });
+    const igdb = await getIGDBClient();
+    const path = event.path.replace("/api/igdb/", "");
+    const body = await readBody(event);
 
-    // Rest of your existing code...
-    const session = await tokenStorage.getSession();
+    const response = await igdb(path, body);
+    const data = await response.json();
 
-    if (!session?.access_token) {
+    if (!response.ok) {
       throw createError({
-        statusCode: 401,
-        statusMessage: "No valid authentication token",
+        statusCode: response.status,
+        message: "IGDB API request failed",
+        data: process.env.NODE_ENV === "development" ? data : undefined,
       });
     }
 
-    const response = await $fetch(url, {
-      method: "POST",
-      baseURL: config.igdb.endpoint,
-      headers: {
-        "Content-Type": "application/json",
-        "Client-ID": config.tw.clientId,
-        Authorization: `Bearer ${session.access_token}`,
-      },
-      body: parsedBody,
-    });
+    return data;
+  } catch (error: unknown) {
+    if (isH3ErrorLike(error)) {
+      throw error;
+    }
 
-    return response;
-  } catch (error) {
-    console.error("IGDB API Error:", error);
-    throw error;
+    throw createError({
+      statusCode: 500,
+      message: "Failed to fetch data from IGDB",
+      data: process.env.NODE_ENV === "development" ? error : undefined,
+    });
   }
 });
+
+function isH3ErrorLike(error: unknown): error is H3ErrorLike {
+  return (
+    typeof error === "object" &&
+    error !== null &&
+    "statusCode" in error &&
+    "message" in error
+  );
+}

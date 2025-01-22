@@ -56,12 +56,34 @@ export const pcStoreCrossplayPlatforms = pgTable(
   ]
 );
 
-export const insertPcStorePlatformSchema = createInsertSchema(pcStorePlatforms);
-export const selectPcStorePlatformSchema = createSelectSchema(pcStorePlatforms);
+// Base Zod schemas generated from Drizzle schema
+export const BasePcStorePlatformGroupSchema = createSelectSchema(
+  pcStorePlatformGroups
+);
+export const BaseInsertPcStorePlatformGroupSchema = createInsertSchema(
+  pcStorePlatformGroups
+);
 
-export const insertPcStoreCrossplayPlatformsSchema = createInsertSchema(
+export const BasePcStorePlatformSchema = createSelectSchema(pcStorePlatforms);
+export const BaseInsertPcStorePlatformSchema =
+  createInsertSchema(pcStorePlatforms);
+
+export const BasePcStoreCrossplayPlatformSchema = createSelectSchema(
   pcStoreCrossplayPlatforms
 );
-export const selectPcStoreCrossplayPlatformsSchema = createSelectSchema(
+export const BaseInsertPcStoreCrossplayPlatformSchema = createInsertSchema(
   pcStoreCrossplayPlatforms
 );
+
+// Types for internal database usage
+export type PcStorePlatformGroup = typeof pcStorePlatformGroups.$inferSelect;
+export type InsertPcStorePlatformGroup =
+  typeof pcStorePlatformGroups.$inferInsert;
+
+export type PcStorePlatform = typeof pcStorePlatforms.$inferSelect;
+export type InsertPcStorePlatform = typeof pcStorePlatforms.$inferInsert;
+
+export type PcStoreCrossplayPlatform =
+  typeof pcStoreCrossplayPlatforms.$inferSelect;
+export type InsertPcStoreCrossplayPlatform =
+  typeof pcStoreCrossplayPlatforms.$inferInsert;

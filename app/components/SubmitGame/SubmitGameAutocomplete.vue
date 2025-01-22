@@ -13,24 +13,12 @@ export interface GameOption {
 
 export type GameOptionOrString = GameOption | string | null;
 
-export interface SubmitGameAutocompleteProps {
-  modelValue: GameOptionOrString;
-}
+const value = defineModel<GameOptionOrString>("modelValue", {
+  required: true,
+});
 
-const props = defineProps<SubmitGameAutocompleteProps>();
-
-const selectedGame = ref<GameOptionOrString>(props.modelValue);
 const isLoading = ref(false);
 const games = ref<GameOption[]>([]);
-
-const emit = defineEmits<{
-  (e: "update:modelValue", value: GameOptionOrString): void;
-}>();
-
-const value = computed({
-  get: () => selectedGame.value,
-  set: value => emit("update:modelValue", value),
-});
 
 async function searchGames(event: { query: string }) {
   const query = event.query;
@@ -50,7 +38,7 @@ async function searchGames(event: { query: string }) {
       },
     });
 
-    games.value = response.map(game => ({
+    games.value = (response ?? []).map(game => ({
       id: game.id,
       name: game.name,
       slug: game.slug,

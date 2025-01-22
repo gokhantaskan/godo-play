@@ -1,8 +1,7 @@
-import type { GameOption } from "~/components/SubmitGame/SubmitGameAutocomplete.vue";
 import type { PlatformId } from "~/types/crossPlay";
-import type { SUPPORTED_PC_STORES } from "~~/shared/constants";
+import type { PcStoreHardcoded } from "~~/shared/types/globals";
 
-export type PCStore = (typeof SUPPORTED_PC_STORES)[number];
+export type PCStore = PcStoreHardcoded;
 
 export type PlatformGroups = PlatformId[][];
 
@@ -15,8 +14,16 @@ export type PCStoreData = Partial<
   >
 >;
 
+export interface GameSubmissionData {
+  id: number;
+  name: string;
+  slug: string;
+  imageId?: string;
+}
+
 export interface SubmitGamePayload {
-  game: GameOption;
+  game: GameSubmissionData;
   platformGroups: PlatformGroups;
   pcStoresPlatforms: PCStoreData;
+  token: string;
 }

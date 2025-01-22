@@ -1,3 +1,7 @@
+import {
+  handleAuthError,
+  handleExternalApiError,
+} from "~~/server/utils/errorHandler";
 import { GAME_MODE_IDS } from "~~/shared/constants/gameModes";
 import { SUPPORTED_PLATFORM_IDS } from "~~/shared/constants/platforms";
 import type { DashboardGamesRequestBody } from "~~/shared/types/queries";
@@ -41,16 +45,12 @@ export default defineCachedEventHandler(
       "aggregated_rating_count > 2",
       "age_ratings.category=(2)", // PEGI
       `release_dates.date >= ${tenYearsAgoUnix}`,
-      // `first_release_date >= ${tenYearsAgoUnix}`,
     ];
 
     const whereConditions = [];
 
     if (platforms?.length) {
       whereConditions.push(`platforms=[${platforms.join(",")}]`);
-      // if (platforms.length > 1) {
-      //   whereConditions.push("multiplayer_modes.onlinemax != null");
-      // }
     } else {
       whereConditions.push(`platforms=(${SUPPORTED_PLATFORM_IDS.join(",")})`);
     }
@@ -82,10 +82,9 @@ export default defineCachedEventHandler(
     const where = [...fixedConditions, ...whereConditions].join(" & ");
 
     const fields = [
-      // "aggregated_rating",
       "name",
       "slug",
-      "category", // 0: main game, 3: bundle, 8: remake, 9: remaster
+      "category",
       "platforms.*",
       "genres.*",
       "player_perspectives.*",
@@ -93,7 +92,6 @@ export default defineCachedEventHandler(
       "cover.*",
       "game_modes.*",
       "multiplayer_modes.*",
-      // "release_dates.date",
     ].join(",");
 
     // Simplified body construction
@@ -116,10 +114,7 @@ export default defineCachedEventHandler(
       const session = await tokenStorage.getSession();
 
       if (!session) {
-        throw createError({
-          statusCode: 401,
-          statusMessage: "No valid authentication session",
-        });
+        throw handleAuthError(new Error("No valid authentication session"));
       }
 
       const response = await tokenStorage.makeAuthenticatedRequest(
@@ -131,24 +126,19 @@ export default defineCachedEventHandler(
       );
 
       if (!response.ok) {
-        throw createError({
-          statusCode: response.status,
-          statusMessage: response.statusText,
-        });
+        throw handleExternalApiError(
+          new Error(`HTTP ${response.status}: ${response.statusText}`),
+          "IGDB"
+        );
       }
 
       return await response.json();
     } catch (error) {
-      if (error instanceof Error) {
-        console.error("Error:", error);
-        throw createError(error);
+      if (error && typeof error === "object" && "statusCode" in error) {
+        throw error;
       }
 
-      console.error("Unknown Error:", error);
-      throw createError({
-        statusCode: 500,
-        statusMessage: "Internal Server Error",
-      });
+      throw handleExternalApiError(error, "IGDB");
     }
   },
   {

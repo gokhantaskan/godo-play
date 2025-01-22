@@ -1,4 +1,3 @@
-import type { InferSelectModel } from "drizzle-orm";
 import { pgTable, serial, text } from "drizzle-orm/pg-core";
 import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 
@@ -11,7 +10,10 @@ export const pcStores = pgTable("pc_stores", {
   ...defaultInsertTimestamps,
 });
 
-export const insertPcStoreSchema = createInsertSchema(pcStores);
-export const selectPcStoreSchema = createSelectSchema(pcStores);
+// Base Zod schemas generated from Drizzle schema
+export const BasePcStoreSchema = createSelectSchema(pcStores);
+export const BaseInsertPcStoreSchema = createInsertSchema(pcStores);
 
-export type GameStore = InferSelectModel<typeof pcStores>;
+// Types for internal database usage
+export type PcStore = typeof pcStores.$inferSelect;
+export type InsertPcStore = typeof pcStores.$inferInsert;

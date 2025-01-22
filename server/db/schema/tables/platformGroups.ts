@@ -35,12 +35,21 @@ export const platformGroupPlatforms = pgTable(
   table => [primaryKey({ columns: [table.platformGroupId, table.platformId] })]
 );
 
-export const insertPlatformGroupSchema = createInsertSchema(platformGroups);
-export const selectPlatformGroupSchema = createSelectSchema(platformGroups);
+// Base Zod schemas generated from Drizzle schema
+export const BasePlatformGroupSchema = createSelectSchema(platformGroups);
+export const BaseInsertPlatformGroupSchema = createInsertSchema(platformGroups);
 
-export const insertPlatformGroupPlatformsSchema = createInsertSchema(
+export const BasePlatformGroupPlatformsSchema = createSelectSchema(
   platformGroupPlatforms
 );
-export const selectPlatformGroupPlatformsSchema = createSelectSchema(
+export const BaseInsertPlatformGroupPlatformsSchema = createInsertSchema(
   platformGroupPlatforms
 );
+
+// Types for internal database usage
+export type PlatformGroup = typeof platformGroups.$inferSelect;
+export type InsertPlatformGroup = typeof platformGroups.$inferInsert;
+
+export type PlatformGroupPlatform = typeof platformGroupPlatforms.$inferSelect;
+export type InsertPlatformGroupPlatform =
+  typeof platformGroupPlatforms.$inferInsert;

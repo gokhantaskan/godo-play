@@ -1,7 +1,7 @@
 import { inArray } from "drizzle-orm";
 import { z } from "zod";
 
-import { db } from "../../db";
+import { db } from "~~/server/db";
 import {
   gameSubmissions,
   pcStoreCrossplayPlatforms,
@@ -9,7 +9,18 @@ import {
   platformGroupPlatforms,
   platformGroups,
   platforms,
-} from "../../db/schema";
+} from "~~/server/db/schema";
+import { isH3ErrorLike } from "~~/server/utils/errorHandler";
+import { verifyRecaptchaToken } from "~~/server/utils/recaptcha";
+import {
+  InsertPcStoreCrossplayPlatformSchema,
+  InsertPcStorePlatformSchema,
+} from "~~/shared/schemas/pcStorePlatform";
+import { PlatformSchema } from "~~/shared/schemas/platform";
+import {
+  InsertPlatformGroupPlatformsSchema,
+  InsertPlatformGroupSchema,
+} from "~~/shared/schemas/platformGroup";
 
 // Validate the request body
 const submitGameSchema = z.object({
@@ -34,78 +45,63 @@ const submitGameSchema = z.object({
   token: z.string().min(1, "reCAPTCHA token is required"),
 });
 
-const SubmissionResponseSchema = z.object({
-  success: z.boolean(),
-  message: z.string(),
-  data: z.object({
-    id: z.number(),
-    gameId: z.number(),
-    gameName: z.string(),
-    gameSlug: z.string(),
-    gameImageId: z.string().nullable(),
-    status: z.enum(["pending", "approved", "rejected"]),
-    createdAt: z.date(),
-    updatedAt: z.date(),
-  }),
-});
-
 type RequestBody = z.infer<typeof submitGameSchema>;
-type SubmissionResponse = z.infer<typeof SubmissionResponseSchema>;
-
-interface RecaptchaResponse {
-  success: boolean;
-  challenge_ts?: string;
-  hostname?: string;
-  "error-codes"?: string[];
-}
 
 export default defineEventHandler(async event => {
+  let body: RequestBody;
   try {
-    const body = await readBody<RequestBody>(event);
-
-    // Validate request body
-    const validatedData = submitGameSchema.parse(body);
-
-    // Verify reCAPTCHA token
-    const config = useRuntimeConfig();
-    const recaptchaSecret = config.google.recaptcha.secretKey;
-
-    if (!recaptchaSecret) {
+    body = await readBody<RequestBody>(event);
+    submitGameSchema.parse(body);
+  } catch (error) {
+    if (error instanceof z.ZodError) {
       throw createError({
-        statusCode: 500,
-        message: "reCAPTCHA secret key is not configured",
+        statusCode: 400,
+        message: "Invalid request data",
+        data: {
+          errors: error.errors.reduce(
+            (acc, err) => {
+              acc[err.path.join(".")] = err.message;
+              return acc;
+            },
+            {} as Record<string, string>
+          ),
+        },
       });
     }
+    throw createError({
+      statusCode: 400,
+      message: "Invalid request data",
+    });
+  }
 
-    const recaptchaResponse = await $fetch<RecaptchaResponse>(
-      "https://www.google.com/recaptcha/api/siteverify",
-      {
-        method: "POST",
-        body: new URLSearchParams({
-          secret: recaptchaSecret,
-          response: validatedData.token,
-        }),
-      }
-    );
-
-    if (!recaptchaResponse.success) {
+  try {
+    const { success: isValidToken } = await verifyRecaptchaToken(body.token);
+    if (!isValidToken) {
       throw createError({
         statusCode: 400,
         message: "Invalid reCAPTCHA token",
-        data: recaptchaResponse["error-codes"],
       });
     }
+  } catch (error: unknown) {
+    if (isH3ErrorLike(error)) {
+      throw error;
+    }
+    throw createError({
+      statusCode: 500,
+      message: "Failed to verify reCAPTCHA token",
+    });
+  }
 
-    // Start a transaction
+  try {
     const result = await db.transaction(async tx => {
       // Insert game submission
       const [submission] = await tx
         .insert(gameSubmissions)
         .values({
-          gameId: validatedData.game.id,
-          gameName: validatedData.game.name,
-          gameSlug: validatedData.game.slug,
-          gameImageId: validatedData.game.imageId,
+          gameId: body.game.id,
+          gameName: body.game.name,
+          gameSlug: body.game.slug,
+          gameImageId: body.game.imageId,
         })
         .returning();
 
@@ -120,12 +116,12 @@ export default defineEventHandler(async event => {
       const platformIdsSet = new Set<number>();
 
       // From platform groups
-      validatedData.platformGroups.forEach(group => {
+      body.platformGroups.forEach(group => {
         group.forEach(platformId => platformIdsSet.add(platformId));
       });
 
       // From PC store crossplay platforms
-      Object.values(validatedData.pcStoresPlatforms).forEach(storeData => {
+      Object.values(body.pcStoresPlatforms).forEach(storeData => {
         storeData.crossplayPlatforms.forEach(platformId =>
           platformIdsSet.add(platformId)
         );
@@ -135,11 +131,16 @@ export default defineEventHandler(async event => {
 
       // Ensure platforms exist in the `platforms` table
       const existingPlatforms = await tx
-        .select({ id: platforms.id })
+        .select()
         .from(platforms)
         .where(inArray(platforms.id, platformIds));
 
-      const existingPlatformIds = existingPlatforms.map(p => p.id);
+      // Validate platforms using PlatformSchema
+      const validatedPlatforms = existingPlatforms.map(platform =>
+        PlatformSchema.parse(platform)
+      );
+
+      const existingPlatformIds = validatedPlatforms.map(p => p.id);
       const missingPlatformIds = platformIds.filter(
         id => !existingPlatformIds.includes(id)
       );
@@ -154,12 +155,14 @@ export default defineEventHandler(async event => {
 
       // Insert platform groups and their platforms
       await Promise.all(
-        validatedData.platformGroups.map(async (groupPlatforms: number[]) => {
+        body.platformGroups.map(async (groupPlatforms: number[]) => {
           const [group] = await tx
             .insert(platformGroups)
-            .values({
-              submissionId: submission.id,
-            })
+            .values(
+              InsertPlatformGroupSchema.parse({
+                submissionId: submission.id,
+              })
+            )
             .returning();
 
           if (!group) {
@@ -172,10 +175,12 @@ export default defineEventHandler(async event => {
           if (groupPlatforms.length > 0) {
             try {
               await tx.insert(platformGroupPlatforms).values(
-                groupPlatforms.map(platformId => ({
-                  platformGroupId: group.id,
-                  platformId: platformId,
-                }))
+                groupPlatforms.map(platformId =>
+                  InsertPlatformGroupPlatformsSchema.parse({
+                    platformGroupId: group.id,
+                    platformId,
+                  })
+                )
               );
             } catch (error) {
               throw createError({
@@ -190,14 +195,16 @@ export default defineEventHandler(async event => {
 
       // Insert PC store platforms and their crossplay platforms
       await Promise.all(
-        Object.entries(validatedData.pcStoresPlatforms).map(
+        Object.entries(body.pcStoresPlatforms).map(
           async ([storeSlug, { crossplayPlatforms }]) => {
             const [pcStore] = await tx
               .insert(pcStorePlatforms)
-              .values({
-                submissionId: submission.id,
-                storeSlug,
-              })
+              .values(
+                InsertPcStorePlatformSchema.parse({
+                  submissionId: submission.id,
+                  storeSlug,
+                })
+              )
               .returning();
 
             if (!pcStore) {
@@ -210,10 +217,12 @@ export default defineEventHandler(async event => {
             if (crossplayPlatforms.length > 0) {
               try {
                 await tx.insert(pcStoreCrossplayPlatforms).values(
-                  crossplayPlatforms.map(platformId => ({
-                    pcStorePlatformId: pcStore.id,
-                    platformId: platformId,
-                  }))
+                  crossplayPlatforms.map(platformId =>
+                    InsertPcStoreCrossplayPlatformSchema.parse({
+                      pcStorePlatformId: pcStore.id,
+                      platformId,
+                    })
+                  )
                 );
               } catch (error) {
                 throw createError({
@@ -227,39 +236,19 @@ export default defineEventHandler(async event => {
         )
       );
 
-      const response: SubmissionResponse = {
-        success: true,
-        message: "Game submission created successfully",
-        data: {
-          ...submission,
-          createdAt: new Date(submission.createdAt),
-          updatedAt: new Date(submission.updatedAt),
-        },
-      };
-
-      return SubmissionResponseSchema.parse(response);
+      return submission;
     });
 
     return result;
   } catch (error: unknown) {
-    console.error("Game submission error:", error);
-
-    if (error instanceof z.ZodError) {
-      throw createError({
-        statusCode: 400,
-        message: "Invalid request data",
-        data: error.errors,
-      });
-    }
-
-    // If it's already a H3 error, just rethrow it
-    if (error && typeof error === "object" && "statusCode" in error) {
+    if (isH3ErrorLike(error)) {
       throw error;
     }
 
     throw createError({
       statusCode: 500,
-      message: "Failed to create game submission",
+      message: "Failed to process game submission",
+      data: process.env.NODE_ENV === "development" ? error : undefined,
     });
   }
 });

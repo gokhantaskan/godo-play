@@ -15,6 +15,9 @@ definePageMeta({
   name: "CrossPlayGamesPage",
 });
 
+const { data, error, refresh } =
+  await useFetch<GameSubmission[]>("/api/submissions");
+
 // Platform Selection Management
 const selectedPlatforms = useState<SelectedPlatforms>(
   "submission-platforms",
@@ -25,9 +28,14 @@ const selectedPlatforms = useState<SelectedPlatforms>(
   })
 );
 
+// Add type safety for platform selection
+function isPlatformId(value: unknown): value is PlatformId {
+  return typeof value === "number" && !isNaN(value);
+}
+
 // Filter submissions based on selected platforms
 const filteredSubmissions = computed(() => {
-  if (!data.value?.submissions) {
+  if (!data.value) {
     return [];
   }
 
@@ -35,33 +43,42 @@ const filteredSubmissions = computed(() => {
     selectedPlatforms.value.p1,
     selectedPlatforms.value.p2,
     selectedPlatforms.value.p3,
-  ].filter((p): p is PlatformId => p !== null);
+  ].filter(isPlatformId);
 
   if (!platforms.length) {
-    return data.value.submissions;
+    return data.value;
   }
 
-  return data.value.submissions.filter(submission => {
+  return data.value.filter(submission => {
+    // Ensure platformGroups exists and has platformGroupPlatforms
+    if (!submission.platformGroups?.length) {
+      return false;
+    }
+
     // If only one platform is selected, check if it exists in any group
     if (platforms.length === 1) {
-      return submission.platformGroups.some(group =>
-        group.platformGroupPlatforms.some(p => p.platform.id === platforms[0])
-      );
+      return submission.platformGroups.some(group => {
+        if (!group.platformGroupPlatforms?.length) {
+          return false;
+        }
+        return group.platformGroupPlatforms.some(
+          p => p.platform?.id === platforms[0]
+        );
+      });
     }
 
     // Check if all selected platforms exist in the same platform group
     return submission.platformGroups.some(group => {
+      if (!group.platformGroupPlatforms?.length) {
+        return false;
+      }
       const groupPlatformIds = new Set(
-        group.platformGroupPlatforms.map(p => p.platform.id)
+        group.platformGroupPlatforms.map(p => p.platform?.id)
       );
       return platforms.every(platformId => groupPlatformIds.has(platformId));
     });
   });
 });
-
-const { data, error, refresh } = await useFetch<{
-  submissions: GameSubmission[];
-}>("/api/submissions");
 </script>
 
 <template>
@@ -117,7 +134,7 @@ const { data, error, refresh } = await useFetch<{
 
     <div
       v-else-if="filteredSubmissions.length"
-      class="tw:space-y-4"
+      class="tw:grid tw:grid-cols-2 tw:gap-4 tw:sm:grid-cols-3 tw:lg:grid-cols-4 tw:xl:grid-cols-5"
     >
       <CrossPlayGameCard
         v-for="submission in filteredSubmissions"

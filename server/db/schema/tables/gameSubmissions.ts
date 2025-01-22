@@ -1,5 +1,6 @@
 import { integer, pgTable, serial, text } from "drizzle-orm/pg-core";
 import { createInsertSchema, createSelectSchema } from "drizzle-zod";
+import { z } from "zod";
 
 import { defaultInsertTimestamps } from "../helpers/defaults";
 
@@ -19,5 +20,15 @@ export const gameSubmissions = pgTable("game_submissions", {
   ...defaultInsertTimestamps,
 });
 
-export const insertGameSubmissionSchema = createInsertSchema(gameSubmissions);
-export const selectGameSubmissionSchema = createSelectSchema(gameSubmissions);
+// Base Zod schemas generated from Drizzle schema
+export const BaseGameSubmissionSchema = createSelectSchema(gameSubmissions);
+export const BaseInsertGameSubmissionSchema = createInsertSchema(
+  gameSubmissions,
+  {
+    status: z.enum(["pending", "approved", "rejected"]),
+  }
+);
+
+// Types for internal database usage
+export type GameSubmission = typeof gameSubmissions.$inferSelect;
+export type InsertGameSubmission = typeof gameSubmissions.$inferInsert;
