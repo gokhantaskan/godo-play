@@ -38,6 +38,19 @@ export const SubmissionSchema = z.object({
       ),
     })
   ),
+  gameSubmissionGameModes: z.array(
+    z.object({
+      submissionId: z.number(),
+      gameModeId: z.number(),
+      gameMode: z.object({
+        id: z.number(),
+        name: z.string(),
+        slug: z.string(),
+        createdAt: z.date(),
+        updatedAt: z.date(),
+      }),
+    })
+  ),
 });
 
 export const SubmissionResponseSchema = z.array(SubmissionSchema);

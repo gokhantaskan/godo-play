@@ -26,11 +26,21 @@ export default defineEventHandler(async () => {
             },
           },
         },
+        gameSubmissionGameModes: {
+          with: {
+            gameMode: true,
+          },
+        },
       },
       orderBy: [desc(gameSubmissions.updatedAt)],
     });
 
-    return submissions;
+    // Transform the response to match the schema
+    const transformedSubmissions = submissions.map(({ ...submission }) => ({
+      ...submission,
+    }));
+
+    return transformedSubmissions;
   } catch (error: unknown) {
     if (isH3ErrorLike(error)) {
       throw error;

@@ -3,7 +3,11 @@ import { z, ZodError } from "zod";
 
 import type { PlatformId } from "~/types/crossPlay";
 import type { PCStore, PCStoreData, PlatformGroups } from "~/types/submit-game";
-import { SUPPORTED_PC_STORES, SUPPORTED_PLATFORMS } from "~~/shared/constants";
+import {
+  GAME_MODES,
+  SUPPORTED_PC_STORES,
+  SUPPORTED_PLATFORMS,
+} from "~~/shared/constants";
 import { InsertPcStorePlatformSchema } from "~~/shared/schemas/pcStorePlatform";
 import { InsertPlatformGroupSchema } from "~~/shared/schemas/platformGroup";
 
@@ -20,6 +24,11 @@ const pcStores = defineModel<PCStore["slug"][]>("pcStores", {
 const pcStorePlatforms = defineModel<PCStoreData>("pcStorePlatforms", {
   required: true,
   default: {},
+});
+
+const gameModes = defineModel<number[]>("gameModes", {
+  required: true,
+  default: [],
 });
 
 // Validation state
@@ -171,6 +180,29 @@ watch(
 
 <template>
   <div>
+    <fieldset>
+      <legend>Game Modes</legend>
+      <p class="tw:text-sm tw:text-text-muted tw:mb-4">
+        Select at least one game mode that the game supports.
+      </p>
+      <div class="tw:space-y-2">
+        <div
+          v-for="mode in GAME_MODES"
+          :key="mode.id"
+          class="tw:flex tw:items-center tw:gap-2"
+        >
+          <input
+            :id="mode.slug"
+            v-model="gameModes"
+            type="checkbox"
+            class="checkbox"
+            :value="mode.id"
+          />
+          <label :for="mode.slug">{{ mode.name }}</label>
+        </div>
+      </div>
+    </fieldset>
+
     <fieldset>
       <legend>Platforms</legend>
       <p class="tw:text-sm tw:text-text-muted tw:mb-4">

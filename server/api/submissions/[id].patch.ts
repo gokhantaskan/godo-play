@@ -3,6 +3,7 @@ import { z } from "zod";
 
 import { db } from "~~/server/db";
 import {
+  gameSubmissionGameModes,
   gameSubmissions,
   pcStoreCrossplayPlatforms,
   pcStorePlatforms,
@@ -33,6 +34,7 @@ const updateSubmissionSchema = z.object({
       crossplayPlatforms: z.array(z.number()).default([]),
     })
   ),
+  gameModeIds: z.array(z.number()).min(1, "At least one game mode is required"),
 });
 
 type RequestBody = z.infer<typeof updateSubmissionSchema>;
@@ -87,13 +89,16 @@ export default defineEventHandler(async event => {
         });
       }
 
-      // Delete existing platform groups and PC store platforms
+      // Delete existing platform groups, PC store platforms, and game modes
       await tx
         .delete(platformGroups)
         .where(eq(platformGroups.submissionId, submissionId));
       await tx
         .delete(pcStorePlatforms)
         .where(eq(pcStorePlatforms.submissionId, submissionId));
+      await tx
+        .delete(gameSubmissionGameModes)
+        .where(eq(gameSubmissionGameModes.submissionId, submissionId));
 
       // Process all insertions sequentially to maintain atomicity
       for (const groupPlatforms of body.platformGroups) {
@@ -156,6 +161,16 @@ export default defineEventHandler(async event => {
             )
           );
         }
+      }
+
+      // Process game modes
+      if (body.gameModeIds.length > 0) {
+        await tx.insert(gameSubmissionGameModes).values(
+          body.gameModeIds.map(gameModeId => ({
+            submissionId,
+            gameModeId,
+          }))
+        );
       }
 
       return submission;

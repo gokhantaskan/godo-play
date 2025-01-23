@@ -1,5 +1,6 @@
 import { relations } from "drizzle-orm";
 
+import { gameModes, gameSubmissionGameModes } from "../tables/gameModes";
 import { gameSubmissions } from "../tables/gameSubmissions";
 import {
   pcStoreCrossplayPlatforms,
@@ -17,6 +18,25 @@ export const gameSubmissionsRelations = relations(
     // A submission can have many platform groups and many pc store entries
     platformGroups: many(platformGroups),
     pcStorePlatforms: many(pcStorePlatforms),
+    gameSubmissionGameModes: many(gameSubmissionGameModes),
+  })
+);
+
+export const gameModesRelations = relations(gameModes, ({ many }) => ({
+  gameSubmissionGameModes: many(gameSubmissionGameModes),
+}));
+
+export const gameSubmissionGameModesRelations = relations(
+  gameSubmissionGameModes,
+  ({ one }) => ({
+    submission: one(gameSubmissions, {
+      fields: [gameSubmissionGameModes.submissionId],
+      references: [gameSubmissions.id],
+    }),
+    gameMode: one(gameModes, {
+      fields: [gameSubmissionGameModes.gameModeId],
+      references: [gameModes.id],
+    }),
   })
 );
 

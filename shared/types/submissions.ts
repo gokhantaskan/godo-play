@@ -1,3 +1,7 @@
+import type { Submission } from "../schemas/submission";
+
+export type GameSubmission = Submission;
+
 export interface GameSubmissionPlatform {
   id: number;
   name: string;
@@ -21,17 +25,4 @@ export interface GameSubmissionPCStorePlatform {
   id: number;
   storeSlug: string;
   crossplayEntries: GameSubmissionCrossplayEntry[];
-}
-
-export interface GameSubmission {
-  id: number;
-  gameId: string;
-  gameName: string;
-  gameSlug: string;
-  gameImageId: string | null;
-  status: "pending" | "approved" | "rejected";
-  createdAt: string;
-  updatedAt: string;
-  platformGroups: GameSubmissionPlatformGroup[];
-  pcStorePlatforms: GameSubmissionPCStorePlatform[];
 }

@@ -25,6 +25,7 @@ export interface SubmitGamePayload {
   game: GameSubmissionData;
   platformGroups: PlatformGroups;
   pcStoresPlatforms: PCStoreData;
+  gameModeIds: number[];
   token: string;
 }
 
@@ -32,4 +33,5 @@ export interface SubmitGameFormData {
   platformGroups: PlatformGroups;
   pcStores: PCStore["slug"][];
   pcStorePlatforms: PCStoreData;
+  gameModeIds: number[];
 }

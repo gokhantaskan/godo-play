@@ -57,7 +57,19 @@ const hasCrossplaySupport = (crossplayLength: number) => {
         <h2 class="game-card__title">{{ game.gameName }}</h2>
       </header>
 
-      <div class="sections">
+      <div>
+        <!-- Game Modes -->
+        <div
+          v-if="game.gameSubmissionGameModes?.length"
+          class="game-card__game-modes"
+        >
+          {{
+            game.gameSubmissionGameModes
+              .map(mode => mode.gameMode.name)
+              .join(", ")
+          }}
+        </div>
+
         <!-- Platform Groups -->
         <div v-if="game.platformGroups?.length">
           <CrossPlayGameCardPlatformGroups

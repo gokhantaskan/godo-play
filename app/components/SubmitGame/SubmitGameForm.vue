@@ -16,6 +16,7 @@ const selectedGame = ref<GameOption | null>(null);
 const selectedPlatformGroups = ref<PlatformGroups>([[]]);
 const selectedPcStores = ref<PCStore["slug"][]>([]);
 const selectedPcStoresPlatforms = ref<PCStoreData>({});
+const selectedGameModes = ref<number[]>([]);
 const isSubmitting = ref(false);
 const formError = ref<string | null>(null);
 
@@ -25,8 +26,11 @@ const isValidForm = computed(() => {
   const hasValidGroups = selectedPlatformGroups.value.some(
     group => group.length > 0
   );
+  const hasValidGameModes = selectedGameModes.value.length > 0;
 
-  return hasValidGame && hasValidGroups && !isSubmitting.value;
+  return (
+    hasValidGame && hasValidGroups && hasValidGameModes && !isSubmitting.value
+  );
 });
 
 // Methods
@@ -35,6 +39,7 @@ function resetForm() {
   selectedPlatformGroups.value = [[]];
   selectedPcStores.value = [];
   selectedPcStoresPlatforms.value = {};
+  selectedGameModes.value = [];
   formError.value = null;
 }
 
@@ -63,6 +68,7 @@ async function handleSubmit() {
       },
       platformGroups: selectedPlatformGroups.value,
       pcStoresPlatforms: selectedPcStoresPlatforms.value,
+      gameModeIds: selectedGameModes.value,
       token,
     };
 
@@ -140,6 +146,7 @@ async function handleSubmit() {
       v-model:platform-groups="selectedPlatformGroups"
       v-model:pc-stores="selectedPcStores"
       v-model:pc-store-platforms="selectedPcStoresPlatforms"
+      v-model:game-modes="selectedGameModes"
     />
 
     <div

@@ -3,6 +3,7 @@ import { z } from "zod";
 
 import { db } from "~~/server/db";
 import {
+  gameSubmissionGameModes,
   gameSubmissions,
   pcStoreCrossplayPlatforms,
   pcStorePlatforms,
@@ -42,6 +43,7 @@ const submitGameSchema = z.object({
       crossplayPlatforms: z.array(z.number()).default([]),
     })
   ),
+  gameModeIds: z.array(z.number()).min(1, "At least one game mode is required"),
   token: z.string().min(1, "reCAPTCHA token is required"),
 });
 
@@ -214,6 +216,16 @@ export default defineEventHandler(async event => {
             )
           );
         }
+      }
+
+      // Process game modes
+      if (body.gameModeIds.length > 0) {
+        await tx.insert(gameSubmissionGameModes).values(
+          body.gameModeIds.map(gameModeId => ({
+            submissionId: submission.id,
+            gameModeId,
+          }))
+        );
       }
 
       return submission;

@@ -20,12 +20,13 @@ const emit = defineEmits<{
   (e: "refresh"): void;
 }>();
 
-const { platformGroups, pcStores, pcStorePlatforms } =
+const { platformGroups, pcStores, pcStorePlatforms, gameModeIds } =
   transformSubmissionToFormData(props.submission);
 
 const platformGroupsModel = ref<PlatformGroups>(platformGroups);
 const pcStoresModel = ref<PCStore["slug"][]>(pcStores);
 const pcStorePlatformsModel = ref<PCStoreData>(pcStorePlatforms);
+const gameModesModel = ref<number[]>(gameModeIds);
 
 async function handleUpdate(status: "approved" | "rejected") {
   try {
@@ -37,6 +38,7 @@ async function handleUpdate(status: "approved" | "rejected") {
           platformGroups: platformGroupsModel.value,
           pcStores: pcStoresModel.value,
           pcStoresPlatforms: pcStorePlatformsModel.value,
+          gameModeIds: gameModesModel.value,
         },
       });
     }
@@ -80,6 +82,7 @@ async function handleSave() {
         platformGroups: platformGroupsModel.value,
         pcStores: pcStoresModel.value,
         pcStoresPlatforms: pcStorePlatformsModel.value,
+        gameModeIds: gameModesModel.value,
       },
     });
 
@@ -111,10 +114,16 @@ function transformSubmissionToFormData(
     {} as PCStoreData
   );
 
+  // Transform game modes
+  const gameModeIds = submission.gameSubmissionGameModes.map(
+    mode => mode.gameModeId
+  );
+
   return {
     platformGroups,
     pcStores,
     pcStorePlatforms,
+    gameModeIds,
   };
 }
 
@@ -205,6 +214,7 @@ syncPCStorePlatforms();
               v-model:platform-groups="platformGroupsModel"
               v-model:pc-stores="pcStoresModel"
               v-model:pc-store-platforms="pcStorePlatformsModel"
+              v-model:game-modes="gameModesModel"
               :disabled="submission.status === 'rejected'"
             />
 
