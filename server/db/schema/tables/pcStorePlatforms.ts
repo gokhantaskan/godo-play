@@ -11,14 +11,6 @@ import { defaultInsertTimestamps } from "../helpers/defaults";
 import { gameSubmissions } from "./gameSubmissions";
 import { platforms } from "./platforms";
 
-export const pcStorePlatformGroups = pgTable("pc_store_platform_groups", {
-  id: serial("id").primaryKey(),
-  submissionId: integer("submission_id")
-    .references(() => gameSubmissions.id)
-    .notNull(),
-  ...defaultInsertTimestamps,
-});
-
 /**
  * pc_store_platforms
  * Associates a submission with a PC store (e.g., "steam", "epic").
@@ -56,14 +48,9 @@ export const pcStoreCrossplayPlatforms = pgTable(
   ]
 );
 
-// Base Zod schemas generated from Drizzle schema
-export const BasePcStorePlatformGroupSchema = createSelectSchema(
-  pcStorePlatformGroups
-);
-export const BaseInsertPcStorePlatformGroupSchema = createInsertSchema(
-  pcStorePlatformGroups
-);
-
+/**
+ * Base Zod schemas generated from Drizzle schema
+ */
 export const BasePcStorePlatformSchema = createSelectSchema(pcStorePlatforms);
 export const BaseInsertPcStorePlatformSchema =
   createInsertSchema(pcStorePlatforms);
@@ -75,15 +62,8 @@ export const BaseInsertPcStoreCrossplayPlatformSchema = createInsertSchema(
   pcStoreCrossplayPlatforms
 );
 
-// Types for internal database usage
-export type PcStorePlatformGroup = typeof pcStorePlatformGroups.$inferSelect;
-export type InsertPcStorePlatformGroup =
-  typeof pcStorePlatformGroups.$inferInsert;
-
+/**
+ * Types for internal database usage
+ */
 export type PcStorePlatform = typeof pcStorePlatforms.$inferSelect;
 export type InsertPcStorePlatform = typeof pcStorePlatforms.$inferInsert;
-
-export type PcStoreCrossplayPlatform =
-  typeof pcStoreCrossplayPlatforms.$inferSelect;
-export type InsertPcStoreCrossplayPlatform =
-  typeof pcStoreCrossplayPlatforms.$inferInsert;

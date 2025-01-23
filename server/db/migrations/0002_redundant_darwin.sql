@@ -1,0 +1,1 @@
+DROP TABLE "pc_store_platform_groups" CASCADE;
