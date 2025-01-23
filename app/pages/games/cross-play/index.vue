@@ -134,7 +134,7 @@ const filteredSubmissions = computed(() => {
 
     <div
       v-else-if="filteredSubmissions.length"
-      class="tw:grid tw:grid-cols-2 tw:gap-4 tw:sm:grid-cols-3 tw:lg:grid-cols-4 tw:xl:grid-cols-5"
+      class="tw:grid tw:grid-cols-2 tw:sm:grid-cols-[repeat(auto-fill,minmax(14rem,1fr))] tw:gap-4"
     >
       <CrossPlayGameCard
         v-for="submission in filteredSubmissions"

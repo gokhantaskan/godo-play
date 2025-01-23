@@ -1,7 +1,7 @@
 <script setup lang="ts">
 const { slug } = useRoute().params;
 
-const { data: game } = await useFetch(`/api/games/${slug}`);
+const { data: game } = await useFetch(`/api/games/external/${slug}`);
 </script>
 
 <template>

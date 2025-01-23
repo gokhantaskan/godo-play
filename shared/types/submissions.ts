@@ -1,7 +1,7 @@
 import type {
   GameSubmission,
   GameSubmissionWithRelations as BaseGameSubmissionWithRelations,
-} from "../../server/db/schema/tables/gameSubmissions";
+} from "~~/server/db/schema/tables/gameSubmissions";
 
 export type { GameSubmission };
 export interface GameSubmissionWithRelations

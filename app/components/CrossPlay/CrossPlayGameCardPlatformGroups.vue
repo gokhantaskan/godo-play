@@ -182,8 +182,8 @@ const platformGroups = computed(() => {
   }
 
   &__icon {
-    width: 1lh;
-    height: 1lh;
+    width: calc(var(--gap) * 4);
+    height: calc(var(--gap) * 4);
     flex-shrink: 0;
   }
 

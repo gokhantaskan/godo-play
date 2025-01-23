@@ -3,7 +3,7 @@ import { z } from "zod";
 import {
   GameSubmissionSchema as BaseGameSubmissionSchema,
   InsertGameSubmissionSchema as BaseInsertGameSubmissionSchema,
-} from "../../server/db/schema/tables/gameSubmissions";
+} from "~~/server/db/schema/tables/gameSubmissions";
 
 // Extend base schemas with additional validation/transformation
 const ExtendedGameSubmissionSchema = BaseGameSubmissionSchema.extend({

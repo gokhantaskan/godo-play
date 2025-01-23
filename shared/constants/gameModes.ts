@@ -3,6 +3,7 @@ export const GAME_MODES: {
   name: string;
   slug: string;
 }[] = [
+  // IGDB (keep as-is)
   {
     id: 1,
     name: "Single player",
@@ -25,13 +26,49 @@ export const GAME_MODES: {
   },
   {
     id: 5,
-    name: "Massively Multiplayer Online (MMO)",
+    name: "MMO",
     slug: "massively-multiplayer-online-mmo",
   },
   {
     id: 6,
     name: "Battle Royale",
     slug: "battle-royale",
+  },
+  // Custom
+  {
+    id: 100,
+    name: "Campaign",
+    slug: "campaign",
+  },
+  {
+    id: 101,
+    name: "Competitive",
+    slug: "competitive",
+  },
+  {
+    id: 102,
+    name: "Local & Party",
+    slug: "local-and-party",
+  },
+  {
+    id: 103,
+    name: "PvP",
+    slug: "pvp",
+  },
+  {
+    id: 104,
+    name: "PvE",
+    slug: "pve",
+  },
+  {
+    id: 105,
+    name: "Time Trial / Score Attack",
+    slug: "time-trial-score-attack",
+  },
+  {
+    id: 106,
+    name: "Sandbox / Creative",
+    slug: "sandbox-creative",
   },
 ];
 

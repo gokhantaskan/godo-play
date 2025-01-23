@@ -5,7 +5,7 @@ import {
   GameSubmissionSchema,
   type GameSubmissionWithRelations,
   GameSubmissionWithRelationsSchema,
-} from "../../server/db/schema/tables/gameSubmissions";
+} from "~~/server/db/schema/tables/gameSubmissions";
 
 export {
   type GameSubmission,

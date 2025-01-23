@@ -38,7 +38,7 @@ const {
   data: gameDetails,
   status: gameDetailsStatus,
   execute: fetchGameDetails,
-} = useFetch(`/api/games/${props.game.slug}`, {
+} = useFetch(`/api/games/external/${props.game.slug}`, {
   immediate: false,
   key: cacheKey.value,
   lazy: !!cachedGameDetails.value,

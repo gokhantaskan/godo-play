@@ -1,12 +1,7 @@
 <script setup lang="ts">
 import { Disclosure, DisclosureButton, DisclosurePanel } from "@headlessui/vue";
+import { ref } from "vue";
 
-import type {
-  PCStore,
-  PCStoreData,
-  PlatformGroups,
-  SubmitGameFormData,
-} from "~/types/submit-game";
 import type { GameSubmissionWithRelations } from "~~/shared/types/submissions";
 
 interface Props {
@@ -26,30 +21,16 @@ interface Props {
 const props = defineProps<Props>();
 
 const emit = defineEmits<{
-  (e: "refresh"): void;
+  (e: "refresh" | "save-and-approve"): void;
 }>();
 
-const { platformGroups, pcStores, pcStorePlatforms, gameModeIds } =
-  transformSubmissionToFormData(props.submission);
-
-const platformGroupsModel = ref<PlatformGroups>(platformGroups);
-const pcStoresModel = ref<PCStore["slug"][]>(pcStores);
-const pcStorePlatformsModel = ref<PCStoreData>(pcStorePlatforms);
-const gameModesModel = ref<number[]>(gameModeIds);
+const detailsRef = ref<{ save: () => Promise<void> } | null>(null);
 
 async function handleUpdate(status: "approved" | "rejected") {
   try {
     if (status === "approved") {
-      // Save form changes first
-      await $fetch(`/api/submissions/${props.submission.id}`, {
-        method: "PATCH",
-        body: {
-          platformGroups: platformGroupsModel.value,
-          pcStores: pcStoresModel.value,
-          pcStoresPlatforms: pcStorePlatformsModel.value,
-          gameModeIds: gameModesModel.value,
-        },
-      });
+      // First save the form data
+      await detailsRef.value?.save();
     }
 
     // Then update the status
@@ -82,101 +63,6 @@ async function handleDelete() {
     console.error("Failed to delete submission:", error);
   }
 }
-
-async function handleSave() {
-  try {
-    await $fetch(`/api/submissions/${props.submission.id}`, {
-      method: "PATCH",
-      body: {
-        platformGroups: platformGroupsModel.value,
-        pcStores: pcStoresModel.value,
-        pcStoresPlatforms: pcStorePlatformsModel.value,
-        gameModeIds: gameModesModel.value,
-      },
-    });
-
-    emit("refresh");
-  } catch (error) {
-    console.error("Failed to save changes:", error);
-  }
-}
-
-function transformSubmissionToFormData(
-  submission: Props["submission"]
-): SubmitGameFormData {
-  // Transform platform groups
-  const platformGroups: PlatformGroups = submission.platformGroups.map(group =>
-    group.platformGroupPlatforms.map(p => p.platform.id)
-  );
-
-  // Transform PC store platforms
-  const pcStores = submission.pcStorePlatforms.map(store => store.storeSlug);
-  const pcStorePlatforms: PCStoreData = submission.pcStorePlatforms.reduce(
-    (acc, store) => {
-      acc[store.storeSlug] = {
-        crossplayPlatforms: store.crossplayEntries.map(
-          entry => entry.platform.id
-        ),
-      };
-      return acc;
-    },
-    {} as PCStoreData
-  );
-
-  // Transform game modes
-  const gameModeIds = submission.gameSubmissionGameModes.map(
-    mode => mode.gameModeId
-  );
-
-  return {
-    platformGroups,
-    pcStores,
-    pcStorePlatforms,
-    gameModeIds,
-  };
-}
-
-function syncPCStorePlatforms() {
-  // Find the group that contains PC (id: 6)
-  const pcGroup = platformGroupsModel.value.find(group => group.includes(6));
-
-  // If no PC group found, clear all PC store platforms
-  if (!pcGroup) {
-    pcStorePlatformsModel.value = {};
-    pcStoresModel.value = [];
-    return;
-  }
-
-  // Get available crossplay platforms (excluding PC)
-  const availablePlatforms = pcGroup.filter(id => id !== 6);
-
-  // Update each PC store's crossplay platforms
-  pcStorePlatformsModel.value = Object.fromEntries(
-    pcStoresModel.value.map(storeSlug => {
-      const currentCrossplayPlatforms =
-        pcStorePlatformsModel.value[storeSlug]?.crossplayPlatforms ?? [];
-
-      // Keep only platforms that are in both the current list and the PC group
-      const validPlatforms = currentCrossplayPlatforms.filter(platformId =>
-        availablePlatforms.includes(platformId)
-      );
-
-      return [storeSlug, { crossplayPlatforms: validPlatforms }];
-    })
-  );
-}
-
-// Watch platform groups to sync PC store platforms
-watch(
-  platformGroupsModel,
-  () => {
-    syncPCStorePlatforms();
-  },
-  { deep: true }
-);
-
-// Initial sync after data transformation
-syncPCStorePlatforms();
 </script>
 
 <template>
@@ -219,26 +105,12 @@ syncPCStorePlatforms();
             {{ open ? "Hide Details" : "Show Details" }}
           </DisclosureButton>
           <DisclosurePanel class="submission-card__edit-panel">
-            <SubmitGameFormInner
-              v-model:platform-groups="platformGroupsModel"
-              v-model:pc-stores="pcStoresModel"
-              v-model:pc-store-platforms="pcStorePlatformsModel"
-              v-model:game-modes="gameModesModel"
+            <SubmissionListItemDetails
+              ref="detailsRef"
+              :submission="submission"
               :disabled="submission.status === 'rejected'"
+              @refresh="emit('refresh')"
             />
-
-            <div
-              v-if="submission.status === 'approved'"
-              class="submission-card__save-button"
-            >
-              <TheButton
-                size="sm"
-                variant="primary"
-                @click="handleSave"
-              >
-                Save Changes
-              </TheButton>
-            </div>
           </DisclosurePanel>
         </Disclosure>
 
@@ -343,15 +215,6 @@ syncPCStorePlatforms();
 
   &__edit-panel {
     margin-block-start: 1rem;
-    padding: 1rem;
-    background-color: var(--tw-color-gray-50);
-    border-radius: var(--tw-radius-md);
-  }
-
-  &__save-button {
-    margin-block-start: 1rem;
-    display: flex;
-    justify-content: flex-end;
   }
 
   &__status-buttons {

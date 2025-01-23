@@ -69,7 +69,19 @@ const hasCrossplaySupport = (crossplayLength: number) => {
     <!-- Content Section -->
     <div class="game-card__content">
       <header>
-        <h2 class="game-card__title">{{ game.gameName }}</h2>
+        <h2
+          class="game-card__title"
+          :style="{
+            textOverflow: 'unset',
+            whiteSpace: 'unset',
+            // line clamp for 2 lines
+            display: '-webkit-box',
+            '-webkit-line-clamp': '2',
+            '-webkit-box-orient': 'vertical',
+          }"
+        >
+          {{ game.gameName }}
+        </h2>
       </header>
 
       <div>
@@ -86,7 +98,10 @@ const hasCrossplaySupport = (crossplayLength: number) => {
         </div>
 
         <!-- Platform Groups -->
-        <div v-if="game.platformGroups?.length">
+        <div
+          v-if="game.platformGroups?.length"
+          class="tw:mt-2"
+        >
           <CrossPlayGameCardPlatformGroups
             role="listitem"
             :platform-groups="game.platformGroups"

@@ -74,6 +74,11 @@ export default defineNuxtConfig({
   typescript: {
     typeCheck: true,
   },
+  // routeRules: {
+  //   "/games/cross-play": {
+  //     headers: { "cache-control": "public, max-age=1" },
+  //   },
+  // },
   modules: [
     "@nuxt/eslint",
     "@nuxt/fonts",
