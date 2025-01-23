@@ -1,19 +1,34 @@
 <script setup lang="ts">
 import { Icon } from "#components";
 import { SUPPORTED_PC_STORES_BY_SLUG } from "~~/shared/constants";
-import type { GameSubmission } from "~~/shared/types/submissions";
+import type {
+  GameSubmissionPlatformGroupPlatform,
+  GameSubmissionWithRelations,
+} from "~~/shared/types/submissions";
+
+interface GameMode {
+  gameMode: {
+    id: number;
+    name: string;
+    slug: string;
+  };
+}
 
 const props = defineProps<{
-  game: GameSubmission;
+  game: GameSubmissionWithRelations & {
+    gameSubmissionGameModes?: GameMode[];
+  };
 }>();
 
-const groupPlatformsWithPC = computed(() => {
-  return (
-    props.game.platformGroups?.find(group =>
-      group.platformGroupPlatforms?.some(p => p.platform?.id === 6)
-    )?.platformGroupPlatforms ?? []
-  );
-});
+const groupPlatformsWithPC = computed<GameSubmissionPlatformGroupPlatform[]>(
+  () => {
+    return (
+      props.game.platformGroups?.find(group =>
+        group.platformGroupPlatforms?.some(p => p.platform?.id === 6)
+      )?.platformGroupPlatforms ?? []
+    );
+  }
+);
 
 const sortedPCStores = computed(
   () =>

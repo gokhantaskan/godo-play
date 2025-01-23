@@ -1,7 +1,30 @@
-import type { Submission } from "../schemas/submission";
+import type {
+  GameSubmission,
+  GameSubmissionWithRelations as BaseGameSubmissionWithRelations,
+} from "../../server/db/schema/tables/gameSubmissions";
 
-export type GameSubmission = Submission;
+export type { GameSubmission };
+export interface GameSubmissionWithRelations
+  extends BaseGameSubmissionWithRelations {
+  gameSubmissionGameModes: Array<{
+    gameModeId: number;
+    gameMode: {
+      id: number;
+      name: string;
+      slug: string;
+    };
+  }>;
+}
+export type GameSubmissionResponse = GameSubmissionWithRelations[];
 
+// Only define types that are specific to the frontend and not covered by the database schema
+export interface GameSubmissionUIState {
+  isEditing: boolean;
+  isDeleting: boolean;
+  hasError: boolean;
+}
+
+// These types should match the schema in GameSubmissionWithRelationsSchema
 export interface GameSubmissionPlatform {
   id: number;
   name: string;
@@ -25,4 +48,11 @@ export interface GameSubmissionPCStorePlatform {
   id: number;
   storeSlug: string;
   crossplayEntries: GameSubmissionCrossplayEntry[];
+}
+
+// Type guard to check if a submission has relations
+export function hasRelations(
+  submission: GameSubmission | GameSubmissionWithRelations
+): submission is GameSubmissionWithRelations {
+  return "platformGroups" in submission;
 }

@@ -5,17 +5,15 @@ import {
   BasePlatformSchema,
 } from "~~/server/db/schema/tables/platforms";
 
-// Extend base schemas with additional validation/transformation
+// Extend base schemas only if you need runtime date coercion:
 export const PlatformSchema = BasePlatformSchema.extend({
-  // Add any additional validation or transformations here
   createdAt: z.coerce.date(),
   updatedAt: z.coerce.date(),
 });
 
-export const InsertPlatformSchema = BaseInsertPlatformSchema.extend({
-  // Add any additional validation or transformations here
-});
+// If no extra validation is needed, you can directly export BaseInsertPlatformSchema
+export const InsertPlatformSchema = BaseInsertPlatformSchema;
 
-// Export types for use in the application
+// Export Types
 export type Platform = z.infer<typeof PlatformSchema>;
 export type InsertPlatform = z.infer<typeof InsertPlatformSchema>;

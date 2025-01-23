@@ -2,16 +2,16 @@
 import { Tab, TabGroup, TabList, TabPanel, TabPanels } from "@headlessui/vue";
 
 import type {
-  Submission,
-  SubmissionResponse,
-} from "~~/shared/schemas/submission";
+  GameSubmissionResponse,
+  GameSubmissionWithRelations,
+} from "~~/shared/types/submissions";
 
 definePageMeta({
   name: "AdminGameSubmissionsPage",
 });
 
 const { data: submissions, refresh } =
-  await useFetch<SubmissionResponse>("/api/submissions");
+  await useFetch<GameSubmissionResponse>("/api/submissions");
 
 const tabs = [
   { name: "Pending", status: "pending" },
@@ -20,7 +20,10 @@ const tabs = [
 ] as const;
 
 const groupedSubmissions = computed(() => {
-  const initial: Record<"pending" | "approved" | "rejected", Submission[]> = {
+  const initial: Record<
+    "pending" | "approved" | "rejected",
+    GameSubmissionWithRelations[]
+  > = {
     pending: [],
     approved: [],
     rejected: [],

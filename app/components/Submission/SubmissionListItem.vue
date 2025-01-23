@@ -7,10 +7,19 @@ import type {
   PlatformGroups,
   SubmitGameFormData,
 } from "~/types/submit-game";
-import type { Submission } from "~~/shared/schemas/submission";
+import type { GameSubmissionWithRelations } from "~~/shared/types/submissions";
 
 interface Props {
-  submission: Submission;
+  submission: GameSubmissionWithRelations & {
+    gameSubmissionGameModes: Array<{
+      gameModeId: number;
+      gameMode: {
+        id: number;
+        name: string;
+        slug: string;
+      };
+    }>;
+  };
   isPending?: boolean;
 }
 
@@ -93,7 +102,7 @@ async function handleSave() {
 }
 
 function transformSubmissionToFormData(
-  submission: Submission
+  submission: Props["submission"]
 ): SubmitGameFormData {
   // Transform platform groups
   const platformGroups: PlatformGroups = submission.platformGroups.map(group =>
