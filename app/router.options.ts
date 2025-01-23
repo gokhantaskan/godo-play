@@ -1,6 +1,6 @@
 import type { RouterConfig } from "@nuxt/schema";
 
-const excludedPaths = ["/admin", "/submit-game"];
+const excludedPaths = ["/admin"];
 
 export default {
   routes: _routes => {

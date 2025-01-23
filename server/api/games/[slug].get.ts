@@ -53,16 +53,15 @@ export default defineCachedEventHandler(
 
       const [gameDetails] = await response.json();
       return gameDetails as GameDetails;
-    } catch (error) {
-      if (error instanceof Error) {
-        console.error("Error:", error);
-        throw createError(error);
+    } catch (error: unknown) {
+      if (isH3ErrorLike(error)) {
+        throw error;
       }
 
-      console.error("Unknown Error:", error);
       throw createError({
         statusCode: 500,
-        statusMessage: "Internal Server Error",
+        message: "Failed to fetch game details",
+        data: process.env.NODE_ENV === "development" ? error : undefined,
       });
     }
   },

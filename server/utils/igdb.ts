@@ -17,8 +17,12 @@ export async function getIGDBClient() {
     });
   }
 
-  return (path: string, body: unknown) =>
-    fetch(`${config.igdb.endpoint}/${path}`, {
+  return (path: string, body: unknown) => {
+    if (process.env.NODE_ENV === "development") {
+      console.log("IGDB client =>", `${config.igdb.endpoint}/${path} =>`, body);
+    }
+
+    return fetch(`${config.igdb.endpoint}/${path}`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -27,4 +31,5 @@ export async function getIGDBClient() {
       },
       body: JSON.stringify(body),
     });
+  };
 }

@@ -30,10 +30,6 @@ defineProps<{
           {{ slice.primary.cta_text }}
         </TheButton>
       </NuxtLink>
-      <PlatformIcons
-        class="tw:mt-6"
-        use-default-color
-      />
     </div>
   </header>
 </template>

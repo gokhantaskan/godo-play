@@ -1,23 +1,46 @@
+import { GAME_MODE_IDS } from "~~/shared/constants";
+
 export type IGDBFields = {
   fields?: string;
   sort?: string;
   limit?: number;
   offset?: number;
   where?: string;
-  search?: string;
   [key: string]: any;
 };
 
 export default {
-  async allGames(fields: IGDBFields) {
-    const { limit = 100, sort = "aggregated_rating desc", ...rest } = fields;
+  async allGames(options: IGDBFields) {
+    const {
+      fields = "name,slug,category,platforms.*,genres.*,player_perspectives.*,themes.*,cover.*,game_modes.*,multiplayer_modes.*,first_release_date",
+      limit = 100,
+      sort = "aggregated_rating desc",
+      where = "category=(0,3,8,9) & version_parent=null & platforms=() & age_ratings.category=(2) & release_dates.date>=1672531200",
+      ...rest
+    } = options;
 
     return await this.request("games", {
-      fields:
-        "name,slug,category,platforms.*,genres.*,player_perspectives.*,themes.*,cover.*,game_modes.*,multiplayer_modes.*,first_release_date,release_dates.*",
+      fields,
       limit,
       sort,
+      where,
       ...rest,
+    });
+  },
+
+  async searchGames(query: string, options: Partial<IGDBFields> = {}) {
+    const {
+      fields = "name,slug,category,platforms.*,genres.*,player_perspectives.*,themes.*,cover.*,game_modes.*,multiplayer_modes.*",
+      limit = 100,
+      where = `category=(0,3,8,9) & version_parent=null & game_modes=(${GAME_MODE_IDS.filter(id => id !== 1).join(",")})`,
+      sort = "popularity desc",
+    } = options;
+
+    return await this.request("games", {
+      fields,
+      where: `name~*"${query}"* & ${where}`,
+      limit,
+      sort,
     });
   },
 

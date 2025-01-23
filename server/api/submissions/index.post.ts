@@ -153,88 +153,68 @@ export default defineEventHandler(async event => {
         });
       }
 
-      // Insert platform groups and their platforms
-      await Promise.all(
-        body.platformGroups.map(async (groupPlatforms: number[]) => {
-          const [group] = await tx
-            .insert(platformGroups)
-            .values(
-              InsertPlatformGroupSchema.parse({
-                submissionId: submission.id,
+      // Process platform groups sequentially instead of Promise.all
+      for (const groupPlatforms of body.platformGroups) {
+        const [group] = await tx
+          .insert(platformGroups)
+          .values(
+            InsertPlatformGroupSchema.parse({
+              submissionId: submission.id,
+            })
+          )
+          .returning();
+
+        if (!group) {
+          throw createError({
+            statusCode: 500,
+            message: "Failed to create platform group",
+          });
+        }
+
+        if (groupPlatforms.length > 0) {
+          await tx.insert(platformGroupPlatforms).values(
+            groupPlatforms.map(platformId =>
+              InsertPlatformGroupPlatformsSchema.parse({
+                platformGroupId: group.id,
+                platformId,
               })
             )
-            .returning();
+          );
+        }
+      }
 
-          if (!group) {
-            throw createError({
-              statusCode: 500,
-              message: "Failed to create platform group",
-            });
-          }
+      // Process PC store platforms sequentially
+      for (const [storeSlug, { crossplayPlatforms }] of Object.entries(
+        body.pcStoresPlatforms
+      )) {
+        const [pcStore] = await tx
+          .insert(pcStorePlatforms)
+          .values(
+            InsertPcStorePlatformSchema.parse({
+              submissionId: submission.id,
+              storeSlug,
+            })
+          )
+          .returning();
 
-          if (groupPlatforms.length > 0) {
-            try {
-              await tx.insert(platformGroupPlatforms).values(
-                groupPlatforms.map(platformId =>
-                  InsertPlatformGroupPlatformsSchema.parse({
-                    platformGroupId: group.id,
-                    platformId,
-                  })
-                )
-              );
-            } catch (error) {
-              throw createError({
-                statusCode: 500,
-                message: "Failed to associate platforms with group",
-                data: error,
-              });
-            }
-          }
-        })
-      );
+        if (!pcStore) {
+          throw createError({
+            statusCode: 500,
+            message: "Failed to create PC store platform",
+          });
+        }
 
-      // Insert PC store platforms and their crossplay platforms
-      await Promise.all(
-        Object.entries(body.pcStoresPlatforms).map(
-          async ([storeSlug, { crossplayPlatforms }]) => {
-            const [pcStore] = await tx
-              .insert(pcStorePlatforms)
-              .values(
-                InsertPcStorePlatformSchema.parse({
-                  submissionId: submission.id,
-                  storeSlug,
-                })
-              )
-              .returning();
-
-            if (!pcStore) {
-              throw createError({
-                statusCode: 500,
-                message: "Failed to create PC store platform",
-              });
-            }
-
-            if (crossplayPlatforms.length > 0) {
-              try {
-                await tx.insert(pcStoreCrossplayPlatforms).values(
-                  crossplayPlatforms.map(platformId =>
-                    InsertPcStoreCrossplayPlatformSchema.parse({
-                      pcStorePlatformId: pcStore.id,
-                      platformId,
-                    })
-                  )
-                );
-              } catch (error) {
-                throw createError({
-                  statusCode: 500,
-                  message: "Failed to associate crossplay platforms",
-                  data: error,
-                });
-              }
-            }
-          }
-        )
-      );
+        if (crossplayPlatforms.length > 0) {
+          await tx.insert(pcStoreCrossplayPlatforms).values(
+            crossplayPlatforms.map(platformId =>
+              InsertPcStoreCrossplayPlatformSchema.parse({
+                pcStorePlatformId: pcStore.id,
+                platformId,
+              })
+            )
+          );
+        }
+      }
 
       return submission;
     });

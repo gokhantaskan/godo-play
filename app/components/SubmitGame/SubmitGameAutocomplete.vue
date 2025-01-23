@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import igdbService from "@/lib/services/igdb.service";
 import { autoCompletePt } from "@/utils/pt";
 import type { DashboardGame } from "~~/shared/types/igdb/dashboardGames";
 
@@ -30,15 +31,9 @@ async function searchGames(event: { query: string }) {
 
   try {
     isLoading.value = true;
+    const response = await igdbService.searchGames(query);
 
-    const response = await $fetch<DashboardGame[]>("/api/games", {
-      params: {
-        search: query,
-        limit: 100,
-      },
-    });
-
-    games.value = (response ?? []).map(game => ({
+    games.value = (response ?? []).map((game: DashboardGame) => ({
       id: game.id,
       name: game.name,
       slug: game.slug,
@@ -56,8 +51,12 @@ async function searchGames(event: { query: string }) {
 </script>
 
 <template>
-  <label for="game-search">
-    <span class="tw:font-medium">Game</span>
+  <div class="tw:flex tw:flex-col tw:gap-1">
+    <label
+      for="game-search"
+      class="tw:font-medium"
+      >Game</label
+    >
     <PAutoComplete
       v-model="value"
       input-id="game-search"
@@ -83,12 +82,9 @@ async function searchGames(event: { query: string }) {
           </div>
           <div class="tw:flex-1">
             <div class="tw:font-medium">{{ option.name }}</div>
-            <div class="tw:text-sm tw:text-gray-500">
-              {{ option.description }}
-            </div>
           </div>
         </div>
       </template>
     </PAutoComplete>
-  </label>
+  </div>
 </template>

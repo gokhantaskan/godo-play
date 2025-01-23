@@ -56,9 +56,21 @@ export default defineCachedEventHandler(
     }
 
     if (gameModes?.length) {
-      whereConditions.push(`game_modes=[${gameModes.join(",")}]`);
+      const hasSinglePlayerOnly = gameModes.length === 1 && gameModes[0] === 1;
+      const hasMultiplayerModes = gameModes.some(mode => mode !== 1);
+
+      if (hasSinglePlayerOnly) {
+        // If only single-player is selected, include multiplayer and cooperative modes
+        whereConditions.push(`game_modes != 1`);
+      } else if (hasMultiplayerModes) {
+        // If other modes are selected, use the provided selection
+        whereConditions.push(`game_modes=[${gameModes.join(",")}]`);
+      }
     } else {
-      whereConditions.push(`game_modes=(${GAME_MODE_IDS.join(",")})`);
+      // Default behavior: exclude single-player only games
+      whereConditions.push(
+        `game_modes=(${GAME_MODE_IDS.filter(id => id !== 1).join(",")})`
+      );
     }
 
     if (playerPerspectives?.length) {

@@ -6,6 +6,10 @@ import type {
   SubmissionResponse,
 } from "~~/shared/schemas/submission";
 
+definePageMeta({
+  name: "AdminGameSubmissionsPage",
+});
+
 const { data: submissions, refresh } =
   await useFetch<SubmissionResponse>("/api/submissions");
 
@@ -35,7 +39,20 @@ const groupedSubmissions = computed(() => {
 
 <template>
   <main class="tw:container tw:py-8">
-    <h1 class="page-title">Submissions</h1>
+    <header class="tw:flex tw:items-center tw:justify-between">
+      <h1 class="page-title">Submissions</h1>
+      <NuxtLink
+        v-slot="{ navigate }"
+        class="tw:inline-flex tw:items-center tw:gap-1"
+        :to="{ name: 'AdminNewGameSubmissionPage' }"
+        custom
+      >
+        <TheButton @click="navigate">
+          <Icon name="lucide:plus" />
+          <span class="tw:sr-only">Submit a Crossplay Support</span>
+        </TheButton>
+      </NuxtLink>
+    </header>
 
     <TabGroup
       as="div"

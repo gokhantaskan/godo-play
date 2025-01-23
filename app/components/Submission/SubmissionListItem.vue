@@ -57,6 +57,10 @@ async function handleUpdate(status: "approved" | "rejected") {
 }
 
 async function handleDelete() {
+  if (!confirm("Are you sure you want to delete this submission?")) {
+    return;
+  }
+
   try {
     await $fetch(`/api/submissions/${props.submission.id}`, {
       method: "DELETE",
@@ -197,7 +201,7 @@ syncPCStorePlatforms();
             {{ open ? "Hide Details" : "Show Details" }}
           </DisclosureButton>
           <DisclosurePanel class="submission-card__edit-panel">
-            <SubmitGameForm
+            <SubmitGameFormInner
               v-model:platform-groups="platformGroupsModel"
               v-model:pc-stores="pcStoresModel"
               v-model:pc-store-platforms="pcStorePlatformsModel"

@@ -131,7 +131,7 @@ const hasCrossplaySupport = (crossplayLength: number) => {
                     class="tw:text-red"
                     aria-hidden="true"
                   />
-                  <span>Cross-play supported</span>
+                  <span>Cross-play not supported</span>
                 </template>
               </p>
             </div>

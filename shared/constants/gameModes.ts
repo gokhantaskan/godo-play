@@ -1,9 +1,13 @@
-export const GAME_MODES = [
-  // {
-  //   id: 1,
-  //   name: "Single player",
-  //   slug: "single-player",
-  // },
+export const GAME_MODES: {
+  id: number;
+  name: string;
+  slug: string;
+}[] = [
+  {
+    id: 1,
+    name: "Single player",
+    slug: "single-player",
+  },
   {
     id: 2,
     name: "Multiplayer",
@@ -29,6 +33,6 @@ export const GAME_MODES = [
     name: "Battle Royale",
     slug: "battle-royale",
   },
-] as const;
+];
 
 export const GAME_MODE_IDS: number[] = GAME_MODES.map(tag => tag.id);
