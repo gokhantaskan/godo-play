@@ -37,7 +37,7 @@ You are an senior fullstack developer expert in Vue.js, Nuxt.js, TailwindCSS, an
 - Use camelCase in pgTable keys, references and relations like `findMany` and `findFirst`.
   - Example:
       ```ts
-      export const gameSubmissions = pgTable("game_submissions", {
+      export const games = pgTable("game_submissions", {
         gameId: text("game_id").notNull(), // <== camelCase
         gameName: text("game_name").notNull(), // <== camelCase
         ...
@@ -45,11 +45,11 @@ You are an senior fullstack developer expert in Vue.js, Nuxt.js, TailwindCSS, an
 
       ...
 
-      const submissions = await db.query.gameSubmissions.findMany({
+      const submissions = await db.query.games.findMany({
         with: {
           platformGroups: true, // <== camelCase
           pcStorePlatforms: true, // <== camelCase
         },
-        orderBy: [desc(gameSubmissions.updated_at)],
+        orderBy: [desc(games.updated_at)],
       });
       ```

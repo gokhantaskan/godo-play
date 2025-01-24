@@ -1,9 +1,9 @@
 import type {
-  GameSubmission,
-  GameSubmissionWithRelations as BaseGameSubmissionWithRelations,
-} from "~~/server/db/schema/tables/gameSubmissions";
+  DbGame,
+  DbGameWithRelations as BaseGameSubmissionWithRelations,
+} from "~~/server/db/schema/tables/games";
 
-export type { GameSubmission };
+export type { DbGame as GameSubmission };
 export interface GameSubmissionWithRelations
   extends BaseGameSubmissionWithRelations {
   gameSubmissionGameModes: Array<{
@@ -52,7 +52,7 @@ export interface GameSubmissionPCStorePlatform {
 
 // Type guard to check if a submission has relations
 export function hasRelations(
-  submission: GameSubmission | GameSubmissionWithRelations
+  submission: DbGame | GameSubmissionWithRelations
 ): submission is GameSubmissionWithRelations {
   return "platformGroups" in submission;
 }

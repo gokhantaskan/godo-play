@@ -1,7 +1,7 @@
 import { relations } from "drizzle-orm";
 
 import { gameModes, gameSubmissionGameModes } from "../tables/gameModes";
-import { gameSubmissions } from "../tables/gameSubmissions";
+import { games } from "../tables/games";
 import {
   pcStoreCrossplayPlatforms,
   pcStorePlatforms,
@@ -13,7 +13,7 @@ import {
 import { platforms } from "../tables/platforms";
 
 export const gameSubmissionsRelations = relations(
-  gameSubmissions,
+  games,
   ({ many }) => ({
     // A submission can have many platform groups and many pc store entries
     platformGroups: many(platformGroups),
@@ -29,9 +29,9 @@ export const gameModesRelations = relations(gameModes, ({ many }) => ({
 export const gameSubmissionGameModesRelations = relations(
   gameSubmissionGameModes,
   ({ one }) => ({
-    submission: one(gameSubmissions, {
+    submission: one(games, {
       fields: [gameSubmissionGameModes.submissionId],
-      references: [gameSubmissions.id],
+      references: [games.id],
     }),
     gameMode: one(gameModes, {
       fields: [gameSubmissionGameModes.gameModeId],
@@ -43,9 +43,9 @@ export const gameSubmissionGameModesRelations = relations(
 export const platformGroupsRelations = relations(
   platformGroups,
   ({ one, many }) => ({
-    submission: one(gameSubmissions, {
+    submission: one(games, {
       fields: [platformGroups.submissionId],
-      references: [gameSubmissions.id],
+      references: [games.id],
     }),
     // a platform group can be linked to many platforms via platformGroupPlatforms
     platformGroupPlatforms: many(platformGroupPlatforms),
@@ -69,9 +69,9 @@ export const platformGroupPlatformsRelations = relations(
 export const pcStorePlatformsRelations = relations(
   pcStorePlatforms,
   ({ one, many }) => ({
-    submission: one(gameSubmissions, {
+    submission: one(games, {
       fields: [pcStorePlatforms.submissionId],
-      references: [gameSubmissions.id],
+      references: [games.id],
     }),
     // link to crossplay tables
     crossplayEntries: many(pcStoreCrossplayPlatforms),

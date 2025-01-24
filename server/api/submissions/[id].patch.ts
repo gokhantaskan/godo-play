@@ -4,7 +4,7 @@ import { z } from "zod";
 import { db } from "~~/server/db";
 import {
   gameSubmissionGameModes,
-  gameSubmissions,
+  games,
   pcStoreCrossplayPlatforms,
   pcStorePlatforms,
   platformGroupPlatforms,
@@ -78,8 +78,8 @@ export default defineEventHandler(async event => {
   try {
     const result = await db.transaction(async tx => {
       // Check if submission exists
-      const submission = await tx.query.gameSubmissions.findFirst({
-        where: eq(gameSubmissions.id, submissionId),
+      const submission = await tx.query.games.findFirst({
+        where: eq(games.id, submissionId),
       });
 
       if (!submission) {

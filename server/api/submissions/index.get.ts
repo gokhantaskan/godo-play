@@ -1,12 +1,12 @@
 import { desc } from "drizzle-orm";
 
 import { db } from "~~/server/db";
-import { gameSubmissions } from "~~/server/db/schema";
+import { games } from "~~/server/db/schema";
 import { isH3ErrorLike } from "~~/server/utils/errorHandler";
 
 export default defineEventHandler(async () => {
   try {
-    const submissions = await db.query.gameSubmissions.findMany({
+    const submissions = await db.query.games.findMany({
       with: {
         platformGroups: {
           with: {
@@ -32,7 +32,7 @@ export default defineEventHandler(async () => {
           },
         },
       },
-      orderBy: [desc(gameSubmissions.updatedAt)],
+      orderBy: [desc(games.updatedAt)],
     });
 
     // Transform the response to match the schema

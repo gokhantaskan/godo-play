@@ -39,7 +39,7 @@ const pcStorePlatformsModel = ref<PCStoreData>(pcStorePlatforms);
 const gameModesModel = ref<number[]>(gameModeIds);
 
 async function fetchIgdbGame() {
-  if (!props.submission.gameId) {
+  if (!props.submission.externalId) {
     return;
   }
 
@@ -51,7 +51,7 @@ async function fetchIgdbGame() {
       body: {
         fields:
           "name,slug,category,game_modes.name,genres.name,platforms.name,themes.name",
-        where: `id = ${props.submission.gameId}`,
+        where: `id = ${props.submission.externalId}`,
       },
     });
 

@@ -5,7 +5,7 @@ import { ref } from "vue";
 import type { GameSubmissionWithRelations } from "~~/shared/types/submissions";
 
 interface Props {
-  submission: GameSubmissionWithRelations & {
+  game: GameSubmissionWithRelations & {
     gameSubmissionGameModes: Array<{
       gameModeId: number;
       gameMode: {
@@ -37,7 +37,7 @@ async function handleUpdate(status: "approved" | "rejected") {
     await $fetch("/api/submissions/update", {
       method: "POST",
       body: {
-        id: props.submission.id,
+        id: props.game.id,
         status,
       },
     });
@@ -54,7 +54,7 @@ async function handleDelete() {
   }
 
   try {
-    await $fetch(`/api/submissions/${props.submission.id}`, {
+    await $fetch(`/api/submissions/${props.game.id}`, {
       method: "DELETE",
     });
 
@@ -69,15 +69,15 @@ async function handleDelete() {
   <div class="submission-card">
     <div class="submission-card__image">
       <NuxtImg
-        :src="`https://images.igdb.com/igdb/image/upload/t_cover_small/${submission.gameImageId}.jpg`"
-        :alt="submission.gameName"
+        :src="`https://images.igdb.com/igdb/image/upload/t_cover_small/${game.imageId}.jpg`"
+        :alt="game.name"
       />
     </div>
     <div class="submission-card__content">
       <div class="submission-card__header">
-        <h2 class="submission-card__title">{{ submission.gameName }}</h2>
+        <h2 class="submission-card__title">{{ game.name }}</h2>
         <TheButton
-          v-if="submission.status === 'approved'"
+          v-if="game.status === 'approved'"
           size="sm"
           variant="secondary"
           @click="handleDelete"
@@ -85,14 +85,14 @@ async function handleDelete() {
           Delete
         </TheButton>
       </div>
-      <p class="submission-card__meta">ID: {{ submission.id }}</p>
+      <p class="submission-card__meta">ID: {{ game.id }}</p>
       <p class="submission-card__meta">
         Submitted:
         {{
           new Intl.DateTimeFormat("en-US", {
             dateStyle: "medium",
             timeStyle: "short",
-          }).format(new Date(submission.createdAt))
+          }).format(new Date(game.createdAt))
         }}
       </p>
 
@@ -107,8 +107,8 @@ async function handleDelete() {
           <DisclosurePanel class="submission-card__edit-panel">
             <SubmissionListItemDetails
               ref="detailsRef"
-              :submission="submission"
-              :disabled="submission.status === 'rejected'"
+              :submission="game"
+              :disabled="game.status === 'rejected'"
               @refresh="emit('refresh')"
             />
           </DisclosurePanel>

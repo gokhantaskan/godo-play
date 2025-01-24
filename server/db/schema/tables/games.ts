@@ -8,12 +8,12 @@ import { defaultInsertTimestamps } from "../helpers/defaults";
  * The central table that stores information about a game submission.
  * This is the source of truth for submission types.
  */
-export const gameSubmissions = pgTable("game_submissions", {
+export const games = pgTable("games", {
   id: serial("id").primaryKey(),
-  gameId: integer("game_id").unique().notNull(),
-  gameName: text("game_name").notNull(),
-  gameSlug: text("game_slug").unique().notNull(),
-  gameImageId: text("game_image_id").unique(),
+  externalId: integer("external_id").unique().notNull(),
+  name: text("name").notNull(),
+  slug: text("slug").unique().notNull(),
+  imageId: text("image_id").unique(),
   status: text("status", { enum: ["pending", "approved", "rejected"] })
     .default("pending")
     .notNull(),
@@ -21,17 +21,17 @@ export const gameSubmissions = pgTable("game_submissions", {
 });
 
 // Base Zod schemas for validation
-export const GameSubmissionSchema = createSelectSchema(gameSubmissions);
-export const InsertGameSubmissionSchema = createInsertSchema(gameSubmissions, {
+export const DbGameSchema = createSelectSchema(games);
+export const DbInsertGameSchema = createInsertSchema(games, {
   status: z.enum(["pending", "approved", "rejected"]),
 });
 
 // Types for database and API usage
-export type GameSubmission = typeof gameSubmissions.$inferSelect;
-export type InsertGameSubmission = typeof gameSubmissions.$inferInsert;
+export type DbGame = typeof games.$inferSelect;
+export type DbInsertGame = typeof games.$inferInsert;
 
 // Extended schema with relations for API responses
-export const GameSubmissionWithRelationsSchema = GameSubmissionSchema.extend({
+export const DbGameWithRelationsSchema = DbGameSchema.extend({
   platformGroups: z.array(
     z.object({
       id: z.number(),
@@ -63,6 +63,4 @@ export const GameSubmissionWithRelationsSchema = GameSubmissionSchema.extend({
   ),
 });
 
-export type GameSubmissionWithRelations = z.infer<
-  typeof GameSubmissionWithRelationsSchema
->;
+export type DbGameWithRelations = z.infer<typeof DbGameWithRelationsSchema>;

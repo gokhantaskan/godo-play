@@ -2,7 +2,7 @@ import { integer, pgTable, primaryKey, serial } from "drizzle-orm/pg-core";
 import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 
 import { defaultInsertTimestamps } from "../helpers/defaults";
-import { gameSubmissions } from "./gameSubmissions";
+import { games } from "./games";
 import { platforms } from "./platforms";
 
 /**
@@ -13,7 +13,7 @@ import { platforms } from "./platforms";
 export const platformGroups = pgTable("platform_groups", {
   id: serial("id").primaryKey(),
   submissionId: integer("submission_id")
-    .references(() => gameSubmissions.id, { onDelete: "cascade" })
+    .references(() => games.id, { onDelete: "cascade" })
     .notNull(),
   ...defaultInsertTimestamps,
 });

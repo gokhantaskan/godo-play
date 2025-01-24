@@ -1,7 +1,7 @@
 import { eq } from "drizzle-orm";
 
 import { db } from "~~/server/db";
-import { gameSubmissions } from "~~/server/db/schema";
+import { games } from "~~/server/db/schema";
 import { isH3ErrorLike } from "~~/server/utils/errorHandler";
 
 export default defineEventHandler(async event => {
@@ -17,8 +17,8 @@ export default defineEventHandler(async event => {
   try {
     const result = await db.transaction(async tx => {
       // Check if submission exists and is approved
-      const submission = await tx.query.gameSubmissions.findFirst({
-        where: eq(gameSubmissions.id, submissionId),
+      const submission = await tx.query.games.findFirst({
+        where: eq(games.id, submissionId),
       });
 
       if (!submission) {
@@ -37,8 +37,8 @@ export default defineEventHandler(async event => {
 
       // Delete the submission (cascading will handle related records)
       await tx
-        .delete(gameSubmissions)
-        .where(eq(gameSubmissions.id, submissionId));
+        .delete(games)
+        .where(eq(games.id, submissionId));
 
       return submission;
     });

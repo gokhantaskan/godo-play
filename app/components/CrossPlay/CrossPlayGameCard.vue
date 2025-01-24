@@ -81,8 +81,8 @@ const hasCrossplaySupport = (crossplayLength: number) => {
     <!-- Image Section -->
     <button class="game-card__cover">
       <NuxtImg
-        :src="`https://images.igdb.com/igdb/image/upload/t_720p/${game.gameImageId}.jpg`"
-        :alt="game.gameName"
+        :src="`https://images.igdb.com/igdb/image/upload/t_720p/${game.imageId}.jpg`"
+        :alt="game.name"
         preload
         loading="lazy"
         :quality="80"
@@ -104,7 +104,7 @@ const hasCrossplaySupport = (crossplayLength: number) => {
             '-webkit-box-orient': 'vertical',
           }"
         >
-          {{ game.gameName }}
+          {{ game.name }}
         </h2>
       </header>
 

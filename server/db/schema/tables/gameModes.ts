@@ -8,7 +8,7 @@ import {
 import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 
 import { defaultInsertTimestamps } from "../helpers/defaults";
-import { gameSubmissions } from "./gameSubmissions";
+import { games } from "./games";
 
 export const gameModes = pgTable("game_modes", {
   id: serial("id").primaryKey(),
@@ -25,7 +25,7 @@ export const gameSubmissionGameModes = pgTable(
   "game_submission_game_modes",
   {
     submissionId: integer("submission_id")
-      .references(() => gameSubmissions.id)
+      .references(() => games.id)
       .notNull(),
     gameModeId: integer("game_mode_id")
       .references(() => gameModes.id)

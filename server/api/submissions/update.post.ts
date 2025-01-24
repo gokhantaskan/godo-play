@@ -2,7 +2,7 @@ import { eq } from "drizzle-orm";
 import { z } from "zod";
 
 import { db } from "~~/server/db";
-import { gameSubmissions } from "~~/server/db/schema";
+import { games } from "~~/server/db/schema";
 import { isH3ErrorLike } from "~~/server/utils/errorHandler";
 
 const updateSubmissionSchema = z.object({
@@ -41,9 +41,9 @@ export default defineEventHandler(async event => {
 
   try {
     const [submission] = await db
-      .update(gameSubmissions)
+      .update(games)
       .set({ status: body.status })
-      .where(eq(gameSubmissions.id, body.id))
+      .where(eq(games.id, body.id))
       .returning();
 
     if (!submission) {

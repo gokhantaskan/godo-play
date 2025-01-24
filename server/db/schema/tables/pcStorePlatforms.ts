@@ -8,7 +8,7 @@ import {
 import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 
 import { defaultInsertTimestamps } from "../helpers/defaults";
-import { gameSubmissions } from "./gameSubmissions";
+import { games } from "./games";
 import { platforms } from "./platforms";
 
 /**
@@ -20,7 +20,7 @@ import { platforms } from "./platforms";
 export const pcStorePlatforms = pgTable("pc_store_platforms", {
   id: serial("id").primaryKey(),
   submissionId: integer("submission_id")
-    .references(() => gameSubmissions.id, { onDelete: "cascade" })
+    .references(() => games.id, { onDelete: "cascade" })
     .notNull(),
   storeSlug: text("store_slug").notNull(),
   ...defaultInsertTimestamps,

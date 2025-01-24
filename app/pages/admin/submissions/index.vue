@@ -88,7 +88,7 @@ const groupedSubmissions = computed(() => {
           <SubmissionListItem
             v-for="submission in groupedSubmissions[tab.status]"
             :key="submission.id"
-            :submission="submission"
+            :game="submission"
             :is-pending="tab.status === 'pending'"
             @refresh="refresh"
           />

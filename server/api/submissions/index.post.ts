@@ -3,8 +3,8 @@ import { z } from "zod";
 
 import { db } from "~~/server/db";
 import {
+  games,
   gameSubmissionGameModes,
-  gameSubmissions,
   pcStoreCrossplayPlatforms,
   pcStorePlatforms,
   platformGroupPlatforms,
@@ -98,12 +98,12 @@ export default defineEventHandler(async event => {
     const result = await db.transaction(async tx => {
       // Insert game submission
       const [submission] = await tx
-        .insert(gameSubmissions)
+        .insert(games)
         .values({
-          gameId: body.game.id,
-          gameName: body.game.name,
-          gameSlug: body.game.slug,
-          gameImageId: body.game.imageId,
+          externalId: body.game.id,
+          name: body.game.name,
+          slug: body.game.slug,
+          imageId: body.game.imageId,
         })
         .returning();
 
