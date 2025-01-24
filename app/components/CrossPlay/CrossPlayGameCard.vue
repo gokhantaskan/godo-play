@@ -37,6 +37,23 @@ const sortedPCStores = computed(
     ) ?? []
 );
 
+// TODO: Work on this
+// const isModalOpen = ref(false);
+// const cacheKey = computed(() => `game-${props.game.gameId}`);
+// const { data: cachedGameDetails } = useNuxtData(cacheKey.value);
+// const {
+//   data: gameDetails,
+//   status: gameDetailsStatus,
+//   execute: fetchGameDetails,
+// } = useFetch(`/api/games/external/${props.game.gameSlug}`, {
+//   immediate: false,
+//   key: cacheKey.value,
+//   lazy: !!cachedGameDetails.value,
+// });
+// const pendingGameDetails = computed(() => {
+//   return gameDetailsStatus.value === "pending";
+// });
+
 const getStoreName = (storeSlug: string) =>
   SUPPORTED_PC_STORES_BY_SLUG[storeSlug]?.name ?? storeSlug;
 
@@ -52,6 +69,11 @@ const hasCrossplaySupport = (crossplayLength: number) => {
   // Check if the number of crossplay entries matches the number of other platforms
   return crossplayLength === platformsInGroup.length - 1;
 };
+
+// async function openModal() {
+//   isModalOpen.value = true;
+//   await fetchGameDetails();
+// }
 </script>
 
 <template>
@@ -183,5 +205,18 @@ const hasCrossplaySupport = (crossplayLength: number) => {
         </div>
       </div>
     </div>
+
+    <!-- Game Details Modal -->
+    <!-- <TheModal
+      :key="game.gameId"
+      v-model:open="isModalOpen"
+      :title="game.gameName"
+      max-width="48rem"
+    >
+      <GameDetails
+        :details="gameDetails"
+        :is-loading="!gameDetails && pendingGameDetails"
+      />
+    </TheModal> -->
   </article>
 </template>
