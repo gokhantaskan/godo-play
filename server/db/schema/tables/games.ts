@@ -8,6 +8,7 @@ import { defaultInsertTimestamps } from "../helpers/defaults";
 interface ExternalData {
   igdbId: number;
   igdbImageId?: string;
+  igdbAggregatedRating?: number;
 }
 
 /**

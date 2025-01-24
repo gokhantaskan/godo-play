@@ -23,7 +23,7 @@ const groupPlatformsWithPC = computed<GameSubmissionPlatformGroupPlatform[]>(
   () => {
     return (
       props.game.platformGroups?.find(group =>
-        group.platformGroupPlatforms?.some(p => p.platform?.id === 6)
+        group.platformGroupPlatforms?.some(p => p.platform?.slug === "win")
       )?.platformGroupPlatforms ?? []
     );
   }

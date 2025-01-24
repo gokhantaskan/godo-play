@@ -1,5 +1,3 @@
-import tokenStorage from "./tokenStorage";
-
 export async function getIGDBClient() {
   const config = useRuntimeConfig();
   await tokenStorage.retrieveSession({
@@ -17,7 +15,7 @@ export async function getIGDBClient() {
     });
   }
 
-  return (path: string, body: unknown) => {
+  return (path: string, body: string) => {
     if (process.env.NODE_ENV === "development") {
       console.log("IGDB client =>", `${config.igdb.endpoint}/${path} =>`, body);
     }
@@ -25,11 +23,11 @@ export async function getIGDBClient() {
     return fetch(`${config.igdb.endpoint}/${path}`, {
       method: "POST",
       headers: {
-        "Content-Type": "application/json",
+        Accept: "application/json",
         "Client-ID": config.tw.clientId,
         Authorization: `Bearer ${session.access_token}`,
       },
-      body: JSON.stringify(body),
+      body: body, // Send raw string body instead of JSON.stringify
     });
   };
 }

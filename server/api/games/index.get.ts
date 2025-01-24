@@ -1,7 +1,6 @@
-import { desc } from "drizzle-orm";
+import { sql } from "drizzle-orm";
 
 import { db } from "~~/server/db";
-import { games } from "~~/server/db/schema";
 import { isH3ErrorLike } from "~~/server/utils/errorHandler";
 
 export default defineEventHandler(async () => {
@@ -9,38 +8,57 @@ export default defineEventHandler(async () => {
     const submissions = await db.query.games.findMany({
       with: {
         platformGroups: {
+          columns: {
+            id: true,
+          },
           with: {
             platformGroupPlatforms: {
+              columns: {},
               with: {
-                platform: true,
+                platform: {
+                  columns: {
+                    name: true,
+                    slug: true,
+                  },
+                },
               },
             },
           },
         },
         pcStorePlatforms: {
+          columns: {
+            storeSlug: true,
+          },
           with: {
             crossplayEntries: {
+              columns: {},
               with: {
-                platform: true,
+                platform: {
+                  columns: {
+                    name: true,
+                  },
+                },
               },
             },
           },
         },
         gameSubmissionGameModes: {
+          columns: {},
           with: {
-            gameMode: true,
+            gameMode: {
+              columns: {
+                name: true,
+              },
+            },
           },
         },
       },
-      orderBy: [desc(games.updatedAt)],
+      orderBy: [
+        sql`(external->>'igdbAggregatedRating')::float DESC NULLS LAST`,
+      ],
     });
 
-    // Transform the response to match the schema
-    const transformedSubmissions = submissions.map(({ ...submission }) => ({
-      ...submission,
-    }));
-
-    return transformedSubmissions;
+    return submissions;
   } catch (error: unknown) {
     if (isH3ErrorLike(error)) {
       throw error;
