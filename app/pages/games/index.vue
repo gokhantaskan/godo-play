@@ -2,11 +2,11 @@
 import type { DashboardGame } from "~~/shared/types/igdb/dashboardGames";
 
 definePageMeta({
-  name: "GamesPage",
+  name: "MultiPlatformGamesPage",
 });
 
 useHead({
-  title: "Games",
+  title: "Multiplatform Games",
 });
 
 // Composables
@@ -36,7 +36,7 @@ const pending = computed(() => status.value === "pending");
 <template>
   <main class="tw:container tw:space-y-4">
     <header class="tw:flex tw:justify-between tw:items-center tw:gap-4">
-      <h1 class="title">Find the best co-op and multiplayer games</h1>
+      <h1 class="title">Multi-platform Games</h1>
       <TheButton
         variant="secondary"
         size="sm"
@@ -61,9 +61,13 @@ const pending = computed(() => status.value === "pending");
         </template>
 
         <p id="cross-play-warning">
-          While this list provides useful information, it doesn't guarantee
-          cross-platform play. For the latest details, please check official
-          sources and stay tuned for updates.
+          While this list highlights games available on multiple platforms, it
+          doesn’t guarantee cross-platform play. For details on titles that do
+          support cross-play, please visit
+          <NuxtLink :to="{ name: 'CrossPlayGamesPage' }"
+            >cross-play games page</NuxtLink
+          >. As always, remember to check official sources for the most
+          up-to-date information.
         </p>
       </TheAlert>
     </section>

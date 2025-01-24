@@ -4,7 +4,7 @@ import type * as prismic from "@prismicio/client";
 
 type Simplify<T> = { [KeyType in keyof T]: T[KeyType] };
 
-type HomePageDocumentDataSlicesSlice = HeroSectionSlice;
+type HomePageDocumentDataSlicesSlice = FaqSectionSlice | HeroSectionSlice;
 
 /**
  * Content for Home Page documents
@@ -135,6 +135,98 @@ export type ProsePageDocument<Lang extends string = string> =
   >;
 
 export type AllDocumentTypes = HomePageDocument | ProsePageDocument;
+
+/**
+ * Item in *FaqSection → Default → Primary → Disclosure*
+ */
+export interface FaqSectionSliceDefaultPrimaryDisclosureItem {
+  /**
+   * Title field in *FaqSection → Default → Primary → Disclosure*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: Disclosure Title
+   * - **API ID Path**: faq_section.default.primary.disclosure[].title
+   * - **Documentation**: https://prismic.io/docs/field#key-text
+   */
+  title: prismic.KeyTextField;
+
+  /**
+   * Content field in *FaqSection → Default → Primary → Disclosure*
+   *
+   * - **Field Type**: Rich Text
+   * - **Placeholder**: Disclosure Rich Text Content
+   * - **API ID Path**: faq_section.default.primary.disclosure[].content
+   * - **Documentation**: https://prismic.io/docs/field#rich-text-title
+   */
+  content: prismic.RichTextField;
+}
+
+/**
+ * Primary content in *FaqSection → Default → Primary*
+ */
+export interface FaqSectionSliceDefaultPrimary {
+  /**
+   * Section Title field in *FaqSection → Default → Primary*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: faq_section.default.primary.section_title
+   * - **Documentation**: https://prismic.io/docs/field#key-text
+   */
+  section_title: prismic.KeyTextField;
+
+  /**
+   * Section Description field in *FaqSection → Default → Primary*
+   *
+   * - **Field Type**: Rich Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: faq_section.default.primary.section_description
+   * - **Documentation**: https://prismic.io/docs/field#rich-text-title
+   */
+  section_description: prismic.RichTextField;
+
+  /**
+   * Disclosure field in *FaqSection → Default → Primary*
+   *
+   * - **Field Type**: Group
+   * - **Placeholder**: *None*
+   * - **API ID Path**: faq_section.default.primary.disclosure[]
+   * - **Documentation**: https://prismic.io/docs/field#group
+   */
+  disclosure: prismic.GroupField<
+    Simplify<FaqSectionSliceDefaultPrimaryDisclosureItem>
+  >;
+}
+
+/**
+ * Default variation for FaqSection Slice
+ *
+ * - **API ID**: `default`
+ * - **Description**: Default
+ * - **Documentation**: https://prismic.io/docs/slice
+ */
+export type FaqSectionSliceDefault = prismic.SharedSliceVariation<
+  "default",
+  Simplify<FaqSectionSliceDefaultPrimary>,
+  never
+>;
+
+/**
+ * Slice variation for *FaqSection*
+ */
+type FaqSectionSliceVariation = FaqSectionSliceDefault;
+
+/**
+ * FaqSection Shared Slice
+ *
+ * - **API ID**: `faq_section`
+ * - **Description**: FaqSection
+ * - **Documentation**: https://prismic.io/docs/slice
+ */
+export type FaqSectionSlice = prismic.SharedSlice<
+  "faq_section",
+  FaqSectionSliceVariation
+>;
 
 /**
  * Primary content in *HeroSection → Default → Primary*
@@ -412,6 +504,11 @@ declare module "@prismicio/client" {
       ProsePageDocumentData,
       ProsePageDocumentDataSlicesSlice,
       AllDocumentTypes,
+      FaqSectionSlice,
+      FaqSectionSliceDefaultPrimaryDisclosureItem,
+      FaqSectionSliceDefaultPrimary,
+      FaqSectionSliceVariation,
+      FaqSectionSliceDefault,
       HeroSectionSlice,
       HeroSectionSliceDefaultPrimary,
       HeroSectionSliceWithBgImagePrimary,

@@ -33,16 +33,16 @@ useHead({
 useSeoMeta({
   title: "GodoPlay - The Ultimate Fusion for Co-Op and Multiplayer Gaming",
   description:
-    "Discover multiplayer and co-op games for PC, PlayStation, Xbox, and Nintendo Switch, perfect for playing together or competing against friends, regardless of your platform.",
+    "Discover the best multi-platform and cross-play co-op and multiplayer games for PC, PlayStation, Xbox, and Nintendo Switch—team up or compete with friends on any platform.",
   ogTitle: "GodoPlay - The Ultimate Fusion for Co-Op and Multiplayer Gaming",
   ogDescription:
-    "Discover multiplayer and co-op games for PC, PlayStation, Xbox, and Nintendo Switch, perfect for playing together or competing against friends, regardless of your platform.",
+    "Discover the best multi-platform and cross-play co-op and multiplayer games for PC, PlayStation, Xbox, and Nintendo Switch—team up or compete with friends on any platform.",
   ogImage: "/og_img.jpg",
   ogUrl: "https://godoplay.com",
   twitterCard: "summary_large_image",
-  twitterTitle: "GodoPlay - Find Cross-Platform Multiplayer Games",
+  twitterTitle: "The Ultimate Fusion for Co-Op and Multiplayer Gaming",
   twitterDescription:
-    "Discover multiplayer and co-op games for PC, PlayStation, Xbox, and Nintendo Switch, perfect for playing together or competing against friends, regardless of your platform.",
+    "Discover the best multi-platform and cross-play co-op and multiplayer games for PC, PlayStation, Xbox, and Nintendo Switch—team up or compete with friends on any platform.",
   twitterImage: "/og_img.jpg",
 });
 

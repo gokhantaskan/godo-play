@@ -9,6 +9,8 @@ $breakpoint-md: map.get($breakpoints, "md");
   --scale-ratio-small: 1.2; // Minor third
   --font-scale: var(--scale-ratio-small);
 
+  $root: &;
+
   max-width: 80ch;
   color: var(--tw-color-fg);
   font-family: var(--tw-font-body);
@@ -57,6 +59,10 @@ $breakpoint-md: map.get($breakpoints, "md");
 
   p {
     margin-block: calc(var(--tw-spacing) * 5);
+  }
+
+  & > p:first-child {
+    margin-block-start: 0;
   }
 
   :is(ul, ol) {

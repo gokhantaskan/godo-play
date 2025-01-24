@@ -3,16 +3,17 @@ const LINKS = [
   {
     title: "Links",
     links: [
-      { label: "Home", href: "/" },
-      { label: "Games", href: "/games" },
-      { label: "About", href: "/about" },
+      { label: "Home", to: "/" },
+      { label: "Multiplatform Games", to: { name: "MultiPlatformGamesPage" } },
+      { label: "Cross-play Games", to: { name: "CrossPlayGamesPage" } },
+      { label: "About", to: "/about" },
     ],
   },
   {
     title: "Legal",
     links: [
-      { label: "Privacy Policy", href: "/privacy-policy" },
-      { label: "Terms of Service", href: "/terms-of-service" },
+      { label: "Privacy Policy", to: "/privacy-policy" },
+      { label: "Terms of Service", to: "/terms-of-service" },
     ],
   },
 ];
@@ -39,12 +40,12 @@ const LINKS = [
           <p class="footer__nav-title">{{ section.title }}</p>
           <ul class="footer__nav-list">
             <li
-              v-for="link in section.links"
-              :key="link.href"
+              v-for="(link, index) in section.links"
+              :key="index"
               class="footer__nav-item"
             >
               <NuxtLink
-                :to="link.href"
+                :to="link.to"
                 class="footer__nav-link"
                 >{{ link.label }}</NuxtLink
               >
