@@ -63,6 +63,7 @@ const hasCrossplaySupport = (crossplayLength: number) => {
         :alt="game.gameName"
         preload
         loading="lazy"
+        :quality="80"
       />
     </button>
 
@@ -71,6 +72,7 @@ const hasCrossplaySupport = (crossplayLength: number) => {
       <header>
         <h2
           class="game-card__title"
+          :class="[game.status === 'pending' && 'tw:text-red']"
           :style="{
             textOverflow: 'unset',
             whiteSpace: 'unset',

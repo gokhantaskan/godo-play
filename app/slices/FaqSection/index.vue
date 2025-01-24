@@ -10,11 +10,14 @@ const { slice } = defineProps(
   ])
 );
 
+const id = useId();
+
 // Add event listeners for exclusive accordion behavior
 onMounted(() => {
-  const details = document.querySelectorAll<HTMLDetailsElement>(".faq__item");
+  const wrapper = document.getElementById(id);
+  const details = wrapper?.querySelectorAll<HTMLDetailsElement>(".faq__item");
 
-  details.forEach(detail => {
+  details?.forEach(detail => {
     detail.addEventListener("toggle", () => {
       if (detail.open) {
         details.forEach(otherDetail => {
@@ -30,6 +33,7 @@ onMounted(() => {
 
 <template>
   <section
+    :id
     class="faq tw:container tw:max-w-screen-md"
     :data-slice-type="slice.slice_type"
     :data-slice-variation="slice.variation"
@@ -44,11 +48,12 @@ onMounted(() => {
       >
         {{ slice.primary.section_title }}
       </h3>
-      <div
-        v-if="slice.primary.section_description"
-        class="faq__description"
-      >
-        <PrismicRichText :field="slice.primary.section_description" />
+      <div>
+        <PrismicRichText
+          v-if="slice.primary.section_description"
+          class="faq__description"
+          :field="slice.primary.section_description"
+        />
       </div>
     </header>
 
@@ -105,6 +110,8 @@ onMounted(() => {
   &__description {
     color: var(--text-muted);
     font-size: 1.125rem;
+    max-width: 60ch;
+    text-wrap: balance;
   }
 
   &__items {
@@ -113,22 +120,26 @@ onMounted(() => {
     gap: 1rem;
   }
 
+  // <details>
   &__item {
     border: 1px solid var(--border-color);
     border-radius: var(--radius);
     background-color: var(--bg-color);
   }
 
+  // <summary>
   &__button {
     width: 100%;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 1.25rem;
+    padding: var(--spacing);
     text-align: start;
     gap: 1rem;
     cursor: pointer;
     list-style: none;
+    border-top-left-radius: var(--radius);
+    border-top-right-radius: var(--radius);
 
     &::-webkit-details-marker {
       display: none;
@@ -136,7 +147,7 @@ onMounted(() => {
   }
 
   &__question {
-    font-weight: 500;
+    font-weight: 600;
     color: var(--text-color);
   }
 
@@ -153,8 +164,8 @@ onMounted(() => {
   }
 
   &__panel {
-    padding-inline: 1.25rem;
-    padding-block-end: 1.25rem;
+    padding-inline: var(--spacing);
+    padding-block-end: var(--spacing);
     color: var(--text-muted);
   }
 }

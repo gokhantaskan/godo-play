@@ -132,6 +132,9 @@ export default defineNuxtConfig({
     url: "https://godo-play.com",
     name: "GōdōPlay",
   },
+  sitemap: {
+    exclude: ["/_ipx/", "/admin/"],
+  },
   robots: {
     disallow: ["/_ipx/", "/admin/"],
   },

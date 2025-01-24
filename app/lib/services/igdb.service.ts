@@ -1,5 +1,3 @@
-import { GAME_MODE_IDS } from "~~/shared/constants";
-
 export type IGDBFields = {
   fields?: string;
   sort?: string;
@@ -32,8 +30,9 @@ export default {
     const {
       fields = "name,slug,category,platforms.*,genres.*,player_perspectives.*,themes.*,cover.*,game_modes.*,multiplayer_modes.*",
       limit = 100,
-      where = `category=(0,3,8,9) & version_parent=null & game_modes=(${GAME_MODE_IDS.filter(id => id !== 1).join(",")})`,
+      where = `category=(0,3,8,9) & version_parent=null & game_modes != 1`,
       sort = "popularity desc",
+      ...rest
     } = options;
 
     return await this.request("games", {
@@ -41,6 +40,7 @@ export default {
       where: `name~*"${query}"* & ${where}`,
       limit,
       sort,
+      ...rest,
     });
   },
 

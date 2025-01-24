@@ -46,12 +46,20 @@ const filteredSubmissions = computed(() => {
   ].filter(isPlatformId);
 
   if (!platforms.length) {
-    return data.value;
+    if (IS_DEV) {
+      return data.value;
+    }
+
+    // Filter to show only approved submissions
+    return data.value.filter(submission => submission.status === "approved");
   }
 
   return data.value.filter(submission => {
     // Ensure platformGroups exists and has platformGroupPlatforms
-    if (!submission.platformGroups?.length) {
+    if (
+      !submission.platformGroups?.length ||
+      submission.status !== "approved"
+    ) {
       return false;
     }
 
@@ -61,6 +69,7 @@ const filteredSubmissions = computed(() => {
         if (!group.platformGroupPlatforms?.length) {
           return false;
         }
+
         return group.platformGroupPlatforms.some(
           p => p.platform?.id === platforms[0]
         );
@@ -72,9 +81,11 @@ const filteredSubmissions = computed(() => {
       if (!group.platformGroupPlatforms?.length) {
         return false;
       }
+
       const groupPlatformIds = new Set(
         group.platformGroupPlatforms.map(p => p.platform?.id)
       );
+
       return platforms.every(platformId => groupPlatformIds.has(platformId));
     });
   });

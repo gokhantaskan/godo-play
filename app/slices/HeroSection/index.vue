@@ -1,9 +1,14 @@
 <script setup lang="ts">
-import type { HeroSectionSlice } from "~~/prismicio-types";
+import type { Content } from "@prismicio/client";
 
-defineProps<{
-  slice: HeroSectionSlice;
-}>();
+const { slice } = defineProps(
+  getSliceComponentProps<Content.HeroSectionSlice>([
+    "slice",
+    "index",
+    "slices",
+    "context",
+  ])
+);
 </script>
 
 <template>
