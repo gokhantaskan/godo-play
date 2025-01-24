@@ -2,7 +2,7 @@ import { refDebounced } from "@vueuse/core";
 
 import type { SelectOption } from "~/components/The/TheSelect.vue";
 import {
-  GAME_MODES,
+  EXTERNAL_GAME_MODES,
   GENRES,
   PLAYER_PERSPECTIVES,
   SUPPORTED_PLATFORMS,
@@ -298,7 +298,7 @@ export function useGameFilters(): GameFiltersReturn {
 
     // Game Modes
     selectedFilters.value.gameModes.forEach(id => {
-      const mode = GAME_MODES.find(m => m.id === id);
+      const mode = EXTERNAL_GAME_MODES.find(m => m.id === id);
       if (mode) {
         chips.push({
           id,

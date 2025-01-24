@@ -1,6 +1,7 @@
 import { eq } from "drizzle-orm";
 
 import { db } from "~~/server/db";
+import type { GameMode } from "~~/server/db/schema/tables/gameModes";
 import { gameModes } from "~~/server/db/schema/tables/gameModes";
 import { GAME_MODES } from "~~/shared/constants/gameModes";
 
@@ -21,30 +22,47 @@ export async function seedGameModes() {
 
       console.log("✅ Game modes seeded successfully!");
     } else {
-      console.log("🔄 Game modes already exist, skipping to update.");
+      console.log("🔄 Game modes already exist, checking for updates...");
+
+      const updates: Promise<any>[] = [];
+      const inserts: Pick<GameMode, "id" | "name" | "slug">[] = [];
 
       GAME_MODES.forEach(mode => {
         const existingMode = existingGameModes.find(p => p.id === mode.id);
 
         if (!existingMode) {
-          console.log(`🔄 Inserting game mode ${mode.name}...`);
-
-          db.insert(gameModes).values({
+          console.log(`🔄 Queuing insert for game mode ${mode.name}...`);
+          inserts.push({
             id: mode.id,
             name: mode.name,
             slug: mode.slug,
           });
-        } else {
-          console.log(`🔄 Updating game mode ${mode.name}...`);
-
-          db.update(gameModes)
-            .set({
-              name: mode.name,
-              slug: mode.slug,
-            })
-            .where(eq(gameModes.id, mode.id));
+        } else if (
+          existingMode.name !== mode.name ||
+          existingMode.slug !== mode.slug
+        ) {
+          console.log(`🔄 Queuing update for game mode ${mode.name}...`);
+          updates.push(
+            db
+              .update(gameModes)
+              .set({
+                name: mode.name,
+                slug: mode.slug,
+              })
+              .where(eq(gameModes.id, mode.id))
+          );
         }
       });
+
+      if (inserts.length > 0) {
+        console.log(`🔄 Inserting ${inserts.length} new game modes...`);
+        await db.insert(gameModes).values(inserts);
+      }
+
+      if (updates.length > 0) {
+        console.log(`🔄 Updating ${updates.length} existing game modes...`);
+        await Promise.all(updates);
+      }
 
       console.log("✅ Game modes updated successfully!");
     }

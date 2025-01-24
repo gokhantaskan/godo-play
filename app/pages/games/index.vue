@@ -111,6 +111,7 @@ const pending = computed(() => status.value === "pending");
           v-model:player-perspectives="selectedFilters.playerPerspectives"
           v-model:genres="selectedFilters.genres"
           v-model:themes="selectedFilters.themes"
+          external
         />
       </div>
       <div

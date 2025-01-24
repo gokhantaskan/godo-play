@@ -1,6 +1,7 @@
 import { eq } from "drizzle-orm";
 
 import { db } from "~~/server/db";
+import type { Platform } from "~~/server/db/schema/tables/platforms";
 import { platforms } from "~~/server/db/schema/tables/platforms";
 import { SUPPORTED_PLATFORMS } from "~~/shared/constants/platforms";
 
@@ -22,7 +23,11 @@ export async function seedPlatforms() {
 
       console.log("✅ Platforms seeded successfully!");
     } else {
-      console.log("🔄 Platforms already exist, skipping to update.");
+      console.log("🔄 Platforms already exist, checking for updates...");
+
+      const updates: Promise<any>[] = [];
+      const inserts: Pick<Platform, "id" | "name" | "slug" | "abbreviation">[] =
+        [];
 
       SUPPORTED_PLATFORMS.forEach(platform => {
         const existingPlatform = existingPlatforms.find(
@@ -30,25 +35,41 @@ export async function seedPlatforms() {
         );
 
         if (!existingPlatform) {
-          console.log(`🔄 Inserting platform ${platform.name}...`);
-
-          db.insert(platforms).values({
+          console.log(`🔄 Queuing insert for platform ${platform.name}...`);
+          inserts.push({
             id: platform.id,
             name: platform.name,
             slug: platform.slug,
             abbreviation: platform.abbreviation,
           });
-        } else {
-          console.log(`🔄 Updating platform ${platform.name}...`);
-
-          db.update(platforms)
-            .set({
-              name: platform.name,
-              slug: platform.slug,
-            })
-            .where(eq(platforms.id, platform.id));
+        } else if (
+          existingPlatform.name !== platform.name ||
+          existingPlatform.slug !== platform.slug ||
+          existingPlatform.abbreviation !== platform.abbreviation
+        ) {
+          console.log(`🔄 Queuing update for platform ${platform.name}...`);
+          updates.push(
+            db
+              .update(platforms)
+              .set({
+                name: platform.name,
+                slug: platform.slug,
+                abbreviation: platform.abbreviation,
+              })
+              .where(eq(platforms.id, platform.id))
+          );
         }
       });
+
+      if (inserts.length > 0) {
+        console.log(`🔄 Inserting ${inserts.length} new platforms...`);
+        await db.insert(platforms).values(inserts);
+      }
+
+      if (updates.length > 0) {
+        console.log(`🔄 Updating ${updates.length} existing platforms...`);
+        await Promise.all(updates);
+      }
 
       console.log("✅ Platforms updated successfully!");
     }

@@ -72,4 +72,5 @@ export const GAME_MODES: {
   },
 ];
 
+export const EXTERNAL_GAME_MODES = GAME_MODES.filter(mode => mode.id < 100);
 export const GAME_MODE_IDS: number[] = GAME_MODES.map(tag => tag.id);

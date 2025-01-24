@@ -1,8 +1,16 @@
 <script setup lang="ts">
-import { GAME_MODES } from "~~/shared/constants/gameModes";
+import { EXTERNAL_GAME_MODES, GAME_MODES } from "~~/shared/constants/gameModes";
 import { GENRES } from "~~/shared/constants/genres";
 import { PLAYER_PERSPECTIVES } from "~~/shared/constants/playerPerspectives";
 import { THEMES } from "~~/shared/constants/themes";
+
+interface Props {
+  external?: boolean;
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  external: false,
+});
 
 const isDrawerOpen = ref(false);
 
@@ -27,6 +35,10 @@ const draftGenres = ref<number[]>([]);
 const draftThemes = ref<number[]>([]);
 const draftGameModes = ref<number[]>([]);
 const draftPlayerPerspectives = ref<number[]>([]);
+
+const currentGameModes = computed(() => {
+  return props.external ? EXTERNAL_GAME_MODES : GAME_MODES;
+});
 
 // Initialize draft states when drawer opens
 watch(isDrawerOpen, newValue => {
@@ -151,7 +163,7 @@ function isArrayEqual(arr1: number[], arr2: number[]) {
             Game Modes
           </legend>
           <label
-            v-for="gameMode in GAME_MODES.toSorted((a, b) =>
+            v-for="gameMode in currentGameModes.toSorted((a, b) =>
               a.name.localeCompare(b.name)
             )"
             :key="gameMode.id"
