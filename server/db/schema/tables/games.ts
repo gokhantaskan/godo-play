@@ -5,12 +5,6 @@ import { z } from "zod";
 
 import { defaultInsertTimestamps } from "../helpers/defaults";
 
-interface ExternalData {
-  igdbId: number;
-  igdbImageId?: string;
-  igdbAggregatedRating?: number;
-}
-
 /**
  * The central table that stores information about a game submission.
  * This is the source of truth for submission types.
@@ -28,10 +22,17 @@ export const games = pgTable("games", {
   ...defaultInsertTimestamps,
 });
 
+interface ExternalData {
+  igdbId: number;
+  igdbImageId?: string;
+  igdbAggregatedRating?: number;
+}
+
 // Base Zod schemas for validation
 const ExternalDataSchema = z.object({
   igdbId: z.number(),
   igdbImageId: z.string().optional(),
+  igdbAggregatedRating: z.number().optional(),
 });
 
 export const DbGameSchema = createSelectSchema(games, {

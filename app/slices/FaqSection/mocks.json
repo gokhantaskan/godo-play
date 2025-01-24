@@ -1,57 +1,57 @@
 [
-	{
-		"__TYPE__": "SharedSliceContent",
-		"variation": "default",
-		"primary": {
-			"disclosure": {
-				"__TYPE__": "GroupContentType",
-				"value": [
-					{
-						"__TYPE__": "GroupItemContent",
-						"value": [
-							[
-								"title",
-								{
-									"__TYPE__": "FieldContent",
-									"value": "sets",
-									"type": "Text"
-								}
-							],
-							[
-								"content",
-								{
-									"__TYPE__": "StructuredTextContent",
-									"value": [
-										{
-											"type": "paragraph",
-											"content": {
-												"text": "Ipsum enim in eu ut ex. Ullamco ullamco non in qui deserunt nulla non aliquip aliquip quis esse magna non aute. In amet ad mollit id consectetur aliquip incididunt sit."
-											}
-										}
-									]
-								}
-							]
-						]
-					}
-				]
-			},
-			"section_title": {
-				"__TYPE__": "FieldContent",
-				"value": "major",
-				"type": "Text"
-			},
-			"section_description": {
-				"__TYPE__": "StructuredTextContent",
-				"value": [
-					{
-						"type": "paragraph",
-						"content": {
-							"text": "Quis nisi ex amet ullamco ullamco duis qui consectetur eiusmod nisi mollit proident."
-						}
-					}
-				]
-			}
-		},
-		"items": []
-	}
+  {
+    "__TYPE__": "SharedSliceContent",
+    "variation": "default",
+    "primary": {
+      "disclosure": {
+        "__TYPE__": "GroupContentType",
+        "value": [
+          {
+            "__TYPE__": "GroupItemContent",
+            "value": [
+              [
+                "title",
+                {
+                  "__TYPE__": "FieldContent",
+                  "value": "sets",
+                  "type": "Text"
+                }
+              ],
+              [
+                "content",
+                {
+                  "__TYPE__": "StructuredTextContent",
+                  "value": [
+                    {
+                      "type": "paragraph",
+                      "content": {
+                        "text": "Ipsum enim in eu ut ex. Ullamco ullamco non in qui deserunt nulla non aliquip aliquip quis esse magna non aute. In amet ad mollit id consectetur aliquip incididunt sit."
+                      }
+                    }
+                  ]
+                }
+              ]
+            ]
+          }
+        ]
+      },
+      "section_title": {
+        "__TYPE__": "FieldContent",
+        "value": "major",
+        "type": "Text"
+      },
+      "section_description": {
+        "__TYPE__": "StructuredTextContent",
+        "value": [
+          {
+            "type": "paragraph",
+            "content": {
+              "text": "Quis nisi ex amet ullamco ullamco duis qui consectetur eiusmod nisi mollit proident."
+            }
+          }
+        ]
+      }
+    },
+    "items": []
+  }
 ]

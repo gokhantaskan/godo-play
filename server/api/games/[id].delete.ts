@@ -36,9 +36,7 @@ export default defineEventHandler(async event => {
       }
 
       // Delete the submission (cascading will handle related records)
-      await tx
-        .delete(games)
-        .where(eq(games.id, submissionId));
+      await tx.delete(games).where(eq(games.id, submissionId));
 
       return submission;
     });

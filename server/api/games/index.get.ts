@@ -17,6 +17,7 @@ export default defineEventHandler(async () => {
               with: {
                 platform: {
                   columns: {
+                    id: true,
                     name: true,
                     slug: true,
                   },

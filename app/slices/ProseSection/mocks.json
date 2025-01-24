@@ -1,68 +1,68 @@
 [
-	{
-		"__TYPE__": "SharedSliceContent",
-		"variation": "default",
-		"primary": {
-			"title": {
-				"__TYPE__": "FieldContent",
-				"value": "upon",
-				"type": "Text"
-			},
-			"description": {
-				"__TYPE__": "FieldContent",
-				"value": "trail",
-				"type": "Text"
-			},
-			"content": {
-				"__TYPE__": "StructuredTextContent",
-				"value": [
-					{
-						"type": "paragraph",
-						"content": {
-							"text": "Amet nulla dolor enim mollit et ad."
-						}
-					}
-				]
-			}
-		},
-		"items": []
-	},
-	{
-		"__TYPE__": "SharedSliceContent",
-		"variation": "legal",
-		"primary": {
-			"title": {
-				"__TYPE__": "FieldContent",
-				"value": "fur",
-				"type": "Text"
-			},
-			"description": {
-				"__TYPE__": "FieldContent",
-				"value": "slightly",
-				"type": "Text"
-			},
-			"content": {
-				"__TYPE__": "StructuredTextContent",
-				"value": [
-					{
-						"type": "paragraph",
-						"content": {
-							"text": "Non et magna veniam fugiat labore id reprehenderit eiusmod."
-						}
-					}
-				]
-			},
-			"effective_date": {
-				"__TYPE__": "FieldContent",
-				"type": "Date",
-				"value": "2013-04-01"
-			}
-		},
-		"items": [
-			{
-				"__TYPE__": "GroupItemContent",
-				"value": []
-			}
-		]
-	}
+  {
+    "__TYPE__": "SharedSliceContent",
+    "variation": "default",
+    "primary": {
+      "title": {
+        "__TYPE__": "FieldContent",
+        "value": "upon",
+        "type": "Text"
+      },
+      "description": {
+        "__TYPE__": "FieldContent",
+        "value": "trail",
+        "type": "Text"
+      },
+      "content": {
+        "__TYPE__": "StructuredTextContent",
+        "value": [
+          {
+            "type": "paragraph",
+            "content": {
+              "text": "Amet nulla dolor enim mollit et ad."
+            }
+          }
+        ]
+      }
+    },
+    "items": []
+  },
+  {
+    "__TYPE__": "SharedSliceContent",
+    "variation": "legal",
+    "primary": {
+      "title": {
+        "__TYPE__": "FieldContent",
+        "value": "fur",
+        "type": "Text"
+      },
+      "description": {
+        "__TYPE__": "FieldContent",
+        "value": "slightly",
+        "type": "Text"
+      },
+      "content": {
+        "__TYPE__": "StructuredTextContent",
+        "value": [
+          {
+            "type": "paragraph",
+            "content": {
+              "text": "Non et magna veniam fugiat labore id reprehenderit eiusmod."
+            }
+          }
+        ]
+      },
+      "effective_date": {
+        "__TYPE__": "FieldContent",
+        "type": "Date",
+        "value": "2013-04-01"
+      }
+    },
+    "items": [
+      {
+        "__TYPE__": "GroupItemContent",
+        "value": []
+      }
+    ]
+  }
 ]

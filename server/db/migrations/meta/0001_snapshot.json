@@ -48,9 +48,7 @@
         "game_modes_slug_unique": {
           "name": "game_modes_slug_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "slug"
-          ]
+          "columns": ["slug"]
         }
       },
       "policies": {},
@@ -80,12 +78,8 @@
           "name": "game_submission_game_modes_submission_id_games_id_fk",
           "tableFrom": "game_submission_game_modes",
           "tableTo": "games",
-          "columnsFrom": [
-            "submission_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["submission_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -93,12 +87,8 @@
           "name": "game_submission_game_modes_game_mode_id_game_modes_id_fk",
           "tableFrom": "game_submission_game_modes",
           "tableTo": "game_modes",
-          "columnsFrom": [
-            "game_mode_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["game_mode_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -106,10 +96,7 @@
       "compositePrimaryKeys": {
         "game_submission_game_modes_submission_id_game_mode_id_pk": {
           "name": "game_submission_game_modes_submission_id_game_mode_id_pk",
-          "columns": [
-            "submission_id",
-            "game_mode_id"
-          ]
+          "columns": ["submission_id", "game_mode_id"]
         }
       },
       "uniqueConstraints": {},
@@ -175,9 +162,7 @@
         "games_slug_unique": {
           "name": "games_slug_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "slug"
-          ]
+          "columns": ["slug"]
         }
       },
       "policies": {},
@@ -207,12 +192,8 @@
           "name": "pc_store_crossplay_platforms_pc_store_platform_id_pc_store_platforms_id_fk",
           "tableFrom": "pc_store_crossplay_platforms",
           "tableTo": "pc_store_platforms",
-          "columnsFrom": [
-            "pc_store_platform_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["pc_store_platform_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -220,12 +201,8 @@
           "name": "pc_store_crossplay_platforms_platform_id_platforms_id_fk",
           "tableFrom": "pc_store_crossplay_platforms",
           "tableTo": "platforms",
-          "columnsFrom": [
-            "platform_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["platform_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -233,10 +210,7 @@
       "compositePrimaryKeys": {
         "pc_store_crossplay_platforms_pc_store_platform_id_platform_id_pk": {
           "name": "pc_store_crossplay_platforms_pc_store_platform_id_platform_id_pk",
-          "columns": [
-            "pc_store_platform_id",
-            "platform_id"
-          ]
+          "columns": ["pc_store_platform_id", "platform_id"]
         }
       },
       "uniqueConstraints": {},
@@ -287,12 +261,8 @@
           "name": "pc_store_platforms_submission_id_games_id_fk",
           "tableFrom": "pc_store_platforms",
           "tableTo": "games",
-          "columnsFrom": [
-            "submission_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["submission_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -347,9 +317,7 @@
         "pc_stores_slug_unique": {
           "name": "pc_stores_slug_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "slug"
-          ]
+          "columns": ["slug"]
         }
       },
       "policies": {},
@@ -379,12 +347,8 @@
           "name": "platform_group_platforms_platform_group_id_platform_groups_id_fk",
           "tableFrom": "platform_group_platforms",
           "tableTo": "platform_groups",
-          "columnsFrom": [
-            "platform_group_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["platform_group_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -392,12 +356,8 @@
           "name": "platform_group_platforms_platform_id_platforms_id_fk",
           "tableFrom": "platform_group_platforms",
           "tableTo": "platforms",
-          "columnsFrom": [
-            "platform_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["platform_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -405,10 +365,7 @@
       "compositePrimaryKeys": {
         "platform_group_platforms_platform_group_id_platform_id_pk": {
           "name": "platform_group_platforms_platform_group_id_platform_id_pk",
-          "columns": [
-            "platform_group_id",
-            "platform_id"
-          ]
+          "columns": ["platform_group_id", "platform_id"]
         }
       },
       "uniqueConstraints": {},
@@ -453,12 +410,8 @@
           "name": "platform_groups_submission_id_games_id_fk",
           "tableFrom": "platform_groups",
           "tableTo": "games",
-          "columnsFrom": [
-            "submission_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["submission_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -519,9 +472,7 @@
         "platforms_slug_unique": {
           "name": "platforms_slug_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "slug"
-          ]
+          "columns": ["slug"]
         }
       },
       "policies": {},

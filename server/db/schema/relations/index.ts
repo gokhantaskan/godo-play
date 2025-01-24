@@ -12,15 +12,12 @@ import {
 } from "../tables/platformGroups";
 import { platforms } from "../tables/platforms";
 
-export const gameSubmissionsRelations = relations(
-  games,
-  ({ many }) => ({
-    // A submission can have many platform groups and many pc store entries
-    platformGroups: many(platformGroups),
-    pcStorePlatforms: many(pcStorePlatforms),
-    gameSubmissionGameModes: many(gameSubmissionGameModes),
-  })
-);
+export const gameSubmissionsRelations = relations(games, ({ many }) => ({
+  // A submission can have many platform groups and many pc store entries
+  platformGroups: many(platformGroups),
+  pcStorePlatforms: many(pcStorePlatforms),
+  gameSubmissionGameModes: many(gameSubmissionGameModes),
+}));
 
 export const gameModesRelations = relations(gameModes, ({ many }) => ({
   gameSubmissionGameModes: many(gameSubmissionGameModes),
