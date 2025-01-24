@@ -4,14 +4,14 @@ import { Tab, TabGroup, TabList, TabPanel, TabPanels } from "@headlessui/vue";
 import type {
   GameSubmissionResponse,
   GameSubmissionWithRelations,
-} from "~~/shared/types/submissions";
+} from "~~/shared/types/games";
 
 definePageMeta({
   name: "AdminGameSubmissionsPage",
 });
 
 const { data: submissions, refresh } =
-  await useFetch<GameSubmissionResponse>("/api/submissions");
+  await useFetch<GameSubmissionResponse>("/api/games");
 
 const tabs = [
   { name: "Pending", status: "pending" },

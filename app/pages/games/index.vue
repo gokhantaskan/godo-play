@@ -23,12 +23,9 @@ const {
 } = useGameFilters();
 
 // Data Fetching
-const { status, data: games } = useFetch<DashboardGame[]>(
-  "/api/games/external",
-  {
-    query: queryParams,
-  }
-);
+const { status, data: games } = useFetch<DashboardGame[]>("/api/games/igdb", {
+  query: queryParams,
+});
 
 const pending = computed(() => status.value === "pending");
 </script>

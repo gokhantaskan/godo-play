@@ -72,7 +72,7 @@ async function handleSubmit() {
       token,
     };
 
-    const response = await $fetch("/api/submissions", {
+    const response = await $fetch("/api/games", {
       method: "POST",
       body: payload,
     });

@@ -1,10 +1,9 @@
 <script setup lang="ts">
-import { Icon } from "#components";
 import { SUPPORTED_PC_STORES_BY_SLUG } from "~~/shared/constants";
 import type {
   GameSubmissionPlatformGroupPlatform,
   GameSubmissionWithRelations,
-} from "~~/shared/types/submissions";
+} from "~~/shared/types/games";
 
 interface GameMode {
   gameMode: {
@@ -45,7 +44,7 @@ const sortedPCStores = computed(
 //   data: gameDetails,
 //   status: gameDetailsStatus,
 //   execute: fetchGameDetails,
-// } = useFetch(`/api/games/external/${props.game.gameSlug}`, {
+// } = useFetch(`/api/games/igdb/${props.game.slug}`, {
 //   immediate: false,
 //   key: cacheKey.value,
 //   lazy: !!cachedGameDetails.value,
@@ -81,7 +80,7 @@ const hasCrossplaySupport = (crossplayLength: number) => {
     <!-- Image Section -->
     <button class="game-card__cover">
       <NuxtImg
-        :src="`https://images.igdb.com/igdb/image/upload/t_720p/${game.imageId}.jpg`"
+        :src="`https://images.igdb.com/igdb/image/upload/t_720p/${game.external.igdbImageId}.jpg`"
         :alt="game.name"
         preload
         loading="lazy"

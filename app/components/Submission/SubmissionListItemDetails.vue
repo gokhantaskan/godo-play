@@ -5,7 +5,7 @@ import type {
   PlatformGroups,
   SubmitGameFormData,
 } from "~/types/submit-game";
-import type { GameSubmissionWithRelations } from "~~/shared/types/submissions";
+import type { GameSubmissionWithRelations } from "~~/shared/types/games";
 
 interface Props {
   submission: GameSubmissionWithRelations & {
@@ -39,7 +39,7 @@ const pcStorePlatformsModel = ref<PCStoreData>(pcStorePlatforms);
 const gameModesModel = ref<number[]>(gameModeIds);
 
 async function fetchIgdbGame() {
-  if (!props.submission.externalId) {
+  if (!props.submission.external?.igdbId) {
     return;
   }
 
@@ -51,7 +51,7 @@ async function fetchIgdbGame() {
       body: {
         fields:
           "name,slug,category,game_modes.name,genres.name,platforms.name,themes.name",
-        where: `id = ${props.submission.externalId}`,
+        where: `id = ${props.submission.external.igdbId}`,
       },
     });
 
@@ -67,7 +67,7 @@ async function fetchIgdbGame() {
 
 async function handleSave() {
   try {
-    await $fetch(`/api/submissions/${props.submission.id}`, {
+    await $fetch(`/api/games/${props.submission.id}`, {
       method: "PATCH",
       body: {
         platformGroups: platformGroupsModel.value,

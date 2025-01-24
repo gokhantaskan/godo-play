@@ -1,8 +1,14 @@
-import { integer, pgTable, serial, text } from "drizzle-orm/pg-core";
+import { sql } from "drizzle-orm";
+import { jsonb, pgTable, serial, text } from "drizzle-orm/pg-core";
 import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 import { z } from "zod";
 
 import { defaultInsertTimestamps } from "../helpers/defaults";
+
+interface ExternalData {
+  igdbId: number;
+  igdbImageId?: string;
+}
 
 /**
  * The central table that stores information about a game submission.
@@ -10,10 +16,11 @@ import { defaultInsertTimestamps } from "../helpers/defaults";
  */
 export const games = pgTable("games", {
   id: serial("id").primaryKey(),
-  externalId: integer("external_id").unique().notNull(),
+  external: jsonb("external")
+    .$type<ExternalData>()
+    .default(sql`'{}'::jsonb`),
   name: text("name").notNull(),
   slug: text("slug").unique().notNull(),
-  imageId: text("image_id").unique(),
   status: text("status", { enum: ["pending", "approved", "rejected"] })
     .default("pending")
     .notNull(),
@@ -21,8 +28,17 @@ export const games = pgTable("games", {
 });
 
 // Base Zod schemas for validation
-export const DbGameSchema = createSelectSchema(games);
+const ExternalDataSchema = z.object({
+  igdbId: z.number(),
+  igdbImageId: z.string().optional(),
+});
+
+export const DbGameSchema = createSelectSchema(games, {
+  external: ExternalDataSchema,
+});
+
 export const DbInsertGameSchema = createInsertSchema(games, {
+  external: ExternalDataSchema,
   status: z.enum(["pending", "approved", "rejected"]),
 });
 

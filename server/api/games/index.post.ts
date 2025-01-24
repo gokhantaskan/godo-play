@@ -100,10 +100,12 @@ export default defineEventHandler(async event => {
       const [submission] = await tx
         .insert(games)
         .values({
-          externalId: body.game.id,
+          external: {
+            igdbId: body.game.id,
+            igdbImageId: body.game.imageId,
+          },
           name: body.game.name,
           slug: body.game.slug,
-          imageId: body.game.imageId,
         })
         .returning();
 

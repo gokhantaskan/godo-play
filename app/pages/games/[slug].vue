@@ -1,7 +1,7 @@
 <script setup lang="ts">
 const { slug } = useRoute().params;
 
-const { data: game } = await useFetch(`/api/games/external/${slug}`);
+const { data: game } = await useFetch(`/api/games/igdb/${slug}`);
 </script>
 
 <template>

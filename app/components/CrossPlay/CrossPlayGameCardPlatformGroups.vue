@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { PLATFORM_ICONS } from "~~/shared/constants";
-import type { GameSubmissionPlatformGroup } from "~~/shared/types/submissions";
+import type { GameSubmissionPlatformGroup } from "~~/shared/types/games";
 
 const props = defineProps<{
   platformGroups: GameSubmissionPlatformGroup[];

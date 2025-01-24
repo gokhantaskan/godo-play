@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { PlatformId } from "~/types/crossPlay";
 import type { SUPPORTED_PLATFORMS } from "~~/shared/constants";
-import type { GameSubmissionWithRelations } from "~~/shared/types/submissions";
+import type { GameSubmissionWithRelations } from "~~/shared/types/games";
 
 type SupportedPlatform = (typeof SUPPORTED_PLATFORMS)[number];
 
@@ -16,7 +16,7 @@ definePageMeta({
 });
 
 const { data, error, refresh } =
-  await useFetch<GameSubmissionWithRelations[]>("/api/submissions");
+  await useFetch<GameSubmissionWithRelations[]>("/api/games");
 
 // Platform Selection Management
 const selectedPlatforms = useState<SelectedPlatforms>(

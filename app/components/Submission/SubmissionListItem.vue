@@ -2,7 +2,7 @@
 import { Disclosure, DisclosureButton, DisclosurePanel } from "@headlessui/vue";
 import { ref } from "vue";
 
-import type { GameSubmissionWithRelations } from "~~/shared/types/submissions";
+import type { GameSubmissionWithRelations } from "~~/shared/types/games";
 
 interface Props {
   game: GameSubmissionWithRelations & {
@@ -34,7 +34,7 @@ async function handleUpdate(status: "approved" | "rejected") {
     }
 
     // Then update the status
-    await $fetch("/api/submissions/update", {
+    await $fetch("/api/games/update", {
       method: "POST",
       body: {
         id: props.game.id,
@@ -54,7 +54,7 @@ async function handleDelete() {
   }
 
   try {
-    await $fetch(`/api/submissions/${props.game.id}`, {
+    await $fetch(`/api/games/${props.game.id}`, {
       method: "DELETE",
     });
 
@@ -69,7 +69,7 @@ async function handleDelete() {
   <div class="submission-card">
     <div class="submission-card__image">
       <NuxtImg
-        :src="`https://images.igdb.com/igdb/image/upload/t_cover_small/${game.imageId}.jpg`"
+        :src="`https://images.igdb.com/igdb/image/upload/t_cover_small/${game.external.igdbImageId}.jpg`"
         :alt="game.name"
       />
     </div>
