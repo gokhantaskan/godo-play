@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { PlatformId } from "~/types/crossPlay";
-import type { SUPPORTED_PLATFORMS } from "~~/shared/constants";
+import { SUPPORTED_PLATFORMS } from "~~/shared/constants";
 import type { GameSubmissionWithRelations } from "~~/shared/types";
 
 type SupportedPlatform = (typeof SUPPORTED_PLATFORMS)[number];
@@ -14,9 +14,6 @@ interface SelectedPlatforms {
 definePageMeta({
   name: "CrossPlayGamesPage",
 });
-
-const { data, error, refresh } =
-  await useFetch<GameSubmissionWithRelations[]>("/api/games");
 
 // Platform Selection Management
 const selectedPlatforms = useState<SelectedPlatforms>(
@@ -33,68 +30,58 @@ function isPlatformId(value: unknown): value is PlatformId {
   return typeof value === "number" && !isNaN(value);
 }
 
-// Filter submissions based on selected platforms
-const filteredSubmissions = computed(() => {
-  if (!data.value) {
-    return [];
-  }
-
+// Create a computed property for the API query
+const platformsQuery = computed(() => {
   const platforms = [
     selectedPlatforms.value.p1,
     selectedPlatforms.value.p2,
     selectedPlatforms.value.p3,
   ].filter(isPlatformId);
 
-  if (!platforms.length) {
-    if (IS_DEV) {
-      return data.value;
-    }
-
-    // Filter to show only approved submissions
-    return data.value.filter(submission => submission.status === "approved");
-  }
-
-  return data.value.filter(submission => {
-    // Ensure platformGroups exists and has platformGroupPlatforms
-    if (
-      !submission.platformGroups?.length ||
-      submission.status !== "approved"
-    ) {
-      return false;
-    }
-
-    // If only one platform is selected, check if it exists in any group
-    if (platforms.length === 1) {
-      return submission.platformGroups.some(group => {
-        if (!group.platformGroupPlatforms?.length) {
-          return false;
-        }
-
-        return group.platformGroupPlatforms.some(
-          p => p.platform?.id === platforms[0]
-        );
-      });
-    }
-
-    // Check if all selected platforms exist in the same platform group
-    return submission.platformGroups.some(group => {
-      if (!group.platformGroupPlatforms?.length) {
-        return false;
-      }
-
-      const groupPlatformIds = new Set(
-        group.platformGroupPlatforms.map(p => p.platform?.id)
-      );
-
-      return platforms.every(platformId => groupPlatformIds.has(platformId));
-    });
-  });
+  return platforms.length ? { platforms: platforms.join(",") } : undefined;
 });
 
-const totalSubmissionsCount = computed(() => data.value?.length ?? 0);
+interface GamesResponse {
+  total: number;
+  data: GameSubmissionWithRelations[];
+  limit: number;
+  offset: number;
+}
+
+// Update useFetch to use the query parameters
+const {
+  data: response,
+  error,
+  refresh,
+} = await useFetch<GamesResponse>("/api/games", {
+  query: platformsQuery,
+  watch: [platformsQuery],
+});
+
+const totalSubmissionsCount = computed(() => response.value?.total ?? 0);
 const filteredSubmissionsCount = computed(
-  () => filteredSubmissions.value.length
+  () => response.value?.data?.length ?? 0
 );
+
+useHead({
+  title: computed(() =>
+    Object.values(selectedPlatforms.value).some(Boolean)
+      ? `Cross-Play Games (${Object.values(selectedPlatforms.value)
+          .filter(Boolean)
+          .map(
+            p => SUPPORTED_PLATFORMS.find(platform => platform.id === p)?.name
+          )
+          .join(", ")})`
+      : "Cross-Play Games"
+  ),
+  meta: [
+    {
+      name: "description",
+      content:
+        "Find cross-play games for your favorite platforms between PC, Mac, PlayStation, Xbox, and Nintendo Switch.",
+    },
+  ],
+});
 </script>
 
 <template>
@@ -156,11 +143,11 @@ const filteredSubmissionsCount = computed(
     </div>
 
     <div
-      v-else-if="filteredSubmissions.length"
+      v-else-if="filteredSubmissionsCount"
       class="tw:grid tw:grid-cols-2 tw:sm:grid-cols-[repeat(auto-fill,minmax(14rem,1fr))] tw:gap-4"
     >
       <CrossPlayGameCard
-        v-for="submission in filteredSubmissions"
+        v-for="submission in response?.data"
         :key="submission.id"
         :game="submission"
       />

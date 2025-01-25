@@ -26,6 +26,29 @@ const modelValue = defineModel<
   SupportedPlatform["id"][] | SupportedPlatform["id"]
 >();
 
+const getPlatformIcon = (
+  platformId:
+    | SupportedPlatform["id"]
+    | SupportedPlatform["id"][]
+    | null
+    | undefined
+) => {
+  if (!platformId) {
+    return "lucide:gamepad-2";
+  }
+
+  if (Array.isArray(platformId)) {
+    if (platformId.length === 0) {
+      return "lucide:gamepad-2";
+    }
+    const platform = SUPPORTED_PLATFORMS.find(p => p.id === platformId[0]);
+    return platform?.icon ?? "lucide:gamepad-2";
+  }
+
+  const platform = SUPPORTED_PLATFORMS.find(p => p.id === platformId);
+  return platform?.icon ?? "lucide:gamepad-2";
+};
+
 const allOptions = computed<SelectOption[]>(() => {
   return [
     ...SUPPORTED_PLATFORMS.map(platform => ({
@@ -67,5 +90,6 @@ const availableOptions = computed(() =>
     label="Platform"
     :options="availableOptions"
     :multiple="multiple"
+    :icon="getPlatformIcon(modelValue)"
   />
 </template>

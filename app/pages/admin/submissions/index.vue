@@ -17,6 +17,13 @@ interface GroupedSubmissions {
   rejected: GameSubmissionWithRelations[];
 }
 
+interface GamesResponse {
+  total: number;
+  data: GameSubmissionWithRelations[];
+  limit: number;
+  offset: number;
+}
+
 definePageMeta({
   name: "AdminGameSubmissionsPage",
 });
@@ -36,8 +43,7 @@ const tabs = [
   },
 ];
 
-const { data: submissions, refresh } =
-  await useFetch<GameSubmissionWithRelations[]>("/api/games");
+const { data: response, refresh } = await useFetch<GamesResponse>("/api/games");
 
 const groupedSubmissions = computed<GroupedSubmissions>(() => {
   const initial: GroupedSubmissions = {
@@ -46,11 +52,11 @@ const groupedSubmissions = computed<GroupedSubmissions>(() => {
     rejected: [],
   };
 
-  if (!submissions.value) {
+  if (!response.value?.data) {
     return initial;
   }
 
-  return submissions.value.reduce((acc, submission) => {
+  return response.value.data.reduce((acc, submission) => {
     if (submission.status) {
       acc[submission.status as SubmissionStatus].push(submission);
     }
