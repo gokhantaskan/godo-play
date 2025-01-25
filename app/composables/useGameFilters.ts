@@ -68,12 +68,12 @@ interface FilterChip {
 // Return type for the composable
 interface GameFiltersReturn {
   // Platform Selection
-  selectedPlatforms: SelectedPlatforms;
+  selectedPlatforms: Ref<SelectedPlatforms>;
   availablePlatforms: AvailablePlatforms;
   getPlatformIcon: (platformId: number | null) => string;
 
   // Filter Selections
-  selectedFilters: SelectedFilters;
+  selectedFilters: Ref<SelectedFilters>;
 
   // Search
   search: Ref<string>;
@@ -89,6 +89,79 @@ interface GameFiltersReturn {
   // Active Filters
   activeFilterChips: ComputedRef<FilterChip[]>;
   removeFilter: (chip: FilterChip) => void;
+}
+
+// Mapping functions for converting between IDs and slugs
+const platformsMap = {
+  idToSlug: SUPPORTED_PLATFORMS.reduce<Record<number, string>>((acc, curr) => {
+    acc[curr.id] = curr.slug;
+    return acc;
+  }, {}),
+  slugToId: SUPPORTED_PLATFORMS.reduce<Record<string, number>>((acc, curr) => {
+    acc[curr.slug] = curr.id;
+    return acc;
+  }, {}),
+};
+
+const gameModeMap = {
+  idToSlug: EXTERNAL_GAME_MODES.reduce<Record<number, string>>((acc, curr) => {
+    acc[curr.id] = curr.slug;
+    return acc;
+  }, {}),
+  slugToId: EXTERNAL_GAME_MODES.reduce<Record<string, number>>((acc, curr) => {
+    acc[curr.slug] = curr.id;
+    return acc;
+  }, {}),
+};
+
+const playerPerspectivesMap = {
+  idToSlug: PLAYER_PERSPECTIVES.reduce<Record<number, string>>((acc, curr) => {
+    acc[curr.id] = curr.slug;
+    return acc;
+  }, {}),
+  slugToId: PLAYER_PERSPECTIVES.reduce<Record<string, number>>((acc, curr) => {
+    acc[curr.slug] = curr.id;
+    return acc;
+  }, {}),
+};
+
+const genresMap = {
+  idToSlug: GENRES.reduce<Record<number, string>>((acc, curr) => {
+    acc[curr.id] = curr.slug;
+    return acc;
+  }, {}),
+  slugToId: GENRES.reduce<Record<string, number>>((acc, curr) => {
+    acc[curr.slug] = curr.id;
+    return acc;
+  }, {}),
+};
+
+const themesMap = {
+  idToSlug: THEMES.reduce<Record<number, string>>((acc, curr) => {
+    acc[curr.id] = curr.slug;
+    return acc;
+  }, {}),
+  slugToId: THEMES.reduce<Record<string, number>>((acc, curr) => {
+    acc[curr.slug] = curr.id;
+    return acc;
+  }, {}),
+};
+
+/**
+ * Helper function to convert slug to ID
+ */
+function getIdFromSlug(
+  slug: string,
+  map: Record<string, number>
+): number | null {
+  return map[slug] ?? null;
+}
+
+/**
+ * Helper function to convert ID to slug
+ */
+function getSlugFromId(id: number, map: Record<number, string>): string | null {
+  return map[id] ?? null;
 }
 
 /**
@@ -108,7 +181,9 @@ export function useGameFilters(): GameFiltersReturn {
    * - Initializes from URL query or defaults to first platform
    * - Maintains state across navigation using useState
    */
-  const initialPlatforms = initialQuery.platforms?.split(",").map(Number);
+  const initialPlatforms = initialQuery.platforms
+    ?.split(",")
+    .map(slug => getIdFromSlug(slug, platformsMap.slugToId));
   const selectedPlatforms = useState<SelectedPlatforms>(
     "game-platforms",
     () => ({
@@ -154,15 +229,30 @@ export function useGameFilters(): GameFiltersReturn {
 
   /**
    * Filter Categories Management
-   * - Initializes from URL query
+   * - Initializes from URL query using slugs
    * - Maintains state across navigation using useState
    */
   const selectedFilters = useState<SelectedFilters>("game-filters", () => ({
-    gameModes: initialQuery.gameModes?.split(",").map(Number) || [],
+    gameModes:
+      initialQuery.gameModes
+        ?.split(",")
+        .map(slug => getIdFromSlug(slug, gameModeMap.slugToId))
+        .filter((id): id is number => id !== null) || [],
     playerPerspectives:
-      initialQuery.playerPerspectives?.split(",").map(Number) || [],
-    genres: initialQuery.genres?.split(",").map(Number) || [],
-    themes: initialQuery.themes?.split(",").map(Number) || [],
+      initialQuery.playerPerspectives
+        ?.split(",")
+        .map(slug => getIdFromSlug(slug, playerPerspectivesMap.slugToId))
+        .filter((id): id is number => id !== null) || [],
+    genres:
+      initialQuery.genres
+        ?.split(",")
+        .map(slug => getIdFromSlug(slug, genresMap.slugToId))
+        .filter((id): id is number => id !== null) || [],
+    themes:
+      initialQuery.themes
+        ?.split(",")
+        .map(slug => getIdFromSlug(slug, themesMap.slugToId))
+        .filter((id): id is number => id !== null) || [],
   }));
 
   /**
@@ -191,7 +281,7 @@ export function useGameFilters(): GameFiltersReturn {
   }
 
   /**
-   * Watches all filter states and syncs with URL
+   * Watches all filter states and syncs with URL using slugs
    * - Runs immediately on mount to sync URL with persisted state
    * - Deep watches objects to catch nested changes
    */
@@ -199,19 +289,37 @@ export function useGameFilters(): GameFiltersReturn {
     [selectedPlatforms, selectedFilters, search],
     ([platforms, filters, searchValue]) => {
       const platformsList = [platforms.p1, platforms.p2, platforms.p3]
+        .filter((id): id is number => id !== null)
+        .map(id => getSlugFromId(id, platformsMap.idToSlug))
         .filter(Boolean)
         .join(",");
 
       updateQueryParams({
         platforms: platformsList || undefined,
         gameModes: filters.gameModes.length
-          ? filters.gameModes.join(",")
+          ? filters.gameModes
+              .map(id => getSlugFromId(id, gameModeMap.idToSlug))
+              .filter(Boolean)
+              .join(",")
           : undefined,
         playerPerspectives: filters.playerPerspectives.length
-          ? filters.playerPerspectives.join(",")
+          ? filters.playerPerspectives
+              .map(id => getSlugFromId(id, playerPerspectivesMap.idToSlug))
+              .filter(Boolean)
+              .join(",")
           : undefined,
-        genres: filters.genres.length ? filters.genres.join(",") : undefined,
-        themes: filters.themes.length ? filters.themes.join(",") : undefined,
+        genres: filters.genres.length
+          ? filters.genres
+              .map(id => getSlugFromId(id, genresMap.idToSlug))
+              .filter(Boolean)
+              .join(",")
+          : undefined,
+        themes: filters.themes.length
+          ? filters.themes
+              .map(id => getSlugFromId(id, themesMap.idToSlug))
+              .filter(Boolean)
+              .join(",")
+          : undefined,
         search: searchValue || undefined,
       });
     },
@@ -246,25 +354,47 @@ export function useGameFilters(): GameFiltersReturn {
 
   /**
    * Formats query parameters for API requests
-   * - Encodes values for URL safety
-   * - Joins arrays with commas
+   * - Uses IDs for API communication
    */
   const queryParams = computed(() => {
-    return Object.fromEntries(
-      Object.entries(requestBody.value)
-        .filter(([_, value]) => Boolean(value))
-        .map(([key, value]) => [
-          key,
-          encodeURIComponent(
-            String(Array.isArray(value) ? value.join(",") : value)
-          ),
-        ])
-    );
+    const params: Record<string, string> = {};
+
+    const platforms = [
+      selectedPlatforms.value.p1,
+      selectedPlatforms.value.p2,
+      selectedPlatforms.value.p3,
+    ].filter((id): id is number => id !== null);
+
+    if (platforms.length) {
+      params.platforms = platforms.join(",");
+    }
+
+    if (selectedFilters.value.gameModes.length) {
+      params.gameModes = selectedFilters.value.gameModes.join(",");
+    }
+
+    if (selectedFilters.value.playerPerspectives.length) {
+      params.playerPerspectives =
+        selectedFilters.value.playerPerspectives.join(",");
+    }
+
+    if (selectedFilters.value.genres.length) {
+      params.genres = selectedFilters.value.genres.join(",");
+    }
+
+    if (selectedFilters.value.themes.length) {
+      params.themes = selectedFilters.value.themes.join(",");
+    }
+
+    if (debouncedSearch.value) {
+      params.search = debouncedSearch.value;
+    }
+
+    return params;
   });
 
   /**
-   * Utility to clear all filters and refresh the page
-   * Only works on client-side
+   * Utility function to clear all filters and refresh the page
    */
   function clearQueryAndRefreshPage() {
     if (import.meta.client) {
@@ -276,71 +406,48 @@ export function useGameFilters(): GameFiltersReturn {
   }
 
   /**
-   * Gets the platform icon for display
-   * Falls back to default gamepad icon if not found
+   * Gets the platform icon for a given platform ID
    */
   function getPlatformIcon(platformId: number | null): string {
-    if (!platformId) {
-      return "lucide:gamepad-2";
-    }
-
     const platform = SUPPORTED_PLATFORMS.find(p => p.id === platformId);
-    return platform?.icon || "lucide:gamepad-2";
+    return platform?.icon ?? "lucide:gamepad-2";
   }
 
   /**
-   * Active Filter Chips Management
-   * - Converts selected filter IDs to displayable chips
-   * - Groups by filter type for organized display
+   * Computes active filter chips for display
    */
   const activeFilterChips = computed<FilterChip[]>(() => {
     const chips: FilterChip[] = [];
 
-    // Game Modes
     selectedFilters.value.gameModes.forEach(id => {
       const mode = EXTERNAL_GAME_MODES.find(m => m.id === id);
       if (mode) {
-        chips.push({
-          id,
-          name: mode.name,
-          type: "gameMode",
-        });
+        chips.push({ type: "gameMode", id, name: mode.name });
       }
     });
 
-    // Player Perspectives
     selectedFilters.value.playerPerspectives.forEach(id => {
       const perspective = PLAYER_PERSPECTIVES.find(p => p.id === id);
       if (perspective) {
         chips.push({
+          type: "playerPerspective",
           id,
           name: perspective.name,
-          type: "playerPerspective",
         });
       }
     });
 
-    // Genres
     selectedFilters.value.genres.forEach(id => {
       const genre = GENRES.find(g => g.id === id);
       if (genre) {
-        chips.push({
-          id,
-          name: genre.name,
-          type: "genre",
-        });
+        chips.push({ type: "genre", id, name: genre.name });
       }
     });
 
-    // Themes
     selectedFilters.value.themes.forEach(id => {
       const theme = THEMES.find(t => t.id === id);
       if (theme) {
-        chips.push({
-          id,
-          name: theme.name,
-          type: "theme",
-        });
+        chips.push({ type: "theme", id, name: theme.name });
       }
     });
 
@@ -348,8 +455,7 @@ export function useGameFilters(): GameFiltersReturn {
   });
 
   /**
-   * Removes a filter when its chip is closed
-   * Updates the appropriate filter array based on the chip type
+   * Removes a filter chip
    */
   function removeFilter(chip: FilterChip) {
     switch (chip.type) {
@@ -374,29 +480,17 @@ export function useGameFilters(): GameFiltersReturn {
     }
   }
 
-  // Return all necessary values and functions
   return {
-    // Platform Selection
-    selectedPlatforms: selectedPlatforms.value,
+    selectedPlatforms,
     availablePlatforms,
     getPlatformIcon,
-
-    // Filter Selections
-    selectedFilters: selectedFilters.value,
-
-    // Search
+    selectedFilters,
     search,
     debouncedSearch,
-
-    // Data Fetching
     requestBody,
     queryParams,
-
-    // Utils
     clearQueryAndRefreshPage,
-
-    // Active Filters
     activeFilterChips,
     removeFilter,
-  };
+  } satisfies GameFiltersReturn;
 }
