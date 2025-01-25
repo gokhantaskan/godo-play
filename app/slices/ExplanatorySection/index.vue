@@ -35,6 +35,13 @@ const textContentClasses = computed(() => {
       return "";
   }
 });
+
+function getUrl(
+  cta: Content.ExplanatorySectionSliceDefault["primary"]["cta_text"][number]
+) {
+  // @ts-ignore - URL is not available in the type
+  return cta.url;
+}
 </script>
 
 <template>
@@ -66,7 +73,7 @@ const textContentClasses = computed(() => {
         >
           <NuxtLink
             v-slot="{ href }"
-            :to="cta.key"
+            :to="getUrl(cta)"
             custom
           >
             <TheButton
