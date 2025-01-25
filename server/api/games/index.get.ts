@@ -5,7 +5,7 @@ import { isH3ErrorLike } from "~~/server/utils/errorHandler";
 
 export default defineEventHandler(async () => {
   try {
-    const submissions = await db.query.games.findMany({
+    const games = await db.query.games.findMany({
       with: {
         platformGroups: {
           columns: {
@@ -28,6 +28,7 @@ export default defineEventHandler(async () => {
         },
         pcStorePlatforms: {
           columns: {
+            id: true,
             storeSlug: true,
           },
           with: {
@@ -36,7 +37,9 @@ export default defineEventHandler(async () => {
               with: {
                 platform: {
                   columns: {
+                    id: true,
                     name: true,
+                    slug: true,
                   },
                 },
               },
@@ -44,11 +47,15 @@ export default defineEventHandler(async () => {
           },
         },
         gameSubmissionGameModes: {
-          columns: {},
+          columns: {
+            gameModeId: true,
+          },
           with: {
             gameMode: {
               columns: {
+                id: true,
                 name: true,
+                slug: true,
               },
             },
           },
@@ -59,7 +66,7 @@ export default defineEventHandler(async () => {
       ],
     });
 
-    return submissions;
+    return games;
   } catch (error: unknown) {
     if (isH3ErrorLike(error)) {
       throw error;

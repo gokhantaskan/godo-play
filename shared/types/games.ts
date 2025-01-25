@@ -1,58 +1,50 @@
-import type {
-  DbGame,
-  DbGameWithRelations as BaseGameSubmissionWithRelations,
-} from "~~/server/db/schema/tables/games";
+import type { GameSubmissionWithRelations } from ".";
 
-export type { DbGame as GameSubmission };
-export interface GameSubmissionWithRelations
-  extends BaseGameSubmissionWithRelations {
-  gameSubmissionGameModes: Array<{
-    gameModeId: number;
-    gameMode: {
-      id: number;
-      name: string;
-      slug: string;
-    };
-  }>;
-}
-export type GameSubmissionResponse = GameSubmissionWithRelations[];
-
-// Only define types that are specific to the frontend and not covered by the database schema
-export interface GameSubmissionUIState {
-  isEditing: boolean;
-  isDeleting: boolean;
-  hasError: boolean;
-}
-
-// These types should match the schema in GameSubmissionWithRelationsSchema
+/**
+ * Platform with essential fields for UI
+ */
 export interface GameSubmissionPlatform {
   id: number;
   name: string;
   slug: string;
 }
 
-export interface GameSubmissionPlatformGroupPlatform {
-  platform: GameSubmissionPlatform;
-}
-
+/**
+ * Platform group with its associated platforms
+ */
 export interface GameSubmissionPlatformGroup {
   id: number;
-  platformGroupPlatforms: GameSubmissionPlatformGroupPlatform[];
+  platformGroupPlatforms: Array<{
+    platform: GameSubmissionPlatform;
+  }>;
 }
 
+/**
+ * Crossplay entry with platform information
+ */
 export interface GameSubmissionCrossplayEntry {
   platform: GameSubmissionPlatform;
 }
 
+/**
+ * PC Store platform with crossplay information
+ */
 export interface GameSubmissionPCStorePlatform {
   id: number;
   storeSlug: string;
   crossplayEntries: GameSubmissionCrossplayEntry[];
 }
 
-// Type guard to check if a submission has relations
-export function hasRelations(
-  submission: DbGame | GameSubmissionWithRelations
-): submission is GameSubmissionWithRelations {
-  return "platformGroups" in submission;
+/**
+ * Game mode with essential fields
+ */
+export interface GameSubmissionGameMode {
+  gameModeId: number;
+  gameMode: {
+    id: number;
+    name: string;
+    slug: string;
+  };
 }
+
+export type GameSubmissionResponse = GameSubmissionWithRelations[];

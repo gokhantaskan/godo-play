@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { PlatformId } from "~/types/crossPlay";
 import type { SUPPORTED_PLATFORMS } from "~~/shared/constants";
-import type { GameSubmissionWithRelations } from "~~/shared/types/games";
+import type { GameSubmissionWithRelations } from "~~/shared/types";
 
 type SupportedPlatform = (typeof SUPPORTED_PLATFORMS)[number];
 
@@ -90,6 +90,11 @@ const filteredSubmissions = computed(() => {
     });
   });
 });
+
+const totalSubmissionsCount = computed(() => data.value?.length ?? 0);
+const filteredSubmissionsCount = computed(
+  () => filteredSubmissions.value.length
+);
 </script>
 
 <template>
@@ -136,6 +141,13 @@ const filteredSubmissions = computed(() => {
         allow-empty
         label="Platform 3"
       />
+    </section>
+
+    <section v-if="totalSubmissionsCount">
+      <p>
+        Showing {{ filteredSubmissionsCount }} of {{ totalSubmissionsCount }}
+        games
+      </p>
     </section>
 
     <div v-if="error">

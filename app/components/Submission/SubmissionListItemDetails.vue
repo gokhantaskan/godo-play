@@ -5,19 +5,10 @@ import type {
   PlatformGroups,
   SubmitGameFormData,
 } from "~/types/submit-game";
-import type { GameSubmissionWithRelations } from "~~/shared/types/games";
+import type { GameSubmissionWithRelations } from "~~/shared/types";
 
 interface Props {
-  submission: GameSubmissionWithRelations & {
-    gameSubmissionGameModes: Array<{
-      gameModeId: number;
-      gameMode: {
-        id: number;
-        name: string;
-        slug: string;
-      };
-    }>;
-  };
+  submission: GameSubmissionWithRelations;
   disabled?: boolean;
 }
 

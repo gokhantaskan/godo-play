@@ -2,7 +2,7 @@ import type { BaseEntity } from "./globals";
 
 export interface DashboardGame {
   id: number;
-  // aggregated_rating: number;
+  aggregated_rating: number;
   category: number; // 0: main game, 3: bundle, 8: remake, 9: remaster
   cover: Cover;
   // first_release_date: number;

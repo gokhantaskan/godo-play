@@ -2,19 +2,10 @@
 import { Disclosure, DisclosureButton, DisclosurePanel } from "@headlessui/vue";
 import { ref } from "vue";
 
-import type { GameSubmissionWithRelations } from "~~/shared/types/games";
+import type { GameSubmissionWithRelations } from "~~/shared/types";
 
 interface Props {
-  game: GameSubmissionWithRelations & {
-    gameSubmissionGameModes: Array<{
-      gameModeId: number;
-      gameMode: {
-        id: number;
-        name: string;
-        slug: string;
-      };
-    }>;
-  };
+  game: GameSubmissionWithRelations;
   isPending?: boolean;
 }
 
@@ -69,7 +60,7 @@ async function handleDelete() {
   <div class="submission-card">
     <div class="submission-card__image">
       <NuxtImg
-        :src="`https://images.igdb.com/igdb/image/upload/t_cover_small/${game.external.igdbImageId}.jpg`"
+        :src="`https://images.igdb.com/igdb/image/upload/t_cover_small/${game.external?.igdbImageId}.jpg`"
         :alt="game.name"
       />
     </div>

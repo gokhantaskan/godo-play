@@ -1,29 +1,46 @@
 <script setup lang="ts">
-import { Tab, TabGroup, TabList, TabPanel, TabPanels } from "@headlessui/vue";
+import {
+  TabsContent,
+  TabsIndicator,
+  TabsList,
+  TabsRoot,
+  TabsTrigger,
+} from "radix-vue";
 
-import type {
-  GameSubmissionResponse,
-  GameSubmissionWithRelations,
-} from "~~/shared/types/games";
+import type { GameSubmissionWithRelations } from "~~/shared/types";
+
+type SubmissionStatus = "pending" | "approved" | "rejected";
+
+interface GroupedSubmissions {
+  pending: GameSubmissionWithRelations[];
+  approved: GameSubmissionWithRelations[];
+  rejected: GameSubmissionWithRelations[];
+}
 
 definePageMeta({
   name: "AdminGameSubmissionsPage",
 });
 
-const { data: submissions, refresh } =
-  await useFetch<GameSubmissionResponse>("/api/games");
-
 const tabs = [
-  { name: "Pending", status: "pending" },
-  { name: "Approved", status: "approved" },
-  { name: "Rejected", status: "rejected" },
-] as const;
+  {
+    status: "pending" as const,
+    label: "Pending",
+  },
+  {
+    status: "approved" as const,
+    label: "Approved",
+  },
+  {
+    status: "rejected" as const,
+    label: "Rejected",
+  },
+];
 
-const groupedSubmissions = computed(() => {
-  const initial: Record<
-    "pending" | "approved" | "rejected",
-    GameSubmissionWithRelations[]
-  > = {
+const { data: submissions, refresh } =
+  await useFetch<GameSubmissionWithRelations[]>("/api/games");
+
+const groupedSubmissions = computed<GroupedSubmissions>(() => {
+  const initial: GroupedSubmissions = {
     pending: [],
     approved: [],
     rejected: [],
@@ -33,8 +50,10 @@ const groupedSubmissions = computed(() => {
     return initial;
   }
 
-  return submissions.value?.reduce((acc, submission) => {
-    acc[submission.status].push(submission);
+  return submissions.value.reduce((acc, submission) => {
+    if (submission.status) {
+      acc[submission.status as SubmissionStatus].push(submission);
+    }
     return acc;
   }, initial);
 });
@@ -57,51 +76,49 @@ const groupedSubmissions = computed(() => {
       </NuxtLink>
     </header>
 
-    <TabGroup
-      as="div"
+    <TabsRoot
       class="submissions"
+      default-value="pending"
     >
-      <TabList class="submissions__tab-list">
-        <Tab
+      <TabsList class="submissions__tab-list">
+        <TabsIndicator class="submissions__indicator">
+          <div class="submissions__indicator-inner" />
+        </TabsIndicator>
+        <TabsTrigger
           v-for="tab in tabs"
           :key="tab.status"
-          v-slot="{ selected }"
-          as="template"
+          :value="tab.status"
+          class="submissions__tab"
         >
-          <button
-            :class="[
-              'submissions__tab',
-              selected && 'submissions__tab--selected',
-            ]"
-          >
-            {{ tab.name }}
-          </button>
-        </Tab>
-      </TabList>
+          {{ tab.label }}
+        </TabsTrigger>
+      </TabsList>
 
-      <TabPanels class="submissions__panels">
-        <TabPanel
-          v-for="tab in tabs"
-          :key="tab.status"
-          class="submissions__panel"
+      <TabsContent
+        v-for="tab in tabs"
+        :key="tab.status"
+        :value="tab.status"
+        class="submissions__panel"
+      >
+        <SubmissionListItem
+          v-for="submission in groupedSubmissions[tab.status].toSorted(
+            (a, b) =>
+              new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+          )"
+          :key="submission.id"
+          :game="submission"
+          :is-pending="tab.status === 'pending'"
+          @refresh="refresh"
+        />
+
+        <p
+          v-if="groupedSubmissions[tab.status]?.length === 0"
+          class="submissions__empty"
         >
-          <SubmissionListItem
-            v-for="submission in groupedSubmissions[tab.status]"
-            :key="submission.id"
-            :game="submission"
-            :is-pending="tab.status === 'pending'"
-            @refresh="refresh"
-          />
-
-          <p
-            v-if="groupedSubmissions[tab.status]?.length === 0"
-            class="submissions__empty"
-          >
-            No {{ tab.status }} submissions found.
-          </p>
-        </TabPanel>
-      </TabPanels>
-    </TabGroup>
+          No {{ tab.label }} submissions found.
+        </p>
+      </TabsContent>
+    </TabsRoot>
   </main>
 </template>
 
@@ -126,6 +143,7 @@ const groupedSubmissions = computed(() => {
   --radius: var(--tw-radius-md);
 
   &__tab-list {
+    position: relative;
     display: flex;
     gap: var(--tab-spacing);
     padding: var(--tab-spacing);
@@ -137,13 +155,32 @@ const groupedSubmissions = computed(() => {
     );
   }
 
+  &__indicator {
+    position: absolute;
+    height: 100%;
+    transition:
+      width 300ms,
+      transform 300ms;
+    padding-inline: 0.25rem;
+    padding-block: 0.25rem;
+  }
+
+  &__indicator-inner {
+    height: 100%;
+    width: 100%;
+    background-color: white;
+    border-radius: var(--radius);
+  }
+
   &__tab {
     flex: 1;
     padding-block: 0.625rem;
     padding-inline: 1rem;
+    color: var(--tw-color-text-muted);
+    transition: color 200ms;
+    z-index: 1;
 
-    &--selected {
-      background-color: white;
+    &[data-state="active"] {
       color: var(--tw-color-primary);
     }
   }

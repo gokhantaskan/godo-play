@@ -15,10 +15,13 @@ export type PCStoreData = Partial<
 >;
 
 export interface GameSubmissionData {
-  id: number;
   name: string;
   slug: string;
-  imageId?: string;
+  external: {
+    igdbId: number;
+    igdbImageId?: string;
+    igdbAggregatedRating?: number;
+  };
 }
 
 export interface SubmitGamePayload {
