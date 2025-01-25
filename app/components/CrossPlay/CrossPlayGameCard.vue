@@ -1,33 +1,18 @@
 <script setup lang="ts">
 import { SUPPORTED_PC_STORES_BY_SLUG } from "~~/shared/constants";
-import type {
-  GameSubmissionPlatformGroupPlatform,
-  GameSubmissionWithRelations,
-} from "~~/shared/types/games";
-
-interface GameMode {
-  gameMode: {
-    id: number;
-    name: string;
-    slug: string;
-  };
-}
+import type { GameSubmissionWithRelations } from "~~/shared/types";
 
 const props = defineProps<{
-  game: GameSubmissionWithRelations & {
-    gameSubmissionGameModes?: GameMode[];
-  };
+  game: GameSubmissionWithRelations;
 }>();
 
-const groupPlatformsWithPC = computed<GameSubmissionPlatformGroupPlatform[]>(
-  () => {
-    return (
-      props.game.platformGroups?.find(group =>
-        group.platformGroupPlatforms?.some(p => p.platform?.slug === "win")
-      )?.platformGroupPlatforms ?? []
-    );
-  }
-);
+const groupPlatformsWithPC = computed(() => {
+  return (
+    props.game.platformGroups?.find(group =>
+      group.platformGroupPlatforms?.some(p => p.platform?.slug === "win")
+    )?.platformGroupPlatforms ?? []
+  );
+});
 
 const sortedPCStores = computed(
   () =>
@@ -80,7 +65,7 @@ const hasCrossplaySupport = (crossplayLength: number) => {
     <!-- Image Section -->
     <button class="game-card__cover">
       <NuxtImg
-        :src="`https://images.igdb.com/igdb/image/upload/t_720p/${game.external.igdbImageId}.jpg`"
+        :src="`https://images.igdb.com/igdb/image/upload/t_720p/${game.external?.igdbImageId}.jpg`"
         :alt="game.name"
         preload
         loading="lazy"

@@ -43,7 +43,9 @@ function resetForm() {
   formError.value = null;
 }
 
-async function handleSubmit() {
+async function handleSubmit(event: Event) {
+  event.preventDefault();
+
   if (!selectedGame.value || !isValidForm.value) {
     return;
   }
@@ -61,10 +63,13 @@ async function handleSubmit() {
 
     const payload: SubmitGamePayload = {
       game: {
-        id: selectedGame.value.id,
         name: selectedGame.value.name,
         slug: selectedGame.value.slug,
-        imageId: selectedGame.value.imageId,
+        external: {
+          igdbId: selectedGame.value.id,
+          igdbImageId: selectedGame.value.imageId,
+          igdbAggregatedRating: selectedGame.value.aggregated_rating,
+        },
       },
       platformGroups: selectedPlatformGroups.value,
       pcStoresPlatforms: selectedPcStoresPlatforms.value,
@@ -72,25 +77,16 @@ async function handleSubmit() {
       token,
     };
 
-    const response = await $fetch("/api/games", {
+    await $fetch("/api/games", {
       method: "POST",
       body: payload,
     });
 
-    if (response) {
-      resetForm();
-      // navigateTo("/admin/submissions");
-    } else {
-      formError.value = "Failed to submit game";
-    }
+    // Reset form
+    resetForm();
   } catch (error) {
-    if (error && typeof error === "object" && "data" in error) {
-      formError.value =
-        (error.data as { message?: string })?.message ||
-        "Failed to submit game";
-    } else {
-      formError.value = "Failed to submit game";
-    }
+    console.error("Failed to submit game:", error);
+    formError.value = "Failed to submit game. Please try again.";
   } finally {
     isSubmitting.value = false;
   }

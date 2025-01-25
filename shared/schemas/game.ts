@@ -8,6 +8,13 @@ import {
   DbInsertGameSchema,
 } from "~~/server/db/schema/tables/games";
 
+// Base schemas for validation
+const ExternalDataSchema = z.object({
+  igdbId: z.number(),
+  igdbImageId: z.string().optional(),
+  igdbAggregatedRating: z.number().optional(),
+});
+
 // Extend base schemas with additional validation/transformation
 const ExtendedGameSchema = DbGameSchema.extend({
   // Add any additional validation or transformations here
@@ -25,6 +32,29 @@ export const UpdateGameSchema = z.object({
   reason: z.string().optional(),
 });
 
+// Game submission schema
+export const SubmitGameSchema = z.object({
+  game: z.object({
+    name: z.string().min(1, "Game name is required"),
+    slug: z.string().min(1, "Game slug is required"),
+    external: ExternalDataSchema,
+  }),
+  platformGroups: z
+    .array(z.array(z.number()))
+    .min(1, "At least one platform group is required")
+    .refine(groups => groups.every(group => group.length > 0), {
+      message: "Each platform group must contain at least one platform",
+    }),
+  pcStoresPlatforms: z.record(
+    z.string(),
+    z.object({
+      crossplayPlatforms: z.array(z.number()).default([]),
+    })
+  ),
+  gameModeIds: z.array(z.number()).min(1, "At least one game mode is required"),
+  token: z.string().min(1, "reCAPTCHA token is required"),
+});
+
 // Export the extended schemas
 export const GameSchema = ExtendedGameSchema;
 export const InsertGameSchema = ExtendedInsertGameSchema;
@@ -37,6 +67,7 @@ export type Game = z.infer<typeof GameSchema>;
 export type InsertGame = z.infer<typeof InsertGameSchema>;
 export type UpdateGame = z.infer<typeof UpdateGameSchema>;
 export type GameResponse = z.infer<typeof GameResponseSchema>;
+export type SubmitGame = z.infer<typeof SubmitGameSchema>;
 
 // Re-export base types with submission naming
 export type { DbGame as GameBase, DbGameWithRelations as GameWithRelations };

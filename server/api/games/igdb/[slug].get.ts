@@ -22,6 +22,7 @@ export default defineCachedEventHandler(
         "involved_companies.company.name",
         "first_release_date",
         "release_dates.*",
+        "aggregated_rating",
         // With names
         "game_modes.name",
         "genres.name",

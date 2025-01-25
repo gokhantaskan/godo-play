@@ -13,6 +13,7 @@ import {
 } from "~~/server/db/schema";
 import { isH3ErrorLike } from "~~/server/utils/errorHandler";
 import { verifyRecaptchaToken } from "~~/server/utils/recaptcha";
+import { type SubmitGame, SubmitGameSchema } from "~~/shared/schemas/game";
 import {
   InsertPcStoreCrossplayPlatformSchema,
   InsertPcStorePlatformSchema,
@@ -23,37 +24,11 @@ import {
   InsertPlatformGroupSchema,
 } from "~~/shared/schemas/platformGroup";
 
-// Validate the request body
-const submitGameSchema = z.object({
-  game: z.object({
-    id: z.number(),
-    name: z.string().min(1, "Game name is required"),
-    slug: z.string().min(1, "Game slug is required"),
-    imageId: z.string().optional(),
-  }),
-  platformGroups: z
-    .array(z.array(z.number()))
-    .min(1, "At least one platform group is required")
-    .refine(groups => groups.every(group => group.length > 0), {
-      message: "Each platform group must contain at least one platform",
-    }),
-  pcStoresPlatforms: z.record(
-    z.string(),
-    z.object({
-      crossplayPlatforms: z.array(z.number()).default([]),
-    })
-  ),
-  gameModeIds: z.array(z.number()).min(1, "At least one game mode is required"),
-  token: z.string().min(1, "reCAPTCHA token is required"),
-});
-
-type RequestBody = z.infer<typeof submitGameSchema>;
-
 export default defineEventHandler(async event => {
-  let body: RequestBody;
+  let body: SubmitGame;
   try {
-    body = await readBody<RequestBody>(event);
-    submitGameSchema.parse(body);
+    body = await readBody<SubmitGame>(event);
+    SubmitGameSchema.parse(body);
   } catch (error) {
     if (error instanceof z.ZodError) {
       throw createError({
@@ -100,10 +75,7 @@ export default defineEventHandler(async event => {
       const [submission] = await tx
         .insert(games)
         .values({
-          external: {
-            igdbId: body.game.id,
-            igdbImageId: body.game.imageId,
-          },
+          external: body.game.external,
           name: body.game.name,
           slug: body.game.slug,
         })

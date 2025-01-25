@@ -28,7 +28,7 @@ export default {
 
   async searchGames(query: string, options: Partial<IGDBFields> = {}) {
     const {
-      fields = "name,slug,category,platforms.*,genres.*,player_perspectives.*,themes.*,cover.*,game_modes.*,multiplayer_modes.*",
+      fields = "name,slug,category,platforms.*,genres.*,player_perspectives.*,themes.*,cover.*,game_modes.*,multiplayer_modes.*,aggregated_rating",
       limit = 100,
       where = `category=(0,3,8,9) & version_parent=null & game_modes != 1`,
       sort = "popularity desc",

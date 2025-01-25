@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { z, ZodError } from "zod";
+import { z } from "zod";
 
 import type { PlatformId } from "~/types/crossPlay";
 import type { PCStore, PCStoreData, PlatformGroups } from "~/types/submit-game";
@@ -137,7 +137,7 @@ watch(
           [`platformGroups.${index}`]: "",
         };
       } catch (error) {
-        if (error instanceof ZodError) {
+        if (error instanceof z.ZodError) {
           errors.value = {
             ...errors.value,
             [`platformGroups.${index}`]:

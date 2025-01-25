@@ -6,6 +6,7 @@ interface SmallEntity {
 export interface GameDetails {
   id: number;
   age_ratings: AgeRating[];
+  aggregated_rating: number;
   category: number;
   cover: Image;
   first_release_date: number;
