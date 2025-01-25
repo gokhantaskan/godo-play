@@ -20,8 +20,13 @@ useSeoMeta({
 <template>
   <SliceZone
     wrapper="main"
-    class="tw:space-y-8"
     :slices="page?.data.slices ?? []"
     :components="components"
   />
 </template>
+
+<style scoped lang="scss">
+:deep(section) {
+  padding-block: 4rem;
+}
+</style>

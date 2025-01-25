@@ -1,0 +1,197 @@
+{
+  "id": "explanatory_section",
+  "type": "SharedSlice",
+  "name": "ExplanatorySection",
+  "description": "ExplanatorySection",
+  "variations": [
+    {
+      "id": "default",
+      "name": "Left Image",
+      "docURL": "...",
+      "version": "initial",
+      "description": "Default",
+      "imageUrl": "",
+      "primary": {
+        "title": {
+          "type": "Text",
+          "config": {
+            "label": "Title",
+            "placeholder": "Section title"
+          }
+        },
+        "content": {
+          "type": "StructuredText",
+          "config": {
+            "label": "Content",
+            "placeholder": "Section content with RTE",
+            "allowTargetBlank": true,
+            "multi": "paragraph,heading3,heading4,strong,em,hyperlink,embed,list-item,o-list-item,rtl"
+          }
+        },
+        "section_image": {
+          "type": "Image",
+          "config": {
+            "label": "Section Image",
+            "constraint": {},
+            "thumbnails": []
+          }
+        },
+        "content_size": {
+          "type": "Select",
+          "config": {
+            "label": "Content Size",
+            "placeholder": "Select the content text size adjustment",
+            "options": [
+              "default",
+              "small",
+              "large"
+            ],
+            "default_value": "default"
+          }
+        },
+        "cta_text": {
+          "type": "Link",
+          "config": {
+            "label": "CTA Text",
+            "placeholder": "Call-To-Action button label",
+            "select": null,
+            "allowTargetBlank": true,
+            "allowText": true,
+            "repeat": true,
+            "variants": [
+              "Primary",
+              "Secondary"
+            ]
+          }
+        }
+      },
+      "items": {}
+    },
+    {
+      "id": "rightImage",
+      "name": "Right Image",
+      "docURL": "...",
+      "version": "initial",
+      "description": "Default",
+      "imageUrl": "",
+      "primary": {
+        "title": {
+          "type": "Text",
+          "config": {
+            "label": "Title",
+            "placeholder": "Section title"
+          }
+        },
+        "content": {
+          "type": "StructuredText",
+          "config": {
+            "label": "Content",
+            "placeholder": "Section content with RTE",
+            "allowTargetBlank": true,
+            "multi": "paragraph,heading3,heading4,strong,em,hyperlink,embed,list-item,o-list-item,rtl"
+          }
+        },
+        "section_image": {
+          "type": "Image",
+          "config": {
+            "label": "Section Image",
+            "constraint": {},
+            "thumbnails": []
+          }
+        },
+        "content_size": {
+          "type": "Select",
+          "config": {
+            "label": "Content Size",
+            "placeholder": "Select the content text size adjustment",
+            "options": [
+              "default",
+              "small",
+              "large"
+            ],
+            "default_value": "default"
+          }
+        },
+        "cta_text": {
+          "type": "Link",
+          "config": {
+            "label": "CTA Text",
+            "placeholder": "Call-To-Action button label",
+            "select": null,
+            "allowTargetBlank": true,
+            "allowText": true,
+            "repeat": true,
+            "variants": [
+              "Primary",
+              "Secondary"
+            ]
+          }
+        }
+      },
+      "items": {}
+    },
+    {
+      "id": "centered",
+      "name": "Centered",
+      "docURL": "...",
+      "version": "initial",
+      "description": "Default",
+      "imageUrl": "",
+      "primary": {
+        "title": {
+          "type": "Text",
+          "config": {
+            "label": "Title",
+            "placeholder": "Section title"
+          }
+        },
+        "content": {
+          "type": "StructuredText",
+          "config": {
+            "label": "Content",
+            "placeholder": "Section content with RTE",
+            "allowTargetBlank": true,
+            "multi": "paragraph,heading3,heading4,strong,em,hyperlink,embed,list-item,o-list-item,rtl"
+          }
+        },
+        "section_image": {
+          "type": "Image",
+          "config": {
+            "label": "Section Image",
+            "constraint": {},
+            "thumbnails": []
+          }
+        },
+        "content_size": {
+          "type": "Select",
+          "config": {
+            "label": "Content Size",
+            "placeholder": "Select the content text size adjustment",
+            "options": [
+              "default",
+              "small",
+              "large"
+            ],
+            "default_value": "default"
+          }
+        },
+        "cta_text": {
+          "type": "Link",
+          "config": {
+            "label": "CTA Text",
+            "placeholder": "Call-To-Action button label",
+            "select": null,
+            "allowTargetBlank": true,
+            "allowText": true,
+            "repeat": true,
+            "variants": [
+              "Primary",
+              "Secondary"
+            ]
+          }
+        }
+      },
+      "items": {}
+    }
+  ]
+}

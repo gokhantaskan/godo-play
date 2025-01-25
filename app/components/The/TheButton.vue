@@ -1,17 +1,20 @@
 <script setup lang="ts">
-interface Props {
+export interface TheButtonProps {
+  as?: string;
   variant?: "primary" | "secondary";
   size?: "sm" | "md" | "lg";
   disabled?: boolean;
   type?: "button" | "submit" | "reset";
   leftIcon?: string;
   rightIcon?: string;
+  [key: string]: any;
 }
 
-const props = withDefaults(defineProps<Props>(), {
+const props = withDefaults(defineProps<TheButtonProps>(), {
+  as: "button",
   variant: "primary",
   size: "md",
-  disabled: false,
+  disabled: undefined,
   type: "button",
   leftIcon: "",
   rightIcon: "",
@@ -28,7 +31,8 @@ const buttonClasses = computed(() => [
 </script>
 
 <template>
-  <button
+  <Component
+    :is="as"
     :class="buttonClasses"
     :disabled="disabled"
   >
@@ -55,5 +59,5 @@ const buttonClasses = computed(() => [
         />
       </slot>
     </span>
-  </button>
+  </Component>
 </template>

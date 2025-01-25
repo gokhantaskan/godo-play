@@ -2,6 +2,8 @@ import svgLoader from "vite-svg-loader";
 
 import { repositoryName } from "./slicemachine.config.json";
 
+const disallowedPaths = ["/_ipx/", "/admin/", "/preview", "/slice-simulator"];
+
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   compatibilityDate: "2024-11-01",
@@ -133,10 +135,10 @@ export default defineNuxtConfig({
     name: "GōdōPlay",
   },
   sitemap: {
-    exclude: ["/_ipx/", "/admin/"],
+    exclude: disallowedPaths,
   },
   robots: {
-    disallow: ["/_ipx/", "/admin/"],
+    disallow: disallowedPaths,
   },
   gtag: {
     id: process.env.NUXT_PUBLIC_GTAG_ID,

@@ -62,7 +62,7 @@ $breakpoint-md: map.get($breakpoints, "md");
   &__content {
     text-align: center;
     max-width: 60ch;
-    padding-inline: 16px;
+    padding-inline: 1rem;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -70,23 +70,23 @@ $breakpoint-md: map.get($breakpoints, "md");
   }
 
   &__title {
-    font-size: 32px;
+    font-size: 2rem;
     line-height: 105%;
     margin-block-end: 24px;
     font-weight: 600;
 
     @media (min-width: $breakpoint-md) {
-      font-size: 48px;
+      font-size: 3rem;
     }
   }
 
   &__description {
-    font-size: 18px;
+    font-size: 1.125rem;
     line-height: 1.25;
     font-weight: 300;
 
     @media (min-width: $breakpoint-md) {
-      font-size: 20px;
+      font-size: 1.375rem;
     }
   }
 

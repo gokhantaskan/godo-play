@@ -34,9 +34,9 @@ onMounted(() => {
 <template>
   <section
     :id
-    class="faq tw:container tw:max-w-screen-md"
     :data-slice-type="slice.slice_type"
     :data-slice-variation="slice.variation"
+    class="faq tw:container tw:max-w-screen-lg"
   >
     <header
       v-if="slice.primary.section_title || slice.primary.section_description"
@@ -73,10 +73,7 @@ onMounted(() => {
           />
         </summary>
         <div class="faq__panel">
-          <PrismicRichText
-            class="prose"
-            :field="item.content"
-          />
+          <PrismicRichText :field="item.content" />
         </div>
       </details>
     </div>
@@ -92,25 +89,20 @@ onMounted(() => {
   --radius: var(--tw-radius-lg);
   --border-color: var(--tw-color-border);
   --bg-color: var(--tw-color-bg);
-  --text-color: var(--tw-color-text);
-  --text-muted: var(--tw-color-text-muted);
 
   &__header {
     margin-block-end: var(--spacing);
-    text-align: center;
+    text-align: start;
   }
 
   &__title {
     font-size: 2rem;
     font-weight: 600;
-    color: var(--text-color);
     margin-block-end: 0.5rem;
   }
 
   &__description {
-    color: var(--text-muted);
     font-size: 1.125rem;
-    max-width: 60ch;
     text-wrap: balance;
   }
 
@@ -148,14 +140,13 @@ onMounted(() => {
 
   &__question {
     font-weight: 600;
-    color: var(--text-color);
   }
 
   &__icon {
     flex-shrink: 0;
     width: 1.25rem;
     height: 1.25rem;
-    color: var(--text-muted);
+    color: var(--tw-color-text-muted);
     transition: transform 0.2s ease;
   }
 

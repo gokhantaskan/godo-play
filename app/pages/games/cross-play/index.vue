@@ -21,16 +21,6 @@ interface Filters {
   themes: number[];
 }
 
-interface UrlQueryParams {
-  platforms: string;
-  pcStores: string;
-  gameModes: string;
-  search: string;
-  playerPerspectives: string;
-  genres: string;
-  themes: string;
-}
-
 definePageMeta({
   name: "CrossPlayGamesPage",
 });
@@ -48,14 +38,14 @@ const urlQueryParams = computed(() => {
   } = route.query;
 
   return {
-    platforms: String(platforms || ""),
-    pcStores: String(pcStores || ""),
-    gameModes: String(gameModes || ""),
-    search: String(search || ""),
-    playerPerspectives: String(playerPerspectives || ""),
-    genres: String(genres || ""),
-    themes: String(themes || ""),
-  } satisfies UrlQueryParams;
+    platforms: platforms as string,
+    pcStores: pcStores as string,
+    gameModes: gameModes as string,
+    search: search as string,
+    playerPerspectives: playerPerspectives as string,
+    genres: genres as string,
+    themes: themes as string,
+  };
 });
 
 // Platform Selection Management
@@ -87,7 +77,8 @@ const supportedModesMap = {
 
 // Convert game mode slugs to IDs
 function getGameModeIdFromSlug(slug: string): number | null {
-  return supportedModesMap.slugToId[slug] ?? null;
+  const gameMode = GAME_MODES.find(mode => mode.slug === slug);
+  return gameMode ? gameMode.id : null;
 }
 
 // Initialize selectedFilters with game mode IDs from URL slugs

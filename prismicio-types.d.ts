@@ -4,7 +4,10 @@ import type * as prismic from "@prismicio/client";
 
 type Simplify<T> = { [KeyType in keyof T]: T[KeyType] };
 
-type HomePageDocumentDataSlicesSlice = FaqSectionSlice | HeroSectionSlice;
+type HomePageDocumentDataSlicesSlice =
+  | ExplanatorySectionSlice
+  | FaqSectionSlice
+  | HeroSectionSlice;
 
 /**
  * Content for Home Page documents
@@ -135,6 +138,233 @@ export type ProsePageDocument<Lang extends string = string> =
   >;
 
 export type AllDocumentTypes = HomePageDocument | ProsePageDocument;
+
+/**
+ * Primary content in *ExplanatorySection → Left Image → Primary*
+ */
+export interface ExplanatorySectionSliceDefaultPrimary {
+  /**
+   * Title field in *ExplanatorySection → Left Image → Primary*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: Section title
+   * - **API ID Path**: explanatory_section.default.primary.title
+   * - **Documentation**: https://prismic.io/docs/field#key-text
+   */
+  title: prismic.KeyTextField;
+
+  /**
+   * Content field in *ExplanatorySection → Left Image → Primary*
+   *
+   * - **Field Type**: Rich Text
+   * - **Placeholder**: Section content with RTE
+   * - **API ID Path**: explanatory_section.default.primary.content
+   * - **Documentation**: https://prismic.io/docs/field#rich-text-title
+   */
+  content: prismic.RichTextField;
+
+  /**
+   * Section Image field in *ExplanatorySection → Left Image → Primary*
+   *
+   * - **Field Type**: Image
+   * - **Placeholder**: *None*
+   * - **API ID Path**: explanatory_section.default.primary.section_image
+   * - **Documentation**: https://prismic.io/docs/field#image
+   */
+  section_image: prismic.ImageField<never>;
+
+  /**
+   * Content Size field in *ExplanatorySection → Left Image → Primary*
+   *
+   * - **Field Type**: Select
+   * - **Placeholder**: Select the content text size adjustment
+   * - **Default Value**: default
+   * - **API ID Path**: explanatory_section.default.primary.content_size
+   * - **Documentation**: https://prismic.io/docs/field#select
+   */
+  content_size: prismic.SelectField<"default" | "small" | "large", "filled">;
+
+  /**
+   * CTA Text field in *ExplanatorySection → Left Image → Primary*
+   *
+   * - **Field Type**: Link
+   * - **Placeholder**: Call-To-Action button label
+   * - **API ID Path**: explanatory_section.default.primary.cta_text
+   * - **Documentation**: https://prismic.io/docs/field#link-content-relationship
+   */
+  cta_text: prismic.Repeatable<prismic.LinkField>;
+}
+
+/**
+ * Left Image variation for ExplanatorySection Slice
+ *
+ * - **API ID**: `default`
+ * - **Description**: Default
+ * - **Documentation**: https://prismic.io/docs/slice
+ */
+export type ExplanatorySectionSliceDefault = prismic.SharedSliceVariation<
+  "default",
+  Simplify<ExplanatorySectionSliceDefaultPrimary>,
+  never
+>;
+
+/**
+ * Primary content in *ExplanatorySection → Right Image → Primary*
+ */
+export interface ExplanatorySectionSliceRightImagePrimary {
+  /**
+   * Title field in *ExplanatorySection → Right Image → Primary*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: Section title
+   * - **API ID Path**: explanatory_section.rightImage.primary.title
+   * - **Documentation**: https://prismic.io/docs/field#key-text
+   */
+  title: prismic.KeyTextField;
+
+  /**
+   * Content field in *ExplanatorySection → Right Image → Primary*
+   *
+   * - **Field Type**: Rich Text
+   * - **Placeholder**: Section content with RTE
+   * - **API ID Path**: explanatory_section.rightImage.primary.content
+   * - **Documentation**: https://prismic.io/docs/field#rich-text-title
+   */
+  content: prismic.RichTextField;
+
+  /**
+   * Section Image field in *ExplanatorySection → Right Image → Primary*
+   *
+   * - **Field Type**: Image
+   * - **Placeholder**: *None*
+   * - **API ID Path**: explanatory_section.rightImage.primary.section_image
+   * - **Documentation**: https://prismic.io/docs/field#image
+   */
+  section_image: prismic.ImageField<never>;
+
+  /**
+   * Content Size field in *ExplanatorySection → Right Image → Primary*
+   *
+   * - **Field Type**: Select
+   * - **Placeholder**: Select the content text size adjustment
+   * - **Default Value**: default
+   * - **API ID Path**: explanatory_section.rightImage.primary.content_size
+   * - **Documentation**: https://prismic.io/docs/field#select
+   */
+  content_size: prismic.SelectField<"default" | "small" | "large", "filled">;
+
+  /**
+   * CTA Text field in *ExplanatorySection → Right Image → Primary*
+   *
+   * - **Field Type**: Link
+   * - **Placeholder**: Call-To-Action button label
+   * - **API ID Path**: explanatory_section.rightImage.primary.cta_text
+   * - **Documentation**: https://prismic.io/docs/field#link-content-relationship
+   */
+  cta_text: prismic.Repeatable<prismic.LinkField>;
+}
+
+/**
+ * Right Image variation for ExplanatorySection Slice
+ *
+ * - **API ID**: `rightImage`
+ * - **Description**: Default
+ * - **Documentation**: https://prismic.io/docs/slice
+ */
+export type ExplanatorySectionSliceRightImage = prismic.SharedSliceVariation<
+  "rightImage",
+  Simplify<ExplanatorySectionSliceRightImagePrimary>,
+  never
+>;
+
+/**
+ * Primary content in *ExplanatorySection → Centered → Primary*
+ */
+export interface ExplanatorySectionSliceCenteredPrimary {
+  /**
+   * Title field in *ExplanatorySection → Centered → Primary*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: Section title
+   * - **API ID Path**: explanatory_section.centered.primary.title
+   * - **Documentation**: https://prismic.io/docs/field#key-text
+   */
+  title: prismic.KeyTextField;
+
+  /**
+   * Content field in *ExplanatorySection → Centered → Primary*
+   *
+   * - **Field Type**: Rich Text
+   * - **Placeholder**: Section content with RTE
+   * - **API ID Path**: explanatory_section.centered.primary.content
+   * - **Documentation**: https://prismic.io/docs/field#rich-text-title
+   */
+  content: prismic.RichTextField;
+
+  /**
+   * Section Image field in *ExplanatorySection → Centered → Primary*
+   *
+   * - **Field Type**: Image
+   * - **Placeholder**: *None*
+   * - **API ID Path**: explanatory_section.centered.primary.section_image
+   * - **Documentation**: https://prismic.io/docs/field#image
+   */
+  section_image: prismic.ImageField<never>;
+
+  /**
+   * Content Size field in *ExplanatorySection → Centered → Primary*
+   *
+   * - **Field Type**: Select
+   * - **Placeholder**: Select the content text size adjustment
+   * - **Default Value**: default
+   * - **API ID Path**: explanatory_section.centered.primary.content_size
+   * - **Documentation**: https://prismic.io/docs/field#select
+   */
+  content_size: prismic.SelectField<"default" | "small" | "large", "filled">;
+
+  /**
+   * CTA Text field in *ExplanatorySection → Centered → Primary*
+   *
+   * - **Field Type**: Link
+   * - **Placeholder**: Call-To-Action button label
+   * - **API ID Path**: explanatory_section.centered.primary.cta_text
+   * - **Documentation**: https://prismic.io/docs/field#link-content-relationship
+   */
+  cta_text: prismic.Repeatable<prismic.LinkField>;
+}
+
+/**
+ * Centered variation for ExplanatorySection Slice
+ *
+ * - **API ID**: `centered`
+ * - **Description**: Default
+ * - **Documentation**: https://prismic.io/docs/slice
+ */
+export type ExplanatorySectionSliceCentered = prismic.SharedSliceVariation<
+  "centered",
+  Simplify<ExplanatorySectionSliceCenteredPrimary>,
+  never
+>;
+
+/**
+ * Slice variation for *ExplanatorySection*
+ */
+type ExplanatorySectionSliceVariation =
+  | ExplanatorySectionSliceDefault
+  | ExplanatorySectionSliceRightImage
+  | ExplanatorySectionSliceCentered;
+
+/**
+ * ExplanatorySection Shared Slice
+ *
+ * - **API ID**: `explanatory_section`
+ * - **Description**: ExplanatorySection
+ * - **Documentation**: https://prismic.io/docs/slice
+ */
+export type ExplanatorySectionSlice = prismic.SharedSlice<
+  "explanatory_section",
+  ExplanatorySectionSliceVariation
+>;
 
 /**
  * Item in *FaqSection → Default → Primary → Disclosure*
@@ -504,6 +734,14 @@ declare module "@prismicio/client" {
       ProsePageDocumentData,
       ProsePageDocumentDataSlicesSlice,
       AllDocumentTypes,
+      ExplanatorySectionSlice,
+      ExplanatorySectionSliceDefaultPrimary,
+      ExplanatorySectionSliceRightImagePrimary,
+      ExplanatorySectionSliceCenteredPrimary,
+      ExplanatorySectionSliceVariation,
+      ExplanatorySectionSliceDefault,
+      ExplanatorySectionSliceRightImage,
+      ExplanatorySectionSliceCentered,
       FaqSectionSlice,
       FaqSectionSliceDefaultPrimaryDisclosureItem,
       FaqSectionSliceDefaultPrimary,
