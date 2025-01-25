@@ -6,10 +6,12 @@ import { THEMES } from "~~/shared/constants/themes";
 
 interface Props {
   external?: boolean;
+  include?: ("gameModes" | "playerPerspectives" | "genres" | "themes")[];
 }
 
 const props = withDefaults(defineProps<Props>(), {
   external: false,
+  include: () => ["gameModes", "playerPerspectives", "genres", "themes"],
 });
 
 const isDrawerOpen = ref(false);
@@ -158,7 +160,10 @@ function isArrayEqual(arr1: number[], arr2: number[]) {
     >
       <div class="tw:space-y-6">
         <!-- Game Modes -->
-        <fieldset class="tw:flex tw:flex-wrap tw:gap-2">
+        <fieldset
+          v-if="props.include?.includes('gameModes')"
+          class="tw:flex tw:flex-wrap tw:gap-2"
+        >
           <legend class="tw:font-title tw:font-medium tw:text-sm tw:mb-2">
             Game Modes
           </legend>
@@ -180,7 +185,10 @@ function isArrayEqual(arr1: number[], arr2: number[]) {
         </fieldset>
 
         <!-- Player Perspectives -->
-        <fieldset class="tw:flex tw:flex-wrap tw:gap-2">
+        <fieldset
+          v-if="props.include?.includes('playerPerspectives')"
+          class="tw:flex tw:flex-wrap tw:gap-2"
+        >
           <legend class="tw:font-title tw:font-medium tw:text-sm tw:mb-2">
             Player Perspectives
           </legend>
@@ -202,7 +210,10 @@ function isArrayEqual(arr1: number[], arr2: number[]) {
         </fieldset>
 
         <!-- Genres -->
-        <fieldset class="tw:flex tw:flex-wrap tw:gap-2">
+        <fieldset
+          v-if="props.include?.includes('genres')"
+          class="tw:flex tw:flex-wrap tw:gap-2"
+        >
           <legend class="tw:font-title tw:font-medium tw:text-sm tw:mb-2">
             Genres
           </legend>
@@ -224,7 +235,10 @@ function isArrayEqual(arr1: number[], arr2: number[]) {
         </fieldset>
 
         <!-- Themes -->
-        <fieldset class="tw:flex tw:flex-wrap tw:gap-2">
+        <fieldset
+          v-if="props.include?.includes('themes')"
+          class="tw:flex tw:flex-wrap tw:gap-2"
+        >
           <legend class="tw:font-title tw:font-medium tw:text-sm tw:mb-2">
             Themes
           </legend>
