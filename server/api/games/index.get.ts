@@ -7,7 +7,7 @@ import {
   platformGroupPlatforms,
 } from "~~/server/db/schema";
 import { isH3ErrorLike } from "~~/server/utils/errorHandler";
-import type { GameSubmissionWithRelations } from "~~/shared/types";
+import type { GamesResponse } from "~~/shared/types/games";
 
 // Define interfaces for request query and response
 interface GamesRequestQuery {
@@ -17,14 +17,6 @@ interface GamesRequestQuery {
   offset?: string; // Offset for pagination
   sort?: string; // Sorting criteria
   search?: string; // Search term for game names
-}
-
-interface GamesResponse {
-  total: number; // Total number of games
-  count: number; // Number of games after filtering
-  data: GameSubmissionWithRelations[]; // Array of game data
-  limit: number; // Limit used for pagination
-  offset: number; // Offset used for pagination
 }
 
 interface CountResult {
@@ -55,12 +47,6 @@ export default defineCachedEventHandler(
       const parsedGameModes = parseArrayParam(gameModes);
       const parsedLimit = parseInt(limit);
       const parsedOffset = parseInt(offset);
-
-      // Get total count of all games (unfiltered)
-      const totalCountResult = await db
-        .select({ count: count() })
-        .from(games)
-        .then(rows => rows[0] as CountResult);
 
       // Base conditions for filtered queries
       const baseConditions = {
@@ -192,8 +178,8 @@ export default defineCachedEventHandler(
 
       // Return the response with total, count, and data
       return {
-        total: totalCountResult.count,
-        count: filteredCountResult.count,
+        total: filteredCountResult.count,
+        count: data.length,
         data,
         limit: parsedLimit,
         offset: parsedOffset,

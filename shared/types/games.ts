@@ -1,6 +1,17 @@
 import type { GameSubmissionWithRelations } from ".";
 
 /**
+ * Response type for paginated games list
+ */
+export interface GamesResponse {
+  total: number; // Total number of filtered games
+  count: number; // Number of games in current page
+  data: GameSubmissionWithRelations[]; // Array of game data
+  limit: number; // Limit used for pagination
+  offset: number; // Current offset for pagination
+}
+
+/**
  * Platform with essential fields for UI
  */
 export interface GameSubmissionPlatform {

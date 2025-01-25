@@ -21,6 +21,12 @@ const sortedPCStores = computed(
     ) ?? []
 );
 
+const shouldDisplayPCStores = computed(() => {
+  const platformsInGroup = groupPlatformsWithPC.value;
+  // Hide PC stores if PC is the only platform in the group
+  return platformsInGroup && platformsInGroup.length > 1;
+});
+
 // TODO: Work on this
 // const isModalOpen = ref(false);
 // const cacheKey = computed(() => `game-${props.game.gameId}`);
@@ -118,7 +124,7 @@ const hasCrossplaySupport = (crossplayLength: number) => {
 
         <!-- PC Stores -->
         <div
-          v-if="game.pcStorePlatforms?.length"
+          v-if="shouldDisplayPCStores && game.pcStorePlatforms?.length"
           class="game-card__tags"
           aria-label="PC Stores"
         >

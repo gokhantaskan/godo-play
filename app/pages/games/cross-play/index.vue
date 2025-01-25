@@ -21,9 +21,18 @@ interface Filters {
   themes: number[];
 }
 
+interface GamesResponse {
+  total: number;
+  data: GameSubmissionWithRelations[];
+  limit: number;
+  offset: number;
+}
+
 definePageMeta({
   name: "CrossPlayGamesPage",
 });
+
+const ITEMS_PER_PAGE = 48;
 
 const route = useRoute();
 const urlQueryParams = computed(() => {
@@ -201,20 +210,74 @@ const apiQueryParams = computed(() => {
   return Object.keys(query).length ? query : undefined;
 });
 
-interface GamesResponse {
-  total: number;
-  data: GameSubmissionWithRelations[];
-  limit: number;
-  offset: number;
-}
+// Add pagination state
+const currentOffset = useState<number>("crossplay-offset", () => 0);
+const totalGames = useState<number>("crossplay-total", () => 0);
+
+// Track loading state for "Show More"
+const isLoadingMore = ref(false);
 
 // Update useFetch to use the API query parameters
-const { data: games, status } = await useFetch<GamesResponse>("/api/games", {
-  query: apiQueryParams,
-  watch: [apiQueryParams],
+const { data: gamesResponse, status } = await useFetch<GamesResponse>(
+  "/api/games",
+  {
+    query: computed(() => ({
+      ...apiQueryParams.value,
+      limit: ITEMS_PER_PAGE,
+      offset: currentOffset.value,
+    })),
+    watch: [apiQueryParams, currentOffset],
+  }
+);
+
+// Track all loaded games
+const games = useState<GameSubmissionWithRelations[]>(
+  "crossplay-games",
+  () => []
+);
+
+// Update games when response changes
+watch(
+  gamesResponse,
+  newResponse => {
+    if (newResponse?.data) {
+      if (currentOffset.value === 0) {
+        games.value = newResponse.data;
+      } else {
+        games.value = [...games.value, ...newResponse.data];
+      }
+      totalGames.value = newResponse.total;
+      isLoadingMore.value = false;
+    }
+  },
+  { immediate: true }
+);
+
+// Reset offset when filters change
+watch(
+  apiQueryParams,
+  () => {
+    currentOffset.value = 0;
+  },
+  { deep: true }
+);
+
+const hasMoreGames = computed(() => {
+  if (!totalGames.value || !games.value) {
+    return false;
+  }
+  return games.value.length < totalGames.value;
 });
 
-const pending = computed(() => status.value === "pending");
+// Function to load more games
+function loadMoreGames() {
+  isLoadingMore.value = true;
+  currentOffset.value += ITEMS_PER_PAGE;
+}
+
+const pending = computed(
+  () => status.value === "pending" && currentOffset.value === 0
+);
 
 // Watch for changes in selected platforms and update URL
 watch(
@@ -378,17 +441,34 @@ const activeFilterChips = computed(() => {
     </section>
 
     <section
-      v-else-if="games?.data?.length"
+      v-else-if="games?.length"
       class="tw:grid tw:grid-cols-2 tw:sm:grid-cols-[repeat(auto-fill,minmax(14rem,1fr))] tw:gap-4"
     >
       <CrossPlayGameCard
-        v-for="submission in games.data"
+        v-for="submission in games"
         :key="submission.id"
         :game="submission"
       />
     </section>
 
     <p v-else>No submissions found.</p>
+
+    <div
+      v-if="hasMoreGames"
+      class="tw:flex tw:justify-center tw:py-4"
+    >
+      <TheButton
+        variant="secondary"
+        :disabled="isLoadingMore"
+        @click="loadMoreGames"
+      >
+        <template v-if="isLoadingMore">
+          <LoadingSpinner class="tw:size-4" />
+          <span class="tw:ml-2">Loading...</span>
+        </template>
+        <template v-else> Show More Games </template>
+      </TheButton>
+    </div>
   </main>
 </template>
 
