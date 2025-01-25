@@ -61,6 +61,19 @@ export const SUPPORTED_PLATFORMS_BY_ID = SUPPORTED_PLATFORMS.reduce(
   {} as Record<PlatformHardcoded["id"], PlatformHardcoded>
 );
 
+export const supportedPlatformsMap: {
+  idToSlug: Record<PlatformHardcoded["id"], PlatformHardcoded["slug"]>;
+  slugToId: Record<PlatformHardcoded["slug"], PlatformHardcoded["id"]>;
+} = {
+  idToSlug: {},
+  slugToId: {},
+};
+
+SUPPORTED_PLATFORMS.forEach(platform => {
+  supportedPlatformsMap.idToSlug[platform.id] = platform.slug;
+  supportedPlatformsMap.slugToId[platform.slug] = platform.id;
+});
+
 export const PLATFORM_ICONS = SUPPORTED_PLATFORMS.reduce(
   (acc, platform) => {
     acc[platform.slug] =
