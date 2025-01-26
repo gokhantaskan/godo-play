@@ -179,19 +179,15 @@ export function useGameFilters(): GameFiltersReturn {
   /**
    * Platform Selection Management
    * - Initializes from URL query or defaults to first platform
-   * - Maintains state across navigation using useState
    */
   const initialPlatforms = initialQuery.platforms
     ?.split(",")
     .map(slug => getIdFromSlug(slug, platformsMap.slugToId));
-  const selectedPlatforms = useState<SelectedPlatforms>(
-    "game-platforms",
-    () => ({
-      p1: initialPlatforms?.[0] ?? SUPPORTED_PLATFORMS[0]!.id,
-      p2: initialPlatforms?.[1] ?? null,
-      p3: initialPlatforms?.[2] ?? null,
-    })
-  );
+  const selectedPlatforms = ref<SelectedPlatforms>({
+    p1: initialPlatforms?.[0] ?? SUPPORTED_PLATFORMS[0]!.id,
+    p2: initialPlatforms?.[1] ?? null,
+    p3: initialPlatforms?.[2] ?? null,
+  });
 
   /**
    * Gets available platform options excluding already selected ones
@@ -230,9 +226,8 @@ export function useGameFilters(): GameFiltersReturn {
   /**
    * Filter Categories Management
    * - Initializes from URL query using slugs
-   * - Maintains state across navigation using useState
    */
-  const selectedFilters = useState<SelectedFilters>("game-filters", () => ({
+  const selectedFilters = ref<SelectedFilters>({
     gameModes:
       initialQuery.gameModes
         ?.split(",")
@@ -253,17 +248,13 @@ export function useGameFilters(): GameFiltersReturn {
         ?.split(",")
         .map(slug => getIdFromSlug(slug, themesMap.slugToId))
         .filter((id): id is number => id !== null) || [],
-  }));
+  });
 
   /**
    * Search Management
    * - Uses debounced input to prevent excessive API calls
-   * - Maintains state across navigation using useState
    */
-  const search = useState<string>(
-    "game-search",
-    () => initialQuery.search?.toString() || ""
-  );
+  const search = ref<string>(initialQuery.search?.toString() || "");
   const debouncedSearch = refDebounced<string>(search, DEBOUNCE_DELAY);
 
   /**

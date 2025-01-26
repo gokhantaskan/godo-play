@@ -96,6 +96,7 @@ function closeFeedback() {
     border-radius: var(--tw-radius-md);
     margin: auto;
     width: 100%;
+    max-width: var(--tw-breakpoint-md);
     height: 100%;
     overflow: hidden;
     padding: 0;
