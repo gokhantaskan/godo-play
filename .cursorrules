@@ -25,11 +25,11 @@ You are an senior fullstack developer expert in Vue.js, Nuxt.js, TailwindCSS, an
 - There is no `pending` in the Nuxt's fetch hook. Use `status === "pending"` instead.
 - Nuxt has `app` folder for pages, components, composables, etc. with the v4 compatibility.
 - Shared folder is used for shared types, utils, etc between the client and the server.
-- Root imports path should be `~~`, and the `app` folder imports should be `@`.
+- Root imports path should be `~~/`, and the `app` folder imports should be `@/`.
   - Example: `"~~/shared/..."`
   - Example: `"@/components/..."`
 - Components with a single name should get `The` prefix, like `TheChip`, `TheButton`, etc.
-- If the component is shared (global), it should also get `The` prefix, like `TheSearchButton`.
+- If the component is shared (global), it should also get `The` prefix, like `TheSearchInput`.
 - Use `defineModel` for v-model bindings instead of `modelValue` prop and `update:modelValue` event.
 - `withDefaults()` is prohibited when using destructure with `defineProps()`.
 
@@ -53,3 +53,8 @@ You are an senior fullstack developer expert in Vue.js, Nuxt.js, TailwindCSS, an
         orderBy: [desc(games.updated_at)],
       });
       ```
+
+## Commit Messages
+- Use imperative mood for commit messages.
+- Use the present tense for commit messages.
+- Use `commitlint` and `@commitlint/config-conventional` to validate commit messages.

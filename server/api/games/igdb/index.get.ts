@@ -154,8 +154,8 @@ export default defineCachedEventHandler(
     }
   },
   {
-    // 5 minutes in production, 5 seconds in dev
-    maxAge: process.env.NODE_ENV === "production" ? 5 * 60 : 5,
-    swr: false,
+    // 1 hour in production, 10 seconds in dev
+    maxAge: process.env.NODE_ENV === "production" ? 60 * 60 : 10,
+    swr: true,
   }
 );

@@ -291,24 +291,29 @@ watch(
 );
 
 useHead({
-  title: computed(() =>
-    Object.values(selectedPlatforms.value).some(Boolean)
-      ? `Cross-Play Games (${Object.values(selectedPlatforms.value)
-          .filter(Boolean)
-          .map(
-            p => SUPPORTED_PLATFORMS.find(platform => platform.id === p)?.name
-          )
-          .join(", ")})`
-      : "All Cross-Play Games"
-  ),
-  meta: [
-    {
-      name: "description",
-      content:
-        "Find cross-play games between PC, Mac, PlayStation, Xbox, and Nintendo Switch.",
-    },
-  ],
+  title: computed(() => getMetaTitle()),
 });
+
+useSeoMeta({
+  title: computed(() => `${getMetaTitle()} - GodoPlay`),
+  ogTitle: computed(() => `${getMetaTitle()} - GodoPlay`),
+  twitterTitle: computed(() => `${getMetaTitle()} - GodoPlay`),
+  description:
+    "Find cross-play games between PC, Mac, PlayStation, Xbox, and Nintendo Switch.",
+  ogDescription:
+    "Find cross-play games between PC, Mac, PlayStation, Xbox, and Nintendo Switch.",
+  twitterDescription:
+    "Find cross-play games between PC, Mac, PlayStation, Xbox, and Nintendo Switch.",
+});
+
+function getMetaTitle() {
+  return Object.values(selectedPlatforms.value).some(Boolean)
+    ? `Cross-Play Games (${Object.values(selectedPlatforms.value)
+        .filter(Boolean)
+        .map(p => SUPPORTED_PLATFORMS.find(platform => platform.id === p)?.name)
+        .join(", ")})`
+    : "All Cross-Play Games";
+}
 
 // Add function to clear filters and refresh page
 function clearQueryAndRefreshPage() {
