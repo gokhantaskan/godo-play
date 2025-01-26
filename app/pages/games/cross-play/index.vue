@@ -289,11 +289,11 @@ useSeoMeta({
   ogTitle: computed(() => `${getMetaTitle()} - GodoPlay`),
   twitterTitle: computed(() => `${getMetaTitle()} - GodoPlay`),
   description:
-    "Find cross-play games between PC, Mac, PlayStation, Xbox, and Nintendo Switch.",
+    "Find the best cross-gen and cross-play games between PC, Mac, PlayStation, Xbox, and Nintendo Switch.",
   ogDescription:
-    "Find cross-play games between PC, Mac, PlayStation, Xbox, and Nintendo Switch.",
+    "Find the best cross-gen and cross-play games between PC, Mac, PlayStation, Xbox, and Nintendo Switch.",
   twitterDescription:
-    "Find cross-play games between PC, Mac, PlayStation, Xbox, and Nintendo Switch.",
+    "Find the best cross-gen and cross-play games between PC, Mac, PlayStation, Xbox, and Nintendo Switch.",
 });
 
 function getMetaTitle() {
@@ -357,6 +357,11 @@ const activeFilterChips = computed(() => {
         />
       </TheButton>
     </header>
+
+    <p class="tw:text-text-muted tw:text-sm">
+      Discover the best cross-gen and cross-play games available across multiple
+      platforms, including PC, Mac, PlayStation, Xbox, and Nintendo Switch.
+    </p>
 
     <section class="tw:flex tw:max-sm:flex-col tw:gap-4 tw:max-w-2xl">
       <PlatformSelect

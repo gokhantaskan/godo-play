@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { SUPPORTED_PLATFORMS } from "~~/shared/constants";
 import type { DashboardGame } from "~~/shared/types/igdb/dashboardGames";
 
 definePageMeta({
@@ -28,6 +29,31 @@ const { status, data: games } = useFetch<DashboardGame[]>("/api/games/igdb", {
 });
 
 const pending = computed(() => status.value === "pending");
+
+useHead({
+  title: computed(() => getMetaTitle()),
+});
+
+useSeoMeta({
+  title: computed(() => `${getMetaTitle()} - GodoPlay`),
+  ogTitle: computed(() => `${getMetaTitle()} - GodoPlay`),
+  twitterTitle: computed(() => `${getMetaTitle()} - GodoPlay`),
+  description:
+    "Find the best multi-platform games between PC, Mac, PlayStation, Xbox, and Nintendo Switch.",
+  ogDescription:
+    "Find the best multi-platform games between PC, Mac, PlayStation, Xbox, and Nintendo Switch.",
+  twitterDescription:
+    "Find the best multi-platform games between PC, Mac, PlayStation, Xbox, and Nintendo Switch.",
+});
+
+function getMetaTitle() {
+  return Object.values(selectedPlatforms.value).some(Boolean)
+    ? `Multi-Platform Games (${Object.values(selectedPlatforms.value)
+        .filter(Boolean)
+        .map(p => SUPPORTED_PLATFORMS.find(platform => platform.id === p)?.name)
+        .join(", ")})`
+    : "All Multi-Platform Games";
+}
 </script>
 
 <template>
