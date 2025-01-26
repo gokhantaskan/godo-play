@@ -1,8 +1,8 @@
 import { agreedToCookiesScriptConsent } from "@/utils/cookie";
-import { useGtag, useScriptHotjar } from "#imports";
+import { useGtag /* useScriptHotjar */ } from "#imports";
 
 export function useScripts() {
-  const config = useRuntimeConfig();
+  // const config = useRuntimeConfig();
   const { gtag } = useGtag();
 
   function initScripts() {
@@ -11,17 +11,17 @@ export function useScripts() {
     }
 
     // Initialize Hotjar
-    const { onLoaded: onHotjarLoaded } = useScriptHotjar({
-      id: Number(config.public.hotjar.siteId),
-      sv: 6,
-      scriptOptions: {
-        trigger: agreedToCookiesScriptConsent,
-      },
-    });
+    // const { onLoaded: onHotjarLoaded } = useScriptHotjar({
+    //   id: Number(config.public.hotjar.siteId),
+    //   sv: 6,
+    //   scriptOptions: {
+    //     trigger: agreedToCookiesScriptConsent,
+    //   },
+    // });
 
-    onHotjarLoaded(() => {
-      console.info("hj loaded");
-    });
+    // onHotjarLoaded(() => {
+    //   console.info("hj loaded");
+    // });
 
     // Initialize Inspectlet
     if (IS_PROD) {

@@ -61,5 +61,6 @@ onMounted(() => {
       <Analytics />
     </template>
     <TheCookieBanner />
+    <TheFeedbackButton />
   </div>
 </template>

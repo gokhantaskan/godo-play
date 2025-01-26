@@ -58,3 +58,4 @@ You are an senior fullstack developer expert in Vue.js, Nuxt.js, TailwindCSS, an
 - Use imperative mood for commit messages.
 - Use the present tense for commit messages.
 - Use `commitlint` and `@commitlint/config-conventional` to validate commit messages.
+  - Subject must not be sentence-case, start-case, pascal-case, upper-case [subject-case]
