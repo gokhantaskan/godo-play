@@ -5,6 +5,17 @@ import type { PlatformId } from "~/types/crossPlay";
 import { GAME_MODES, SUPPORTED_PLATFORMS } from "~~/shared/constants";
 import type { GameSubmissionWithRelations } from "~~/shared/types";
 
+interface InitialRouteQuery {
+  platforms: string;
+  pcStores: string;
+  gameModes: string;
+  search: string;
+  playerPerspectives: string;
+  genres: string;
+  themes: string;
+  [key: string]: string | string[];
+}
+
 type SupportedPlatform = (typeof SUPPORTED_PLATFORMS)[number];
 
 interface SelectedPlatforms {
@@ -35,26 +46,28 @@ definePageMeta({
 const ITEMS_PER_PAGE = 48;
 
 const route = useRoute();
-const initialQueryParams = {
-  platforms: route.query.platforms as string,
-  pcStores: route.query.pcStores as string,
-  gameModes: route.query.gameModes as string,
-  search: route.query.search as string,
-  playerPerspectives: route.query.playerPerspectives as string,
-  genres: route.query.genres as string,
-  themes: route.query.themes as string,
-};
+const {
+  platforms: initialQueryPlatforms,
+  // initialQueryPcStores,
+  gameModes: initialQueryGameModes,
+  search: initialQuerySearch,
+  playerPerspectives: initialQueryPlayerPerspectives,
+  genres: initialQueryGenres,
+  themes: initialQueryThemes,
+} = route.query as InitialRouteQuery;
+
+console.log(route.query);
 
 // Platform Selection Management
 const selectedPlatforms = ref<SelectedPlatforms>({
-  p1: initialQueryParams.platforms
-    ? getPlatformIdBySlug(initialQueryParams.platforms.split(",")[0] ?? "")
+  p1: initialQueryPlatforms
+    ? getPlatformIdBySlug(initialQueryPlatforms.split(",")[0] ?? "")
     : null,
-  p2: initialQueryParams.platforms
-    ? getPlatformIdBySlug(initialQueryParams.platforms.split(",")[1] ?? "")
+  p2: initialQueryPlatforms
+    ? getPlatformIdBySlug(initialQueryPlatforms.split(",")[1] ?? "")
     : null,
-  p3: initialQueryParams.platforms
-    ? getPlatformIdBySlug(initialQueryParams.platforms.split(",")[2] ?? "")
+  p3: initialQueryPlatforms
+    ? getPlatformIdBySlug(initialQueryPlatforms.split(",")[2] ?? "")
     : null,
 });
 
@@ -78,24 +91,20 @@ function getGameModeIdFromSlug(slug: string): number | null {
 // Initialize selectedFilters with game mode IDs from URL slugs
 const selectedFilters = ref<Filters>({
   pcStores: [],
-  gameModes: initialQueryParams.gameModes
-    ? initialQueryParams.gameModes
+  gameModes: initialQueryGameModes
+    ? initialQueryGameModes
         .split(",")
         .map(slug => getGameModeIdFromSlug(slug))
         .filter((id): id is number => id !== null)
     : [],
-  playerPerspectives: initialQueryParams.playerPerspectives
-    ? initialQueryParams.playerPerspectives.split(",").map(Number)
+  playerPerspectives: initialQueryPlayerPerspectives
+    ? initialQueryPlayerPerspectives.split(",").map(Number)
     : [],
-  genres: initialQueryParams.genres
-    ? initialQueryParams.genres.split(",").map(Number)
-    : [],
-  themes: initialQueryParams.themes
-    ? initialQueryParams.themes.split(",").map(Number)
-    : [],
+  genres: initialQueryGenres ? initialQueryGenres.split(",").map(Number) : [],
+  themes: initialQueryThemes ? initialQueryThemes.split(",").map(Number) : [],
 });
 
-const search = ref<string>(initialQueryParams.search);
+const search = ref<string>(initialQuerySearch);
 const debouncedSearch = refDebounced(search, 500);
 
 // Add type safety for platform selection
@@ -113,40 +122,40 @@ const urlQuery = computed(() => {
     .filter(isPlatformId)
     .map(id => getPlatformSlugById(id));
 
-  const query: Record<string, string> = {};
+  const queryToSet: Record<string, string> = {};
 
   if (platforms.length) {
-    query.platforms = platforms.join(",");
+    queryToSet.platforms = platforms.join(",");
   }
 
   if (selectedFilters.value.gameModes.length) {
-    query.gameModes = selectedFilters.value.gameModes
+    queryToSet.gameModes = selectedFilters.value.gameModes
       .map(id => supportedModesMap.idToSlug[id])
       .join(",");
   }
 
   if (selectedFilters.value.pcStores.length) {
-    query.pcStores = selectedFilters.value.pcStores.join(",");
+    queryToSet.pcStores = selectedFilters.value.pcStores.join(",");
   }
 
   if (selectedFilters.value.playerPerspectives.length) {
-    query.playerPerspectives =
+    queryToSet.playerPerspectives =
       selectedFilters.value.playerPerspectives.join(",");
   }
 
   if (selectedFilters.value.genres.length) {
-    query.genres = selectedFilters.value.genres.join(",");
+    queryToSet.genres = selectedFilters.value.genres.join(",");
   }
 
   if (selectedFilters.value.themes.length) {
-    query.themes = selectedFilters.value.themes.join(",");
+    queryToSet.themes = selectedFilters.value.themes.join(",");
   }
 
   if (debouncedSearch.value) {
-    query.search = debouncedSearch.value;
+    queryToSet.search = debouncedSearch.value;
   }
 
-  return Object.keys(query).length ? query : undefined;
+  return Object.keys(queryToSet).length ? queryToSet : undefined;
 });
 
 // Create a computed property for the API query
