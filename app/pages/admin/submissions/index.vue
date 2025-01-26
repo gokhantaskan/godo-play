@@ -11,12 +11,6 @@ import type { GameSubmissionWithRelations } from "~~/shared/types";
 
 type SubmissionStatus = "pending" | "approved" | "rejected";
 
-interface GroupedSubmissions {
-  pending: GameSubmissionWithRelations[];
-  approved: GameSubmissionWithRelations[];
-  rejected: GameSubmissionWithRelations[];
-}
-
 interface GamesResponse {
   total: number;
   data: GameSubmissionWithRelations[];
@@ -43,26 +37,19 @@ const tabs = [
   },
 ];
 
-const { data: response, refresh } = await useFetch<GamesResponse>("/api/games");
+const currentStatus = ref<SubmissionStatus>("pending");
 
-const groupedSubmissions = computed<GroupedSubmissions>(() => {
-  const initial: GroupedSubmissions = {
-    pending: [],
-    approved: [],
-    rejected: [],
-  };
-
-  if (!response.value?.data) {
-    return initial;
+const { data: response, refresh } = await useFetch<GamesResponse>(
+  "/api/games",
+  {
+    query: {
+      status: currentStatus,
+      limit: 400,
+    },
   }
+);
 
-  return response.value.data.reduce((acc, submission) => {
-    if (submission.status) {
-      acc[submission.status as SubmissionStatus].push(submission);
-    }
-    return acc;
-  }, initial);
-});
+const submissions = computed(() => response.value?.data ?? []);
 </script>
 
 <template>
@@ -83,6 +70,7 @@ const groupedSubmissions = computed<GroupedSubmissions>(() => {
     </header>
 
     <TabsRoot
+      v-model="currentStatus"
       class="submissions"
       default-value="pending"
     >
@@ -107,8 +95,8 @@ const groupedSubmissions = computed<GroupedSubmissions>(() => {
         class="submissions__panel"
       >
         <SubmissionListItem
-          v-for="submission in groupedSubmissions[tab.status].toSorted(
-            (a, b) =>
+          v-for="submission in submissions.toSorted(
+            (a: GameSubmissionWithRelations, b: GameSubmissionWithRelations) =>
               new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
           )"
           :key="submission.id"
@@ -118,7 +106,7 @@ const groupedSubmissions = computed<GroupedSubmissions>(() => {
         />
 
         <p
-          v-if="groupedSubmissions[tab.status]?.length === 0"
+          v-if="submissions.length === 0"
           class="submissions__empty"
         >
           No {{ tab.label }} submissions found.

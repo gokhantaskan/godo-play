@@ -17,6 +17,7 @@ interface GamesRequestQuery {
   offset?: string; // Offset for pagination
   sort?: string; // Sorting criteria
   search?: string; // Search term for game names
+  status?: "pending" | "approved" | "rejected"; // Game status filter
 }
 
 interface CountResult {
@@ -40,6 +41,7 @@ export default defineCachedEventHandler(
         limit = "60", // Default limit
         offset = "0", // Default offset
         search,
+        status,
       }: GamesRequestQuery = query;
 
       // Parse query parameters
@@ -48,12 +50,15 @@ export default defineCachedEventHandler(
       const parsedLimit = parseInt(limit);
       const parsedOffset = parseInt(offset);
 
+      // Validate status parameter
+      const validStatus =
+        status && ["pending", "approved", "rejected"].includes(status)
+          ? status
+          : undefined;
+
       // Base conditions for filtered queries
       const baseConditions = {
-        where:
-          process.env.NODE_ENV === "production"
-            ? eq(games.status, "approved") // Only approved games in production
-            : undefined,
+        where: validStatus ? eq(games.status, validStatus) : undefined,
       };
 
       let conditions = baseConditions.where;
