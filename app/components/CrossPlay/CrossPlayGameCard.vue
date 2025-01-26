@@ -28,21 +28,21 @@ const shouldDisplayPCStores = computed(() => {
 });
 
 // TODO: Work on this
-// const isModalOpen = ref(false);
-// const cacheKey = computed(() => `game-${props.game.gameId}`);
-// const { data: cachedGameDetails } = useNuxtData(cacheKey.value);
-// const {
-//   data: gameDetails,
-//   status: gameDetailsStatus,
-//   execute: fetchGameDetails,
-// } = useFetch(`/api/games/igdb/${props.game.slug}`, {
-//   immediate: false,
-//   key: cacheKey.value,
-//   lazy: !!cachedGameDetails.value,
-// });
-// const pendingGameDetails = computed(() => {
-//   return gameDetailsStatus.value === "pending";
-// });
+const isModalOpen = ref(false);
+const cacheKey = computed(() => `game-${props.game.slug}`);
+const { data: cachedGameDetails } = useNuxtData(cacheKey.value);
+const {
+  data: gameDetails,
+  status: gameDetailsStatus,
+  execute: fetchGameDetails,
+} = useFetch(`/api/games/igdb/${props.game.slug}`, {
+  immediate: false,
+  key: cacheKey.value,
+  lazy: !!cachedGameDetails.value,
+});
+const pendingGameDetails = computed(() => {
+  return gameDetailsStatus.value === "pending";
+});
 
 const getStoreName = (storeSlug: string) =>
   SUPPORTED_PC_STORES_BY_SLUG[storeSlug]?.name ?? storeSlug;
@@ -60,16 +60,19 @@ const hasCrossplaySupport = (crossplayLength: number) => {
   return crossplayLength === platformsInGroup.length - 1;
 };
 
-// async function openModal() {
-//   isModalOpen.value = true;
-//   await fetchGameDetails();
-// }
+async function openModal() {
+  isModalOpen.value = true;
+  await fetchGameDetails();
+}
 </script>
 
 <template>
   <article class="game-card">
     <!-- Image Section -->
-    <button class="game-card__cover">
+    <button
+      class="game-card__cover"
+      @click="openModal"
+    >
       <NuxtImg
         :src="`https://images.igdb.com/igdb/image/upload/t_720p/${game.external?.igdbImageId}.jpg`"
         :alt="game.name"
@@ -197,16 +200,16 @@ const hasCrossplaySupport = (crossplayLength: number) => {
     </div>
 
     <!-- Game Details Modal -->
-    <!-- <TheModal
-      :key="game.gameId"
+    <TheModal
+      :key="game.slug"
       v-model:open="isModalOpen"
-      :title="game.gameName"
+      :title="game.name"
       max-width="48rem"
     >
       <GameDetails
         :details="gameDetails"
         :is-loading="!gameDetails && pendingGameDetails"
       />
-    </TheModal> -->
+    </TheModal>
   </article>
 </template>

@@ -35,43 +35,28 @@ definePageMeta({
 const ITEMS_PER_PAGE = 48;
 
 const route = useRoute();
-const urlQueryParams = computed(() => {
-  const {
-    platforms,
-    pcStores,
-    gameModes,
-    search,
-    playerPerspectives,
-    genres,
-    themes,
-  } = route.query;
-
-  return {
-    platforms: platforms as string,
-    pcStores: pcStores as string,
-    gameModes: gameModes as string,
-    search: search as string,
-    playerPerspectives: playerPerspectives as string,
-    genres: genres as string,
-    themes: themes as string,
-  };
-});
+const initialQueryParams = {
+  platforms: route.query.platforms as string,
+  pcStores: route.query.pcStores as string,
+  gameModes: route.query.gameModes as string,
+  search: route.query.search as string,
+  playerPerspectives: route.query.playerPerspectives as string,
+  genres: route.query.genres as string,
+  themes: route.query.themes as string,
+};
 
 // Platform Selection Management
-const selectedPlatforms = useState<SelectedPlatforms>(
-  "crossplay-platforms",
-  () => ({
-    p1: urlQueryParams.value.platforms
-      ? getPlatformIdBySlug(urlQueryParams.value.platforms.split(",")[0] ?? "")
-      : null,
-    p2: urlQueryParams.value.platforms
-      ? getPlatformIdBySlug(urlQueryParams.value.platforms.split(",")[1] ?? "")
-      : null,
-    p3: urlQueryParams.value.platforms
-      ? getPlatformIdBySlug(urlQueryParams.value.platforms.split(",")[2] ?? "")
-      : null,
-  })
-);
+const selectedPlatforms = ref<SelectedPlatforms>({
+  p1: initialQueryParams.platforms
+    ? getPlatformIdBySlug(initialQueryParams.platforms.split(",")[0] ?? "")
+    : null,
+  p2: initialQueryParams.platforms
+    ? getPlatformIdBySlug(initialQueryParams.platforms.split(",")[1] ?? "")
+    : null,
+  p3: initialQueryParams.platforms
+    ? getPlatformIdBySlug(initialQueryParams.platforms.split(",")[2] ?? "")
+    : null,
+});
 
 const supportedModesMap = {
   idToSlug: GAME_MODES.reduce<Record<number, string>>((acc, curr) => {
@@ -91,30 +76,26 @@ function getGameModeIdFromSlug(slug: string): number | null {
 }
 
 // Initialize selectedFilters with game mode IDs from URL slugs
-const selectedFilters = useState<Filters>("crossplay-filters", () => ({
+const selectedFilters = ref<Filters>({
   pcStores: [],
-  gameModes: urlQueryParams.value.gameModes
-    ? urlQueryParams.value.gameModes
+  gameModes: initialQueryParams.gameModes
+    ? initialQueryParams.gameModes
         .split(",")
         .map(slug => getGameModeIdFromSlug(slug))
         .filter((id): id is number => id !== null)
     : [],
-  playerPerspectives: urlQueryParams.value.playerPerspectives
-    ? urlQueryParams.value.playerPerspectives.split(",").map(Number)
+  playerPerspectives: initialQueryParams.playerPerspectives
+    ? initialQueryParams.playerPerspectives.split(",").map(Number)
     : [],
-  genres: urlQueryParams.value.genres
-    ? urlQueryParams.value.genres.split(",").map(Number)
+  genres: initialQueryParams.genres
+    ? initialQueryParams.genres.split(",").map(Number)
     : [],
-  themes: urlQueryParams.value.themes
-    ? urlQueryParams.value.themes.split(",").map(Number)
+  themes: initialQueryParams.themes
+    ? initialQueryParams.themes.split(",").map(Number)
     : [],
-}));
+});
 
-const search = useState<string>(
-  "crossplay-search",
-  () => urlQueryParams.value.search
-);
-
+const search = ref<string>(initialQueryParams.search);
 const debouncedSearch = refDebounced(search, 500);
 
 // Add type safety for platform selection
