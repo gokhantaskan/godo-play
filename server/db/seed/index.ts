@@ -1,3 +1,4 @@
+import { seedGameCategories } from "./gameCategories";
 import { seedGameModes } from "./gameModes";
 import { seedPcStores } from "./pcStores";
 import { seedPlatforms } from "./platforms";
@@ -7,6 +8,7 @@ export async function seed() {
     await seedPlatforms();
     await seedPcStores();
     await seedGameModes();
+    await seedGameCategories();
   } catch (error) {
     console.error("❌ Error seeding database:", error);
     throw error;

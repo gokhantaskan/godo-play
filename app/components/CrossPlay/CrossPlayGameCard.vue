@@ -1,10 +1,14 @@
 <script setup lang="ts">
-import { SUPPORTED_PC_STORES_BY_SLUG } from "~~/shared/constants";
+import { GAME_TYPES, SUPPORTED_PC_STORES_BY_SLUG } from "~~/shared/constants";
 import type { GameSubmissionWithRelations } from "~~/shared/types";
 
 const props = defineProps<{
   game: GameSubmissionWithRelations;
 }>();
+
+const gameType = computed(() => {
+  return GAME_TYPES[props.game.category];
+});
 
 const groupPlatformsWithPC = computed(() => {
   return (
@@ -206,6 +210,18 @@ async function openModal() {
       :title="game.name"
       max-width="48rem"
     >
+      <template #description>
+        <div
+          v-if="gameType"
+          class="tw:flex tw:items-center tw:gap-2"
+        >
+          <Icon
+            :name="gameType.icon"
+            class="tw:text-xl"
+          />
+          <span>{{ gameType.label }}</span>
+        </div>
+      </template>
       <GameDetails
         :details="gameDetails"
         :is-loading="!gameDetails && pendingGameDetails"

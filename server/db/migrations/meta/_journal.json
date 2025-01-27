@@ -15,6 +15,20 @@
       "when": 1737754528643,
       "tag": "0001_illegal_quasimodo",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1737985507511,
+      "tag": "0002_illegal_captain_flint",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1737986241700,
+      "tag": "0003_furry_shinko_yamashiro",
+      "breakpoints": true
     }
   ]
 }
