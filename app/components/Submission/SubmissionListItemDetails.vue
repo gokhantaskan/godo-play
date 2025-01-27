@@ -5,10 +5,11 @@ import type {
   PlatformGroups,
   SubmitGameFormData,
 } from "~/types/submit-game";
+import { CATEGORIES } from "~~/shared/constants/categories";
 import type { GameSubmissionWithRelations } from "~~/shared/types";
 
 interface Props {
-  submission: GameSubmissionWithRelations;
+  game: GameSubmissionWithRelations;
   disabled?: boolean;
 }
 
@@ -22,28 +23,29 @@ const igdbGame = ref<Record<string, any> | null>(null);
 const isLoadingIgdbGame = ref(false);
 
 const { platformGroups, pcStores, pcStorePlatforms, gameModeIds } =
-  transformSubmissionToFormData(props.submission);
+  transformSubmissionToFormData(props.game);
 
-const category = ref<number>(props.submission.category);
+const category = ref<number>(props.game.category);
 const platformGroupsModel = ref<PlatformGroups>(platformGroups);
 const pcStoresModel = ref<PCStore["slug"][]>(pcStores);
+// Platforms that are available for crossplay on PC (in the same group as PC)
 const pcStorePlatformsModel = ref<PCStoreData>(pcStorePlatforms);
 const gameModesModel = ref<number[]>(gameModeIds);
 
 async function fetchIgdbGame() {
-  if (!props.submission.external?.igdbId) {
+  if (!props.game.external?.igdbId) {
     return;
   }
 
   try {
     isLoadingIgdbGame.value = true;
 
-    const data = await $fetch("/api/igdb/games", {
+    const data = await $fetch<any[]>("/api/igdb/games", {
       method: "POST",
       body: {
         fields:
           "name,slug,category,game_modes.name,genres.name,platforms.name,themes.name",
-        where: `id = ${props.submission.external.igdbId}`,
+        where: `id = ${props.game.external.igdbId}`,
       },
     });
 
@@ -59,9 +61,10 @@ async function fetchIgdbGame() {
 
 async function handleSave() {
   try {
-    await $fetch(`/api/games/${props.submission.id}`, {
+    await $fetch(`/api/games/${props.game.id}`, {
       method: "PATCH",
       body: {
+        category: category.value,
         platformGroups: platformGroupsModel.value,
         pcStores: pcStoresModel.value,
         pcStoresPlatforms: pcStorePlatformsModel.value,
@@ -81,7 +84,7 @@ defineExpose({
 });
 
 function transformSubmissionToFormData(
-  submission: Props["submission"]
+  submission: Props["game"]
 ): SubmitGameFormData {
   // Transform platform groups
   const platformGroups: PlatformGroups = submission.platformGroups.map(group =>
@@ -151,11 +154,8 @@ watch(
   () => {
     syncPCStorePlatforms();
   },
-  { deep: true }
+  { deep: true, immediate: true }
 );
-
-// Initial sync after data transformation
-syncPCStorePlatforms();
 
 // Fetch IGDB game data when mounted
 onMounted(() => {
@@ -170,6 +170,10 @@ onMounted(() => {
       class="submission-details__igdb"
     >
       <ul class="tw:text-sm tw:p-0 tw:mb-2">
+        <li>
+          <strong>Category:</strong>
+          {{ CATEGORIES[igdbGame.category]?.name }}
+        </li>
         <li>
           <strong>Platforms:</strong>
           {{
@@ -208,7 +212,7 @@ onMounted(() => {
     />
 
     <div
-      v-if="submission.status === 'approved'"
+      v-if="game.status === 'approved'"
       class="submission-details__save-button"
     >
       <TheButton

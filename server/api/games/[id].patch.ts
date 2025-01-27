@@ -22,6 +22,7 @@ import {
 
 // Validate the request body
 const updateSubmissionSchema = z.object({
+  category: z.number().optional(),
   platformGroups: z
     .array(z.array(z.number()))
     .min(1, "At least one platform group is required")
@@ -171,6 +172,22 @@ export default defineEventHandler(async event => {
             gameModeId,
           }))
         );
+      }
+
+      // Update category if provided
+      if (body.category !== undefined) {
+        const [updatedGame] = await tx
+          .update(games)
+          .set({ category: body.category })
+          .where(eq(games.id, submissionId))
+          .returning();
+
+        if (!updatedGame) {
+          throw createError({
+            statusCode: 500,
+            message: "Failed to update game category",
+          });
+        }
       }
 
       return submission;
