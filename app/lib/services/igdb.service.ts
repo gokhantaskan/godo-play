@@ -27,18 +27,22 @@ export default {
   },
 
   async searchGames(query: string, options: Partial<IGDBFields> = {}) {
+    const strictWhere = "game_modes != 1";
+
     const {
       fields = "name,slug,category,platforms.*,genres.*,player_perspectives.*,themes.*,cover.*,game_modes.*,multiplayer_modes.*,aggregated_rating",
       limit = 100,
       // category=(0,3,8,9) & version_parent=null
-      where = `game_modes != 1`,
+      where,
       sort = "popularity desc",
       ...rest
     } = options;
 
     return await this.request("games", {
       fields,
-      where: `name~*"${query}"* & ${where}`,
+      where: `name~*"${query}"* & ${strictWhere}`.concat(
+        where ? ` & ${where}` : ""
+      ),
       limit,
       sort,
       ...rest,

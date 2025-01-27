@@ -7,7 +7,7 @@ definePageMeta({
 });
 
 useHead({
-  title: "Multiplatform Games",
+  title: "Multi-Platform Games",
 });
 
 // Composables
@@ -72,6 +72,11 @@ function getMetaTitle() {
         />
       </TheButton>
     </header>
+
+    <p class="tw:text-text-muted tw:text-sm">
+      Discover the best multiplayer games available across multiple platforms,
+      including PC, Mac, PlayStation, Xbox, and Nintendo Switch.
+    </p>
 
     <section>
       <TheAlert
