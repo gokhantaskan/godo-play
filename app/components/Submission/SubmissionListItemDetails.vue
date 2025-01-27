@@ -24,6 +24,7 @@ const isLoadingIgdbGame = ref(false);
 const { platformGroups, pcStores, pcStorePlatforms, gameModeIds } =
   transformSubmissionToFormData(props.submission);
 
+const category = ref<number>(props.submission.category);
 const platformGroupsModel = ref<PlatformGroups>(platformGroups);
 const pcStoresModel = ref<PCStore["slug"][]>(pcStores);
 const pcStorePlatformsModel = ref<PCStoreData>(pcStorePlatforms);
@@ -198,6 +199,7 @@ onMounted(() => {
     </div>
 
     <SubmitGameFormInner
+      v-model:category="category"
       v-model:platform-groups="platformGroupsModel"
       v-model:pc-stores="pcStoresModel"
       v-model:pc-store-platforms="pcStorePlatformsModel"

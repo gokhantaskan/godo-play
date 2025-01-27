@@ -10,7 +10,8 @@ export interface GameOption {
   platforms: DashboardGame["platforms"];
   gameModes: DashboardGame["game_modes"];
   imageId?: string;
-  aggregated_rating?: number;
+  aggregatedRating?: number;
+  category: number;
 }
 
 export type GameOptionOrString = GameOption | string | null;
@@ -41,7 +42,8 @@ async function searchGames(event: { query: string }) {
       platforms: game.platforms,
       gameModes: game.game_modes,
       imageId: game.cover?.image_id ?? "",
-      aggregated_rating: game.aggregated_rating,
+      aggregatedRating: game.aggregated_rating,
+      category: game.category,
     }));
   } catch (error) {
     console.error("Error searching games:", error);
