@@ -19,12 +19,7 @@ const detailsRef = ref<{ save: () => Promise<void> } | null>(null);
 
 async function handleUpdate(status: "approved" | "rejected") {
   try {
-    if (status === "approved") {
-      // First save the form data
-      await detailsRef.value?.save();
-    }
-
-    // Then update the status
+    // Update only the status
     await $fetch("/api/games/update", {
       method: "POST",
       body: {
@@ -36,6 +31,16 @@ async function handleUpdate(status: "approved" | "rejected") {
     emit("refresh");
   } catch (error) {
     console.error("Failed to update submission:", error);
+  }
+}
+
+async function handleSave() {
+  try {
+    // Save form data without changing status
+    await detailsRef.value?.save();
+    emit("refresh");
+  } catch (error) {
+    console.error("Failed to save submission:", error);
   }
 }
 
@@ -112,6 +117,13 @@ async function handleDelete() {
           <TheButton
             size="sm"
             variant="primary"
+            @click="handleSave"
+          >
+            Save
+          </TheButton>
+          <TheButton
+            size="sm"
+            variant="secondary"
             @click="handleUpdate('approved')"
           >
             Approve
