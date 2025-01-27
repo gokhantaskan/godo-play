@@ -1,9 +1,17 @@
 <script setup lang="ts">
 import { nextTick, ref } from "vue";
 
-const buttonRef = useTemplateRef("buttonRef");
+const route = useRoute();
+
 const dialogRef = useTemplateRef("dialogRef");
 const isDialogOpen = ref(false);
+const shouldRender = ref(true);
+
+console.log(route.path);
+
+if (route.path.startsWith("/admin")) {
+  shouldRender.value = false;
+}
 
 function openFeedback() {
   isDialogOpen.value = true;
@@ -28,7 +36,10 @@ function closeFeedback() {
 </script>
 
 <template>
-  <div class="feedback-button">
+  <div
+    v-if="shouldRender"
+    class="feedback-button"
+  >
     <button
       ref="buttonRef"
       class="feedback-button__button"

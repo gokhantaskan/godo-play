@@ -1,15 +1,13 @@
 <script setup lang="ts">
+import { refDebounced } from "@vueuse/core";
+
 import type { GameSubmissionWithRelations } from "~~/shared/types";
-
-type SubmissionStatus = "pending" | "approved" | "rejected";
-type SortField = "+created_at" | "-created_at" | "+updated_at" | "-updated_at";
-
-interface GamesResponse {
-  total: number;
-  data: GameSubmissionWithRelations[];
-  limit: number;
-  offset: number;
-}
+import type {
+  FilterParams,
+  PaginatedResponse,
+  SortField,
+  SubmissionStatus,
+} from "~~/shared/types/globals";
 
 definePageMeta({
   name: "AdminGameSubmissionsPage",
@@ -22,21 +20,24 @@ const selectedStatuses = ref<SubmissionStatus[]>([
 ]);
 
 const selectedSort = ref<SortField>("-created_at");
+const searchQuery = ref("");
+const searchQueryDebounced = refDebounced(searchQuery, 500);
 
-const { data: response, refresh } = await useFetch<GamesResponse>(
-  "/api/games",
-  {
-    query: computed(() => ({
-      limit: 400,
-      status: selectedStatuses.value.join(","),
-      sort: selectedSort.value,
-    })),
-  }
-);
+const { data: response, refresh } = await useFetch<
+  PaginatedResponse<GameSubmissionWithRelations>
+>("/api/games", {
+  query: computed<FilterParams>(() => ({
+    limit: 400,
+    status: selectedStatuses.value,
+    sort: selectedSort.value,
+    search: searchQueryDebounced.value || undefined,
+  })),
+});
 
 const submissions = computed(() => response.value?.data ?? []);
 
 const sortOptions = [
+  { label: "Popularity", value: "-popularity" },
   { label: "Created At (Newest)", value: "-created_at" },
   { label: "Created At (Oldest)", value: "+created_at" },
   { label: "Updated At (Newest)", value: "-updated_at" },
@@ -80,9 +81,14 @@ const sortOptions = [
         </div>
 
         <div class="tw:flex tw:gap-4">
+          <TheSearchInput
+            v-model="searchQuery"
+            placeholder="Search by name..."
+          />
+
           <select
             v-model="selectedSort"
-            class="tw:px-2 tw:py-1 tw:rounded-md tw:border tw:border-border"
+            class="tw:px-2 tw:py-1 tw:rounded tw:border tw:border-border"
           >
             <option
               v-for="option in sortOptions"

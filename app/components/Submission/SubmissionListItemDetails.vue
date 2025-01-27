@@ -246,8 +246,6 @@ onMounted(() => {
 
   &__save-button {
     margin-block-start: 1rem;
-    display: flex;
-    justify-content: flex-end;
   }
 }
 </style>

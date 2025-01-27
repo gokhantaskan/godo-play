@@ -10,3 +10,27 @@ export interface PlatformHardcoded extends OmitTimestamps<Platform> {
 export interface PcStoreHardcoded extends OmitTimestamps<PcStore> {
   icon: string;
 }
+
+export type SubmissionStatus = "pending" | "approved" | "rejected";
+
+export type SortDirection = "+" | "-";
+export type SortableField = "created_at" | "updated_at" | "popularity";
+export type SortField = `${SortDirection}${SortableField}`;
+
+export interface FilterParams {
+  status?: SubmissionStatus[];
+  search?: string;
+  sort?: SortField;
+  limit?: number;
+  offset?: number;
+  platforms?: string;
+  gameModes?: string;
+}
+
+export interface PaginatedResponse<T> {
+  total: number;
+  count: number;
+  data: T[];
+  limit: number;
+  offset: number;
+}

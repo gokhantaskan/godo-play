@@ -7,18 +7,13 @@ import {
   platformGroupPlatforms,
 } from "~~/server/db/schema";
 import { isH3ErrorLike } from "~~/server/utils/errorHandler";
-import type { GamesResponse } from "~~/shared/types/games";
-
-// Define interfaces for request query and response
-interface GamesRequestQuery {
-  platforms?: string; // Comma-separated platform IDs
-  gameModes?: string; // Comma-separated game mode IDs
-  limit?: string; // Limit for pagination
-  offset?: string; // Offset for pagination
-  sort?: string; // Format: field:order (e.g. created_at:desc)
-  search?: string; // Search term for game names
-  status?: string; // Comma-separated status values
-}
+import type { GameSubmissionWithRelations } from "~~/shared/types";
+import type {
+  FilterParams,
+  PaginatedResponse,
+  SortableField,
+  SubmissionStatus,
+} from "~~/shared/types/globals";
 
 interface CountResult {
   count: number; // Count result from database query
@@ -42,8 +37,8 @@ export default defineCachedEventHandler(
         offset = "0", // Default offset
         search,
         status,
-        sort = "created_at:desc", // Default sort
-      }: GamesRequestQuery = query;
+        sort = "-popularity", // Default sort
+      } = query as Partial<Record<keyof FilterParams, string>>;
 
       // Parse query parameters
       const parsedPlatforms = parseArrayParam(platforms);
@@ -52,19 +47,23 @@ export default defineCachedEventHandler(
       const parsedOffset = parseInt(offset);
 
       // Parse sort parameter
-      const sortField = sort.slice(1); // Remove +/- prefix
+      const sortField = sort.slice(1) as SortableField; // Remove +/- prefix
       const isDescending = sort.startsWith("-");
-      const validSortFields = ["created_at", "updated_at"] as const;
+      const validSortFields = [
+        "created_at",
+        "updated_at",
+        "popularity",
+      ] as const;
 
       const parsedSortField = validSortFields.includes(sortField as any)
         ? sortField
-        : "created_at";
+        : "popularity";
 
       // Parse and validate status parameter
       const validStatuses = status
         ? decodeURIComponent(status)
             .split(",")
-            .filter((s): s is "pending" | "approved" | "rejected" =>
+            .filter((s): s is SubmissionStatus =>
               ["pending", "approved", "rejected"].includes(s)
             )
         : undefined;
@@ -80,7 +79,8 @@ export default defineCachedEventHandler(
 
       // Add search filtering condition
       if (search) {
-        conditions = and(conditions, sql`name ILIKE ${`%${search}%`}`);
+        const decodedSearch = decodeURIComponent(search);
+        conditions = and(conditions, sql`name ILIKE ${`%${decodedSearch}%`}`);
       }
 
       // Add platform filtering condition
@@ -190,17 +190,19 @@ export default defineCachedEventHandler(
         },
         where: conditions,
         orderBy: [
-          isDescending
-            ? desc(
-                games[
-                  parsedSortField === "created_at" ? "createdAt" : "updatedAt"
-                ]
-              )
-            : asc(
-                games[
-                  parsedSortField === "created_at" ? "createdAt" : "updatedAt"
-                ]
-              ),
+          parsedSortField === "popularity"
+            ? sql`(external->>'igdbAggregatedRating')::float DESC NULLS LAST`
+            : isDescending
+              ? desc(
+                  games[
+                    parsedSortField === "created_at" ? "createdAt" : "updatedAt"
+                  ]
+                )
+              : asc(
+                  games[
+                    parsedSortField === "created_at" ? "createdAt" : "updatedAt"
+                  ]
+                ),
         ],
         limit: parsedLimit,
         offset: parsedOffset,
@@ -213,7 +215,7 @@ export default defineCachedEventHandler(
         data,
         limit: parsedLimit,
         offset: parsedOffset,
-      } satisfies GamesResponse;
+      } satisfies PaginatedResponse<GameSubmissionWithRelations>;
     } catch (error: unknown) {
       // Handle errors and throw appropriate error messages
       if (isH3ErrorLike(error)) {
