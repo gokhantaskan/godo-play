@@ -1,5 +1,7 @@
 import { sql } from "drizzle-orm";
 
+import { CATEGORIES } from "~~/shared/constants/categories";
+
 import { db } from "../db";
 import { games } from "../db/schema";
 import { getIGDBClient } from "../utils/igdb";
@@ -7,12 +9,21 @@ import { getIGDBClient } from "../utils/igdb";
 const BATCH_SIZE = 10;
 const DELAY_MS = 250;
 
+const categoryIds = CATEGORIES.map(c => c.pointer);
+
+// IGDB category mapping to our category pointers
+const IGDB_CATEGORY_MAP = Array.from(
+  { length: categoryIds.length },
+  (_, i) => categoryIds[i]
+);
+
 async function updateAggregatedRatings() {
   const submissions = await db.query.games.findMany({
     columns: {
       id: true,
       external: true,
       name: true,
+      category: true,
     },
     where: sql`external IS NOT NULL AND external->>'igdbId' IS NOT NULL`,
   });
@@ -31,7 +42,7 @@ async function updateAggregatedRatings() {
     const batchIds = igdbIds.slice(i, i + BATCH_SIZE);
     const igdbClient = await getIGDBClient();
 
-    const requestBody = `fields id,aggregated_rating; where id = (${batchIds.join(",")});`;
+    const requestBody = `fields id,category,aggregated_rating; where id = (${batchIds.join(",")});`;
     const response = await igdbClient("games", requestBody);
 
     if (!response.ok) {
@@ -52,9 +63,13 @@ async function updateAggregatedRatings() {
         continue;
       }
 
+      // Map IGDB category to our category pointer, default to main_game (0)
+      const categoryPointer = IGDB_CATEGORY_MAP[igdbGame.category] ?? 0;
+
       const [game] = await db
         .update(games)
         .set({
+          category: categoryPointer,
           external: sql`
             jsonb_set(
               external,
@@ -68,6 +83,9 @@ async function updateAggregatedRatings() {
 
       if (game) {
         updatedCount++;
+        console.log(
+          `Updated game ${matchingSubmission.name} with category: ${categoryPointer}`
+        );
       }
     }
 

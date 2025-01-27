@@ -78,6 +78,7 @@ export default defineEventHandler(async event => {
           external: body.game.external,
           name: body.game.name,
           slug: body.game.slug,
+          category: body.game.category,
         })
         .returning();
 

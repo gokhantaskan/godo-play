@@ -124,7 +124,7 @@ async function handleDelete() {
           <DisclosurePanel class="submission-card__edit-panel">
             <SubmissionListItemDetails
               ref="detailsRef"
-              :submission="game"
+              :game="game"
               :disabled="game.status === 'rejected'"
               @refresh="emit('refresh')"
             />

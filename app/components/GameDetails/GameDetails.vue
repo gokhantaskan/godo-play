@@ -15,7 +15,7 @@ const props = withDefaults(
 );
 
 const trustedWebsites = computed(() => {
-  return props.details?.websites.filter(website => website.trusted);
+  return props.details?.websites?.filter(website => website.trusted);
 });
 
 const allCategories = computed(() => {
@@ -120,7 +120,10 @@ const availableMultiplayerModes = computed(() => {
       </div>
     </div>
 
-    <div class="game-details__section">
+    <div
+      v-if="details.screenshots?.length"
+      class="game-details__section"
+    >
       <h3 class="game-details__section-title">Gallery</h3>
       <div class="game-details__screenshots">
         <template

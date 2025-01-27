@@ -6,13 +6,14 @@ import type {
   SubmitGamePayload,
 } from "@/types/submit-game";
 import type { GameOption } from "~/components/SubmitGame/SubmitGameAutocomplete.vue";
-import type { Platform } from "~~/shared/types/igdb/dashboardGames";
+import { CATEGORIES } from "~~/shared/constants/categories";
 import type { BaseEntity } from "~~/shared/types/igdb/globals";
 
 const { getToken } = useRecaptcha();
 
 // Form state
 const selectedGame = ref<GameOption | null>(null);
+const selectedCategory = ref<number>(0);
 const selectedPlatformGroups = ref<PlatformGroups>([[]]);
 const selectedPcStores = ref<PCStore["slug"][]>([]);
 const selectedPcStoresPlatforms = ref<PCStoreData>({});
@@ -65,12 +66,13 @@ async function handleSubmit(event: Event) {
       method: "POST",
       body: {
         game: {
+          category: selectedCategory.value,
           name: selectedGame.value.name,
           slug: selectedGame.value.slug,
           external: {
             igdbId: selectedGame.value.id,
             igdbImageId: selectedGame.value.imageId,
-            igdbAggregatedRating: selectedGame.value.aggregated_rating,
+            igdbAggregatedRating: selectedGame.value.aggregatedRating,
           },
         },
         platformGroups: selectedPlatformGroups.value,
@@ -117,9 +119,12 @@ async function handleSubmit(event: Event) {
           <h2 class="game-info__title">{{ selectedGame.name }}</h2>
           <ul class="game-info__list">
             <li class="game-info__list-item">
+              {{ CATEGORIES[selectedGame.category]?.name ?? "Unknown" }}
+            </li>
+            <li class="game-info__list-item">
               {{
                 selectedGame.platforms
-                  .map((platform: Platform) => platform.name)
+                  .map(platform => platform.name)
                   .toSorted()
                   .join(", ")
               }}
@@ -137,6 +142,7 @@ async function handleSubmit(event: Event) {
     </div>
 
     <SubmitGameFormInner
+      v-model:category="selectedCategory"
       v-model:platform-groups="selectedPlatformGroups"
       v-model:pc-stores="selectedPcStores"
       v-model:pc-store-platforms="selectedPcStoresPlatforms"

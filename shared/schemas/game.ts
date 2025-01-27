@@ -37,6 +37,7 @@ export const SubmitGameSchema = z.object({
   game: z.object({
     name: z.string().min(1, "Game name is required"),
     slug: z.string().min(1, "Game slug is required"),
+    category: z.number().min(0, "Game category is required"),
     external: ExternalDataSchema,
   }),
   platformGroups: z

@@ -1,9 +1,10 @@
 import { sql } from "drizzle-orm";
-import { jsonb, pgTable, serial, text } from "drizzle-orm/pg-core";
+import { integer, jsonb, pgTable, serial, text } from "drizzle-orm/pg-core";
 import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 import { z } from "zod";
 
 import { defaultInsertTimestamps } from "../helpers/defaults";
+import { gameCategories } from "./gameCategories";
 
 /**
  * The central table that stores information about a game submission.
@@ -14,6 +15,9 @@ export const games = pgTable("games", {
   external: jsonb("external")
     .$type<ExternalData>()
     .default(sql`'{}'::jsonb`),
+  category: integer("category")
+    .notNull()
+    .references(() => gameCategories.pointer),
   name: text("name").notNull(),
   slug: text("slug").unique().notNull(),
   status: text("status", { enum: ["pending", "approved", "rejected"] })

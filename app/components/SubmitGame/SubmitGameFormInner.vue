@@ -8,8 +8,14 @@ import {
   SUPPORTED_PC_STORES,
   SUPPORTED_PLATFORMS,
 } from "~~/shared/constants";
+import { CATEGORIES } from "~~/shared/constants/categories";
 import { InsertPcStorePlatformSchema } from "~~/shared/schemas/pcStorePlatform";
 import { InsertPlatformGroupSchema } from "~~/shared/schemas/platformGroup";
+
+const category = defineModel<number>("category", {
+  required: true,
+  default: 0,
+});
 
 const platformGroups = defineModel<PlatformGroups>("platformGroups", {
   required: true,
@@ -180,6 +186,19 @@ watch(
 
 <template>
   <div>
+    <div class="form__group">
+      <TheSelect
+        v-model="category"
+        :options="
+          CATEGORIES.map(category => ({
+            label: category.name,
+            value: category.pointer,
+          }))
+        "
+        label="Category"
+      />
+    </div>
+
     <fieldset>
       <legend>Game Modes</legend>
       <p class="tw:text-sm tw:text-text-muted tw:mb-4">
