@@ -1,4 +1,4 @@
-import { and, count, eq, inArray, sql } from "drizzle-orm";
+import { and, asc, count, desc, inArray, sql } from "drizzle-orm";
 
 import { db } from "~~/server/db";
 import {
@@ -15,9 +15,9 @@ interface GamesRequestQuery {
   gameModes?: string; // Comma-separated game mode IDs
   limit?: string; // Limit for pagination
   offset?: string; // Offset for pagination
-  sort?: string; // Sorting criteria
+  sort?: string; // Format: field:order (e.g. created_at:desc)
   search?: string; // Search term for game names
-  status?: "pending" | "approved" | "rejected"; // Game status filter
+  status?: string; // Comma-separated status values
 }
 
 interface CountResult {
@@ -42,6 +42,7 @@ export default defineCachedEventHandler(
         offset = "0", // Default offset
         search,
         status,
+        sort = "created_at:desc", // Default sort
       }: GamesRequestQuery = query;
 
       // Parse query parameters
@@ -50,15 +51,29 @@ export default defineCachedEventHandler(
       const parsedLimit = parseInt(limit);
       const parsedOffset = parseInt(offset);
 
-      // Validate status parameter
-      const validStatus =
-        status && ["pending", "approved", "rejected"].includes(status)
-          ? status
-          : undefined;
+      // Parse sort parameter
+      const sortField = sort.slice(1); // Remove +/- prefix
+      const isDescending = sort.startsWith("-");
+      const validSortFields = ["created_at", "updated_at"] as const;
+
+      const parsedSortField = validSortFields.includes(sortField as any)
+        ? sortField
+        : "created_at";
+
+      // Parse and validate status parameter
+      const validStatuses = status
+        ? decodeURIComponent(status)
+            .split(",")
+            .filter((s): s is "pending" | "approved" | "rejected" =>
+              ["pending", "approved", "rejected"].includes(s)
+            )
+        : undefined;
 
       // Base conditions for filtered queries
       const baseConditions = {
-        where: validStatus ? eq(games.status, validStatus) : undefined,
+        where: validStatuses?.length
+          ? inArray(games.status, validStatuses)
+          : undefined,
       };
 
       let conditions = baseConditions.where;
@@ -175,7 +190,17 @@ export default defineCachedEventHandler(
         },
         where: conditions,
         orderBy: [
-          sql`(external->>'igdbAggregatedRating')::float DESC NULLS LAST`, // Sort by aggregated rating
+          isDescending
+            ? desc(
+                games[
+                  parsedSortField === "created_at" ? "createdAt" : "updatedAt"
+                ]
+              )
+            : asc(
+                games[
+                  parsedSortField === "created_at" ? "createdAt" : "updatedAt"
+                ]
+              ),
         ],
         limit: parsedLimit,
         offset: parsedOffset,

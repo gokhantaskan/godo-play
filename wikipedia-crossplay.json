@@ -1,7 +1,7 @@
 {
   "#IDARB": ["MS", "XBO"],
   "Aliens: Fireteam Elite": ["Steam", "MS", "XBO", "PS5", "XBSX/XBSS"],
-  "Among Us": [
+  "-Among Us": [
     "GOG",
     "Steam",
     "MS",
@@ -15,7 +15,7 @@
     "XBSX/XBSS",
     "GeForce Now"
   ],
-  "Apex Legends": [
+  "-Apex Legends": [
     "Steam",
     "EA",
     "PS4",
@@ -26,8 +26,8 @@
     "GeForce Now"
   ],
   "Aragami": ["Linux", "Mac", "GOG", "Steam", "XBO", "Switch", "Luna"],
-  "Ark: Survival Ascended": ["Steam", "MS", "PS5", "XBSX/XBSS"],
-  "Ark: Survival Evolved": [
+  "-Ark: Survival Ascended": ["Steam", "MS", "PS5", "XBSX/XBSS"],
+  "?Ark: Survival Evolved": [
     "Linux",
     "Mac",
     "Steam",
@@ -45,10 +45,10 @@
   "Astroneer": ["MS", "XBO"],
   "Atom Universe": ["Steam", "PS4"],
   "Back 4 Blood": ["Steam", "MS", "Epic", "PS4", "XBO", "PS5", "XBSX/XBSS"],
-  "Battlefield 2042": ["PS4", "XBO", "Steam", "EA, Epic", "PS5", "XBSX/XBSS"],
+  "-Battlefield 2042": ["PS4", "XBO", "Steam", "EA, Epic", "PS5", "XBSX/XBSS"],
   "Black Desert Online": ["PS4", "XBO"],
   "BlobCat": ["Steam", "Switch"],
-  "Borderlands 3": ["Mac", "Steam", "Epic", "PS4", "XBO", "PS5", "XBSX/XBSS"],
+  "-Borderlands 3": ["Mac", "Steam", "Epic", "PS4", "XBO", "PS5", "XBSX/XBSS"],
   "Boundless": ["Mac", "Steam", "PS4", "PS5"],
   "Brawlhalla": [
     "Mac",
@@ -112,7 +112,7 @@
     "PS5",
     "XBSX/XBSS"
   ],
-  "Crusader Kings III": ["Linux", "Mac", "Steam", "MS"],
+  "-Crusader Kings III": ["Linux", "Mac", "Steam", "MS"],
   "Cubemen 2": ["Linux", "Mac", "Steam", "iOS", "Android", "Wii U"],
   "Dauntless": [
     "Epic",
@@ -126,7 +126,7 @@
     "GeForce Now"
   ],
   "DC Universe Online": ["Steam", "PS4", "PS5"],
-  "Dead by Daylight": [
+  "-Dead by Daylight": [
     "Steam",
     "MS",
     "Epic",
@@ -139,8 +139,8 @@
     "iOS",
     "Android"
   ],
-  "Deep Rock Galactic": ["MS", "XBO", "XBSX/XBSS"],
-  "Destiny 2": [
+  "-Deep Rock Galactic": ["MS", "XBO", "XBSX/XBSS"],
+  "-Destiny 2": [
     "Steam",
     "MS",
     "Epic",
@@ -164,8 +164,8 @@
     "PS5",
     "XBSX/XBSS"
   ],
-  "Diablo IV": ["Steam", "Battle.net", "PS4", "XBO", "PS5", "XBSX/XBSS"],
-  "Dirt 5": ["Steam", "MS", "PS4", "XBO", "PS5", "XBSX/XBSS"],
+  "-Diablo IV": ["Steam", "Battle.net", "PS4", "XBO", "PS5", "XBSX/XBSS"],
+  "-Dirt 5": ["Steam", "MS", "PS4", "XBO", "PS5", "XBSX/XBSS"],
   "Disc Jam": ["Steam", "PS4", "PS5", "Switch"],
   "Disney Speedstorm": [
     "Steam",
@@ -181,13 +181,13 @@
   "Dragon Quest Builders 2": ["MS", "PS4", "XBO", "Switch"],
   "Dreii": ["PS4", "PS5", "Vita", "Linux", "Mac", "Steam", "Wii U"],
   "Eagle Flight": ["Steam", "PS4", "PS5"],
-  "Enlisted": ["MS", "XBO", "XBSX/XBSS"],
-  "Europa Universalis IV": ["Linux", "Mac", "Steam", "MS", "Epic"],
+  "-Enlisted": ["MS", "XBO", "XBSX/XBSS"],
+  "-Europa Universalis IV": ["Linux", "Mac", "Steam", "MS", "Epic"],
   "Eve Online": ["Mac", "Steam", "Epic, Other"],
   "Eve: Valkyrie": ["Steam", "PS4", "PS5"],
   "Exorder": ["Linux", "Mac", "Steam", "Switch"],
   "Fable Fortune": ["MS", "XBO", "XBSX/XBSS"],
-  "Factorio": ["Linux", "Mac", "GOG", "Steam", "Other"],
+  "-Factorio": ["Linux", "Mac", "GOG", "Steam", "Other"],
   "Faeria": ["Steam", "MS", "Epic", "PS4", "XBO", "Switch", "PS5", "XBSX/XBSS"],
   "Fall Guys: Ultimate Knockout": [
     "Steam",
@@ -226,19 +226,19 @@
     "GeForce Now"
   ],
   "Forza Horizon 3": ["MS", "XBO", "XBSX/XBSS"],
-  "Forza Horizon 4": ["Steam", "MS", "XBO", "XBSX/XBSS"],
-  "Forza Horizon 5": ["Steam", "MS", "XBO", "XBSX/XBSS"],
+  "-Forza Horizon 4": ["Steam", "MS", "XBO", "XBSX/XBSS"],
+  "-Forza Horizon 5": ["Steam", "MS", "XBO", "XBSX/XBSS"],
   "Forza Motorsport 7": ["MS", "XBO", "XBSX/XBSS"],
   "Frozen Synapse": ["Linux", "Mac", "GOG", "Steam", "Other", "iOS", "Android"],
   "Full Metal Furies": ["MS", "XBO", "XBSX/XBSS"],
   "Games of Glory": ["Steam", "PS4", "PS5"],
   "Gang Beasts": ["MS", "XBO", "XBSX/XBSS"],
   "Gears of War 4": ["MS", "XBO", "XBSX/XBSS"],
-  "Gears 5": ["Steam", "MS", "XBO", "XBSX/XBSS"],
+  "-Gears 5": ["Steam", "MS", "XBO", "XBSX/XBSS"],
   "Genesis": ["Steam", "PS4", "PS5"],
-  "Genshin Impact": ["MS", "Epic", "iOS", "Android", "PS4", "PS5"],
-  "Grid Legends": ["Steam", "EA", "PS4", "XBO", "PS5", "XBSX/XBSS"],
-  "Grounded": ["Steam", "MS", "XBO", "XBSX/XBSS"],
+  "-Genshin Impact": ["MS", "Epic", "iOS", "Android", "PS4", "PS5"],
+  "-Grid Legends": ["Steam", "EA", "PS4", "XBO", "PS5", "XBSX/XBSS"],
+  "-Grounded": ["Steam", "MS", "XBO", "XBSX/XBSS"],
   "Guilty Gear Strive": ["Steam", "PS4", "XBO", "PS5", "XBSX/XBSS"],
   "Guns of Icarus: Alliance": ["Linux", "Mac", "Steam", "PS4", "PS5"],
   "Gwent: The Witcher Card Game": [
@@ -269,7 +269,7 @@
   "Helldivers 2": ["Steam", "PS5"],
   "Hover": ["Steam", "XBO", "Switch", "XBSX/XBSS", "PS4", "PS5"],
   "Human: Fall Flat": ["MS", "XBO", "XBSX/XBSS"],
-  "Hunt: Showdown": ["PS4", "XBO", "PS5", "XBSX/XBSS"],
+  "?Hunt: Showdown": ["PS4", "XBO", "PS5", "XBSX/XBSS"],
   "Insurgency: Sandstorm": [
     "Steam",
     "MS",
@@ -296,9 +296,9 @@
   "Lethal League Blaze": ["MS", "XBO", "XBSX/XBSS"],
   "LevelHead": ["Steam", "iOS", "Android", "Switch"],
   "Lightseekers": ["Mac", "Steam", "iOS", "Android", "Switch"],
-  "Madden NFL 24": ["Steam", "EA", "Epic", "PS5", "XBSX/XBSS"],
+  "-Madden NFL 24": ["Steam", "EA", "Epic", "PS5", "XBSX/XBSS"],
   "Mantis Burn Racing": ["Steam", "PS4", "PS5", "XBO", "Switch", "XBSX/XBSS"],
-  "Matchpoint: Tennis Championships": [
+  "-Matchpoint: Tennis Championships": [
     "Steam",
     "MS",
     "Epic",
@@ -322,7 +322,7 @@
     "PS5",
     "XBSX/XBSS"
   ],
-  "Minecraft Dungeons": [
+  "-Minecraft Dungeons": [
     "Steam",
     "MS",
     "PS4",
@@ -333,9 +333,9 @@
     "Xbox Cloud Gaming"
   ],
   "Minetest": ["Linux", "Mac", "MS", "iOS", "Android", "WP"],
-  "Monster Train": ["GOG", "Steam", "MS", "XBO", "XBSX/XBSS"],
+  "-Monster Train": ["GOG", "Steam", "MS", "XBO", "XBSX/XBSS"],
   "Morphies Law": ["Steam", "Switch"],
-  "Mortal Kombat 11": ["PS4", "XBO", "PS5", "XBSX/XBSS"],
+  "-Mortal Kombat 11": ["PS4", "XBO", "PS5", "XBSX/XBSS"],
   "MultiVersus": ["Steam", "PS4", "XBO", "PS5", "XBSX/XBSS"],
   "Mushroom Wars 2": ["Mac", "Steam", "iOS", "Android", "Switch"],
   "NBA 2K Playgrounds 2": ["Steam", "XBO", "Switch", "XBSX/XBSS"],
@@ -347,8 +347,8 @@
     "PS5",
     "XBSX/XBSS"
   ],
-  "Need for Speed Heat": ["Steam", "EA", "PS4", "XBO", "PS5", "XBSX/XBSS"],
-  "Need for Speed: Hot Pursuit Remastered": [
+  "-Need for Speed Heat": ["Steam", "EA", "PS4", "XBO", "PS5", "XBSX/XBSS"],
+  "-Need for Speed: Hot Pursuit Remastered": [
     "Steam",
     "EA",
     "PS4",
@@ -368,10 +368,10 @@
     "XBSX/XBSS"
   ],
   "Next Up Hero": ["Mac", "Steam", "XBO", "Switch", "XBSX/XBSS"],
-  "No Man's Sky": ["Steam", "MS", "PS4", "XBO", "PS5", "XBSX/XBSS"],
+  "-No Man's Sky": ["Steam", "MS", "PS4", "XBO", "PS5", "XBSX/XBSS"],
   "Onigiri": ["Steam", "Switch"],
-  "Operation: Tango": ["Steam", "Epic", "PS4", "XBO", "PS5", "XBSX/XBSS"],
-  "Overcooked: All You Can Eat": [
+  "-Operation: Tango": ["Steam", "Epic", "PS4", "XBO", "PS5", "XBSX/XBSS"],
+  "-Overcooked: All You Can Eat": [
     "Steam",
     "PS4",
     "XBO",
@@ -389,7 +389,7 @@
     "PS4",
     "PS5"
   ],
-  "Overwatch 2": [
+  "-Overwatch 2": [
     "Steam",
     "Battle.net",
     "PS4",
@@ -412,7 +412,7 @@
   ],
   "Phantom Dust": ["MS", "XBO", "XBSX/XBSS"],
   "Pinball FX 3": ["Steam", "PS4", "PS5", "MS", "XBO", "Switch", "XBSX/XBSS"],
-  "PUBG: Battlegrounds": ["PS4", "XBO", "PS5", "XBSX/XBSS"],
+  "-PUBG: Battlegrounds": ["PS4", "XBO", "PS5", "XBSX/XBSS"],
   "Power Rangers: Battle for the Grid": [
     "Steam",
     "MS",
@@ -438,11 +438,11 @@
   ],
   "Rec Room": ["Steam", "iOS", "PS4", "XBO", "PS5", "XBSX/XBSS", "OQ"],
   "Remnant: From the Ashes": ["MS", "XBO", "XBSX/XBSS"],
-  "Remnant 2": ["MS", "XBO", "XBSX/XBSS"],
+  "-Remnant 2": ["MS", "XBO", "XBSX/XBSS"],
   "Riptide GP Renegade": ["Steam", "Switch", "MS", "XBO", "XBSX/XBSS"],
   "Roblox": ["Mac", "MS", "iOS", "Android", "PS4", "XBO", "PS5", "XBSX/XBSS"],
   "Rocket Arena": ["Steam", "EA", "PS4", "XBO", "PS5", "XBSX/XBSS"],
-  "Rocket League": [
+  "-Rocket League": [
     "Steam",
     "Epic",
     "PS4",
@@ -452,7 +452,7 @@
     "XBSX/XBSS",
     "GeForce Now"
   ],
-  "Rogue Company": [
+  "-Rogue Company": [
     "Steam",
     "Epic",
     "PS4",
@@ -462,7 +462,7 @@
     "XBSX/XBSS",
     "GeForce Now"
   ],
-  "Sea of Thieves": ["Steam", "MS", "XBO", "PS5", "XBSX/XBSS"],
+  "-Sea of Thieves": ["Steam", "MS", "XBO", "PS5", "XBSX/XBSS"],
   "Siegecraft Commander": [
     "Mac",
     "Steam",
@@ -474,24 +474,24 @@
     "XBSX/XBSS"
   ],
   "Sky: Children of the Light": ["iOS", "Android", "PS4", "Switch"],
-  "Smite": ["Steam", "Epic", "PS4", "XBO", "Switch", "PS5", "XBSX/XBSS"],
+  "-Smite": ["Steam", "Epic", "PS4", "XBO", "Switch", "PS5", "XBSX/XBSS"],
   "Sniper Elite V2 Remastered": ["MS", "XBO", "XBSX/XBSS"],
-  "SnowRunner": ["Steam", "MS", "Epic", "PS4", "XBO", "Switch", "XBSX/XBSS"],
+  "-SnowRunner": ["Steam", "MS", "Epic", "PS4", "XBO", "Switch", "XBSX/XBSS"],
   "Spacelords": ["Steam", "MS", "PS4", "XBO", "PS5", "XBSX/XBSS"],
   "Space Junkies": ["Steam", "PS4", "PS5"],
-  "Spelunky 2": ["Steam", "MS", "PS4", "XBO", "Switch", "PS5", "XBSX/XBSS"],
+  "-Spelunky 2": ["Steam", "MS", "PS4", "XBO", "Switch", "PS5", "XBSX/XBSS"],
   "Spellbreak": ["Epic", "PS4", "XBO", "Switch", "PS5", "XBSX/XBSS"],
   "Splitgate": ["Linux", "Steam", "PS4", "XBO", "PS5", "XBSX/XBSS"],
   "Sports Bar VR": ["Steam", "PS4", "PS5"],
   "StarCraft II": ["Mac", "Battle.net"],
   "Star Trek: Bridge Crew": ["Steam", "PS4", "PS5"],
-  "Star Wars: Squadrons": ["Steam", "EA", "PS4", "XBO", "PS5", "XBSX/XBSS"],
-  "State of Decay 2": ["Steam", "MS", "XBO", "XBSX/XBSS"],
+  "-Star Wars: Squadrons": ["Steam", "EA", "PS4", "XBO", "PS5", "XBSX/XBSS"],
+  "-State of Decay 2": ["Steam", "MS", "XBO", "XBSX/XBSS"],
   "Street Fighter V": ["Steam", "PS4", "PS5"],
-  "Street Fighter 6": ["Steam", "PS4", "PS5", "XBSX/XBSS"],
+  "-Street Fighter 6": ["Steam", "PS4", "PS5", "XBSX/XBSS"],
   "Streets of Rage 4": ["MS", "XBO", "XBSX/XBSS"],
   "Square Heroes": ["Steam", "PS4", "PS5"],
-  "Super Animal Royale": [
+  "-Super Animal Royale": [
     "Mac",
     "Steam",
     "PS4",
@@ -529,7 +529,7 @@
   "Surviv.io": ["Linux", "Mac", "MS", "iOS", "Android"],
   "Talisman: Digital Edition": ["Steam", "iOS", "Android", "Switch"],
   "Tannenberg": ["PS4", "XBO", "PS5", "XBSX/XBSS"],
-  "Tekken 8": ["Steam", "PS5", "XBSX/XBSS"],
+  "-Tekken 8": ["Steam", "PS5", "XBSX/XBSS"],
   "Teenage Mutant Ninja Turtles: Shredder's Revenge": [
     "Steam",
     "MS",
@@ -575,7 +575,7 @@
     "XBO",
     "XBSX/XBSS"
   ],
-  "Total War: Warhammer III": ["Linux", "Mac", "Steam", "MS", "Epic"],
+  "-Total War: Warhammer III": ["Linux", "Mac", "Steam", "MS", "Epic"],
   "Touring Karts": ["Steam", "iOS", "Android", "PS4", "Switch", "PS5"],
   "Trailblazers": [
     "Linux",
@@ -615,7 +615,7 @@
     "Android",
     "Switch"
   ],
-  "War Thunder": ["Linux", "Mac", "Steam", "PS4", "XBO", "PS5", "XBSX/XBSS"],
+  "-War Thunder": ["Linux", "Mac", "Steam", "PS4", "XBO", "PS5", "XBSX/XBSS"],
   "Warspear": ["Linux", "Mac", "Steam", "iOS", "Android", "WP"],
   "Warface": [
     "Steam",
@@ -647,7 +647,7 @@
   ],
   "Worms W.M.D": ["Linux", "Mac", "Steam"],
   "WWE 2K Battlegrounds": ["Steam", "XBO", "XBSX/XBSS"],
-  "Yu-Gi-Oh! Master Duel": [
+  "-Yu-Gi-Oh! Master Duel": [
     "Steam",
     "iOS",
     "Android",

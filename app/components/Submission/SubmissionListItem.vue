@@ -72,23 +72,44 @@ async function handleDelete() {
     <div class="submission-card__content">
       <div class="submission-card__header">
         <h2 class="submission-card__title">{{ game.name }}</h2>
-        <TheButton
-          v-if="game.status === 'approved'"
-          size="sm"
-          variant="secondary"
-          @click="handleDelete"
-        >
-          Delete
-        </TheButton>
+        <div class="tw:flex tw:items-center tw:gap-2">
+          <span
+            class="submission-card__status"
+            :class="{
+              'tw:bg-yellow-100 tw:text-yellow-800': game.status === 'pending',
+              'tw:bg-green-100 tw:text-green-800': game.status === 'approved',
+              'tw:bg-red-100 tw:text-red-800': game.status === 'rejected',
+            }"
+          >
+            {{ game.status }}
+          </span>
+          <TheButton
+            v-if="game.status === 'approved'"
+            size="sm"
+            variant="secondary"
+            @click="handleDelete"
+          >
+            Delete
+          </TheButton>
+        </div>
       </div>
       <p class="submission-card__meta">ID: {{ game.id }}</p>
       <p class="submission-card__meta">
-        Submitted:
+        Created:
         {{
           new Intl.DateTimeFormat("en-US", {
             dateStyle: "medium",
             timeStyle: "short",
           }).format(new Date(game.createdAt))
+        }}
+      </p>
+      <p class="submission-card__meta">
+        Updated:
+        {{
+          new Intl.DateTimeFormat("en-US", {
+            dateStyle: "medium",
+            timeStyle: "short",
+          }).format(new Date(game.updatedAt))
         }}
       </p>
 
@@ -181,6 +202,15 @@ async function handleDelete() {
     font-weight: 500;
     color: var(--tw-color-text);
     line-height: 1.25;
+  }
+
+  &__status {
+    font-size: 0.75rem;
+    font-weight: 500;
+    padding-block: 0.125rem;
+    padding-inline: 0.5rem;
+    border-radius: var(--tw-radius-full);
+    text-transform: capitalize;
   }
 
   &__meta {

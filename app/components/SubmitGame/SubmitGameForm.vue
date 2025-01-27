@@ -61,25 +61,23 @@ async function handleSubmit(event: Event) {
       return;
     }
 
-    const payload: SubmitGamePayload = {
-      game: {
-        name: selectedGame.value.name,
-        slug: selectedGame.value.slug,
-        external: {
-          igdbId: selectedGame.value.id,
-          igdbImageId: selectedGame.value.imageId,
-          igdbAggregatedRating: selectedGame.value.aggregated_rating,
-        },
-      },
-      platformGroups: selectedPlatformGroups.value,
-      pcStoresPlatforms: selectedPcStoresPlatforms.value,
-      gameModeIds: selectedGameModes.value,
-      token,
-    };
-
-    await $fetch("/api/games", {
+    await $fetch<SubmitGamePayload>("/api/games", {
       method: "POST",
-      body: payload,
+      body: {
+        game: {
+          name: selectedGame.value.name,
+          slug: selectedGame.value.slug,
+          external: {
+            igdbId: selectedGame.value.id,
+            igdbImageId: selectedGame.value.imageId,
+            igdbAggregatedRating: selectedGame.value.aggregated_rating,
+          },
+        },
+        platformGroups: selectedPlatformGroups.value,
+        pcStoresPlatforms: selectedPcStoresPlatforms.value,
+        gameModeIds: selectedGameModes.value,
+        token,
+      },
     });
 
     // Reset form

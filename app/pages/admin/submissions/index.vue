@@ -1,15 +1,8 @@
 <script setup lang="ts">
-import {
-  TabsContent,
-  TabsIndicator,
-  TabsList,
-  TabsRoot,
-  TabsTrigger,
-} from "radix-vue";
-
 import type { GameSubmissionWithRelations } from "~~/shared/types";
 
 type SubmissionStatus = "pending" | "approved" | "rejected";
+type SortField = "+created_at" | "-created_at" | "+updated_at" | "-updated_at";
 
 interface GamesResponse {
   total: number;
@@ -22,34 +15,33 @@ definePageMeta({
   name: "AdminGameSubmissionsPage",
 });
 
-const tabs = [
-  {
-    status: "pending" as const,
-    label: "Pending",
-  },
-  {
-    status: "approved" as const,
-    label: "Approved",
-  },
-  {
-    status: "rejected" as const,
-    label: "Rejected",
-  },
-];
+const selectedStatuses = ref<SubmissionStatus[]>([
+  "pending",
+  "approved",
+  "rejected",
+]);
 
-const currentStatus = ref<SubmissionStatus>("pending");
+const selectedSort = ref<SortField>("-created_at");
 
 const { data: response, refresh } = await useFetch<GamesResponse>(
   "/api/games",
   {
-    query: {
-      status: currentStatus,
+    query: computed(() => ({
       limit: 400,
-    },
+      status: selectedStatuses.value.join(","),
+      sort: selectedSort.value,
+    })),
   }
 );
 
 const submissions = computed(() => response.value?.data ?? []);
+
+const sortOptions = [
+  { label: "Created At (Newest)", value: "-created_at" },
+  { label: "Created At (Oldest)", value: "+created_at" },
+  { label: "Updated At (Newest)", value: "-updated_at" },
+  { label: "Updated At (Oldest)", value: "+updated_at" },
+] as const;
 </script>
 
 <template>
@@ -69,50 +61,50 @@ const submissions = computed(() => response.value?.data ?? []);
       </NuxtLink>
     </header>
 
-    <TabsRoot
-      v-model="currentStatus"
-      class="submissions"
-      default-value="pending"
-    >
-      <TabsList class="submissions__tab-list">
-        <TabsIndicator class="submissions__indicator">
-          <div class="submissions__indicator-inner" />
-        </TabsIndicator>
-        <TabsTrigger
-          v-for="tab in tabs"
-          :key="tab.status"
-          :value="tab.status"
-          class="submissions__tab"
-        >
-          {{ tab.label }}
-        </TabsTrigger>
-      </TabsList>
+    <div>
+      <div class="tw:flex tw:flex-wrap tw:gap-8 tw:mb-4">
+        <div class="tw:flex tw:gap-4">
+          <template
+            v-for="status in ['pending', 'approved', 'rejected'] as const"
+            :key="status"
+          >
+            <label class="tw:flex tw:items-center tw:gap-2">
+              <input
+                v-model="selectedStatuses"
+                type="checkbox"
+                :value="status"
+              />
+              <span class="tw:capitalize">{{ status }}</span>
+            </label>
+          </template>
+        </div>
 
-      <TabsContent
-        v-for="tab in tabs"
-        :key="tab.status"
-        :value="tab.status"
-        class="submissions__panel"
-      >
+        <div class="tw:flex tw:gap-4">
+          <select
+            v-model="selectedSort"
+            class="tw:px-2 tw:py-1 tw:rounded-md tw:border tw:border-border"
+          >
+            <option
+              v-for="option in sortOptions"
+              :key="option.value"
+              :value="option.value"
+            >
+              {{ option.label }}
+            </option>
+          </select>
+        </div>
+      </div>
+
+      <div>
         <SubmissionListItem
-          v-for="submission in submissions.toSorted(
-            (a: GameSubmissionWithRelations, b: GameSubmissionWithRelations) =>
-              new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-          )"
+          v-for="submission in submissions"
           :key="submission.id"
           :game="submission"
-          :is-pending="tab.status === 'pending'"
+          :is-pending="submission.status === 'pending'"
           @refresh="refresh"
         />
-
-        <p
-          v-if="submissions.length === 0"
-          class="submissions__empty"
-        >
-          No {{ tab.label }} submissions found.
-        </p>
-      </TabsContent>
-    </TabsRoot>
+      </div>
+    </div>
   </main>
 </template>
 
