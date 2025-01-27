@@ -25,7 +25,7 @@ export const gameSubmissionGameModes = pgTable(
   "game_submission_game_modes",
   {
     submissionId: integer("submission_id")
-      .references(() => games.id)
+      .references(() => games.id, { onDelete: "cascade" })
       .notNull(),
     gameModeId: integer("game_mode_id")
       .references(() => gameModes.id)

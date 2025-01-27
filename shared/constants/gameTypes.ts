@@ -25,4 +25,9 @@ export const GAME_TYPES: {
     icon: "lucide:refresh-cw",
     slug: "remaster",
   },
+  10: {
+    label: "Expanded Game",
+    icon: "lucide:expand",
+    slug: "expanded_game",
+  },
 };
