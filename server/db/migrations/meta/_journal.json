@@ -36,6 +36,13 @@
       "when": 1738006089634,
       "tag": "0004_thankful_giant_girl",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1738084162544,
+      "tag": "0005_green_starhawk",
+      "breakpoints": true
     }
   ]
 }

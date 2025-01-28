@@ -48,7 +48,7 @@ You are an senior fullstack developer expert in Vue.js, Nuxt.js, TailwindCSS, an
       const submissions = await db.query.games.findMany({
         with: {
           platformGroups: true, // <== camelCase
-          pcStorePlatforms: true, // <== camelCase
+          storePlatforms: true, // <== camelCase
         },
         orderBy: [desc(games.updated_at)],
       });

@@ -46,7 +46,7 @@ export const SubmitGameSchema = z.object({
     .refine(groups => groups.every(group => group.length > 0), {
       message: "Each platform group must contain at least one platform",
     }),
-  pcStoresPlatforms: z.record(
+  storesPlatforms: z.record(
     z.string(),
     z.object({
       crossplayPlatforms: z.array(z.number()).default([]),

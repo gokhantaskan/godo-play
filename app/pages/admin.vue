@@ -4,11 +4,15 @@ const links = [
     label: "Submissions",
     to: { name: "AdminGameSubmissionsPage" },
   },
+  {
+    label: "Stores",
+    to: { name: "AdminStoresPage" },
+  },
 ];
 </script>
 
 <template>
-  <main>
+  <main class="tw:container">
     <h1>Admin</h1>
     <ul>
       <li
@@ -18,5 +22,9 @@ const links = [
         <NuxtLink :to="link.to">{{ link.label }}</NuxtLink>
       </li>
     </ul>
+
+    <div>
+      <NuxtPage />
+    </div>
   </main>
 </template>

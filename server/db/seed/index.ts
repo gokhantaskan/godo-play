@@ -1,12 +1,12 @@
 import { seedGameCategories } from "./gameCategories";
 import { seedGameModes } from "./gameModes";
-import { seedPcStores } from "./pcStores";
 import { seedPlatforms } from "./platforms";
+import { seedStores } from "./stores";
 
 export async function seed() {
   try {
     await seedPlatforms();
-    await seedPcStores();
+    await seedStores();
     await seedGameModes();
     await seedGameCategories();
   } catch (error) {

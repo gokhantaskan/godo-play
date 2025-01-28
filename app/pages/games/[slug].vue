@@ -40,7 +40,7 @@ const { data: game } = useFetch(`/api/game-details/${slug}`, {
       <div v-if="game?.platformGroups?.length">
         <CrossPlayGameCardPlatformGroups
           :platform-groups="game.platformGroups"
-          :pc-stores="game?.pcStorePlatforms"
+          :pc-stores="game?.storePlatforms"
         />
       </div>
       <p class="game__description">{{ igdbGame?.storyline }}</p>

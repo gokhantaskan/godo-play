@@ -17,7 +17,7 @@ import { platforms } from "./platforms";
  * Previously, crossplayPlatforms was an integer array;
  * now we'll use a pivot table for crossplay references.
  */
-export const pcStorePlatforms = pgTable("pc_store_platforms", {
+export const storePlatforms = pgTable("store_platforms", {
   id: serial("id").primaryKey(),
   submissionId: integer("submission_id")
     .references(() => games.id, { onDelete: "cascade" })
@@ -31,11 +31,11 @@ export const pcStorePlatforms = pgTable("pc_store_platforms", {
  * Each row ties one PC store entry to a single platform,
  * allowing you to query crossplay on a per-platform basis.
  */
-export const pcStoreCrossplayPlatforms = pgTable(
-  "pc_store_crossplay_platforms",
+export const storeCrossplayPlatforms = pgTable(
+  "store_crossplay_platforms",
   {
-    pcStorePlatformId: integer("pc_store_platform_id")
-      .references(() => pcStorePlatforms.id, { onDelete: "cascade" })
+    storePlatformId: integer("store_platform_id")
+      .references(() => storePlatforms.id, { onDelete: "cascade" })
       .notNull(),
     platformId: integer("platform_id")
       .references(() => platforms.id)
@@ -43,7 +43,7 @@ export const pcStoreCrossplayPlatforms = pgTable(
   },
   table => [
     primaryKey({
-      columns: [table.pcStorePlatformId, table.platformId],
+      columns: [table.storePlatformId, table.platformId],
     }),
   ]
 );
@@ -51,19 +51,18 @@ export const pcStoreCrossplayPlatforms = pgTable(
 /**
  * Base Zod schemas generated from Drizzle schema
  */
-export const BasePcStorePlatformSchema = createSelectSchema(pcStorePlatforms);
-export const BaseInsertPcStorePlatformSchema =
-  createInsertSchema(pcStorePlatforms);
+export const BaseStorePlatformSchema = createSelectSchema(storePlatforms);
+export const BaseInsertStorePlatformSchema = createInsertSchema(storePlatforms);
 
-export const BasePcStoreCrossplayPlatformSchema = createSelectSchema(
-  pcStoreCrossplayPlatforms
+export const BaseStoreCrossplayPlatformSchema = createSelectSchema(
+  storeCrossplayPlatforms
 );
-export const BaseInsertPcStoreCrossplayPlatformSchema = createInsertSchema(
-  pcStoreCrossplayPlatforms
+export const BaseInsertStoreCrossplayPlatformSchema = createInsertSchema(
+  storeCrossplayPlatforms
 );
 
 /**
  * Types for internal database usage
  */
-export type PcStorePlatform = typeof pcStorePlatforms.$inferSelect;
-export type InsertPcStorePlatform = typeof pcStorePlatforms.$inferInsert;
+export type StorePlatform = typeof storePlatforms.$inferSelect;
+export type InsertStorePlatform = typeof storePlatforms.$inferInsert;

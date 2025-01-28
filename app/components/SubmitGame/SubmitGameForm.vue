@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import type {
-  PCStore,
-  PCStoreData,
   PlatformGroups,
+  Store,
+  StoreData,
   SubmitGamePayload,
 } from "@/types/submit-game";
 import type { GameOption } from "~/components/SubmitGame/SubmitGameAutocomplete.vue";
@@ -15,8 +15,8 @@ const { getToken } = useRecaptcha();
 const selectedGame = ref<GameOption | null>(null);
 const selectedCategory = ref<number>(0);
 const selectedPlatformGroups = ref<PlatformGroups>([[]]);
-const selectedPcStores = ref<PCStore["slug"][]>([]);
-const selectedPcStoresPlatforms = ref<PCStoreData>({});
+const selectedPcStores = ref<Store["slug"][]>([]);
+const selectedPcStoresPlatforms = ref<StoreData>({});
 const selectedGameModes = ref<number[]>([]);
 const isSubmitting = ref(false);
 const formError = ref<string | null>(null);
@@ -145,7 +145,7 @@ async function handleSubmit(event: Event) {
       v-model:category="selectedCategory"
       v-model:platform-groups="selectedPlatformGroups"
       v-model:pc-stores="selectedPcStores"
-      v-model:pc-store-platforms="selectedPcStoresPlatforms"
+      v-model:store-platforms="selectedPcStoresPlatforms"
       v-model:game-modes="selectedGameModes"
     />
 

@@ -20,7 +20,7 @@ const groupPlatformsWithPC = computed(() => {
 
 const sortedPCStores = computed(
   () =>
-    props.game.pcStorePlatforms?.toSorted((a, b) =>
+    props.game.storePlatforms?.toSorted((a, b) =>
       a.storeSlug.localeCompare(b.storeSlug)
     ) ?? []
 );
@@ -131,7 +131,7 @@ async function openModal() {
 
         <!-- PC Stores -->
         <div
-          v-if="shouldDisplayPCStores && game.pcStorePlatforms?.length"
+          v-if="shouldDisplayPCStores && game.storePlatforms?.length"
           class="game-card__tags"
           aria-label="PC Stores"
         >

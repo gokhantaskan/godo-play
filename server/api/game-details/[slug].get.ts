@@ -42,7 +42,7 @@ export default defineCachedEventHandler(
               },
             },
           },
-          pcStorePlatforms: {
+          storePlatforms: {
             columns: {
               id: true,
               storeSlug: true,

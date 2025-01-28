@@ -1,7 +1,7 @@
-import type { PcStoreHardcoded } from "~~/shared/types/globals";
+import type { StoreHardcoded } from "~~/shared/types/globals";
 
 // IGDB PC Stores + Local Stores
-export const SUPPORTED_PC_STORES: PcStoreHardcoded[] = [
+export const SUPPORTED_STORES: StoreHardcoded[] = [
   {
     id: 1,
     slug: "steam",
@@ -47,14 +47,12 @@ export const SUPPORTED_PC_STORES: PcStoreHardcoded[] = [
   },
 ];
 
-export const SUPPORTED_PC_STORES_BY_SLUG = SUPPORTED_PC_STORES.reduce(
+export const SUPPORTED_PC_STORES_BY_SLUG = SUPPORTED_STORES.reduce(
   (acc, store) => {
     acc[store.slug] = store;
     return acc;
   },
-  {} as Record<string, PcStoreHardcoded>
+  {} as Record<string, StoreHardcoded>
 );
 
-export const SUPPORTED_PC_STORE_IDS = SUPPORTED_PC_STORES.map(
-  store => store.slug
-);
+export const SUPPORTED_PC_STORE_IDS = SUPPORTED_STORES.map(store => store.slug);

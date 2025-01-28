@@ -2,15 +2,15 @@
 import { z } from "zod";
 
 import type { PlatformId } from "~/types/crossPlay";
-import type { PCStore, PCStoreData, PlatformGroups } from "~/types/submit-game";
+import type { PlatformGroups, Store, StoreData } from "~/types/submit-game";
 import {
   GAME_MODES,
-  SUPPORTED_PC_STORES,
   SUPPORTED_PLATFORMS,
+  SUPPORTED_STORES,
 } from "~~/shared/constants";
 import { CATEGORIES } from "~~/shared/constants/categories";
-import { InsertPcStorePlatformSchema } from "~~/shared/schemas/pcStorePlatform";
 import { InsertPlatformGroupSchema } from "~~/shared/schemas/platformGroup";
+import { InsertStorePlatformSchema } from "~~/shared/schemas/storePlatform";
 
 const category = defineModel<number>("category", {
   required: true,
@@ -22,12 +22,12 @@ const platformGroups = defineModel<PlatformGroups>("platformGroups", {
   default: [[]],
 });
 
-const pcStores = defineModel<PCStore["slug"][]>("pcStores", {
+const pcStores = defineModel<Store["slug"][]>("pcStores", {
   required: true,
   default: [],
 });
 
-const pcStorePlatforms = defineModel<PCStoreData>("pcStorePlatforms", {
+const storePlatforms = defineModel<StoreData>("storePlatforms", {
   required: true,
   default: {},
 });
@@ -91,31 +91,30 @@ function removePlatformGroup(index: number): void {
 }
 
 function updatePcStorePlatforms(
-  store: PCStore["slug"],
+  store: Store["slug"],
   platforms: PlatformId[]
 ): void {
   try {
     // Validate the store slug
-    InsertPcStorePlatformSchema.parse({
+    InsertStorePlatformSchema.parse({
       storeSlug: store,
       submissionId: 0, // This will be set by the server
     });
 
-    pcStorePlatforms.value[store] = {
+    storePlatforms.value[store] = {
       crossplayPlatforms: platforms,
     };
 
     // Clear any previous errors
     errors.value = {
       ...errors.value,
-      [`pcStorePlatforms.${store}`]: "",
+      [`storePlatforms.${store}`]: "",
     };
   } catch (error) {
     if (error instanceof z.ZodError) {
       errors.value = {
         ...errors.value,
-        [`pcStorePlatforms.${store}`]:
-          error.errors[0]?.message || "Invalid data",
+        [`storePlatforms.${store}`]: error.errors[0]?.message || "Invalid data",
       };
     }
   }
@@ -129,7 +128,7 @@ watch(
 
     if (!hasPCPlatform) {
       pcStores.value = [];
-      pcStorePlatforms.value = {};
+      storePlatforms.value = {};
     }
 
     // Validate each group
@@ -164,17 +163,17 @@ watch(
         store => !newStores.includes(store)
       );
 
-      pcStorePlatforms.value = Object.fromEntries(
-        Object.entries(pcStorePlatforms.value).filter(
-          ([store]) => !removedStores.includes(store as PCStore["slug"])
+      storePlatforms.value = Object.fromEntries(
+        Object.entries(storePlatforms.value).filter(
+          ([store]) => !removedStores.includes(store as Store["slug"])
         )
       );
     }
 
     newStores.forEach(store => {
-      if (!pcStorePlatforms.value[store]) {
-        pcStorePlatforms.value = {
-          ...pcStorePlatforms.value,
+      if (!storePlatforms.value[store]) {
+        storePlatforms.value = {
+          ...storePlatforms.value,
           [store]: { crossplayPlatforms: [] },
         };
       }
@@ -284,7 +283,7 @@ watch(
       </p>
       <div class="tw:space-y-4">
         <div
-          v-for="store in SUPPORTED_PC_STORES"
+          v-for="store in SUPPORTED_STORES"
           :key="store.slug"
           class="tw:space-y-1"
         >
@@ -302,7 +301,7 @@ watch(
           <div v-if="pcStores.includes(store.slug)">
             <PlatformSelect
               :model-value="
-                pcStorePlatforms[store.slug]?.crossplayPlatforms ?? []
+                storePlatforms[store.slug]?.crossplayPlatforms ?? []
               "
               :label="`Select platforms that ${store.name} version can play with`"
               multiple
@@ -317,10 +316,10 @@ watch(
               "
             />
             <p
-              v-if="errors[`pcStorePlatforms.${store.slug}`]"
+              v-if="errors[`storePlatforms.${store.slug}`]"
               class="tw:text-sm tw:text-error tw:mt-1"
             >
-              {{ errors[`pcStorePlatforms.${store.slug}`] }}
+              {{ errors[`storePlatforms.${store.slug}`] }}
             </p>
           </div>
         </div>

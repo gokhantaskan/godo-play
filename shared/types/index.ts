@@ -11,14 +11,6 @@ import type {
 } from "~~/server/db/schema/tables/gameModes";
 import type { DbGame, DbInsertGame } from "~~/server/db/schema/tables/games";
 import type {
-  InsertPcStorePlatform,
-  PcStorePlatform as DbPcStorePlatform,
-} from "~~/server/db/schema/tables/pcStorePlatforms";
-import type {
-  InsertPcStore,
-  PcStore as DbPcStore,
-} from "~~/server/db/schema/tables/pcStores";
-import type {
   InsertPlatformGroup,
   InsertPlatformGroupPlatform,
   PlatformGroup as DbPlatformGroup,
@@ -28,6 +20,14 @@ import type {
   InsertPlatform,
   Platform as DbPlatform,
 } from "~~/server/db/schema/tables/platforms";
+import type {
+  InsertStorePlatform,
+  StorePlatform as DbStorePlatform,
+} from "~~/server/db/schema/tables/storePlatforms";
+import type {
+  InsertStore,
+  Store as DbStore,
+} from "~~/server/db/schema/tables/stores";
 
 /**
  * READ TYPES
@@ -37,13 +37,13 @@ import type {
 // Core Types
 export type ReadGame = DbGame;
 export type ReadPlatform = DbPlatform;
-export type ReadPcStore = DbPcStore;
+export type ReadStore = DbStore;
 export type ReadGameMode = DbGameMode;
 
 // Relation Types
 export type ReadPlatformGroup = DbPlatformGroup;
 export type ReadPlatformGroupPlatform = DbPlatformGroupPlatform;
-export type ReadPcStorePlatform = DbPcStorePlatform;
+export type ReadStorePlatform = DbStorePlatform;
 export type ReadGameSubmissionGameMode = DbGameSubmissionGameMode;
 
 // UI Types
@@ -60,14 +60,14 @@ export interface GameSubmissionUIState {
 
 // Core Types
 export type InsertGame = DbInsertGame;
-export type { InsertGameMode, InsertPcStore, InsertPlatform };
+export type { InsertGameMode, InsertPlatform, InsertStore };
 
 // Relation Types
 export type {
   InsertGameSubmissionGameMode,
-  InsertPcStorePlatform,
   InsertPlatformGroup,
   InsertPlatformGroupPlatform,
+  InsertStorePlatform,
 };
 
 // Submission Types
@@ -82,7 +82,7 @@ export interface NewGameSubmission {
   platformGroups: Array<{
     platforms: Array<{ id: number }>;
   }>;
-  pcStorePlatforms: Array<{
+  storePlatforms: Array<{
     storeSlug: string;
     crossplayPlatforms: Array<{ id: number }>;
   }>;
@@ -103,7 +103,7 @@ export interface GameSubmissionWithRelations extends ReadGame {
       };
     }>;
   }>;
-  pcStorePlatforms: Array<{
+  storePlatforms: Array<{
     id: number;
     storeSlug: string;
     crossplayEntries: Array<{
