@@ -52,7 +52,7 @@ const availableMultiplayerModes = computed(() => {
   >
     <div class="game-details__main">
       <div class="game-details__cover">
-        <NuxtImg
+        <img
           :src="`https://images.igdb.com/igdb/image/upload/t_720p/${details.cover.image_id}.jpg`"
           :alt="`Cover image of ${details.name}`"
           :width="details.cover.width"
