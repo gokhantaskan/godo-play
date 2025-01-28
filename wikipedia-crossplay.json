@@ -1,6 +1,5 @@
 {
-  "#IDARB": ["MS", "XBO"],
-  "Aliens: Fireteam Elite": ["Steam", "MS", "XBO", "PS5", "XBSX/XBSS"],
+  "-Aliens: Fireteam Elite": ["Steam", "MS", "XBO", "PS5", "XBSX/XBSS"],
   "-Among Us": [
     "GOG",
     "Steam",
@@ -25,9 +24,7 @@
     "XBSX/XBSS",
     "GeForce Now"
   ],
-  "Aragami": ["Linux", "Mac", "GOG", "Steam", "XBO", "Switch", "Luna"],
-  "-Ark: Survival Ascended": ["Steam", "MS", "PS5", "XBSX/XBSS"],
-  "?Ark: Survival Evolved": [
+  "Ark: Survival Evolved": [
     "Linux",
     "Mac",
     "Steam",
@@ -39,15 +36,15 @@
     "iOS",
     "Android"
   ],
-  "Armello": ["Steam", "PS4", "XBO", "Switch"],
-  "The Ascent": ["MS", "XBO", "XBSX/XBSS"],
+  "-Aragami": ["Linux", "Mac", "GOG", "Steam", "XBO", "Switch", "Luna"],
+  "-Ark: Survival Ascended": ["Steam", "MS", "PS5", "XBSX/XBSS"],
+  "-Armello": ["Steam", "PS4", "XBO", "Switch"],
+  "-The Ascent": ["MS", "XBO", "XBSX/XBSS"],
   "Assetto Corsa Competizione": ["PS5", "XBSX/XBSS"],
   "Astroneer": ["MS", "XBO"],
-  "Atom Universe": ["Steam", "PS4"],
   "Back 4 Blood": ["Steam", "MS", "Epic", "PS4", "XBO", "PS5", "XBSX/XBSS"],
   "-Battlefield 2042": ["PS4", "XBO", "Steam", "EA, Epic", "PS5", "XBSX/XBSS"],
   "Black Desert Online": ["PS4", "XBO"],
-  "BlobCat": ["Steam", "Switch"],
   "-Borderlands 3": ["Mac", "Steam", "Epic", "PS4", "XBO", "PS5", "XBSX/XBSS"],
   "Boundless": ["Mac", "Steam", "PS4", "PS5"],
   "Brawlhalla": [
