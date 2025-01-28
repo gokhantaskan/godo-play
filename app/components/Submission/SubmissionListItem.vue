@@ -64,9 +64,10 @@ async function handleDelete() {
 <template>
   <div class="submission-card">
     <div class="submission-card__image">
-      <NuxtImg
+      <img
         :src="`https://images.igdb.com/igdb/image/upload/t_cover_small/${game.external?.igdbImageId}.jpg`"
         :alt="game.name"
+        lazy
       />
     </div>
     <div class="submission-card__content">

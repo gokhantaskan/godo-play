@@ -109,7 +109,7 @@ async function handleSubmit(event: Event) {
     >
       <div class="game-info">
         <div class="game-info__cover">
-          <NuxtImg
+          <img
             :src="`https://images.igdb.com/igdb/image/upload/t_cover_big/${selectedGame.imageId}.jpg`"
             :alt="selectedGame.name"
             lazy
