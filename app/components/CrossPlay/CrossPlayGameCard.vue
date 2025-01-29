@@ -18,14 +18,14 @@ const groupPlatformsWithPC = computed(() => {
   );
 });
 
-const sortedPCStores = computed(
+const sortedStores = computed(
   () =>
     props.game.storePlatforms?.toSorted((a, b) =>
       a.storeSlug.localeCompare(b.storeSlug)
     ) ?? []
 );
 
-const shouldDisplayPCStores = computed(() => {
+const shouldDisplayStores = computed(() => {
   const platformsInGroup = groupPlatformsWithPC.value;
   // Hide PC stores if PC is the only platform in the group
   return platformsInGroup && platformsInGroup.length > 1;
@@ -130,7 +130,7 @@ async function openModal() {
 
         <!-- PC Stores -->
         <div
-          v-if="shouldDisplayPCStores && game.storePlatforms?.length"
+          v-if="shouldDisplayStores && game.storePlatforms?.length"
           class="game-card__tags"
           aria-label="PC Stores"
         >
@@ -139,7 +139,7 @@ async function openModal() {
             role="list"
           >
             <div
-              v-for="store in sortedPCStores"
+              v-for="store in sortedStores"
               :key="store.id"
               class="store-item"
               role="listitem"

@@ -25,33 +25,12 @@ import {
 } from "~~/shared/schemas/storePlatform";
 
 export default defineEventHandler(async event => {
-  let body: SubmitGame;
   try {
-    body = await readBody<SubmitGame>(event);
+    // Validate request body
+    const body = await readBody<SubmitGame>(event);
     SubmitGameSchema.parse(body);
-  } catch (error) {
-    if (error instanceof z.ZodError) {
-      throw createError({
-        statusCode: 400,
-        message: "Invalid request data",
-        data: {
-          errors: error.errors.reduce(
-            (acc, err) => {
-              acc[err.path.join(".")] = err.message;
-              return acc;
-            },
-            {} as Record<string, string>
-          ),
-        },
-      });
-    }
-    throw createError({
-      statusCode: 400,
-      message: "Invalid request data",
-    });
-  }
 
-  try {
+    // Verify reCAPTCHA token
     const { success: isValidToken } = await verifyRecaptchaToken(body.token);
     if (!isValidToken) {
       throw createError({
@@ -59,17 +38,7 @@ export default defineEventHandler(async event => {
         message: "Invalid reCAPTCHA token",
       });
     }
-  } catch (error: unknown) {
-    if (isH3ErrorLike(error)) {
-      throw error;
-    }
-    throw createError({
-      statusCode: 500,
-      message: "Failed to verify reCAPTCHA token",
-    });
-  }
 
-  try {
     const result = await db.transaction(async tx => {
       // Insert game submission
       const [submission] = await tx
@@ -89,15 +58,11 @@ export default defineEventHandler(async event => {
         });
       }
 
-      // Collect all platform IDs used in the submission
+      // Collect and validate platform IDs
       const platformIdsSet = new Set<number>();
-
-      // From platform groups
       body.platformGroups.forEach(group => {
         group.forEach(platformId => platformIdsSet.add(platformId));
       });
-
-      // From PC store crossplay platforms
       Object.values(body.storesPlatforms).forEach(storeData => {
         storeData.crossplayPlatforms.forEach(platformId =>
           platformIdsSet.add(platformId)
@@ -105,14 +70,11 @@ export default defineEventHandler(async event => {
       });
 
       const platformIds = Array.from(platformIdsSet);
-
-      // Ensure platforms exist in the `platforms` table
       const existingPlatforms = await tx
         .select()
         .from(platforms)
         .where(inArray(platforms.id, platformIds));
 
-      // Validate platforms using PlatformSchema
       const validatedPlatforms = existingPlatforms.map(platform =>
         PlatformSchema.parse(platform)
       );
@@ -164,7 +126,7 @@ export default defineEventHandler(async event => {
       for (const [storeSlug, { crossplayPlatforms }] of Object.entries(
         body.storesPlatforms
       )) {
-        const [pcStore] = await tx
+        const [store] = await tx
           .insert(storePlatforms)
           .values(
             InsertStorePlatformSchema.parse({
@@ -174,7 +136,7 @@ export default defineEventHandler(async event => {
           )
           .returning();
 
-        if (!pcStore) {
+        if (!store) {
           throw createError({
             statusCode: 500,
             message: "Failed to create PC store platform",
@@ -185,7 +147,7 @@ export default defineEventHandler(async event => {
           await tx.insert(storeCrossplayPlatforms).values(
             crossplayPlatforms.map(platformId =>
               InsertStoreCrossplayPlatformSchema.parse({
-                storePlatformId: pcStore.id,
+                storePlatformId: store.id,
                 platformId,
               })
             )
@@ -207,7 +169,23 @@ export default defineEventHandler(async event => {
     });
 
     return result;
-  } catch (error: unknown) {
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      throw createError({
+        statusCode: 400,
+        message: "Invalid request data",
+        data: {
+          errors: error.errors.reduce(
+            (acc, err) => {
+              acc[err.path.join(".")] = err.message;
+              return acc;
+            },
+            {} as Record<string, string>
+          ),
+        },
+      });
+    }
+
     if (isH3ErrorLike(error)) {
       throw error;
     }

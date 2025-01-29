@@ -15,8 +15,8 @@ const { getToken } = useRecaptcha();
 const selectedGame = ref<GameOption | null>(null);
 const selectedCategory = ref<number>(0);
 const selectedPlatformGroups = ref<PlatformGroups>([[]]);
-const selectedPcStores = ref<Store["slug"][]>([]);
-const selectedPcStoresPlatforms = ref<StoreData>({});
+const selectedStores = ref<Store["slug"][]>([]);
+const selectedStoresPlatforms = ref<StoreData>({});
 const selectedGameModes = ref<number[]>([]);
 const isSubmitting = ref(false);
 const formError = ref<string | null>(null);
@@ -38,8 +38,8 @@ const isValidForm = computed(() => {
 function resetForm() {
   selectedGame.value = null;
   selectedPlatformGroups.value = [[]];
-  selectedPcStores.value = [];
-  selectedPcStoresPlatforms.value = {};
+  selectedStores.value = [];
+  selectedStoresPlatforms.value = {};
   selectedGameModes.value = [];
   formError.value = null;
 }
@@ -76,7 +76,7 @@ async function handleSubmit(event: Event) {
           },
         },
         platformGroups: selectedPlatformGroups.value,
-        storesPlatforms: selectedPcStoresPlatforms.value,
+        storesPlatforms: selectedStoresPlatforms.value,
         gameModeIds: selectedGameModes.value,
         token,
       },
@@ -144,8 +144,8 @@ async function handleSubmit(event: Event) {
     <SubmitGameFormInner
       v-model:category="selectedCategory"
       v-model:platform-groups="selectedPlatformGroups"
-      v-model:pc-stores="selectedPcStores"
-      v-model:store-platforms="selectedPcStoresPlatforms"
+      v-model:stores="selectedStores"
+      v-model:store-platforms="selectedStoresPlatforms"
       v-model:game-modes="selectedGameModes"
     />
 

@@ -25,17 +25,15 @@ const updateSubmissionSchema = z.object({
   category: z.number().optional(),
   platformGroups: z
     .array(z.array(z.number()))
-    .min(1, "At least one platform group is required")
-    .refine(groups => groups.every(group => group.length > 0), {
-      message: "Each platform group must contain at least one platform",
-    }),
-  pcStoresPlatforms: z.record(
+    .min(1, "At least one platform group is required"),
+  storesPlatforms: z.record(
     z.string(),
     z.object({
       crossplayPlatforms: z.array(z.number()).default([]),
     })
   ),
   gameModeIds: z.array(z.number()).min(1, "At least one game mode is required"),
+  status: z.enum(["approved", "rejected"]).optional(),
 });
 
 type RequestBody = z.infer<typeof updateSubmissionSchema>;
@@ -50,33 +48,11 @@ export default defineEventHandler(async event => {
     });
   }
 
-  let body: RequestBody;
   try {
-    body = await readBody<RequestBody>(event);
+    // Validate request body
+    const body = await readBody<RequestBody>(event);
     updateSubmissionSchema.parse(body);
-  } catch (error) {
-    if (error instanceof z.ZodError) {
-      throw createError({
-        statusCode: 400,
-        message: "Invalid request data",
-        data: {
-          errors: error.errors.reduce(
-            (acc, err) => {
-              acc[err.path.join(".")] = err.message;
-              return acc;
-            },
-            {} as Record<string, string>
-          ),
-        },
-      });
-    }
-    throw createError({
-      statusCode: 400,
-      message: "Invalid request data",
-    });
-  }
 
-  try {
     const result = await db.transaction(async tx => {
       // Check if submission exists
       const submission = await tx.query.games.findFirst({
@@ -133,9 +109,9 @@ export default defineEventHandler(async event => {
 
       // Process PC store platforms sequentially
       for (const [storeSlug, { crossplayPlatforms }] of Object.entries(
-        body.pcStoresPlatforms
+        body.storesPlatforms
       )) {
-        const [pcStore] = await tx
+        const [store] = await tx
           .insert(storePlatforms)
           .values(
             InsertStorePlatformSchema.parse({
@@ -145,7 +121,7 @@ export default defineEventHandler(async event => {
           )
           .returning();
 
-        if (!pcStore) {
+        if (!store) {
           throw createError({
             statusCode: 500,
             message: "Failed to create PC store platform",
@@ -156,7 +132,7 @@ export default defineEventHandler(async event => {
           await tx.insert(storeCrossplayPlatforms).values(
             crossplayPlatforms.map(platformId =>
               InsertStoreCrossplayPlatformSchema.parse({
-                storePlatformId: pcStore.id,
+                storePlatformId: store.id,
                 platformId,
               })
             )
@@ -194,7 +170,23 @@ export default defineEventHandler(async event => {
     });
 
     return result;
-  } catch (error: unknown) {
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      throw createError({
+        statusCode: 400,
+        message: "Invalid request data",
+        data: {
+          errors: error.errors.reduce(
+            (acc, err) => {
+              acc[err.path.join(".")] = err.message;
+              return acc;
+            },
+            {} as Record<string, string>
+          ),
+        },
+      });
+    }
+
     if (isH3ErrorLike(error)) {
       throw error;
     }

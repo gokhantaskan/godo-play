@@ -7,7 +7,7 @@ import type { GameSubmissionWithRelations } from "~~/shared/types";
 
 interface InitialRouteQuery {
   platforms: string;
-  pcStores: string;
+  stores: string;
   gameModes: string;
   search: string;
   playerPerspectives: string;
@@ -25,7 +25,7 @@ interface SelectedPlatforms {
 }
 
 interface Filters {
-  pcStores: number[];
+  stores: number[];
   gameModes: number[];
   playerPerspectives: number[];
   genres: number[];
@@ -48,7 +48,7 @@ const ITEMS_PER_PAGE = 48;
 const route = useRoute();
 const {
   platforms: initialQueryPlatforms,
-  // initialQueryPcStores,
+  // initialQueryStores,
   gameModes: initialQueryGameModes,
   search: initialQuerySearch,
   playerPerspectives: initialQueryPlayerPerspectives,
@@ -90,7 +90,7 @@ function getGameModeIdFromSlug(slug: string): number | null {
 
 // Initialize selectedFilters with game mode IDs from URL slugs
 const selectedFilters = ref<Filters>({
-  pcStores: [],
+  stores: [],
   gameModes: initialQueryGameModes
     ? initialQueryGameModes
         .split(",")
@@ -134,8 +134,8 @@ const urlQuery = computed(() => {
       .join(",");
   }
 
-  if (selectedFilters.value.pcStores.length) {
-    queryToSet.pcStores = selectedFilters.value.pcStores.join(",");
+  if (selectedFilters.value.stores.length) {
+    queryToSet.stores = selectedFilters.value.stores.join(",");
   }
 
   if (selectedFilters.value.playerPerspectives.length) {
@@ -176,8 +176,8 @@ const apiQueryParams = computed(() => {
     query.gameModes = selectedFilters.value.gameModes.join(",");
   }
 
-  if (selectedFilters.value.pcStores.length) {
-    query.pcStores = selectedFilters.value.pcStores.join(",");
+  if (selectedFilters.value.stores.length) {
+    query.stores = selectedFilters.value.stores.join(",");
   }
 
   if (selectedFilters.value.playerPerspectives.length) {

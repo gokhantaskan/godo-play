@@ -23,15 +23,15 @@ const igdbGame = ref<Record<string, any> | null>(null);
 const isLoadingIgdbGame = ref(false);
 
 const {
-  platformGroups,
-  stores: pcStores,
+  platformGroups: initialPlatformGroups,
+  stores,
   storePlatforms,
   gameModeIds,
 } = transformSubmissionToFormData(props.game);
 
 const categoryModel = ref<number>(props.game.category);
-const platformGroupsModel = ref<PlatformGroups>(platformGroups);
-const pcStoresModel = ref<Store["slug"][]>(pcStores);
+const platformGroupsModel = ref<PlatformGroups>(initialPlatformGroups);
+const storesModel = ref<Store["slug"][]>(stores);
 // Platforms that are available for crossplay on PC (in the same group as PC)
 const storePlatformsModel = ref<StoreData>(storePlatforms);
 const gameModesModel = ref<number[]>(gameModeIds);
@@ -70,8 +70,8 @@ async function handleSave() {
       body: {
         category: categoryModel.value,
         platformGroups: platformGroupsModel.value,
-        pcStores: pcStoresModel.value,
-        pcStoresPlatforms: storePlatformsModel.value,
+        stores: storesModel.value,
+        storesPlatforms: storePlatformsModel.value,
         gameModeIds: gameModesModel.value,
       },
     });
@@ -122,14 +122,14 @@ function transformSubmissionToFormData(
   };
 }
 
-function syncPCStorePlatforms() {
+function syncStorePlatforms() {
   // Find the group that contains PC (id: 6)
   const pcGroup = platformGroupsModel.value.find(group => group.includes(6));
 
   // If no PC group found, clear all PC store platforms
   if (!pcGroup) {
     storePlatformsModel.value = {};
-    pcStoresModel.value = [];
+    storesModel.value = [];
     return;
   }
 
@@ -138,7 +138,7 @@ function syncPCStorePlatforms() {
 
   // Update each PC store's crossplay platforms
   storePlatformsModel.value = Object.fromEntries(
-    pcStoresModel.value.map(storeSlug => {
+    storesModel.value.map(storeSlug => {
       const currentCrossplayPlatforms =
         storePlatformsModel.value[storeSlug]?.crossplayPlatforms ?? [];
 
@@ -156,7 +156,7 @@ function syncPCStorePlatforms() {
 watch(
   platformGroupsModel,
   () => {
-    syncPCStorePlatforms();
+    syncStorePlatforms();
   },
   { deep: true, immediate: true }
 );
@@ -208,9 +208,9 @@ onMounted(() => {
 
     <SubmitGameFormInner
       v-model:category="categoryModel"
-      v-model:platform-groups="platformGroups"
-      v-model:pc-stores="pcStores"
-      v-model:store-platforms="storePlatforms"
+      v-model:platform-groups="platformGroupsModel"
+      v-model:stores="storesModel"
+      v-model:store-platforms="storePlatformsModel"
       v-model:game-modes="gameModesModel"
       :disabled="disabled"
     />

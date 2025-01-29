@@ -20,10 +20,9 @@ const detailsRef = ref<{ save: () => Promise<void> } | null>(null);
 async function handleUpdate(status: "approved" | "rejected") {
   try {
     // Update only the status
-    await $fetch("/api/games/update", {
-      method: "POST",
+    await $fetch(`/api/games/${props.game.id}`, {
+      method: "PATCH",
       body: {
-        id: props.game.id,
         status,
       },
     });

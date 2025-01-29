@@ -22,7 +22,7 @@ const platformGroups = defineModel<PlatformGroups>("platformGroups", {
   default: [[]],
 });
 
-const pcStores = defineModel<Store["slug"][]>("pcStores", {
+const stores = defineModel<Store["slug"][]>("stores", {
   required: true,
   default: [],
 });
@@ -90,7 +90,7 @@ function removePlatformGroup(index: number): void {
   }
 }
 
-function updatePcStorePlatforms(
+function updateStorePlatforms(
   store: Store["slug"],
   platforms: PlatformId[]
 ): void {
@@ -127,7 +127,7 @@ watch(
     const hasPCPlatform = groups.some(group => group.includes(6 as PlatformId));
 
     if (!hasPCPlatform) {
-      pcStores.value = [];
+      stores.value = [];
       storePlatforms.value = {};
     }
 
@@ -156,7 +156,7 @@ watch(
 );
 
 watch(
-  pcStores,
+  stores,
   (newStores, oldStores) => {
     if (oldStores) {
       const removedStores = oldStores.filter(
@@ -290,7 +290,7 @@ watch(
           <label class="tw:flex tw:items-center tw:gap-2">
             <input
               :id="store.slug"
-              v-model="pcStores"
+              v-model="stores"
               type="checkbox"
               class="checkbox"
               :value="store.slug"
@@ -298,7 +298,7 @@ watch(
             <span>{{ store.name }}</span>
           </label>
 
-          <div v-if="pcStores.includes(store.slug)">
+          <div v-if="stores.includes(store.slug)">
             <PlatformSelect
               :model-value="
                 storePlatforms[store.slug]?.crossplayPlatforms ?? []
@@ -309,7 +309,7 @@ watch(
                 platformsWithPC?.filter(platform => platform !== 6)
               "
               @update:model-value="
-                updatePcStorePlatforms(
+                updateStorePlatforms(
                   store.slug,
                   Array.isArray($event) ? $event : [$event]
                 )
