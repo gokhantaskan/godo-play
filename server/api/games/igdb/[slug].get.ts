@@ -9,8 +9,6 @@ export default defineCachedEventHandler(
         "name",
         "age_ratings.*",
         "age_ratings.content_descriptions.*",
-        "language_supports.language.*",
-        "language_supports.language_support_type",
         "category",
         "cover.*",
         "multiplayer_modes.*",
