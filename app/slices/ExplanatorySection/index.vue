@@ -51,10 +51,9 @@ function getUrl(
     class="tw:container tw:max-w-screen-lg explanatory-section"
     :class="[wrapperClasses, textContentClasses]"
   >
-    <NuxtImg
+    <PrismicImage
       v-if="slice.primary.section_image"
-      :src="slice.primary.section_image.url!"
-      :alt="slice.primary.section_image.alt ?? ''"
+      :field="slice.primary.section_image"
       class="explanatory-section__image"
     />
     <div class="explanatory-section__content">

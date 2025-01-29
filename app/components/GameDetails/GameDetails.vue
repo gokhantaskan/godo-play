@@ -130,7 +130,7 @@ const availableMultiplayerModes = computed(() => {
           v-for="sc in details.screenshots"
           :key="sc.id"
         >
-          <NuxtImg
+          <img
             :src="`https://images.igdb.com/igdb/image/upload/t_screenshot_big/${sc.image_id}.jpg`"
             :alt="`Screenshot of ${details.name}`"
             :width="sc.width"

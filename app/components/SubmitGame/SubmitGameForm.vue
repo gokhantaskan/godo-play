@@ -76,7 +76,7 @@ async function handleSubmit(event: Event) {
           },
         },
         platformGroups: selectedPlatformGroups.value,
-        pcStoresPlatforms: selectedPcStoresPlatforms.value,
+        storesPlatforms: selectedPcStoresPlatforms.value,
         gameModeIds: selectedGameModes.value,
         token,
       },

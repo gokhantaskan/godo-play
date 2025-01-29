@@ -77,12 +77,11 @@ async function openModal() {
       class="game-card__cover"
       @click="openModal"
     >
-      <NuxtImg
+      <img
         :src="`https://images.igdb.com/igdb/image/upload/t_720p/${game.external?.igdbImageId}.jpg`"
         :alt="game.name"
         preload
         loading="lazy"
-        :quality="80"
       />
     </button>
 

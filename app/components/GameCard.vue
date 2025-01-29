@@ -68,14 +68,13 @@ async function openModal() {
       role="button"
       @click="openModal"
     >
-      <NuxtImg
+      <img
         v-if="game.cover?.image_id"
         :src="getImageUrl(game.cover.image_id)"
         :alt="game.name"
         :width="game.cover.width"
         :height="game.cover.height"
         loading="lazy"
-        quality="80"
       />
       <div
         v-else
