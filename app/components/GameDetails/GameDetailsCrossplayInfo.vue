@@ -105,7 +105,9 @@ defineProps<GameDetailsCrossplayInfoProps>();
   &__evidence {
     margin-block: 1rem;
     border-inline-start: 2px solid var(--tw-color-border);
-    padding-inline-start: 1rem;
+    padding-inline-start: 0.5rem;
+    font-size: 0.875rem;
+    color: var(--tw-color-text-muted);
   }
 
   &__link {
