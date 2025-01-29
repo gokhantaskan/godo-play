@@ -93,6 +93,10 @@ export interface NewGameSubmission {
  * Complete Types with Relations
  */
 export interface GameSubmissionWithRelations extends ReadGame {
+  crossplayInformation: {
+    evidenceUrl: string | null;
+    information: string | null;
+  };
   platformGroups: Array<{
     id: number;
     platformGroupPlatforms: Array<{

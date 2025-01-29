@@ -1,12 +1,31 @@
 <script setup lang="ts">
-import type {
-  PlatformGroups,
-  Store,
-  StoreData,
-  SubmitGameFormData,
-} from "~/types/submit-game";
 import { CATEGORIES } from "~~/shared/constants/categories";
 import type { GameSubmissionWithRelations } from "~~/shared/types";
+import type {
+  CrossplayInformation,
+  PlatformId,
+} from "~~/shared/types/crossplay";
+import type { StoreHardcoded } from "~~/shared/types/globals";
+
+// Define types that were previously in submit-game.ts
+type PlatformGroups = PlatformId[][];
+type Store = StoreHardcoded;
+type StoreData = Partial<
+  Record<
+    StoreHardcoded["slug"],
+    {
+      crossplayPlatforms: PlatformId[];
+    }
+  >
+>;
+
+interface SubmitGameFormData {
+  crossplayInformation: CrossplayInformation;
+  platformGroups: PlatformGroups;
+  stores: Store["slug"][];
+  storePlatforms: StoreData;
+  gameModeIds: number[];
+}
 
 interface Props {
   game: GameSubmissionWithRelations;
@@ -23,18 +42,20 @@ const igdbGame = ref<Record<string, any> | null>(null);
 const isLoadingIgdbGame = ref(false);
 
 const {
-  platformGroups: initialPlatformGroups,
+  platformGroups,
   stores,
   storePlatforms,
   gameModeIds,
+  crossplayInformation,
 } = transformSubmissionToFormData(props.game);
 
 const categoryModel = ref<number>(props.game.category);
-const platformGroupsModel = ref<PlatformGroups>(initialPlatformGroups);
+const platformGroupsModel = ref<PlatformGroups>(platformGroups);
 const storesModel = ref<Store["slug"][]>(stores);
-// Platforms that are available for crossplay on PC (in the same group as PC)
 const storePlatformsModel = ref<StoreData>(storePlatforms);
 const gameModesModel = ref<number[]>(gameModeIds);
+const crossplayInformationModel =
+  ref<CrossplayInformation>(crossplayInformation);
 
 async function fetchIgdbGame() {
   if (!props.game.external?.igdbId) {
@@ -73,6 +94,7 @@ async function handleSave() {
         stores: storesModel.value,
         storesPlatforms: storePlatformsModel.value,
         gameModeIds: gameModesModel.value,
+        crossplayInformation: crossplayInformationModel.value,
       },
     });
 
@@ -98,7 +120,7 @@ function transformSubmissionToFormData(
   // Transform PC store platforms
   const stores = submission.storePlatforms.map(store => store.storeSlug);
   const storePlatforms: StoreData = submission.storePlatforms.reduce(
-    (acc, store) => {
+    (acc: StoreData, store) => {
       acc[store.storeSlug] = {
         crossplayPlatforms: store.crossplayEntries.map(
           entry => entry.platform.id
@@ -114,17 +136,22 @@ function transformSubmissionToFormData(
     mode => mode.gameModeId
   );
 
+  const crossplayInformation = submission.crossplayInformation;
+
   return {
     platformGroups,
-    stores: stores,
+    stores,
     storePlatforms,
     gameModeIds,
+    crossplayInformation,
   };
 }
 
 function syncStorePlatforms() {
   // Find the group that contains PC (id: 6)
-  const pcGroup = platformGroupsModel.value.find(group => group.includes(6));
+  const pcGroup = platformGroupsModel.value.find((group: PlatformId[]) =>
+    group.includes(6)
+  );
 
   // If no PC group found, clear all PC store platforms
   if (!pcGroup) {
@@ -134,17 +161,17 @@ function syncStorePlatforms() {
   }
 
   // Get available crossplay platforms (excluding PC)
-  const availablePlatforms = pcGroup.filter(id => id !== 6);
+  const availablePlatforms = pcGroup.filter((id: PlatformId) => id !== 6);
 
   // Update each PC store's crossplay platforms
   storePlatformsModel.value = Object.fromEntries(
-    storesModel.value.map(storeSlug => {
+    storesModel.value.map((storeSlug: Store["slug"]) => {
       const currentCrossplayPlatforms =
         storePlatformsModel.value[storeSlug]?.crossplayPlatforms ?? [];
 
       // Keep only platforms that are in both the current list and the PC group
-      const validPlatforms = currentCrossplayPlatforms.filter(platformId =>
-        availablePlatforms.includes(platformId)
+      const validPlatforms = currentCrossplayPlatforms.filter(
+        (platformId: PlatformId) => availablePlatforms.includes(platformId)
       );
 
       return [storeSlug, { crossplayPlatforms: validPlatforms }];
@@ -207,6 +234,7 @@ onMounted(() => {
     </div>
 
     <SubmitGameFormInner
+      v-model:crossplay-information="crossplayInformationModel"
       v-model:category="categoryModel"
       v-model:platform-groups="platformGroupsModel"
       v-model:stores="storesModel"

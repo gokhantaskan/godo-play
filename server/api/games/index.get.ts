@@ -1,4 +1,6 @@
+import createDOMPurify from "dompurify";
 import { and, asc, count, desc, inArray, sql } from "drizzle-orm";
+import { JSDOM } from "jsdom";
 
 import { db } from "~~/server/db";
 import {
@@ -19,10 +21,25 @@ interface CountResult {
   count: number; // Count result from database query
 }
 
+// Initialize DOMPurify with jsdom
+const window = new JSDOM("").window;
+const DOMPurify = createDOMPurify(window);
+
 // Helper function to parse array parameters from query
 function parseArrayParam(param?: string): number[] | undefined {
   // Decode URI component and split by comma, then convert to numbers
   return param ? decodeURIComponent(param).split(",").map(Number) : undefined;
+}
+
+// Helper function to sanitize HTML content
+function sanitizeHtml(html: string | null): string | null {
+  if (!html) {
+    return null;
+  }
+  return DOMPurify.sanitize(html, {
+    ALLOWED_TAGS: ["p", "br", "strong", "em", "u", "ul", "ol", "li", "a"],
+    ALLOWED_ATTR: ["href", "target", "rel"],
+  });
 }
 
 export default defineCachedEventHandler(
@@ -129,6 +146,7 @@ export default defineCachedEventHandler(
       // Retrieve filtered game data with related entities
       const data = await db.query.games.findMany({
         with: {
+          crossplayInformation: true,
           platformGroups: {
             columns: {
               id: true,
@@ -208,11 +226,26 @@ export default defineCachedEventHandler(
         offset: parsedOffset,
       });
 
-      // Return the response with total, count, and data
+      // Sanitize HTML content in crossplay information
+      const sanitizedData = data.map(game => {
+        const sanitizedCrossplayInfo = game.crossplayInformation
+          ? {
+              evidenceUrl: game.crossplayInformation.evidenceUrl,
+              information: sanitizeHtml(game.crossplayInformation.information),
+            }
+          : null;
+
+        return {
+          ...game,
+          crossplayInformation: sanitizedCrossplayInfo,
+        };
+      }) as GameSubmissionWithRelations[];
+
+      // Return the response with total, count, and sanitized data
       return {
         total: filteredCountResult.count,
-        count: data.length,
-        data,
+        count: sanitizedData.length,
+        data: sanitizedData,
         limit: parsedLimit,
         offset: parsedOffset,
       } satisfies PaginatedResponse<GameSubmissionWithRelations>;

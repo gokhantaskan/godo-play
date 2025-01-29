@@ -1,8 +1,7 @@
 <script setup lang="ts">
 import { z } from "zod";
 
-import type { PlatformId } from "~/types/crossPlay";
-import type { PlatformGroups, Store, StoreData } from "~/types/submit-game";
+import GameCrossplayInformationForm from "~~/app/components/GameDetails/GameCrossplayInformationForm.vue";
 import {
   GAME_MODES,
   SUPPORTED_PLATFORMS,
@@ -11,6 +10,23 @@ import {
 import { CATEGORIES } from "~~/shared/constants/categories";
 import { InsertPlatformGroupSchema } from "~~/shared/schemas/platformGroup";
 import { InsertStorePlatformSchema } from "~~/shared/schemas/storePlatform";
+import type {
+  CrossplayInformation,
+  PlatformId,
+} from "~~/shared/types/crossplay";
+import type { StoreHardcoded } from "~~/shared/types/globals";
+
+// Define types that were previously in submit-game.ts
+type PlatformGroups = PlatformId[][];
+type Store = StoreHardcoded;
+type StoreData = Partial<
+  Record<
+    StoreHardcoded["slug"],
+    {
+      crossplayPlatforms: PlatformId[];
+    }
+  >
+>;
 
 const category = defineModel<number>("category", {
   required: true,
@@ -37,6 +53,14 @@ const gameModes = defineModel<number[]>("gameModes", {
   default: [],
 });
 
+const crossplayInformation = defineModel<CrossplayInformation>(
+  "crossplayInformation",
+  {
+    required: true,
+    default: null,
+  }
+);
+
 // Validation state
 const errors = ref<Record<string, string>>({});
 
@@ -44,7 +68,7 @@ const errors = ref<Record<string, string>>({});
 const selectedPlatformGroups = computed(() => platformGroups.value);
 
 const platformGroupIndexWithPC = computed(() => {
-  const index = selectedPlatformGroups.value.findIndex(group =>
+  const index = selectedPlatformGroups.value.findIndex((group: PlatformId[]) =>
     group.includes(6)
   );
   return index === -1 ? null : index;
@@ -68,7 +92,7 @@ const allSelected = computed(() => {
 // Methods
 function getExcludedPlatforms(currentGroupIndex: number): PlatformId[] {
   return selectedPlatformGroups.value.reduce<PlatformId[]>(
-    (acc, group, index) => {
+    (acc: PlatformId[], group: PlatformId[], index: number) => {
       if (index !== currentGroupIndex) {
         acc.push(...group);
       }
@@ -83,7 +107,9 @@ function addPlatformGroup(): void {
 }
 
 function removePlatformGroup(index: number): void {
-  platformGroups.value = platformGroups.value.filter((_, i) => i !== index);
+  platformGroups.value = platformGroups.value.filter(
+    (_: unknown, i: number) => i !== index
+  );
 
   if (platformGroups.value.length === 0) {
     platformGroups.value = [[]];
@@ -123,8 +149,10 @@ function updateStorePlatforms(
 // Watchers
 watch(
   platformGroups,
-  groups => {
-    const hasPCPlatform = groups.some(group => group.includes(6 as PlatformId));
+  (groups: PlatformGroups) => {
+    const hasPCPlatform = groups.some((group: PlatformId[]) =>
+      group.includes(6 as PlatformId)
+    );
 
     if (!hasPCPlatform) {
       stores.value = [];
@@ -132,7 +160,7 @@ watch(
     }
 
     // Validate each group
-    groups.forEach((group, index) => {
+    groups.forEach((group: PlatformId[], index: number) => {
       try {
         InsertPlatformGroupSchema.parse({
           submissionId: 0, // This will be set by the server
@@ -197,6 +225,8 @@ watch(
         label="Category"
       />
     </div>
+
+    <GameCrossplayInformationForm v-model="crossplayInformation" />
 
     <fieldset>
       <legend>Game Modes</legend>

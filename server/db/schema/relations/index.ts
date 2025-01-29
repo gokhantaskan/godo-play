@@ -14,11 +14,15 @@ import {
 } from "../tables/storePlatforms";
 import { stores, storeSupportedPlatforms } from "../tables/stores";
 
-export const gameSubmissionsRelations = relations(games, ({ many }) => ({
+export const gameSubmissionsRelations = relations(games, ({ many, one }) => ({
   // A submission can have many platform groups and many pc store entries
   platformGroups: many(platformGroups),
   storePlatforms: many(storePlatforms),
   gameSubmissionGameModes: many(gameSubmissionGameModes),
+  crossplayInformation: one(crossplayInformation, {
+    fields: [games.id],
+    references: [crossplayInformation.gameId],
+  }),
 }));
 
 export const gameModesRelations = relations(gameModes, ({ many }) => ({

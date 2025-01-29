@@ -3,6 +3,7 @@ import { z } from "zod";
 
 import { db } from "~~/server/db";
 import {
+  crossplayInformation,
   games,
   gameSubmissionGameModes,
   platformGroupPlatforms,
@@ -34,6 +35,13 @@ const updateSubmissionSchema = z.object({
   ),
   gameModeIds: z.array(z.number()).min(1, "At least one game mode is required"),
   status: z.enum(["approved", "rejected"]).optional(),
+  crossplayInformation: z
+    .object({
+      evidenceUrl: z.string().url().nullable(),
+      information: z.string().nullable(),
+    })
+    .nullable()
+    .optional(),
 });
 
 type RequestBody = z.infer<typeof updateSubmissionSchema>;
@@ -51,6 +59,7 @@ export default defineEventHandler(async event => {
   try {
     // Validate request body
     const body = await readBody<RequestBody>(event);
+    console.log("game patch", body);
     updateSubmissionSchema.parse(body);
 
     const result = await db.transaction(async tx => {
@@ -150,19 +159,57 @@ export default defineEventHandler(async event => {
         );
       }
 
-      // Update category if provided
-      if (body.category !== undefined) {
+      // Update category and crossplay information if provided
+      if (body.category !== undefined || body.crossplayInformation) {
+        const updateData: Record<string, unknown> = {};
+
+        if (body.category !== undefined) {
+          updateData.category = body.category;
+        }
+
         const [updatedGame] = await tx
           .update(games)
-          .set({ category: body.category })
+          .set(updateData)
           .where(eq(games.id, submissionId))
           .returning();
 
         if (!updatedGame) {
           throw createError({
             statusCode: 500,
-            message: "Failed to update game category",
+            message: "Failed to update game",
           });
+        }
+
+        // Handle crossplay information
+        if (body.crossplayInformation !== undefined) {
+          const existingCrossplay =
+            await tx.query.crossplayInformation.findFirst({
+              where: eq(crossplayInformation.gameId, submissionId),
+            });
+
+          if (body.crossplayInformation === null) {
+            if (existingCrossplay) {
+              await tx
+                .delete(crossplayInformation)
+                .where(eq(crossplayInformation.gameId, submissionId));
+            }
+          } else {
+            if (existingCrossplay) {
+              await tx
+                .update(crossplayInformation)
+                .set({
+                  evidenceUrl: body.crossplayInformation.evidenceUrl,
+                  information: body.crossplayInformation.information,
+                })
+                .where(eq(crossplayInformation.gameId, submissionId));
+            } else {
+              await tx.insert(crossplayInformation).values({
+                gameId: submissionId,
+                evidenceUrl: body.crossplayInformation.evidenceUrl,
+                information: body.crossplayInformation.information,
+              });
+            }
+          }
         }
       }
 
@@ -171,6 +218,8 @@ export default defineEventHandler(async event => {
 
     return result;
   } catch (error) {
+    console.error("game patch error", error);
+
     if (error instanceof z.ZodError) {
       throw createError({
         statusCode: 400,

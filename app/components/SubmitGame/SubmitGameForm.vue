@@ -1,19 +1,52 @@
 <script setup lang="ts">
-import type {
-  PlatformGroups,
-  Store,
-  StoreData,
-  SubmitGamePayload,
-} from "@/types/submit-game";
 import type { GameOption } from "~/components/SubmitGame/SubmitGameAutocomplete.vue";
 import { CATEGORIES } from "~~/shared/constants/categories";
+import type {
+  CrossplayInformation,
+  PlatformId,
+} from "~~/shared/types/crossplay";
+import type { StoreHardcoded } from "~~/shared/types/globals";
 import type { BaseEntity } from "~~/shared/types/igdb/globals";
+
+// Define types that were previously in submit-game.ts
+type PlatformGroups = PlatformId[][];
+type Store = StoreHardcoded;
+type StoreData = Partial<
+  Record<
+    StoreHardcoded["slug"],
+    {
+      crossplayPlatforms: PlatformId[];
+    }
+  >
+>;
+
+interface SubmitGamePayload {
+  game: {
+    category: number;
+    name: string;
+    slug: string;
+    external: {
+      igdbId: number;
+      igdbImageId?: string;
+      igdbAggregatedRating?: number;
+    };
+  };
+  crossplayInformation: CrossplayInformation;
+  platformGroups: PlatformGroups;
+  storesPlatforms: StoreData;
+  gameModeIds: number[];
+  token: string;
+}
 
 const { getToken } = useRecaptcha();
 
 // Form state
 const selectedGame = ref<GameOption | null>(null);
 const selectedCategory = ref<number>(0);
+const selectedCrossplayInformation = ref<CrossplayInformation>({
+  evidenceUrl: "",
+  information: "",
+});
 const selectedPlatformGroups = ref<PlatformGroups>([[]]);
 const selectedStores = ref<Store["slug"][]>([]);
 const selectedStoresPlatforms = ref<StoreData>({});
@@ -25,7 +58,7 @@ const formError = ref<string | null>(null);
 const isValidForm = computed(() => {
   const hasValidGame = selectedGame.value !== null;
   const hasValidGroups = selectedPlatformGroups.value.some(
-    group => group.length > 0
+    (group: PlatformId[]) => group.length > 0
   );
   const hasValidGameModes = selectedGameModes.value.length > 0;
 
@@ -62,24 +95,27 @@ async function handleSubmit(event: Event) {
       return;
     }
 
+    const payload: SubmitGamePayload = {
+      game: {
+        category: selectedCategory.value,
+        name: selectedGame.value.name,
+        slug: selectedGame.value.slug,
+        external: {
+          igdbId: selectedGame.value.id,
+          igdbImageId: selectedGame.value.imageId,
+          igdbAggregatedRating: selectedGame.value.aggregatedRating,
+        },
+      },
+      crossplayInformation: selectedCrossplayInformation.value,
+      platformGroups: selectedPlatformGroups.value,
+      storesPlatforms: selectedStoresPlatforms.value,
+      gameModeIds: selectedGameModes.value,
+      token,
+    };
+
     await $fetch<SubmitGamePayload>("/api/games", {
       method: "POST",
-      body: {
-        game: {
-          category: selectedCategory.value,
-          name: selectedGame.value.name,
-          slug: selectedGame.value.slug,
-          external: {
-            igdbId: selectedGame.value.id,
-            igdbImageId: selectedGame.value.imageId,
-            igdbAggregatedRating: selectedGame.value.aggregatedRating,
-          },
-        },
-        platformGroups: selectedPlatformGroups.value,
-        storesPlatforms: selectedStoresPlatforms.value,
-        gameModeIds: selectedGameModes.value,
-        token,
-      },
+      body: payload,
     });
 
     // Reset form
@@ -147,6 +183,7 @@ async function handleSubmit(event: Event) {
       v-model:stores="selectedStores"
       v-model:store-platforms="selectedStoresPlatforms"
       v-model:game-modes="selectedGameModes"
+      v-model:crossplay-information="selectedCrossplayInformation"
     />
 
     <div

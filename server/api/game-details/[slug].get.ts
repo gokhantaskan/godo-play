@@ -20,6 +20,7 @@ export default defineCachedEventHandler(
       const game = await db.query.games.findFirst({
         where: eq(games.slug, slug),
         with: {
+          crossplayInformation: true,
           platformGroups: {
             columns: {
               id: true,

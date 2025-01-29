@@ -241,43 +241,10 @@ async function refreshGameData() {
               v-if="hasPlatformGroups && game?.platformGroups"
               class="game__platforms"
             >
-              <ConsolidatedPlatformGroups
+              <GameDetailsCrossplayInfo
                 :platform-groups="game.platformGroups"
-              >
-                <template #default="{ platformGroups }">
-                  <div class="game__platforms-wrapper">
-                    <h2 class="game__platforms-title">Cross-play Groups</h2>
-                    <p class="game__platforms-description">
-                      Each platform in the same group can cross-play with each
-                      other.
-                    </p>
-                    <dl class="game__platforms-list">
-                      <template
-                        v-for="(group, index) in platformGroups"
-                        :key="index"
-                      >
-                        <dt class="game__platforms-group">
-                          <strong>{{ `#${index + 1}` }}</strong>
-                        </dt>
-                        <dd class="game__platforms-items">
-                          <span
-                            v-for="platform in group"
-                            :key="platform.name"
-                            class="game__platforms-item"
-                          >
-                            <Icon
-                              class="game__platforms-icon"
-                              size="1.125rem"
-                              :name="platform.icon"
-                            />
-                            {{ platform.name }}
-                          </span>
-                        </dd>
-                      </template>
-                    </dl>
-                  </div>
-                </template>
-              </ConsolidatedPlatformGroups>
+                :crossplay-information="game.crossplayInformation"
+              />
             </section>
           </TabsContent>
         </div>
