@@ -269,7 +269,7 @@ async function refreshGameData() {
       </TabsList>
     </TabsRoot>
 
-    <div>
+    <div v-if="IS_DEV">
       <TheButton @click="refreshGameData"> Refresh </TheButton>
     </div>
   </div>
