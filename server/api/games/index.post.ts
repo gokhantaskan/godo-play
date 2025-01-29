@@ -5,24 +5,24 @@ import { db } from "~~/server/db";
 import {
   games,
   gameSubmissionGameModes,
-  pcStoreCrossplayPlatforms,
-  pcStorePlatforms,
   platformGroupPlatforms,
   platformGroups,
   platforms,
+  storeCrossplayPlatforms,
+  storePlatforms,
 } from "~~/server/db/schema";
 import { isH3ErrorLike } from "~~/server/utils/errorHandler";
 import { verifyRecaptchaToken } from "~~/server/utils/recaptcha";
 import { type SubmitGame, SubmitGameSchema } from "~~/shared/schemas/game";
-import {
-  InsertPcStoreCrossplayPlatformSchema,
-  InsertPcStorePlatformSchema,
-} from "~~/shared/schemas/pcStorePlatform";
 import { PlatformSchema } from "~~/shared/schemas/platform";
 import {
   InsertPlatformGroupPlatformsSchema,
   InsertPlatformGroupSchema,
 } from "~~/shared/schemas/platformGroup";
+import {
+  InsertStoreCrossplayPlatformSchema,
+  InsertStorePlatformSchema,
+} from "~~/shared/schemas/storePlatform";
 
 export default defineEventHandler(async event => {
   let body: SubmitGame;
@@ -98,7 +98,7 @@ export default defineEventHandler(async event => {
       });
 
       // From PC store crossplay platforms
-      Object.values(body.pcStoresPlatforms).forEach(storeData => {
+      Object.values(body.storesPlatforms).forEach(storeData => {
         storeData.crossplayPlatforms.forEach(platformId =>
           platformIdsSet.add(platformId)
         );
@@ -162,12 +162,12 @@ export default defineEventHandler(async event => {
 
       // Process PC store platforms sequentially
       for (const [storeSlug, { crossplayPlatforms }] of Object.entries(
-        body.pcStoresPlatforms
+        body.storesPlatforms
       )) {
         const [pcStore] = await tx
-          .insert(pcStorePlatforms)
+          .insert(storePlatforms)
           .values(
-            InsertPcStorePlatformSchema.parse({
+            InsertStorePlatformSchema.parse({
               submissionId: submission.id,
               storeSlug,
             })
@@ -182,10 +182,10 @@ export default defineEventHandler(async event => {
         }
 
         if (crossplayPlatforms.length > 0) {
-          await tx.insert(pcStoreCrossplayPlatforms).values(
+          await tx.insert(storeCrossplayPlatforms).values(
             crossplayPlatforms.map(platformId =>
-              InsertPcStoreCrossplayPlatformSchema.parse({
-                pcStorePlatformId: pcStore.id,
+              InsertStoreCrossplayPlatformSchema.parse({
+                storePlatformId: pcStore.id,
                 platformId,
               })
             )

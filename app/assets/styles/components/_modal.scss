@@ -49,7 +49,7 @@ $breakpoint-md: map.get($breakpoints, "md");
     width: 100%;
     max-width: 32rem;
     transform: translateZ(0);
-    overflow: hidden;
+    // overflow: hidden;
     border-radius: 1rem;
     background-color: var(--tw-color-bg);
     padding: calc(var(--tw-spacing) * var(--panel-padding-factor));

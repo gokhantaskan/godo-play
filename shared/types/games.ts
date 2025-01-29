@@ -40,7 +40,7 @@ export interface GameSubmissionCrossplayEntry {
 /**
  * PC Store platform with crossplay information
  */
-export interface GameSubmissionPCStorePlatform {
+export interface GameSubmissionStorePlatform {
   id: number;
   storeSlug: string;
   crossplayEntries: GameSubmissionCrossplayEntry[];

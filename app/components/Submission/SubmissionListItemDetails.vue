@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import type {
-  PCStore,
-  PCStoreData,
   PlatformGroups,
+  Store,
+  StoreData,
   SubmitGameFormData,
 } from "~/types/submit-game";
 import { CATEGORIES } from "~~/shared/constants/categories";
@@ -22,14 +22,18 @@ const emit = defineEmits<{
 const igdbGame = ref<Record<string, any> | null>(null);
 const isLoadingIgdbGame = ref(false);
 
-const { platformGroups, pcStores, pcStorePlatforms, gameModeIds } =
-  transformSubmissionToFormData(props.game);
+const {
+  platformGroups,
+  stores: pcStores,
+  storePlatforms,
+  gameModeIds,
+} = transformSubmissionToFormData(props.game);
 
-const category = ref<number>(props.game.category);
+const categoryModel = ref<number>(props.game.category);
 const platformGroupsModel = ref<PlatformGroups>(platformGroups);
-const pcStoresModel = ref<PCStore["slug"][]>(pcStores);
+const pcStoresModel = ref<Store["slug"][]>(pcStores);
 // Platforms that are available for crossplay on PC (in the same group as PC)
-const pcStorePlatformsModel = ref<PCStoreData>(pcStorePlatforms);
+const storePlatformsModel = ref<StoreData>(storePlatforms);
 const gameModesModel = ref<number[]>(gameModeIds);
 
 async function fetchIgdbGame() {
@@ -64,10 +68,10 @@ async function handleSave() {
     await $fetch(`/api/games/${props.game.id}`, {
       method: "PATCH",
       body: {
-        category: category.value,
+        category: categoryModel.value,
         platformGroups: platformGroupsModel.value,
         pcStores: pcStoresModel.value,
-        pcStoresPlatforms: pcStorePlatformsModel.value,
+        pcStoresPlatforms: storePlatformsModel.value,
         gameModeIds: gameModesModel.value,
       },
     });
@@ -92,8 +96,8 @@ function transformSubmissionToFormData(
   );
 
   // Transform PC store platforms
-  const pcStores = submission.pcStorePlatforms.map(store => store.storeSlug);
-  const pcStorePlatforms: PCStoreData = submission.pcStorePlatforms.reduce(
+  const stores = submission.storePlatforms.map(store => store.storeSlug);
+  const storePlatforms: StoreData = submission.storePlatforms.reduce(
     (acc, store) => {
       acc[store.storeSlug] = {
         crossplayPlatforms: store.crossplayEntries.map(
@@ -102,7 +106,7 @@ function transformSubmissionToFormData(
       };
       return acc;
     },
-    {} as PCStoreData
+    {} as StoreData
   );
 
   // Transform game modes
@@ -112,8 +116,8 @@ function transformSubmissionToFormData(
 
   return {
     platformGroups,
-    pcStores,
-    pcStorePlatforms,
+    stores: stores,
+    storePlatforms,
     gameModeIds,
   };
 }
@@ -124,7 +128,7 @@ function syncPCStorePlatforms() {
 
   // If no PC group found, clear all PC store platforms
   if (!pcGroup) {
-    pcStorePlatformsModel.value = {};
+    storePlatformsModel.value = {};
     pcStoresModel.value = [];
     return;
   }
@@ -133,10 +137,10 @@ function syncPCStorePlatforms() {
   const availablePlatforms = pcGroup.filter(id => id !== 6);
 
   // Update each PC store's crossplay platforms
-  pcStorePlatformsModel.value = Object.fromEntries(
+  storePlatformsModel.value = Object.fromEntries(
     pcStoresModel.value.map(storeSlug => {
       const currentCrossplayPlatforms =
-        pcStorePlatformsModel.value[storeSlug]?.crossplayPlatforms ?? [];
+        storePlatformsModel.value[storeSlug]?.crossplayPlatforms ?? [];
 
       // Keep only platforms that are in both the current list and the PC group
       const validPlatforms = currentCrossplayPlatforms.filter(platformId =>
@@ -203,10 +207,10 @@ onMounted(() => {
     </div>
 
     <SubmitGameFormInner
-      v-model:category="category"
-      v-model:platform-groups="platformGroupsModel"
-      v-model:pc-stores="pcStoresModel"
-      v-model:pc-store-platforms="pcStorePlatformsModel"
+      v-model:category="categoryModel"
+      v-model:platform-groups="platformGroups"
+      v-model:pc-stores="pcStores"
+      v-model:store-platforms="storePlatforms"
       v-model:game-modes="gameModesModel"
       :disabled="disabled"
     />

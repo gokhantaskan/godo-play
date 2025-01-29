@@ -2,9 +2,15 @@
 import { getSafeUrl, getWebsiteInfo } from "@/utils/url";
 import type { GameDetails } from "~~/shared/types/igdb/gameDetails";
 
-const props = defineProps<{
-  websites: GameDetails["websites"];
-}>();
+const props = withDefaults(
+  defineProps<{
+    websites: GameDetails["websites"];
+    showLabel?: boolean;
+  }>(),
+  {
+    showLabel: true,
+  }
+);
 
 const websiteLinks = computed(() =>
   (
@@ -56,7 +62,10 @@ const websiteLinks = computed(() =>
           :name="link.info.icon"
           class="game-details-websites__icon"
         />
-        <span class="game-details-websites__label">
+        <span
+          v-if="showLabel"
+          class="game-details-websites__label"
+        >
           {{ link.info.label }}
         </span>
       </NuxtLink>

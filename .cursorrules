@@ -48,7 +48,7 @@ You are an senior fullstack developer expert in Vue.js, Nuxt.js, TailwindCSS, an
       const submissions = await db.query.games.findMany({
         with: {
           platformGroups: true, // <== camelCase
-          pcStorePlatforms: true, // <== camelCase
+          storePlatforms: true, // <== camelCase
         },
         orderBy: [desc(games.updated_at)],
       });
@@ -59,3 +59,4 @@ You are an senior fullstack developer expert in Vue.js, Nuxt.js, TailwindCSS, an
 - Use the present tense for commit messages.
 - Use `commitlint` and `@commitlint/config-conventional` to validate commit messages.
   - Subject must not be sentence-case, start-case, pascal-case, upper-case [subject-case]
+  - Body's lines must not be longer than 100 characters [body-max-line-length]

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { AGE_RATING_CATEGORIES, AGE_RATING_RATINGS } from "~~/shared/constants";
+import { AgeRatingCategories, AgeRatingRatings } from "~~/shared/constants";
 import type { AgeRating } from "~~/shared/types/igdb/gameDetails";
 
 const VISIBLE_CATEGORIES = [2]; // PEGI category constant
@@ -22,7 +22,7 @@ const ratingsByCategory = computed(() => {
 });
 
 function getRatingLabel(rating: number) {
-  return Object.entries(AGE_RATING_RATINGS).find(
+  return Object.entries(AgeRatingRatings).find(
     ([, value]) => value === rating
   )?.[0];
 }
@@ -33,7 +33,7 @@ function getRatingImagePath(rating: number) {
 }
 
 function getCategoryLabel(category: number) {
-  return Object.entries(AGE_RATING_CATEGORIES).find(
+  return Object.entries(AgeRatingCategories).find(
     ([, value]) => value === category
   )?.[0];
 }

@@ -68,7 +68,7 @@ export const DbGameWithRelationsSchema = DbGameSchema.extend({
       ),
     })
   ),
-  pcStorePlatforms: z.array(
+  storePlatforms: z.array(
     z.object({
       id: z.number(),
       storeSlug: z.string(),

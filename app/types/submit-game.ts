@@ -1,13 +1,12 @@
 import type { PlatformId } from "~/types/crossPlay";
-import type { PcStoreHardcoded } from "~~/shared/types/globals";
+import type { StoreHardcoded } from "~~/shared/types/globals";
 
-export type PCStore = PcStoreHardcoded;
-
+export type Store = StoreHardcoded;
 export type PlatformGroups = PlatformId[][];
 
-export type PCStoreData = Partial<
+export type StoreData = Partial<
   Record<
-    PCStore["slug"],
+    StoreHardcoded["slug"],
     {
       crossplayPlatforms: PlatformId[];
     }
@@ -27,14 +26,14 @@ export interface GameSubmissionData {
 export interface SubmitGamePayload {
   game: GameSubmissionData;
   platformGroups: PlatformGroups;
-  pcStoresPlatforms: PCStoreData;
+  storesPlatforms: StoreData;
   gameModeIds: number[];
   token: string;
 }
 
 export interface SubmitGameFormData {
   platformGroups: PlatformGroups;
-  pcStores: PCStore["slug"][];
-  pcStorePlatforms: PCStoreData;
+  stores: StoreHardcoded["slug"][];
+  storePlatforms: StoreData;
   gameModeIds: number[];
 }

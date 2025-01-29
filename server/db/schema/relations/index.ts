@@ -3,19 +3,20 @@ import { relations } from "drizzle-orm";
 import { gameModes, gameSubmissionGameModes } from "../tables/gameModes";
 import { games } from "../tables/games";
 import {
-  pcStoreCrossplayPlatforms,
-  pcStorePlatforms,
-} from "../tables/pcStorePlatforms";
-import {
   platformGroupPlatforms,
   platformGroups,
 } from "../tables/platformGroups";
 import { platforms } from "../tables/platforms";
+import {
+  storeCrossplayPlatforms,
+  storePlatforms,
+} from "../tables/storePlatforms";
+import { stores, storeSupportedPlatforms } from "../tables/stores";
 
 export const gameSubmissionsRelations = relations(games, ({ many }) => ({
   // A submission can have many platform groups and many pc store entries
   platformGroups: many(platformGroups),
-  pcStorePlatforms: many(pcStorePlatforms),
+  storePlatforms: many(storePlatforms),
   gameSubmissionGameModes: many(gameSubmissionGameModes),
 }));
 
@@ -63,27 +64,45 @@ export const platformGroupPlatformsRelations = relations(
   })
 );
 
-export const pcStorePlatformsRelations = relations(
-  pcStorePlatforms,
+export const storePlatformsRelations = relations(
+  storePlatforms,
   ({ one, many }) => ({
     submission: one(games, {
-      fields: [pcStorePlatforms.submissionId],
+      fields: [storePlatforms.submissionId],
       references: [games.id],
     }),
     // link to crossplay tables
-    crossplayEntries: many(pcStoreCrossplayPlatforms),
+    crossplayEntries: many(storeCrossplayPlatforms),
   })
 );
 
-export const pcStoreCrossplayPlatformsRelations = relations(
-  pcStoreCrossplayPlatforms,
+export const storeCrossplayPlatformsRelations = relations(
+  storeCrossplayPlatforms,
   ({ one }) => ({
-    pcStorePlatform: one(pcStorePlatforms, {
-      fields: [pcStoreCrossplayPlatforms.pcStorePlatformId],
-      references: [pcStorePlatforms.id],
+    storePlatform: one(storePlatforms, {
+      fields: [storeCrossplayPlatforms.storePlatformId],
+      references: [storePlatforms.id],
     }),
     platform: one(platforms, {
-      fields: [pcStoreCrossplayPlatforms.platformId],
+      fields: [storeCrossplayPlatforms.platformId],
+      references: [platforms.id],
+    }),
+  })
+);
+
+export const storesRelations = relations(stores, ({ many }) => ({
+  supportedPlatforms: many(storeSupportedPlatforms),
+}));
+
+export const storeSupportedPlatformsRelations = relations(
+  storeSupportedPlatforms,
+  ({ one }) => ({
+    store: one(stores, {
+      fields: [storeSupportedPlatforms.storeId],
+      references: [stores.id],
+    }),
+    platform: one(platforms, {
+      fields: [storeSupportedPlatforms.platformId],
       references: [platforms.id],
     }),
   })

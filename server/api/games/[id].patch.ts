@@ -5,20 +5,20 @@ import { db } from "~~/server/db";
 import {
   games,
   gameSubmissionGameModes,
-  pcStoreCrossplayPlatforms,
-  pcStorePlatforms,
   platformGroupPlatforms,
   platformGroups,
+  storeCrossplayPlatforms,
+  storePlatforms,
 } from "~~/server/db/schema";
 import { isH3ErrorLike } from "~~/server/utils/errorHandler";
-import {
-  InsertPcStoreCrossplayPlatformSchema,
-  InsertPcStorePlatformSchema,
-} from "~~/shared/schemas/pcStorePlatform";
 import {
   InsertPlatformGroupPlatformsSchema,
   InsertPlatformGroupSchema,
 } from "~~/shared/schemas/platformGroup";
+import {
+  InsertStoreCrossplayPlatformSchema,
+  InsertStorePlatformSchema,
+} from "~~/shared/schemas/storePlatform";
 
 // Validate the request body
 const updateSubmissionSchema = z.object({
@@ -95,8 +95,8 @@ export default defineEventHandler(async event => {
         .delete(platformGroups)
         .where(eq(platformGroups.submissionId, submissionId));
       await tx
-        .delete(pcStorePlatforms)
-        .where(eq(pcStorePlatforms.submissionId, submissionId));
+        .delete(storePlatforms)
+        .where(eq(storePlatforms.submissionId, submissionId));
       await tx
         .delete(gameSubmissionGameModes)
         .where(eq(gameSubmissionGameModes.submissionId, submissionId));
@@ -136,9 +136,9 @@ export default defineEventHandler(async event => {
         body.pcStoresPlatforms
       )) {
         const [pcStore] = await tx
-          .insert(pcStorePlatforms)
+          .insert(storePlatforms)
           .values(
-            InsertPcStorePlatformSchema.parse({
+            InsertStorePlatformSchema.parse({
               submissionId,
               storeSlug,
             })
@@ -153,10 +153,10 @@ export default defineEventHandler(async event => {
         }
 
         if (crossplayPlatforms.length > 0) {
-          await tx.insert(pcStoreCrossplayPlatforms).values(
+          await tx.insert(storeCrossplayPlatforms).values(
             crossplayPlatforms.map(platformId =>
-              InsertPcStoreCrossplayPlatformSchema.parse({
-                pcStorePlatformId: pcStore.id,
+              InsertStoreCrossplayPlatformSchema.parse({
+                storePlatformId: pcStore.id,
                 platformId,
               })
             )

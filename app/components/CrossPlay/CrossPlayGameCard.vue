@@ -20,7 +20,7 @@ const groupPlatformsWithPC = computed(() => {
 
 const sortedPCStores = computed(
   () =>
-    props.game.pcStorePlatforms?.toSorted((a, b) =>
+    props.game.storePlatforms?.toSorted((a, b) =>
       a.storeSlug.localeCompare(b.storeSlug)
     ) ?? []
 );
@@ -77,12 +77,11 @@ async function openModal() {
       class="game-card__cover"
       @click="openModal"
     >
-      <NuxtImg
+      <img
         :src="`https://images.igdb.com/igdb/image/upload/t_720p/${game.external?.igdbImageId}.jpg`"
         :alt="game.name"
         preload
         loading="lazy"
-        :quality="80"
       />
     </button>
 
@@ -131,7 +130,7 @@ async function openModal() {
 
         <!-- PC Stores -->
         <div
-          v-if="shouldDisplayPCStores && game.pcStorePlatforms?.length"
+          v-if="shouldDisplayPCStores && game.storePlatforms?.length"
           class="game-card__tags"
           aria-label="PC Stores"
         >

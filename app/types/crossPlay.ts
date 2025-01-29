@@ -7,7 +7,7 @@ export type PlatformId = (typeof SUPPORTED_PLATFORMS)[number]["id"];
 export type ConsolePlatformId = Exclude<PlatformId, 6>;
 
 // Available PC stores
-export type PCStore =
+export type Store =
   | "steam"
   | "epic_game_store"
   | "microsoft"
@@ -15,14 +15,8 @@ export type PCStore =
   | "battlenet"
   | "origin";
 
-// Cross-progression data structure
-export interface CrossProgression {
-  enabled: boolean;
-  platforms: PlatformId[];
-}
-
 // PC store cross-play information
-export interface PCStoreInfo {
+export interface StoreInfo {
   available: boolean;
   crossplay_platforms: ConsolePlatformId[];
 }
@@ -30,9 +24,8 @@ export interface PCStoreInfo {
 // Individual game cross-play data
 export interface GameCrossplay {
   platform_groups: PlatformId[][];
-  cross_progression: CrossProgression;
-  pc_stores: {
-    [Store in PCStore]: PCStoreInfo;
+  stores: {
+    [key in Store]: StoreInfo;
   };
 }
 

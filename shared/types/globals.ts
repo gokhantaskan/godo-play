@@ -1,5 +1,5 @@
-import type { PcStore } from "~~/server/db/schema/tables/pcStores";
 import type { Platform } from "~~/server/db/schema/tables/platforms";
+import type { Store } from "~~/server/db/schema/tables/stores";
 
 export type OmitTimestamps<T> = Omit<T, "createdAt" | "updatedAt">;
 
@@ -7,7 +7,7 @@ export interface PlatformHardcoded extends OmitTimestamps<Platform> {
   icon: string;
 }
 
-export interface PcStoreHardcoded extends OmitTimestamps<PcStore> {
+export interface StoreHardcoded extends OmitTimestamps<Store> {
   icon: string;
 }
 

@@ -52,7 +52,7 @@ const availableMultiplayerModes = computed(() => {
   >
     <div class="game-details__main">
       <div class="game-details__cover">
-        <NuxtImg
+        <img
           :src="`https://images.igdb.com/igdb/image/upload/t_720p/${details.cover.image_id}.jpg`"
           :alt="`Cover image of ${details.name}`"
           :width="details.cover.width"
@@ -130,7 +130,7 @@ const availableMultiplayerModes = computed(() => {
           v-for="sc in details.screenshots"
           :key="sc.id"
         >
-          <NuxtImg
+          <img
             :src="`https://images.igdb.com/igdb/image/upload/t_screenshot_big/${sc.image_id}.jpg`"
             :alt="`Screenshot of ${details.name}`"
             :width="sc.width"
