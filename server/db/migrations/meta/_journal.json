@@ -43,6 +43,13 @@
       "when": 1738084162544,
       "tag": "0005_green_starhawk",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1738179698962,
+      "tag": "0006_charming_killraven",
+      "breakpoints": true
     }
   ]
 }

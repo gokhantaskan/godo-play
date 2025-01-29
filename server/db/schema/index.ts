@@ -1,4 +1,5 @@
-export * from "./relations";
+export * from "./relations/";
+export * from "./tables/crossplayInformation";
 export * from "./tables/gameCategories";
 export * from "./tables/gameModes";
 export * from "./tables/games";

@@ -1,5 +1,6 @@
 import { relations } from "drizzle-orm";
 
+import { crossplayInformation } from "../tables/crossplayInformation";
 import { gameModes, gameSubmissionGameModes } from "../tables/gameModes";
 import { games } from "../tables/games";
 import {
@@ -23,6 +24,16 @@ export const gameSubmissionsRelations = relations(games, ({ many }) => ({
 export const gameModesRelations = relations(gameModes, ({ many }) => ({
   gameSubmissionGameModes: many(gameSubmissionGameModes),
 }));
+
+export const crossplayInformationRelations = relations(
+  crossplayInformation,
+  ({ one }) => ({
+    game: one(games, {
+      fields: [crossplayInformation.gameId],
+      references: [games.id],
+    }),
+  })
+);
 
 export const gameSubmissionGameModesRelations = relations(
   gameSubmissionGameModes,
