@@ -47,6 +47,15 @@ const gameRating = computed(() => {
   );
 });
 
+// useHead({
+//   title: `${igdbGame.value.name}`,
+// });
+
+useSeoMeta({
+  title: `${igdbGame.value.name} - GodoPlay`,
+  description: `${igdbGame.value.summary?.slice(0, 147)}...`,
+});
+
 // Pure function for getting age rating image URL
 function getAgeRatingImageUrl(
   category: string,
