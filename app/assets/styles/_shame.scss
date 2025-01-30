@@ -11,13 +11,21 @@
   }
 
   :--heading {
-    font-weight: 600;
+    font-weight: 700;
     font-family: var(--tw-font-sans);
     margin-block-end: 0.25rem;
-    // color: var(--tw-color-text-muted);
+    color: var(--tw-color-fg);
   }
 
   h3 {
     font-size: 1rem;
+  }
+
+  h4 {
+    font-size: 0.875rem;
+  }
+
+  strong {
+    font-weight: 600;
   }
 }
