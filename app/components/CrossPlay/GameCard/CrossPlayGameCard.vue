@@ -1,45 +1,18 @@
 <script setup lang="ts">
-import { GAME_TYPES } from "~~/shared/constants";
-// import { getCategoryNameByPointer } from "~~/shared/constants/categories";
 import type { GameSubmissionWithRelations } from "~~/shared/types";
 
-const props = defineProps<{
+defineProps<{
   game: GameSubmissionWithRelations;
 }>();
-
-const gameType = computed(() => {
-  return GAME_TYPES[props.game.category];
-});
-
-// TODO: Work on this
-const isModalOpen = ref(false);
-const cacheKey = computed(() => `game-${props.game.slug}`);
-const { data: cachedGameDetails } = useNuxtData(cacheKey.value);
-const {
-  data: gameDetails,
-  status: gameDetailsStatus,
-  execute: fetchGameDetails,
-} = useFetch(`/api/games/igdb/${props.game.slug}`, {
-  immediate: false,
-  key: cacheKey.value,
-  lazy: !!cachedGameDetails.value,
-});
-const pendingGameDetails = computed(() => {
-  return gameDetailsStatus.value === "pending";
-});
-
-async function openModal() {
-  isModalOpen.value = true;
-  await fetchGameDetails();
-}
 </script>
 
 <template>
   <article class="game-card">
     <!-- Image Section -->
-    <button
+    <NuxtLink
+      :to="{ name: 'CrossPlayGameDetailsPage', params: { slug: game.slug } }"
+      target="_blank"
       class="game-card__cover"
-      @click="openModal"
     >
       <img
         :src="`https://images.igdb.com/igdb/image/upload/t_720p/${game.external?.igdbImageId}.jpg`"
@@ -47,7 +20,7 @@ async function openModal() {
         preload
         loading="lazy"
       />
-    </button>
+    </NuxtLink>
 
     <!-- Content Section -->
     <div class="game-card__content">
@@ -96,30 +69,5 @@ async function openModal() {
         </div>
       </div>
     </div>
-
-    <!-- Game Details Modal -->
-    <TheModal
-      :key="game.slug"
-      v-model:open="isModalOpen"
-      :title="game.name"
-      max-width="48rem"
-    >
-      <template #description>
-        <div
-          v-if="gameType"
-          class="tw:flex tw:items-center tw:gap-2"
-        >
-          <Icon
-            :name="gameType.icon"
-            class="tw:text-xl"
-          />
-          <span>{{ gameType.label }}</span>
-        </div>
-      </template>
-      <GameDetails
-        :details="gameDetails"
-        :is-loading="!gameDetails && pendingGameDetails"
-      />
-    </TheModal>
   </article>
 </template>

@@ -5,6 +5,10 @@ import { AgeRatingCategories } from "~~/shared/constants";
 import type { GameSubmissionWithRelations } from "~~/shared/types";
 import type { GameDetails } from "~~/shared/types/igdb/gameDetails";
 
+definePageMeta({
+  name: "CrossPlayGameDetailsPage",
+});
+
 const { slug } = useRoute().params;
 const currentTab = ref<"details" | "gallery">("details");
 
@@ -262,7 +266,7 @@ function formatDate(date: number) {
           >
             <section>
               <h2 class="tw:sr-only">About the Game</h2>
-              <p>{{ igdbGame?.summary }}</p>
+              <ReadMore>{{ igdbGame?.summary }}</ReadMore>
               <div
                 role="list"
                 class="tw:w-full tw:mt-2"
