@@ -1,5 +1,12 @@
 import { sql } from "drizzle-orm";
-import { integer, jsonb, pgTable, serial, text } from "drizzle-orm/pg-core";
+import {
+  date,
+  integer,
+  jsonb,
+  pgTable,
+  serial,
+  text,
+} from "drizzle-orm/pg-core";
 import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 import { z } from "zod";
 
@@ -18,6 +25,7 @@ export const games = pgTable("games", {
   category: integer("category")
     .notNull()
     .references(() => gameCategories.pointer),
+  firstReleaseDate: date("first_release_date", { mode: "string" }),
   name: text("name").notNull(),
   slug: text("slug").unique().notNull(),
   status: text("status", { enum: ["pending", "approved", "rejected"] })

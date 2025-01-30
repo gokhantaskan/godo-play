@@ -3,6 +3,7 @@ import type { ConsolidatedPlatformGroupsProps } from "@/components/ConsolidatedP
 
 export interface GameDetailsCrossplayInfoProps {
   platformGroups: ConsolidatedPlatformGroupsProps["platformGroups"];
+  storePlatforms: GameSubmissionWithRelations["storePlatforms"];
   crossplayInformation: GameSubmissionWithRelations["crossplayInformation"];
 }
 
@@ -10,46 +11,24 @@ defineProps<GameDetailsCrossplayInfoProps>();
 </script>
 
 <template>
-  <div>
-    <ConsolidatedPlatformGroups :platform-groups="platformGroups">
-      <template #default="{ platformGroups: _platformGroups }">
-        <div class="crossplay-info__platforms">
-          <h3 class="crossplay-info__title">Cross-play Groups</h3>
-          <p class="crossplay-info__description">
-            Each platform in the same group can cross-play with each other.
-          </p>
-          <dl class="crossplay-info__platforms-list">
-            <template
-              v-for="(group, index) in _platformGroups"
-              :key="index"
-            >
-              <dt class="crossplay-info__group">
-                <strong>{{ `#${index + 1}` }}</strong>
-              </dt>
-              <dd class="crossplay-info__items">
-                <span
-                  v-for="platform in group"
-                  :key="platform.name"
-                  class="crossplay-info__item"
-                >
-                  <Icon
-                    class="crossplay-info__icon"
-                    size="1.125rem"
-                    :name="platform.icon"
-                  />
-                  {{ platform.name }}
-                </span>
-              </dd>
-            </template>
-          </dl>
-        </div>
-      </template>
-    </ConsolidatedPlatformGroups>
-    <div>
+  <div class="tw:space-y-4">
+    <section>
+      <h2>Platforms</h2>
+      <p class="tw:text-text-muted tw:text-sm tw:mb-2">
+        Each platform group can be cross-played with each other.
+      </p>
+      <CrossPlayGameDetailsPlatformGroups :platform-groups="platformGroups" />
+    </section>
+    <section>
+      <h2>Stores</h2>
+      <CrossPlayGameDetailsStorePlatforms :store-platforms="storePlatforms" />
+    </section>
+    <section v-if="crossplayInformation">
+      <h2>Cross-play Information</h2>
       <!-- eslint-disable vue/no-v-html -->
       <blockquote
         v-if="crossplayInformation?.information"
-        class="crossplay-info__evidence"
+        class="ProseMirror"
         v-html="crossplayInformation.information"
       />
       <!-- eslint-enable vue/no-v-html -->
@@ -66,7 +45,7 @@ defineProps<GameDetailsCrossplayInfoProps>();
           size="0.875em"
         />
       </a>
-    </div>
+    </section>
   </div>
 </template>
 
@@ -83,31 +62,10 @@ defineProps<GameDetailsCrossplayInfoProps>();
     color: var(--tw-color-text-muted);
   }
 
-  &__platforms-list {
-    display: grid;
-    grid-template-columns: max-content auto;
-    column-gap: 0.5rem;
-    row-gap: 1rem;
-  }
-
-  &__items {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem;
-  }
-
   &__item {
     display: flex;
     align-items: center;
     gap: 0.25rem;
-  }
-
-  &__evidence {
-    margin-block: 1rem;
-    border-inline-start: 2px solid var(--tw-color-border);
-    padding-inline-start: 0.5rem;
-    font-size: 0.875rem;
-    color: var(--tw-color-text-muted);
   }
 
   &__link {

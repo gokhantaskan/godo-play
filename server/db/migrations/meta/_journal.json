@@ -50,6 +50,13 @@
       "when": 1738179698962,
       "tag": "0006_charming_killraven",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1738240168872,
+      "tag": "0007_freezing_joystick",
+      "breakpoints": true
     }
   ]
 }

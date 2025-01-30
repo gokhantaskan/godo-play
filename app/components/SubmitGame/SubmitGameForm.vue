@@ -25,6 +25,7 @@ interface SubmitGamePayload {
     category: number;
     name: string;
     slug: string;
+    firstReleaseDate?: string;
     external: {
       igdbId: number;
       igdbImageId?: string;
@@ -100,6 +101,9 @@ async function handleSubmit(event: Event) {
         category: selectedCategory.value,
         name: selectedGame.value.name,
         slug: selectedGame.value.slug,
+        firstReleaseDate: selectedGame.value.firstReleaseDate
+          ? new Date(selectedGame.value.firstReleaseDate * 1000).toISOString()
+          : undefined,
         external: {
           igdbId: selectedGame.value.id,
           igdbImageId: selectedGame.value.imageId,

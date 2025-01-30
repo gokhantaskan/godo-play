@@ -13,6 +13,7 @@ export default defineCachedEventHandler(
         "cover.*",
         "multiplayer_modes.*",
         "screenshots.*",
+        "videos.*",
         "storyline",
         "summary",
         "websites.*",

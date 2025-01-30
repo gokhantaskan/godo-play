@@ -47,6 +47,22 @@ const gameRating = computed(() => {
   );
 });
 
+// Add this computed property
+const groupedCompanies = computed(() => {
+  if (!igdbGame.value?.involved_companies) {
+    return { developers: [], publishers: [] };
+  }
+
+  return {
+    developers: igdbGame.value.involved_companies
+      .filter(company => company.developer)
+      .map(company => company.company.name),
+    publishers: igdbGame.value.involved_companies
+      .filter(company => company.publisher)
+      .map(company => company.company.name),
+  };
+});
+
 // useHead({
 //   title: `${igdbGame.value.name}`,
 // });
@@ -95,6 +111,16 @@ async function refreshGameData() {
   await refreshIgdbGame();
   await refreshGame();
 }
+
+function formatDate(date: number) {
+  return new Intl.DateTimeFormat(
+    import.meta.client ? window.navigator.language : "en-US",
+    {
+      year: "numeric",
+      month: "short",
+    }
+  ).format(new Date(date * 1000));
+}
 </script>
 
 <template>
@@ -113,10 +139,27 @@ async function refreshGameData() {
           />
           <div class="game__hero-content">
             <h1 class="game__hero-heading">{{ igdbGame?.name }}</h1>
+            <!--  -->
+            <div class="tw:text-white/80 tw:flex tw:items-center tw:gap-1">
+              <span v-if="igdbGame?.first_release_date">
+                {{ formatDate(igdbGame?.first_release_date) }}
+              </span>
+              <span>•</span>
+              <span
+                v-if="gameRating"
+                class="game__rating"
+              >
+                <Icon
+                  name="lucide:star"
+                  class="game__rating-icon"
+                />
+                {{ gameRating }}/10
+              </span>
+            </div>
             <!-- Game Modes -->
             <div
               v-if="game?.gameSubmissionGameModes?.length"
-              class="game__modes"
+              class="tw:flex tw:gap-2 tw:mt-1"
             >
               <template
                 v-for="{ gameMode } in game.gameSubmissionGameModes"
@@ -124,16 +167,6 @@ async function refreshGameData() {
               >
                 <TheChip variant="gray">{{ gameMode.name }}</TheChip>
               </template>
-            </div>
-            <div
-              v-if="gameRating"
-              class="game__hero-rating"
-            >
-              <Icon
-                name="lucide:star"
-                class="game__hero-rating-icon"
-              />
-              {{ gameRating }}/10
             </div>
           </div>
         </div>
@@ -154,7 +187,7 @@ async function refreshGameData() {
     <!-- Age Ratings -->
     <div
       v-if="hasAgeRatings && igdbGame?.age_ratings"
-      class="game__ratings"
+      class="tw:bg-fg/10 tw:py-4"
     >
       <ConsolidatedAgeRatings
         :age-ratings="igdbGame.age_ratings"
@@ -162,8 +195,8 @@ async function refreshGameData() {
       >
         <template #default="{ consolidatedRatings }">
           <div class="tw:container">
-            <h2 class="game__ratings-title">Age Ratings</h2>
-            <dl class="game__ratings-list">
+            <h2 class="tw:sr-only">Age Ratings</h2>
+            <dl class="tw:grid tw:grid-cols-[max-content_1fr] tw:gap-2">
               <template
                 v-for="rating in consolidatedRatings"
                 :key="rating.category"
@@ -173,14 +206,14 @@ async function refreshGameData() {
                     v-if="rating.name"
                     :src="getAgeRatingImageUrl(rating.category, rating.name)"
                     :alt="`${rating.category} ${rating.name}`"
-                    class="game__ratings-image"
+                    class="tw:max-h-10"
                     loading="lazy"
                   />
                 </dt>
-                <dd class="game__ratings-descriptions">
+                <dd class="game__section-descriptions">
                   <div
                     v-if="rating.contentDescriptions?.length"
-                    class="game__ratings-content"
+                    class="game__section-content"
                     role="list"
                   >
                     {{ rating.contentDescriptions.join(", ") }}
@@ -222,30 +255,82 @@ async function refreshGameData() {
           </div>
         </div>
 
-        <div class="tw:container">
+        <div class="game__tabs-content-wrapper tw:container">
           <TabsContent
             value="details"
             class="game__tabs-content tw:space-y-4"
           >
-            <section class="game__about">
-              <h2 class="game__about-title">About the Game</h2>
-              <p class="game__content-summary">{{ igdbGame?.summary }}</p>
-              <GameDetailsWebsites
-                :websites="igdbGame?.websites"
-                :show-label="false"
-              />
+            <section>
+              <h2 class="tw:sr-only">About the Game</h2>
+              <p>{{ igdbGame?.summary }}</p>
+              <div
+                role="list"
+                class="tw:w-full tw:mt-2"
+              >
+                <template v-if="groupedCompanies.developers.length">
+                  <div role="listitem">
+                    <strong class="tw:text-start tw:mr-2 tw:font-semibold"
+                      >Developers:</strong
+                    >
+                    <span>{{ groupedCompanies.developers.join(", ") }}</span>
+                  </div>
+                </template>
+                <template v-if="groupedCompanies.publishers.length">
+                  <div role="listitem">
+                    <strong class="tw:text-start tw:mr-2 tw:font-semibold"
+                      >Publishers:</strong
+                    >
+                    <span>{{ groupedCompanies.publishers.join(", ") }}</span>
+                  </div>
+                </template>
+              </div>
             </section>
 
             <!-- Platform Groups -->
-            <section
-              v-if="hasPlatformGroups && game?.platformGroups"
-              class="game__platforms"
-            >
+            <section v-if="hasPlatformGroups && game?.platformGroups">
               <GameDetailsCrossplayInfo
                 :platform-groups="game.platformGroups"
+                :store-platforms="game.storePlatforms"
                 :crossplay-information="game.crossplayInformation"
               />
             </section>
+          </TabsContent>
+          <TabsContent
+            value="gallery"
+            class="game__tabs-content tw:space-y-4"
+          >
+            <div class="game__section">
+              <h2 class="game__section-title">Videos</h2>
+              <div
+                v-if="igdbGame?.videos"
+                class="tw:flex tw:overflow-hidden tw:overflow-x-auto tw:gap-4 tw:pb-2"
+              >
+                <iframe
+                  v-for="video in igdbGame.videos"
+                  :key="video.id"
+                  :src="`https://www.youtube.com/embed/${video.video_id}`"
+                  frameborder="0"
+                  allowfullscreen
+                ></iframe>
+              </div>
+              <p v-else>No videos found.</p>
+            </div>
+            <div class="game__section">
+              <h2 class="game__section-title">Screenshots</h2>
+              <div
+                v-if="igdbGame?.screenshots"
+                class="game__gallery-screenshots tw:grid tw:lg:grid-cols-2 tw:gap-4"
+              >
+                <img
+                  v-for="screenshot in igdbGame.screenshots"
+                  :key="screenshot.id"
+                  :src="`https://images.igdb.com/igdb/image/upload/t_screenshot_med/${screenshot.image_id}.jpg`"
+                  alt=""
+                  class="tw:rounded-lg"
+                />
+              </div>
+              <p v-else>No screenshots found.</p>
+            </div>
           </TabsContent>
         </div>
       </TabsList>

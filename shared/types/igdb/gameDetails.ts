@@ -22,6 +22,15 @@ export interface GameDetails {
   summary: string;
   themes: SmallEntity[];
   websites?: Website[];
+  videos?: Video[];
+}
+
+export interface Video {
+  id: number;
+  video_id: string;
+  name: string;
+  game: string;
+  checksum: string;
 }
 
 export interface AgeRating {

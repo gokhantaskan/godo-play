@@ -5,7 +5,7 @@ export interface DashboardGame {
   aggregated_rating: number;
   category: number; // 0: main game, 3: bundle, 8: remake, 9: remaster
   cover: Cover;
-  // first_release_date: number;
+  first_release_date: number;
   game_modes: BaseEntity[];
   genres: BaseEntity[];
   multiplayer_modes?: MultiplayerMode[];

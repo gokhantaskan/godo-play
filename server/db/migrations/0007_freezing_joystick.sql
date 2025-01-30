@@ -1,0 +1,1 @@
+ALTER TABLE "games" ADD COLUMN "first_release_date" date;

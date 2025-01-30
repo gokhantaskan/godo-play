@@ -79,3 +79,7 @@ export const CATEGORIES: {
     name: "Update",
   },
 ];
+
+export function getCategoryNameByPointer(pointer: number) {
+  return CATEGORIES.find(category => category.pointer === pointer)?.name;
+}

@@ -42,6 +42,8 @@ const sortOptions = [
   { label: "Created At (Oldest)", value: "+created_at" },
   { label: "Updated At (Newest)", value: "-updated_at" },
   { label: "Updated At (Oldest)", value: "+updated_at" },
+  { label: "First Release Date (Newest)", value: "-first_release_date" },
+  { label: "First Release Date (Oldest)", value: "+first_release_date" },
 ] as const;
 </script>
 

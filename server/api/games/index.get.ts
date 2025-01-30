@@ -13,9 +13,15 @@ import type { GameSubmissionWithRelations } from "~~/shared/types";
 import type {
   FilterParams,
   PaginatedResponse,
-  SortableField,
   SubmissionStatus,
 } from "~~/shared/types/globals";
+
+// Define the sortable fields type
+type SortableField =
+  | "created_at"
+  | "updated_at"
+  | "popularity"
+  | "first_release_date";
 
 interface CountResult {
   count: number; // Count result from database query
@@ -37,7 +43,19 @@ function sanitizeHtml(html: string | null): string | null {
     return null;
   }
   return DOMPurify.sanitize(html, {
-    ALLOWED_TAGS: ["p", "br", "strong", "em", "u", "ul", "ol", "li", "a"],
+    ALLOWED_TAGS: [
+      "p",
+      "br",
+      "strong",
+      "em",
+      "u",
+      "ul",
+      "ol",
+      "li",
+      "a",
+      "h3",
+      "h4",
+    ],
     ALLOWED_ATTR: ["href", "target", "rel"],
   });
 }
@@ -70,7 +88,8 @@ export default defineCachedEventHandler(
         "created_at",
         "updated_at",
         "popularity",
-      ] as const;
+        "first_release_date",
+      ] as const satisfies readonly SortableField[];
 
       const parsedSortField = validSortFields.includes(sortField as any)
         ? sortField
@@ -210,17 +229,25 @@ export default defineCachedEventHandler(
         orderBy: [
           parsedSortField === "popularity"
             ? sql`(external->>'igdbAggregatedRating')::float DESC NULLS LAST`
-            : isDescending
-              ? desc(
-                  games[
-                    parsedSortField === "created_at" ? "createdAt" : "updatedAt"
-                  ]
-                )
-              : asc(
-                  games[
-                    parsedSortField === "created_at" ? "createdAt" : "updatedAt"
-                  ]
-                ),
+            : parsedSortField === "first_release_date"
+              ? isDescending
+                ? sql`first_release_date DESC NULLS LAST`
+                : sql`first_release_date ASC NULLS LAST`
+              : isDescending
+                ? desc(
+                    games[
+                      parsedSortField === "created_at"
+                        ? "createdAt"
+                        : "updatedAt"
+                    ]
+                  )
+                : asc(
+                    games[
+                      parsedSortField === "created_at"
+                        ? "createdAt"
+                        : "updatedAt"
+                    ]
+                  ),
         ],
         limit: parsedLimit,
         offset: parsedOffset,

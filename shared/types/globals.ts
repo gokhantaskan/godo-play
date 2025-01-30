@@ -14,7 +14,13 @@ export interface StoreHardcoded extends OmitTimestamps<Store> {
 export type SubmissionStatus = "pending" | "approved" | "rejected";
 
 export type SortDirection = "+" | "-";
-export type SortableField = "created_at" | "updated_at" | "popularity";
+
+export type SortableField =
+  | "created_at"
+  | "updated_at"
+  | "popularity"
+  | "first_release_date";
+
 export type SortField = `${SortDirection}${SortableField}`;
 
 export interface FilterParams {

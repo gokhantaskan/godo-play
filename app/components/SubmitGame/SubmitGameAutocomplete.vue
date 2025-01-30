@@ -12,6 +12,7 @@ export interface GameOption {
   imageId?: string;
   aggregatedRating?: number;
   category: number;
+  firstReleaseDate?: number;
 }
 
 export type GameOptionOrString = GameOption | string | null;
@@ -44,6 +45,7 @@ async function searchGames(event: { query: string }) {
       imageId: game.cover?.image_id ?? "",
       aggregatedRating: game.aggregated_rating,
       category: game.category,
+      firstReleaseDate: game.first_release_date,
     }));
   } catch (error) {
     console.error("Error searching games:", error);

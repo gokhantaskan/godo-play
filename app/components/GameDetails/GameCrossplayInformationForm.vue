@@ -1,8 +1,4 @@
 <script setup lang="ts">
-import "@vueup/vue-quill/dist/vue-quill.snow.css";
-
-import { QuillEditor } from "@vueup/vue-quill";
-
 import type { CrossplayInformation } from "~~/shared/types/crossplay";
 
 const props = defineProps<{
@@ -53,11 +49,7 @@ const editorContent = computed({
       </div>
       <ClientOnly>
         <div>
-          <QuillEditor
-            v-model:content="editorContent"
-            toolbar="essential"
-            content-type="html"
-          />
+          <SubmissionRTE v-model="editorContent" />
         </div>
       </ClientOnly>
     </div>

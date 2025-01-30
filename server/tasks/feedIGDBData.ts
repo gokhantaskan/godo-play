@@ -17,7 +17,7 @@ const IGDB_CATEGORY_MAP = Array.from(
   (_, i) => categoryIds[i]
 );
 
-async function updateAggregatedRatings() {
+async function updateIGDBGameData() {
   const submissions = await db.query.games.findMany({
     columns: {
       id: true,
@@ -42,7 +42,7 @@ async function updateAggregatedRatings() {
     const batchIds = igdbIds.slice(i, i + BATCH_SIZE);
     const igdbClient = await getIGDBClient();
 
-    const requestBody = `fields id,category,aggregated_rating; where id = (${batchIds.join(",")});`;
+    const requestBody = `fields id,category,aggregated_rating,first_release_date; where id = (${batchIds.join(",")});`;
     const response = await igdbClient("games", requestBody);
 
     if (!response.ok) {
@@ -66,10 +66,27 @@ async function updateAggregatedRatings() {
       // Map IGDB category to our category pointer, default to main_game (0)
       const categoryPointer = IGDB_CATEGORY_MAP[igdbGame.category] ?? 0;
 
+      // Convert IGDB timestamp (seconds) to YYYY-MM-DD string format
+      // This matches the date field's string mode in the schema
+      const firstReleaseDate = igdbGame.first_release_date
+        ? new Date(igdbGame.first_release_date * 1000)
+            .toISOString()
+            .split("T")[0]
+        : null;
+
+      // Validate date format
+      if (firstReleaseDate && !/^\d{4}-\d{2}-\d{2}$/.test(firstReleaseDate)) {
+        console.warn(
+          `Invalid date format for game ${matchingSubmission.name}: ${firstReleaseDate}`
+        );
+        continue;
+      }
+
       const [game] = await db
         .update(games)
         .set({
           category: categoryPointer,
+          firstReleaseDate,
           external: sql`
             jsonb_set(
               external,
@@ -84,7 +101,7 @@ async function updateAggregatedRatings() {
       if (game) {
         updatedCount++;
         console.log(
-          `Updated game ${matchingSubmission.name} with category: ${categoryPointer}`
+          `Updated game ${matchingSubmission.name} with category: ${categoryPointer}, release date: ${firstReleaseDate}`
         );
       }
     }
@@ -97,20 +114,20 @@ async function updateAggregatedRatings() {
 
 export default defineTask({
   meta: {
-    name: "games:update-ratings",
+    name: "games:update-igdb-data",
   },
   async run() {
     try {
-      const updatedCount = await updateAggregatedRatings();
+      const updatedCount = await updateIGDBGameData();
       return {
         result: "success ✅",
-        message: `Updated ${updatedCount} games.`,
+        message: `Updated ${updatedCount} games with IGDB data.`,
       };
     } catch (error) {
       console.error(error);
       return {
         result: "error ❌",
-        message: "Failed to update game ratings",
+        message: "Failed to update game data from IGDB",
       };
     }
   },
