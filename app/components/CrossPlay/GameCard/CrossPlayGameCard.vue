@@ -6,18 +6,25 @@ const props = defineProps<{
 }>();
 
 const isDialogOpen = ref(false);
+const originalURL = ref("");
 
-function handleCardClick() {
-  if (import.meta.client) {
-    // Store current URL and update URL with game slug
-    history.pushState(
-      { dialogOpen: true, originalURL: window.location.href },
-      "",
-      `/games/${props.game.slug}`
-    );
-  }
+function openDialog() {
+  originalURL.value = window.location.href;
+  history.pushState({ dialogOpen: true }, "", `/games/${props.game.slug}`);
   isDialogOpen.value = true;
 }
+
+onMounted(() => {
+  window.addEventListener("popstate", event => {
+    if (event.state?.dialogOpen === undefined) {
+      isDialogOpen.value = false;
+    }
+  });
+});
+
+onUnmounted(() => {
+  window.removeEventListener("popstate", () => {});
+});
 </script>
 
 <template>
@@ -25,7 +32,7 @@ function handleCardClick() {
     <!-- Image Section -->
     <button
       class="clean-button game-card__cover"
-      @click="handleCardClick"
+      @click="openDialog"
     >
       <img
         :src="`https://images.igdb.com/igdb/image/upload/t_720p/${props.game.external?.igdbImageId}.jpg`"

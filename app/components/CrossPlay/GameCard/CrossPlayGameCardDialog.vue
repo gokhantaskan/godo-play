@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { Dialog, DialogPanel } from "@headlessui/vue";
+
 import { QUERY_KEYS } from "~~/shared/constants/queryKeys";
 import type { GameSubmissionWithRelations } from "~~/shared/types";
 import type { GameDetails } from "~~/shared/types/igdb/gameDetails";
@@ -10,8 +12,8 @@ export interface CrossPlayGameCardDialogProps {
 const props = defineProps<CrossPlayGameCardDialogProps>();
 const isOpen = defineModel<boolean>("open");
 
-const { data: cachedIGDBGame } = useNuxtData(QUERY_KEYS.IGDBGame(props.slug));
-const { data: cachedDbGame } = useNuxtData(QUERY_KEYS.DbGame(props.slug));
+// const { data: cachedIGDBGame } = useNuxtData(QUERY_KEYS.IGDBGame(props.slug));
+// const { data: cachedDbGame } = useNuxtData(QUERY_KEYS.DbGame(props.slug));
 
 const {
   data: fetchedIGDBGame,
@@ -21,7 +23,7 @@ const {
   key: QUERY_KEYS.IGDBGame(props.slug),
   server: false,
   immediate: false,
-  lazy: !!cachedIGDBGame.value,
+  // lazy: !!cachedIGDBGame.value,
 });
 
 const {
@@ -32,99 +34,90 @@ const {
   key: QUERY_KEYS.DbGame(props.slug),
   server: false,
   immediate: false,
-  lazy: !!cachedDbGame.value,
+  // lazy: !!cachedDbGame.value,
 });
 
-const gameName = computed(() => fetchedIGDBGame.value?.name);
 const isLoading = computed(
   () => igdbStatus.value === "pending" || dbStatus.value === "pending"
 );
-const hasData = computed(() => fetchedIGDBGame.value && fetchedDbGame.value);
+// const hasData = computed(() => {
+//   const igdbGame = fetchedIGDBGame.value ?? cachedIGDBGame.value;
+//   const dbGame = fetchedDbGame.value ?? cachedDbGame.value;
+//   return igdbGame && dbGame;
+// });
 
-// Watch modal state to fetch data when opened and handle history
+// Watch modal state to fetch data when opened
 watch(isOpen, async newValue => {
-  if (import.meta.client) {
-    if (newValue) {
-      if (!cachedIGDBGame.value || !cachedDbGame.value) {
-        await refresh();
-      }
-    } else {
-      // When closing, go back in history
-      history.back();
-    }
-  } else {
-    // On server side, just fetch data if needed
-    if (newValue && (!cachedIGDBGame.value || !cachedDbGame.value)) {
-      await refresh();
-    }
+  if (newValue) {
+    await refresh();
   }
 });
-
-// Handle browser back/forward button
-function handlePopState(event: PopStateEvent) {
-  // Close dialog when navigating back, unless we're moving to a state with dialogOpen: true
-  if (!event.state?.dialogOpen && isOpen.value) {
-    isOpen.value = false;
-  }
-
-  // If we're moving to a state with dialogOpen: true, ensure dialog is open
-  if (event.state?.dialogOpen && !isOpen.value) {
-    isOpen.value = true;
-  }
-}
-
-if (import.meta.client) {
-  window.addEventListener("popstate", handlePopState);
-}
 
 async function refresh() {
   await Promise.all([refreshIgdbGame(), refreshDbGame()]);
 }
+
+function closeDialog() {
+  history.back();
+}
 </script>
 
 <template>
-  <TheNativeDialog
-    v-model:open="isOpen"
+  <Dialog
+    :open="isOpen"
     class="game-dialog"
+    @close="closeDialog"
   >
-    <div class="game-dialog__wrapper">
-      <header class="game-dialog__header">
-        <button
-          class="clean-button game-dialog__close"
-          size="sm"
-          @click="isOpen = false"
-        >
-          <Icon name="lucide:x" />
-        </button>
-      </header>
-
-      <div class="game-dialog__content">
-        <template v-if="isOpen">
-          <div
-            v-if="isLoading"
-            class="game-dialog__loader"
+    <div class="game-dialog__backdrop">
+      <DialogPanel class="game-dialog__wrapper">
+        <header class="game-dialog__header">
+          <button
+            class="clean-button game-dialog__close"
+            size="sm"
+            @click="closeDialog"
           >
-            <Icon
-              name="lucide:loader-2"
-              class="game-dialog__loader-icon"
+            <Icon name="lucide:x" />
+          </button>
+        </header>
+
+        <div class="game-dialog__content">
+          <template v-if="isOpen">
+            <div
+              v-if="isLoading"
+              class="game-dialog__loader"
+            >
+              <Icon
+                name="lucide:loader-2"
+                class="game-dialog__loader-icon"
+              />
+            </div>
+            <CrossPlayGameDetails
+              v-else-if="fetchedDbGame && fetchedIGDBGame"
+              :igdb-game="fetchedIGDBGame"
+              :db-game="fetchedDbGame"
+              :game-name="fetchedDbGame.name"
             />
-          </div>
-          <CrossPlayGameDetails
-            v-else-if="hasData"
-            :igdb-game="fetchedIGDBGame ?? null"
-            :db-game="fetchedDbGame ?? null"
-            :game-name="gameName ?? ''"
-          />
-        </template>
-      </div>
+          </template>
+        </div>
+      </DialogPanel>
     </div>
-  </TheNativeDialog>
+  </Dialog>
 </template>
 
 <style lang="scss" scoped>
 .game-dialog {
-  max-width: 100vw;
-  max-height: 100dvh;
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+
+  &__backdrop {
+    position: fixed;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
 
   &__wrapper {
     display: flex;
