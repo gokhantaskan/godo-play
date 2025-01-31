@@ -33,9 +33,9 @@ function handleError(options?: ErrorOptions) {
         <template v-else>
           <h1 class="error-page__title">{{ error.statusCode }}</h1>
           <h2 class="error-page__subtitle">Something went wrong</h2>
-          <p class="error-page__message">
-            <strong>{{ error.message }}</strong>
-          </p>
+          <div class="error-page__message">
+            <pre class="tw:text-sm">{{ error.message }}</pre>
+          </div>
           <p class="error-page__description">
             Our team has been notified and we're working on fixing this issue.
           </p>
@@ -87,6 +87,7 @@ function handleError(options?: ErrorOptions) {
     line-height: 1.75rem;
     color: var(--tw-gray-600);
     margin-block-end: 0.5rem;
+    overflow: auto;
   }
 
   &__description {

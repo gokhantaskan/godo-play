@@ -77,11 +77,11 @@ export default defineNuxtConfig({
   typescript: {
     typeCheck: true,
   },
-  // routeRules: {
-  //   "/games/cross-play": {
-  //     headers: { "cache-control": "public, max-age=1" },
-  //   },
-  // },
+  routeRules: {
+    "/games/**": {
+      headers: { "cache-control": "public, max-age=1" },
+    },
+  },
   modules: [
     "@nuxt/eslint",
     "@nuxt/fonts",
@@ -93,6 +93,7 @@ export default defineNuxtConfig({
     "@nuxt/scripts",
     "@nuxtjs/prismic",
     "@primevue/nuxt-module",
+    ...(process.env.NODE_ENV === "production" ? ["@sentry/nuxt/module"] : []),
   ],
   css: ["./app/assets/styles/tailwind.css", "./app/assets/styles/main.scss"],
   postcss: {
@@ -172,5 +173,16 @@ export default defineNuxtConfig({
     options: {
       theme: "none",
     },
+  },
+  // @ts-ignore
+  sentry: {
+    sourceMapsUploadOptions: {
+      org: "godoplay",
+      project: "javascript-nuxt",
+    },
+    autoInjectServerSentry: "top-level-import",
+  },
+  sourcemap: {
+    client: "hidden",
   },
 });
