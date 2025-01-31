@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { TabsContent, TabsList, TabsRoot, TabsTrigger } from "radix-vue";
 
-import { AgeRatingCategories } from "~~/shared/constants";
+import { ageRatingHumanizedRatings } from "~~/shared/constants";
 import type { GameSubmissionWithRelations } from "~~/shared/types";
 import type { GameDetails } from "~~/shared/types/igdb/gameDetails";
 
@@ -104,21 +104,6 @@ function getAgeRatingImageUrl(
 
   const extension = category === "ESRB" ? "svg" : "png";
 
-  // For ESRB, we need to handle special cases like "Rating Pending" -> "RP"
-  if (category === "ESRB") {
-    // Convert "Rating Pending" to "RP", "Everyone 10+" to "E10", etc.
-    const esrbMap: Record<string, string> = {
-      "Rating Pending": "RP",
-      "Early Childhood": "EC",
-      Everyone: "E",
-      "Everyone 10+": "E10",
-      Teen: "T",
-      Mature: "M",
-      "Adults Only": "AO",
-    };
-    return `/age-ratings/ESRB/${esrbMap[rating] || rating}.${extension}`;
-  }
-
   return `/age-ratings/${category}/${rating}.${extension}`;
 }
 
@@ -187,12 +172,12 @@ function formatDate(date: number) {
         </div>
       </div>
       <div
-        v-if="igdbGame?.cover?.image_id"
+        v-if="dbGame?.external?.igdbImageId"
         class="game__hero-backdrop"
       >
         <img
-          :src="`https://images.igdb.com/igdb/image/upload/t_screenshot_med/${igdbGame.cover.image_id}.jpg`"
-          :alt="igdbGame.name || ''"
+          :src="`https://images.igdb.com/igdb/image/upload/t_screenshot_med/${dbGame.external.igdbImageId}.jpg`"
+          :alt="gameName || ''"
           class="game__hero-backdrop-image"
           loading="lazy"
         />
@@ -204,34 +189,45 @@ function formatDate(date: number) {
       v-if="hasAgeRatings && igdbGame?.age_ratings"
       class="tw:bg-fg/10 tw:py-4"
     >
-      <ConsolidatedAgeRatings
-        :age-ratings="igdbGame.age_ratings"
-        :visible-categories="[AgeRatingCategories.PEGI]"
-      >
+      <ConsolidatedAgeRatings :age-ratings="igdbGame.age_ratings">
         <template #default="{ consolidatedRatings }">
           <div class="tw:container">
             <h2 class="tw:sr-only">Age Ratings</h2>
-            <dl class="tw:grid tw:grid-cols-[max-content_1fr] tw:gap-2">
-              <template
-                v-for="rating in consolidatedRatings"
-                :key="rating.category"
-              >
+            <dl
+              v-for="(rating, index) in consolidatedRatings"
+              :key="rating.category"
+              class="tw:grid tw:grid-cols-[max-content_1fr] tw:gap-2 tw:last-of-type:mt-2"
+            >
+              <template v-if="index === consolidatedRatings.length - 1">
                 <dt>
                   <img
                     v-if="rating.name"
                     :src="getAgeRatingImageUrl(rating.category, rating.name)"
                     :alt="`${rating.category} ${rating.name}`"
-                    class="tw:max-h-10"
+                    class="tw:h-12"
                     loading="lazy"
                   />
                 </dt>
                 <dd class="game__section-descriptions">
                   <div
                     v-if="rating.contentDescriptions?.length"
-                    class="game__section-content"
-                    role="list"
+                    class="game__section-content tw:text-sm"
                   >
-                    {{ rating.contentDescriptions.join(", ") }}
+                    {{
+                      rating.contentDescriptions
+                        ?.map((desc: any) => desc.description)
+                        .join(", ")
+                    }}
+                  </div>
+                  <div>
+                    <span class="tw:text-xs tw:leading-0 tw:text-text-muted"
+                      >{{ rating.category }}
+                      {{
+                        ageRatingHumanizedRatings[
+                          rating.name as keyof typeof ageRatingHumanizedRatings
+                        ]
+                      }}</span
+                    >
                   </div>
                 </dd>
               </template>
@@ -304,6 +300,7 @@ function formatDate(date: number) {
             <!-- Platform Groups -->
             <section v-if="hasPlatformGroups && dbGame?.platformGroups">
               <GameDetailsCrossplayInfo
+                :game-name="gameName"
                 :platform-groups="dbGame.platformGroups"
                 :store-platforms="dbGame.storePlatforms"
                 :crossplay-information="dbGame.crossplayInformation"

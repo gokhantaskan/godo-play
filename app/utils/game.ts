@@ -150,7 +150,7 @@ interface ContentDescription {
 interface AgeRatingInfo {
   category: string;
   name: string;
-  contentDescriptions: string[];
+  contentDescriptions: { category: number; description: string }[];
 }
 
 /**
@@ -186,7 +186,12 @@ export function getConsolidatedAgeRatings(
       const contentDescriptions = (
         (highestRating.content_descriptions as unknown as ContentDescription[]) ??
         []
-      ).map(desc => desc.description);
+      ).map(desc => {
+        return {
+          category: desc.category,
+          description: desc.description,
+        };
+      });
 
       return {
         category: categoryName,

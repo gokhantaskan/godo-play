@@ -18,8 +18,8 @@ export interface GameDetails {
   player_perspectives?: SmallEntity[];
   involved_companies: InvolvedCompany[];
   screenshots?: Image[];
-  storyline: string;
-  summary: string;
+  storyline?: string;
+  summary?: string;
   themes: SmallEntity[];
   websites?: Website[];
   videos?: Video[];

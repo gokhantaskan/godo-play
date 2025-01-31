@@ -1,55 +1,74 @@
 <script setup lang="ts">
-import {
-  PopoverArrow,
-  PopoverContent,
-  PopoverPortal,
-  PopoverRoot,
-  PopoverTrigger,
-} from "radix-vue";
+import { autoUpdate, flip, offset, shift, useFloating } from "@floating-ui/vue";
+import { onClickOutside } from "@vueuse/core";
+import { ref } from "vue";
 
 interface Props {
   content: string;
-  side?: "top" | "right" | "bottom" | "left";
-  sideOffset?: number;
+  position?: "top" | "right" | "bottom" | "left";
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  side: "top",
-  sideOffset: 5,
+  position: "bottom",
 });
+
+const isOpen = ref(false);
+const reference = ref<HTMLElement | null>(null);
+const floating = ref<HTMLElement | null>(null);
+const anchorId = useId();
+const popoverId = useId();
+
+const { floatingStyles } = useFloating(reference, floating, {
+  placement: props.position,
+  middleware: [offset(8), flip(), shift()],
+  whileElementsMounted: autoUpdate,
+});
+
+function togglePopover() {
+  isOpen.value = !isOpen.value;
+}
+
+onClickOutside(
+  floating,
+  () => {
+    if (isOpen.value) {
+      isOpen.value = false;
+    }
+  },
+  {
+    ignore: [reference],
+  }
+);
 </script>
 
 <template>
-  <PopoverRoot>
-    <PopoverTrigger>
-      <Icon name="lucide:info" />
-    </PopoverTrigger>
+  <button
+    :id="anchorId"
+    ref="reference"
+    class="info-bubble__button"
+    type="button"
+    @click="togglePopover"
+  >
+    <Icon name="lucide:info" />
+  </button>
 
-    <PopoverPortal>
-      <PopoverContent
-        :side="props.side"
-        :side-offset="props.sideOffset"
-        class="info-bubble tw:animate-in tw:fade-in-0 tw:zoom-in-95 data-[state=closed]:tw:animate-out data-[state=closed]:tw:fade-out-0 data-[state=closed]:tw:zoom-out-95"
-      >
-        <div>
-          {{ props.content }}
-        </div>
-
-        <PopoverArrow class="tw:fill-white" />
-      </PopoverContent>
-    </PopoverPortal>
-  </PopoverRoot>
+  <div
+    v-show="isOpen"
+    :id="popoverId"
+    ref="floating"
+    class="info-bubble__popover"
+    :style="[
+      floatingStyles,
+      {
+        visibility: isOpen ? 'visible' : 'hidden',
+        pointerEvents: isOpen ? 'auto' : 'none',
+      },
+    ]"
+    role="tooltip"
+    aria-live="polite"
+  >
+    <div class="tw:p-3 tw:text-sm">
+      {{ props.content }}
+    </div>
+  </div>
 </template>
-
-<style scoped lang="scss">
-.info-bubble {
-  z-index: 50;
-  display: inline-block;
-  flex-shrink: 0;
-  align-items: center;
-  justify-content: center;
-  border-radius: var(--tw-radius-md);
-  box-shadow: var(--tw-shadow-md);
-  background-color: white;
-}
-</style>

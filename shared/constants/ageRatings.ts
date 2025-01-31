@@ -137,3 +137,18 @@ export enum AgeRatingsContentDescriptions {
   CLASS_IND_linguagem_impropria = 84,
   CLASS_IND_atos_criminosos = 85,
 }
+
+export const ageRatingHumanizedRatings = {
+  Three: "3+",
+  Seven: "7+",
+  Twelve: "12+",
+  Sixteen: "16+",
+  Eighteen: "18+",
+  RP: "Rating Pending",
+  EC: "Early Childhood",
+  E: "Everyone",
+  E10: "Everyone 10+",
+  T: "Teen",
+  M: "Mature",
+  AO: "Adults Only",
+};
