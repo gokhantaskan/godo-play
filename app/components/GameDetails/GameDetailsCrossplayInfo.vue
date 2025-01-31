@@ -20,7 +20,12 @@ defineProps<GameDetailsCrossplayInfoProps>();
       <CrossPlayGameDetailsPlatformGroups :platform-groups="platformGroups" />
     </section>
     <section>
-      <h2>Stores</h2>
+      <header class="tw:flex tw:items-center tw:gap-1">
+        <h2>Stores</h2>
+        <TheInfoBubble
+          :content="`Each store can be cross-played with each other.`"
+        />
+      </header>
       <CrossPlayGameDetailsStorePlatforms :store-platforms="storePlatforms" />
     </section>
     <section v-if="crossplayInformation">

@@ -12,21 +12,25 @@ useHead({
     <div class="error-layout__container">
       <slot />
     </div>
+    <AppFooter />
   </div>
 </template>
 
 <style scoped lang="scss">
 .error-layout {
   display: flex;
-  align-items: center;
-  justify-content: center;
+  flex-direction: column;
   min-height: 100dvh;
-  padding-inline: 1rem;
 
   &__container {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     width: 100%;
     max-width: 80ch;
     margin-inline: auto;
+    padding-block: 2rem;
     text-align: center;
   }
 }

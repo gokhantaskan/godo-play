@@ -11,6 +11,13 @@
   // Base typography styles
   :--heading {
     font-weight: 500;
+
+    &:not(header :--heading) {
+      margin-block-end: 0.5rem;
+    }
+  }
+
+  header:has(:--heading):not(.game__hero) {
     margin-block-end: 0.5rem;
   }
 
