@@ -1,4 +1,7 @@
 .close-button {
+  --button-size: 2rem;
+  --icon-size: 1.25rem;
+
   flex-shrink: 0;
   display: inline-flex;
   align-items: center;
@@ -10,4 +13,20 @@
   background: color-mix(in oklch, var(--tw-color-border) 50%, transparent);
   color: var(--tw-color-text-fg);
   cursor: pointer;
+  inline-size: var(--button-size);
+  block-size: var(--button-size);
+
+  &__icon {
+    inline-size: var(--icon-size);
+    block-size: var(--icon-size);
+  }
+
+  &--sm {
+    --button-size: 1.5rem;
+    --icon-size: 1rem;
+  }
+
+  &--lg {
+    --button-size: 2.5rem;
+  }
 }

@@ -7,7 +7,7 @@ const { size = "md " } = defineProps<Props>();
 
 const sizeClass = computed(() => {
   return {
-    "close-button--${size}": size,
+    [`close-button--${size}`]: size,
   };
 });
 </script>
@@ -18,6 +18,9 @@ const sizeClass = computed(() => {
     :class="sizeClass"
     type="button"
   >
-    <Icon name="lucide:x" />
+    <Icon
+      class="close-button__icon"
+      name="lucide:x"
+    />
   </button>
 </template>

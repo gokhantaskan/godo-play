@@ -4,15 +4,16 @@ import type { GameSubmissionWithRelations } from "~~/shared/types";
 defineProps<{
   game: GameSubmissionWithRelations;
 }>();
+
+const isDialogOpen = ref(false);
 </script>
 
 <template>
   <article class="game-card">
     <!-- Image Section -->
-    <NuxtLink
-      :to="{ name: 'CrossPlayGameDetailsPage', params: { slug: game.slug } }"
-      target="_blank"
-      class="game-card__cover"
+    <button
+      class="clean-button game-card__cover"
+      @click="isDialogOpen = true"
     >
       <img
         :src="`https://images.igdb.com/igdb/image/upload/t_720p/${game.external?.igdbImageId}.jpg`"
@@ -20,7 +21,12 @@ defineProps<{
         preload
         loading="lazy"
       />
-    </NuxtLink>
+    </button>
+
+    <CrossPlayGameCardDialog
+      v-model:open="isDialogOpen"
+      :slug="game.slug"
+    />
 
     <!-- Content Section -->
     <div class="game-card__content">

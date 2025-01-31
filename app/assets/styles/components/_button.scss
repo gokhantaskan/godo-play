@@ -13,6 +13,14 @@ $button-variants: (
   ),
 );
 
+.clean-button {
+  border: none;
+  padding: 0;
+  margin: 0;
+  background: none;
+  cursor: pointer;
+}
+
 .button {
   --radius: var(--form-radius);
   --padding-inline: var(--form-padding-inline-md);
