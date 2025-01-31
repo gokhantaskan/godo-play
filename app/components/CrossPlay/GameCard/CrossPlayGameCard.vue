@@ -1,11 +1,23 @@
 <script setup lang="ts">
 import type { GameSubmissionWithRelations } from "~~/shared/types";
 
-defineProps<{
+const props = defineProps<{
   game: GameSubmissionWithRelations;
 }>();
 
 const isDialogOpen = ref(false);
+
+function handleCardClick() {
+  if (import.meta.client) {
+    // Store current URL and update URL with game slug
+    history.pushState(
+      { dialogOpen: true, originalURL: window.location.href },
+      "",
+      `/games/${props.game.slug}`
+    );
+  }
+  isDialogOpen.value = true;
+}
 </script>
 
 <template>
@@ -13,11 +25,11 @@ const isDialogOpen = ref(false);
     <!-- Image Section -->
     <button
       class="clean-button game-card__cover"
-      @click="isDialogOpen = true"
+      @click="handleCardClick"
     >
       <img
-        :src="`https://images.igdb.com/igdb/image/upload/t_720p/${game.external?.igdbImageId}.jpg`"
-        :alt="game.name"
+        :src="`https://images.igdb.com/igdb/image/upload/t_720p/${props.game.external?.igdbImageId}.jpg`"
+        :alt="props.game.name"
         preload
         loading="lazy"
       />
@@ -25,18 +37,18 @@ const isDialogOpen = ref(false);
 
     <CrossPlayGameCardDialog
       v-model:open="isDialogOpen"
-      :slug="game.slug"
+      :slug="props.game.slug"
     />
 
     <!-- Content Section -->
     <div class="game-card__content">
       <header>
         <!-- <span class="tw:text-xs">{{
-          getCategoryNameByPointer(game.category)
+          getCategoryNameByPointer(props.game.category)
         }}</span> -->
         <h2
           class="game-card__title"
-          :class="[game.status === 'pending' && 'tw:text-red']"
+          :class="[props.game.status === 'pending' && 'tw:text-red']"
           :style="{
             textOverflow: 'unset',
             whiteSpace: 'unset',
@@ -46,18 +58,18 @@ const isDialogOpen = ref(false);
             '-webkit-box-orient': 'vertical',
           }"
         >
-          {{ game.name }}
+          {{ props.game.name }}
         </h2>
       </header>
 
       <div>
         <!-- Game Modes -->
         <div
-          v-if="game.gameSubmissionGameModes?.length"
+          v-if="props.game.gameSubmissionGameModes?.length"
           class="game-card__game-modes"
         >
           {{
-            game.gameSubmissionGameModes
+            props.game.gameSubmissionGameModes
               .map(mode => mode.gameMode.name)
               .join(", ")
           }}
@@ -65,12 +77,12 @@ const isDialogOpen = ref(false);
 
         <!-- Platform Groups -->
         <div
-          v-if="game.platformGroups?.length"
+          v-if="props.game.platformGroups?.length"
           class="tw:mt-2"
         >
           <CrossPlayGameCardPlatformGroups
             role="listitem"
-            :platform-groups="game.platformGroups"
+            :platform-groups="props.game.platformGroups"
           />
         </div>
       </div>

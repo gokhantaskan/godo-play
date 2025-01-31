@@ -43,41 +43,38 @@ const hasData = computed(() => fetchedIGDBGame.value && fetchedDbGame.value);
 
 // Watch modal state to fetch data when opened and handle history
 watch(isOpen, async newValue => {
-  if (newValue) {
-    // Store current URL in state and update URL
-    history.pushState(
-      { isGameDialog: true, current: window.location.pathname },
-      "",
-      `/games/${props.slug}`
-    );
-
-    if (!cachedIGDBGame.value || !cachedDbGame.value) {
-      await refresh();
+  if (import.meta.client) {
+    if (newValue) {
+      if (!cachedIGDBGame.value || !cachedDbGame.value) {
+        await refresh();
+      }
+    } else {
+      // When closing, go back in history
+      history.back();
     }
   } else {
-    // Restore previous URL from state
-    if (history.state?.current) {
-      history.pushState(history.state, "", history.state.current);
-    } else {
-      history.back();
+    // On server side, just fetch data if needed
+    if (newValue && (!cachedIGDBGame.value || !cachedDbGame.value)) {
+      await refresh();
     }
   }
 });
 
 // Handle browser back/forward button
-onMounted(() => {
-  window.addEventListener("popstate", handlePopState);
-});
-
-onUnmounted(() => {
-  window.removeEventListener("popstate", handlePopState);
-});
-
 function handlePopState(event: PopStateEvent) {
-  // Close dialog when navigating back
-  if (event.state?.isGameDialog !== true && isOpen.value) {
+  // Close dialog when navigating back, unless we're moving to a state with dialogOpen: true
+  if (!event.state?.dialogOpen && isOpen.value) {
     isOpen.value = false;
   }
+
+  // If we're moving to a state with dialogOpen: true, ensure dialog is open
+  if (event.state?.dialogOpen && !isOpen.value) {
+    isOpen.value = true;
+  }
+}
+
+if (import.meta.client) {
+  window.addEventListener("popstate", handlePopState);
 }
 
 async function refresh() {
@@ -86,8 +83,11 @@ async function refresh() {
 </script>
 
 <template>
-  <TheNativeDialog v-model:open="isOpen">
-    <div class="game-dialog">
+  <TheNativeDialog
+    v-model:open="isOpen"
+    class="game-dialog"
+  >
+    <div class="game-dialog__wrapper">
       <header class="game-dialog__header">
         <button
           class="clean-button game-dialog__close"
@@ -123,37 +123,39 @@ async function refresh() {
 
 <style lang="scss" scoped>
 .game-dialog {
-  display: flex;
-  flex-direction: column;
-  width: 100vw;
-  height: 100vh;
-  overflow: hidden;
+  max-width: 100vw;
+  max-height: 100dvh;
+
+  &__wrapper {
+    display: flex;
+    flex-direction: column;
+    width: 100vw;
+    height: 100dvh;
+    overflow: hidden;
+  }
 
   &__header {
-    inset-block-start: 0;
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
+    flex-shrink: 0;
+    position: relative;
     background-color: transparent;
-    padding: 0.5rem;
+    width: 100%;
+    height: 4rem;
   }
 
   &__close {
+    position: absolute;
+    inset: 0;
+    padding-inline: 1rem;
     color: white;
-    width: 2rem;
-    height: 2rem;
     background-color: transparent;
-    border: none;
     display: inline-flex;
     align-items: center;
-    justify-content: center;
-    border-radius: 999rem;
-    background-color: rgba(255, 255, 255, 0.5);
+    justify-content: flex-end;
 
     svg {
-      width: 1.25rem;
-      height: 1.25rem;
-      color: var(--tw-color-red);
+      width: 2rem;
+      height: 2rem;
+      color: white;
     }
   }
 
