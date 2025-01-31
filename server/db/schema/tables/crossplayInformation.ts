@@ -1,4 +1,4 @@
-import { integer, pgTable, serial, text } from "drizzle-orm/pg-core";
+import { boolean, integer, pgTable, serial, text } from "drizzle-orm/pg-core";
 import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 
 import { defaultInsertTimestamps } from "../helpers/defaults";
@@ -15,6 +15,7 @@ export const crossplayInformation = pgTable("crossplay_information", {
     .unique(), // One-to-one relationship with games
   evidenceUrl: text("evidence_url"),
   information: text("information"),
+  isOfficial: boolean("is_official").default(false),
   ...defaultInsertTimestamps,
 });
 

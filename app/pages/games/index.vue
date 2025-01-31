@@ -13,6 +13,7 @@ interface InitialRouteQuery {
   playerPerspectives: string;
   genres: string;
   themes: string;
+  sort: string;
   [key: string]: string | string[];
 }
 
@@ -48,12 +49,12 @@ const ITEMS_PER_PAGE = 48;
 const route = useRoute();
 const {
   platforms: initialQueryPlatforms,
-  // initialQueryStores,
   gameModes: initialQueryGameModes,
   search: initialQuerySearch,
   playerPerspectives: initialQueryPlayerPerspectives,
   genres: initialQueryGenres,
   themes: initialQueryThemes,
+  sort: initialQuerySort = "-popularity",
 } = route.query as InitialRouteQuery;
 
 console.log(route.query);
@@ -112,7 +113,10 @@ function isPlatformId(value: unknown): value is PlatformId {
   return typeof value === "number" && !isNaN(value);
 }
 
-// Update urlQuery to use game mode slugs
+// Add sort state
+const sort = ref<string>(initialQuerySort);
+
+// Update urlQuery to include sort
 const urlQuery = computed(() => {
   const platforms = [
     selectedPlatforms.value.p1,
@@ -155,10 +159,14 @@ const urlQuery = computed(() => {
     queryToSet.search = debouncedSearch.value;
   }
 
+  if (sort.value) {
+    queryToSet.sort = sort.value;
+  }
+
   return Object.keys(queryToSet).length ? queryToSet : undefined;
 });
 
-// Create a computed property for the API query
+// Update apiQueryParams to include sort
 const apiQueryParams = computed(() => {
   const platforms = [
     selectedPlatforms.value.p1,
@@ -166,7 +174,9 @@ const apiQueryParams = computed(() => {
     selectedPlatforms.value.p3,
   ].filter(isPlatformId);
 
-  const query: Record<string, string> = {};
+  const query: Record<string, string> = {
+    sort: sort.value,
+  };
 
   if (platforms.length) {
     query.platforms = platforms.join(",");
@@ -207,9 +217,9 @@ const totalGames = useState<number>("crossplay-total", () => 0);
 // Track loading state for "Show More"
 const isLoadingMore = ref(false);
 
-// Update useFetch to use the API query parameters
+// Update useFetch to use dashboard-games endpoint
 const { data: gamesResponse, status } = await useFetch<GamesResponse>(
-  "/api/games",
+  "/api/dashboard-games",
   {
     query: computed(() => ({
       ...apiQueryParams.value,
@@ -339,6 +349,13 @@ const activeFilterChips = computed(() => {
 
   return chips;
 });
+
+// Add sort change handler
+function handleSortChange(value: string | string[]) {
+  if (typeof value === "string") {
+    sort.value = value;
+  }
+}
 </script>
 
 <template>
@@ -405,11 +422,25 @@ const activeFilterChips = computed(() => {
           class="tw:max-md:w-full"
           placeholder="Search by name"
         />
+        <TheSelect
+          v-model="sort"
+          class="tw:max-w-24 tw:grow-0"
+          :options="[
+            { value: '-popularity', label: 'Most Popular' },
+            { value: '-created_at', label: 'Newest' },
+            { value: '-updated_at', label: 'Recently Updated' },
+            { value: '-first_release_date', label: 'Latest Release' },
+          ]"
+          full-width
+          placeholder="Sort by"
+          @update:model-value="handleSortChange"
+        />
         <GameCategorySelector
           v-model:game-modes="selectedFilters.gameModes"
           :include="['gameModes']"
         />
       </div>
+      <div></div>
       <div
         v-if="activeFilterChips.length"
         class="tw:w-full tw:flex tw:flex-wrap tw:gap-2"

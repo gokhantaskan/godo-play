@@ -24,6 +24,7 @@ export interface SelectProps {
   multiple?: boolean;
   valueKey?: string;
   labelKey?: string;
+  fullWidth?: boolean;
 }
 
 const props = withDefaults(defineProps<SelectProps>(), {
@@ -35,6 +36,7 @@ const props = withDefaults(defineProps<SelectProps>(), {
   multiple: false,
   valueKey: "value",
   labelKey: "label",
+  fullWidth: false,
 });
 
 const modelValue = defineModel<T | T[]>();
@@ -130,7 +132,10 @@ const selectedOptions = computed(() => {
       </span>
     </ListboxButton>
 
-    <ListboxOptions class="select__options">
+    <ListboxOptions
+      class="select__options"
+      :class="{ 'select__options--full-width': fullWidth }"
+    >
       <template v-if="options.length">
         <ListboxOption
           v-for="option in options"

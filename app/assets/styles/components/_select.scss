@@ -1,174 +1,181 @@
-.select {
-  --radius: var(--form-radius);
-  --padding-inline: var(--form-padding-inline-md);
-  --padding-block: var(--form-padding-block-md);
-  --height: var(--form-height-md);
-  --icon-size: var(--form-icon-size-md);
-  --clear-size: 1.5rem;
+@layer components {
+  .select {
+    --radius: var(--form-radius);
+    --padding-inline: var(--form-padding-inline-md);
+    --padding-block: var(--form-padding-block-md);
+    --height: var(--form-height-md);
+    --icon-size: var(--form-icon-size-md);
+    --clear-size: 1.5rem;
 
-  position: relative;
-  width: 100%;
-
-  &__label {
-    display: block;
-    font-size: var(--form-text-sm);
-    font-weight: 500;
-    color: var(--form-text-color);
-    margin-bottom: 0.25rem;
-
-    &-required {
-      color: var(--tw-color-red);
-    }
-  }
-
-  &__button {
-    width: 100%;
-    min-height: var(--height);
-    border-radius: var(--radius);
-    padding-inline: var(--padding-inline);
-    padding-block: var(--padding-block);
-    padding-inline-end: calc(var(--clear-size) + var(--padding-inline));
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    background-color: var(--form-bg);
-    border: 1px solid var(--form-border-color);
-    transition: border-color 0.2s ease-in-out;
     position: relative;
-    cursor: pointer;
-    text-align: left;
-    font-size: var(--form-text-md);
+    width: 100%;
 
-    &:focus {
-      outline: none;
-      border-color: var(--form-border-color-focus);
+    &__label {
+      display: block;
+      font-size: var(--form-text-sm);
+      font-weight: 500;
+      color: var(--form-text-color);
+      margin-bottom: 0.25rem;
+
+      &-required {
+        color: var(--tw-color-red);
+      }
     }
 
-    &-text {
-      flex: 1;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-      overflow: hidden;
+    &__button {
+      width: 100%;
+      min-height: var(--height);
+      border-radius: var(--radius);
+      padding-inline: var(--padding-inline);
+      padding-block: var(--padding-block);
+      padding-inline-end: calc(var(--clear-size) + var(--padding-inline));
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background-color: var(--form-bg);
+      border: 1px solid var(--form-border-color);
+      transition: border-color 0.2s ease-in-out;
+      position: relative;
+      cursor: pointer;
+      text-align: left;
+      font-size: var(--form-text-md);
 
-      &--placeholder {
+      &:focus {
+        outline: none;
+        border-color: var(--form-border-color-focus);
+      }
+
+      &-text {
+        flex: 1;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        overflow: hidden;
+
+        &--placeholder {
+          color: var(--form-text-muted);
+        }
+      }
+
+      &-icon {
+        inline-size: var(--icon-size);
+        block-size: var(--icon-size);
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        right: var(--padding-inline);
+        color: var(--form-text-muted);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        pointer-events: none;
+      }
+
+      &-leading {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        inline-size: var(--icon-size);
+        block-size: var(--icon-size);
+        color: var(--form-text-muted);
+        flex-shrink: 0;
+      }
+    }
+
+    &__options {
+      padding: 0;
+      position: absolute;
+      z-index: 10;
+      margin-top: 0.25rem;
+      width: 100%;
+      overflow: auto;
+      max-height: 15rem;
+      border-radius: var(--radius);
+      background-color: var(--form-bg);
+      border: 1px solid var(--form-border-color);
+      box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+
+      &--full-width {
+        width: max-content;
+        min-width: 100%;
+      }
+    }
+
+    &__option {
+      position: relative;
+      cursor: pointer;
+      user-select: none;
+      padding-inline: var(--padding-inline);
+      padding-block: calc(var(--padding-block) + 0.125rem);
+      padding-inline-end: calc(var(--clear-size) + var(--padding-inline));
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: var(--form-text-md);
+
+      &:hover,
+      &--active {
+        background-color: color-mix(
+          in oklch,
+          var(--tw-color-primary) 10%,
+          transparent
+        );
+        color: var(--tw-color-primary);
+      }
+
+      &--selected {
+        font-weight: 500;
+      }
+
+      &-check {
+        inline-size: var(--icon-size);
+        block-size: var(--icon-size);
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        right: var(--padding-inline);
+        color: var(--tw-color-primary);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      &-icon {
+        inline-size: var(--icon-size);
+        block-size: var(--icon-size);
+        flex-shrink: 0;
         color: var(--form-text-muted);
       }
     }
 
-    &-icon {
-      inline-size: var(--icon-size);
-      block-size: var(--icon-size);
-      position: absolute;
-      top: 50%;
-      transform: translateY(-50%);
-      right: var(--padding-inline);
-      color: var(--form-text-muted);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      pointer-events: none;
+    // Sizes
+    &--sm {
+      --padding-inline: var(--form-padding-inline-sm);
+      --padding-block: var(--form-padding-block-sm);
+      --height: var(--form-height-sm);
+      --icon-size: var(--form-icon-size-sm);
+
+      .select__button {
+        font-size: var(--form-text-sm);
+      }
+
+      .select__option {
+        font-size: var(--form-text-sm);
+      }
     }
 
-    &-leading {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      inline-size: var(--icon-size);
-      block-size: var(--icon-size);
-      color: var(--form-text-muted);
-      flex-shrink: 0;
-    }
-  }
+    &--lg {
+      --padding-inline: var(--form-padding-inline-lg);
+      --padding-block: var(--form-padding-block-lg);
+      --height: var(--form-height-lg);
+      --icon-size: var(--form-icon-size-lg);
 
-  &__options {
-    padding: 0;
-    position: absolute;
-    z-index: 10;
-    margin-top: 0.25rem;
-    width: 100%;
-    overflow: auto;
-    max-height: 15rem;
-    border-radius: var(--radius);
-    background-color: var(--form-bg);
-    border: 1px solid var(--form-border-color);
-    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
-  }
+      .select__button {
+        font-size: var(--form-text-lg);
+      }
 
-  &__option {
-    position: relative;
-    cursor: pointer;
-    user-select: none;
-    padding-inline: var(--padding-inline);
-    padding-block: calc(var(--padding-block) + 0.125rem);
-    padding-inline-end: calc(var(--clear-size) + var(--padding-inline));
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    font-size: var(--form-text-md);
-
-    &:hover,
-    &--active {
-      background-color: color-mix(
-        in oklch,
-        var(--tw-color-primary) 10%,
-        transparent
-      );
-      color: var(--tw-color-primary);
-    }
-
-    &--selected {
-      font-weight: 500;
-    }
-
-    &-check {
-      inline-size: var(--icon-size);
-      block-size: var(--icon-size);
-      position: absolute;
-      top: 50%;
-      transform: translateY(-50%);
-      right: var(--padding-inline);
-      color: var(--tw-color-primary);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    &-icon {
-      inline-size: var(--icon-size);
-      block-size: var(--icon-size);
-      flex-shrink: 0;
-      color: var(--form-text-muted);
-    }
-  }
-
-  // Sizes
-  &--sm {
-    --padding-inline: var(--form-padding-inline-sm);
-    --padding-block: var(--form-padding-block-sm);
-    --height: var(--form-height-sm);
-    --icon-size: var(--form-icon-size-sm);
-
-    .select__button {
-      font-size: var(--form-text-sm);
-    }
-
-    .select__option {
-      font-size: var(--form-text-sm);
-    }
-  }
-
-  &--lg {
-    --padding-inline: var(--form-padding-inline-lg);
-    --padding-block: var(--form-padding-block-lg);
-    --height: var(--form-height-lg);
-    --icon-size: var(--form-icon-size-lg);
-
-    .select__button {
-      font-size: var(--form-text-lg);
-    }
-
-    .select__option {
-      font-size: var(--form-text-lg);
+      .select__option {
+        font-size: var(--form-text-lg);
+      }
     }
   }
 }

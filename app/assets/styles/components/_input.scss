@@ -1,100 +1,102 @@
-// Search input
-.search-input {
-  --radius: var(--form-radius);
-  --padding-inline: var(--form-padding-inline-md);
-  --padding-block: var(--form-padding-block-md);
-  --height: var(--form-height-md);
-  --icon-size: var(--form-icon-size-md);
-  --clear-size: 1.5rem;
+@layer components {
+  // Search input
+  .search-input {
+    --radius: var(--form-radius);
+    --padding-inline: var(--form-padding-inline-md);
+    --padding-block: var(--form-padding-block-md);
+    --height: var(--form-height-md);
+    --icon-size: var(--form-icon-size-md);
+    --clear-size: 1.5rem;
 
-  border-radius: var(--radius);
-  padding-inline: var(--padding-inline);
-  padding-block: var(--padding-block);
-  padding-inline-end: calc(var(--clear-size) + var(--padding-inline) * 2);
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  background-color: var(--form-bg);
-  border: 1px solid var(--form-border-color);
-  transition: border-color 0.2s ease-in-out;
-  position: relative;
-  height: var(--height);
+    border-radius: var(--radius);
+    padding-inline: var(--padding-inline);
+    padding-block: var(--padding-block);
+    padding-inline-end: calc(var(--clear-size) + var(--padding-inline) * 2);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background-color: var(--form-bg);
+    border: 1px solid var(--form-border-color);
+    transition: border-color 0.2s ease-in-out;
+    position: relative;
+    height: var(--height);
 
-  &:focus-within {
-    border-color: var(--form-border-color-focus);
-  }
+    &:focus-within {
+      border-color: var(--form-border-color-focus);
+    }
 
-  &__icon {
-    color: var(--form-text-muted);
-    inline-size: var(--icon-size);
-    block-size: var(--icon-size);
-    flex-shrink: 0;
-  }
+    &__icon {
+      color: var(--form-text-muted);
+      inline-size: var(--icon-size);
+      block-size: var(--icon-size);
+      flex-shrink: 0;
+    }
 
-  &__input {
-    border: none;
-    outline: none;
-    flex: 1;
-    field-sizing: content;
-    inline-size: 100%;
-    font-size: var(--form-text-md);
-    color: var(--form-text-color);
+    &__input {
+      border: none;
+      outline: none;
+      flex: 1;
+      field-sizing: content;
+      inline-size: 100%;
+      font-size: var(--form-text-md);
+      color: var(--form-text-color);
 
-    &::placeholder {
+      &::placeholder {
+        color: var(--form-text-muted);
+      }
+
+      @media (min-width: 768px) {
+        min-inline-size: 15rem;
+      }
+
+      // Remove search icon from input
+      &::-webkit-search-decoration,
+      &::-webkit-search-cancel-button,
+      &::-webkit-search-results-button,
+      &::-webkit-search-results-decoration {
+        display: none;
+      }
+    }
+
+    &__clear {
+      inline-size: var(--clear-size);
+      block-size: var(--clear-size);
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      right: var(--padding-inline);
+      background-color: transparent;
+      border: none;
+      outline: none;
+      cursor: pointer;
+      padding: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       color: var(--form-text-muted);
     }
 
-    @media (min-width: 768px) {
-      min-inline-size: 15rem;
+    // Sizes
+    &--sm {
+      --padding-inline: var(--form-padding-inline-sm);
+      --padding-block: var(--form-padding-block-sm);
+      --height: var(--form-height-sm);
+      --icon-size: var(--form-icon-size-sm);
+
+      .search-input__input {
+        font-size: var(--form-text-sm);
+      }
     }
 
-    // Remove search icon from input
-    &::-webkit-search-decoration,
-    &::-webkit-search-cancel-button,
-    &::-webkit-search-results-button,
-    &::-webkit-search-results-decoration {
-      display: none;
-    }
-  }
+    &--lg {
+      --padding-inline: var(--form-padding-inline-lg);
+      --padding-block: var(--form-padding-block-lg);
+      --height: var(--form-height-lg);
+      --icon-size: var(--form-icon-size-lg);
 
-  &__clear {
-    inline-size: var(--clear-size);
-    block-size: var(--clear-size);
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    right: var(--padding-inline);
-    background-color: transparent;
-    border: none;
-    outline: none;
-    cursor: pointer;
-    padding: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: var(--form-text-muted);
-  }
-
-  // Sizes
-  &--sm {
-    --padding-inline: var(--form-padding-inline-sm);
-    --padding-block: var(--form-padding-block-sm);
-    --height: var(--form-height-sm);
-    --icon-size: var(--form-icon-size-sm);
-
-    .search-input__input {
-      font-size: var(--form-text-sm);
-    }
-  }
-
-  &--lg {
-    --padding-inline: var(--form-padding-inline-lg);
-    --padding-block: var(--form-padding-block-lg);
-    --height: var(--form-height-lg);
-    --icon-size: var(--form-icon-size-lg);
-
-    .search-input__input {
-      font-size: var(--form-text-lg);
+      .search-input__input {
+        font-size: var(--form-text-lg);
+      }
     }
   }
 }

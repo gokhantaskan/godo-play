@@ -1,0 +1,1 @@
+ALTER TABLE "crossplay_information" ADD COLUMN "is_official" boolean DEFAULT false;

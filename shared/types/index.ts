@@ -96,7 +96,8 @@ export interface GameSubmissionWithRelations extends ReadGame {
   crossplayInformation: {
     evidenceUrl: string | null;
     information: string | null;
-  };
+    isOfficial: boolean | null;
+  } | null;
   platformGroups: Array<{
     id: number;
     platformGroupPlatforms: Array<{

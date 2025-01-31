@@ -26,19 +26,26 @@ const updateSubmissionSchema = z.object({
   category: z.number().optional(),
   platformGroups: z
     .array(z.array(z.number()))
-    .min(1, "At least one platform group is required"),
-  storesPlatforms: z.record(
-    z.string(),
-    z.object({
-      crossplayPlatforms: z.array(z.number()).default([]),
-    })
-  ),
-  gameModeIds: z.array(z.number()).min(1, "At least one game mode is required"),
+    .min(1, "At least one platform group is required")
+    .optional(),
+  storesPlatforms: z
+    .record(
+      z.string(),
+      z.object({
+        crossplayPlatforms: z.array(z.number()).default([]),
+      })
+    )
+    .optional(),
+  gameModeIds: z
+    .array(z.number())
+    .min(1, "At least one game mode is required")
+    .optional(),
   status: z.enum(["approved", "rejected"]).optional(),
   crossplayInformation: z
     .object({
       evidenceUrl: z.string().url().nullable(),
       information: z.string().nullable(),
+      isOfficial: z.boolean().optional(),
     })
     .nullable()
     .optional(),
@@ -75,96 +82,112 @@ export default defineEventHandler(async event => {
         });
       }
 
-      // Delete existing platform groups, PC store platforms, and game modes
-      await tx
-        .delete(platformGroups)
-        .where(eq(platformGroups.submissionId, submissionId));
-      await tx
-        .delete(storePlatforms)
-        .where(eq(storePlatforms.submissionId, submissionId));
-      await tx
-        .delete(gameSubmissionGameModes)
-        .where(eq(gameSubmissionGameModes.submissionId, submissionId));
+      // Delete and process platform groups only if provided
+      if (body.platformGroups) {
+        await tx
+          .delete(platformGroups)
+          .where(eq(platformGroups.submissionId, submissionId));
 
-      // Process all insertions sequentially to maintain atomicity
-      for (const groupPlatforms of body.platformGroups) {
-        const [group] = await tx
-          .insert(platformGroups)
-          .values(
-            InsertPlatformGroupSchema.parse({
-              submissionId,
-            })
-          )
-          .returning();
-
-        if (!group) {
-          throw createError({
-            statusCode: 500,
-            message: "Failed to create platform group",
-          });
-        }
-
-        if (groupPlatforms.length > 0) {
-          await tx.insert(platformGroupPlatforms).values(
-            groupPlatforms.map(platformId =>
-              InsertPlatformGroupPlatformsSchema.parse({
-                platformGroupId: group.id,
-                platformId,
+        // Process all insertions sequentially to maintain atomicity
+        for (const groupPlatforms of body.platformGroups) {
+          const [group] = await tx
+            .insert(platformGroups)
+            .values(
+              InsertPlatformGroupSchema.parse({
+                submissionId,
               })
             )
-          );
+            .returning();
+
+          if (!group) {
+            throw createError({
+              statusCode: 500,
+              message: "Failed to create platform group",
+            });
+          }
+
+          if (groupPlatforms.length > 0) {
+            await tx.insert(platformGroupPlatforms).values(
+              groupPlatforms.map(platformId =>
+                InsertPlatformGroupPlatformsSchema.parse({
+                  platformGroupId: group.id,
+                  platformId,
+                })
+              )
+            );
+          }
         }
       }
 
-      // Process PC store platforms sequentially
-      for (const [storeSlug, { crossplayPlatforms }] of Object.entries(
-        body.storesPlatforms
-      )) {
-        const [store] = await tx
-          .insert(storePlatforms)
-          .values(
-            InsertStorePlatformSchema.parse({
-              submissionId,
-              storeSlug,
-            })
-          )
-          .returning();
+      // Process PC store platforms only if provided
+      if (body.storesPlatforms) {
+        await tx
+          .delete(storePlatforms)
+          .where(eq(storePlatforms.submissionId, submissionId));
 
-        if (!store) {
-          throw createError({
-            statusCode: 500,
-            message: "Failed to create PC store platform",
-          });
-        }
-
-        if (crossplayPlatforms.length > 0) {
-          await tx.insert(storeCrossplayPlatforms).values(
-            crossplayPlatforms.map(platformId =>
-              InsertStoreCrossplayPlatformSchema.parse({
-                storePlatformId: store.id,
-                platformId,
+        for (const [storeSlug, { crossplayPlatforms }] of Object.entries(
+          body.storesPlatforms
+        )) {
+          const [store] = await tx
+            .insert(storePlatforms)
+            .values(
+              InsertStorePlatformSchema.parse({
+                submissionId,
+                storeSlug,
               })
             )
-          );
+            .returning();
+
+          if (!store) {
+            throw createError({
+              statusCode: 500,
+              message: "Failed to create PC store platform",
+            });
+          }
+
+          if (crossplayPlatforms.length > 0) {
+            await tx.insert(storeCrossplayPlatforms).values(
+              crossplayPlatforms.map(platformId =>
+                InsertStoreCrossplayPlatformSchema.parse({
+                  storePlatformId: store.id,
+                  platformId,
+                })
+              )
+            );
+          }
         }
       }
 
-      // Process game modes
-      if (body.gameModeIds.length > 0) {
-        await tx.insert(gameSubmissionGameModes).values(
-          body.gameModeIds.map(gameModeId => ({
-            submissionId,
-            gameModeId,
-          }))
-        );
+      // Process game modes only if provided
+      if (body.gameModeIds) {
+        await tx
+          .delete(gameSubmissionGameModes)
+          .where(eq(gameSubmissionGameModes.submissionId, submissionId));
+
+        if (body.gameModeIds.length > 0) {
+          await tx.insert(gameSubmissionGameModes).values(
+            body.gameModeIds.map(gameModeId => ({
+              submissionId,
+              gameModeId,
+            }))
+          );
+        }
       }
 
       // Update category and crossplay information if provided
-      if (body.category !== undefined || body.crossplayInformation) {
+      if (
+        body.category !== undefined ||
+        body.crossplayInformation ||
+        body.status
+      ) {
         const updateData: Record<string, unknown> = {};
 
         if (body.category !== undefined) {
           updateData.category = body.category;
+        }
+
+        if (body.status) {
+          updateData.status = body.status;
         }
 
         const [updatedGame] = await tx
@@ -200,6 +223,7 @@ export default defineEventHandler(async event => {
                 .set({
                   evidenceUrl: body.crossplayInformation.evidenceUrl,
                   information: body.crossplayInformation.information,
+                  isOfficial: body.crossplayInformation.isOfficial,
                 })
                 .where(eq(crossplayInformation.gameId, submissionId));
             } else {

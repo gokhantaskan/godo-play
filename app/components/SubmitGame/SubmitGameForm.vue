@@ -47,6 +47,7 @@ const selectedCategory = ref<number>(0);
 const selectedCrossplayInformation = ref<CrossplayInformation>({
   evidenceUrl: "",
   information: "",
+  isOfficial: false,
 });
 const selectedPlatformGroups = ref<PlatformGroups>([[]]);
 const selectedStores = ref<Store["slug"][]>([]);

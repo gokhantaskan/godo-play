@@ -34,6 +34,11 @@ export const UpdateGameSchema = z.object({
 
 // Game submission schema
 export const SubmitGameSchema = z.object({
+  crossplayInformation: z.object({
+    isOfficial: z.boolean().optional(),
+    evidenceUrl: z.string().optional(),
+    information: z.string().optional(),
+  }),
   game: z.object({
     name: z.string().min(1, "Game name is required"),
     slug: z.string().min(1, "Game slug is required"),

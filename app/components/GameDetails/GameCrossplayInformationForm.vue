@@ -10,7 +10,12 @@ const emit = defineEmits<{
 }>();
 
 const localValue = computed({
-  get: () => props.modelValue ?? { evidenceUrl: null, information: null },
+  get: () =>
+    props.modelValue ?? {
+      evidenceUrl: null,
+      information: null,
+      isOfficial: false,
+    },
   set: value => emit("update:modelValue", value),
 });
 
@@ -34,8 +39,9 @@ const editorContent = computed({
     <div class="tw:space-y-2">
       <div>
         <input
+          class="tw:w-full"
+          placeholder="Evidence URL"
           :value="localValue.evidenceUrl ?? ''"
-          label="Evidence URL"
           @input="
             e => {
               const value = (e.target as HTMLInputElement).value;
@@ -46,6 +52,15 @@ const editorContent = computed({
             }
           "
         />
+      </div>
+      <div>
+        <label>
+          <input
+            v-model="localValue.isOfficial"
+            type="checkbox"
+          />
+          Official
+        </label>
       </div>
       <ClientOnly>
         <div>

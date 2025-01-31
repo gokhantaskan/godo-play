@@ -1,20 +1,13 @@
-import createDOMPurify from "dompurify";
-import { and, asc, count, desc, inArray, sql } from "drizzle-orm";
-import { JSDOM } from "jsdom";
+import { and, asc, count, desc, inArray, type SQL, sql } from "drizzle-orm";
 
 import { db } from "~~/server/db";
 import {
-  games,
+  games as gamesTable,
   gameSubmissionGameModes,
   platformGroupPlatforms,
 } from "~~/server/db/schema";
 import { isH3ErrorLike } from "~~/server/utils/errorHandler";
-import type { GameSubmissionWithRelations } from "~~/shared/types";
-import type {
-  FilterParams,
-  PaginatedResponse,
-  SubmissionStatus,
-} from "~~/shared/types/globals";
+import type { FilterParams, SubmissionStatus } from "~~/shared/types/globals";
 
 // Define the sortable fields type
 type SortableField =
@@ -24,40 +17,12 @@ type SortableField =
   | "first_release_date";
 
 interface CountResult {
-  count: number; // Count result from database query
+  count: number;
 }
-
-// Initialize DOMPurify with jsdom
-const window = new JSDOM("").window;
-const DOMPurify = createDOMPurify(window);
 
 // Helper function to parse array parameters from query
 function parseArrayParam(param?: string): number[] | undefined {
-  // Decode URI component and split by comma, then convert to numbers
   return param ? decodeURIComponent(param).split(",").map(Number) : undefined;
-}
-
-// Helper function to sanitize HTML content
-function sanitizeHtml(html: string | null): string | null {
-  if (!html) {
-    return null;
-  }
-  return DOMPurify.sanitize(html, {
-    ALLOWED_TAGS: [
-      "p",
-      "br",
-      "strong",
-      "em",
-      "u",
-      "ul",
-      "ol",
-      "li",
-      "a",
-      "h3",
-      "h4",
-    ],
-    ALLOWED_ATTR: ["href", "target", "rel"],
-  });
 }
 
 export default defineCachedEventHandler(
@@ -68,11 +33,11 @@ export default defineCachedEventHandler(
       const {
         platforms,
         gameModes,
-        limit = "60", // Default limit
-        offset = "0", // Default offset
+        limit = "60",
+        offset = "0",
         search,
         status,
-        sort = "-popularity", // Default sort
+        sort = "-popularity",
       } = query as Partial<Record<keyof FilterParams, string>>;
 
       // Parse query parameters
@@ -82,7 +47,7 @@ export default defineCachedEventHandler(
       const parsedOffset = parseInt(offset);
 
       // Parse sort parameter
-      const sortField = sort.slice(1) as SortableField; // Remove +/- prefix
+      const sortField = sort.slice(1) as SortableField;
       const isDescending = sort.startsWith("-");
       const validSortFields = [
         "created_at",
@@ -105,13 +70,13 @@ export default defineCachedEventHandler(
         : undefined;
 
       // Base conditions for filtered queries
-      const baseConditions = {
+      const baseConditions: { where: SQL | undefined } = {
         where: validStatuses?.length
-          ? inArray(games.status, validStatuses)
+          ? inArray(gamesTable.status, validStatuses)
           : undefined,
       };
 
-      let conditions = baseConditions.where;
+      let conditions: SQL | undefined = baseConditions.where;
 
       // Add search filtering condition
       if (search) {
@@ -140,16 +105,11 @@ export default defineCachedEventHandler(
         );
       }
 
-      // Update game mode filtering to include at least one selected mode
+      // Add game mode filtering condition
       if (parsedGameModes?.length) {
         const gameModeQuery = db
           .select({ submissionId: gameSubmissionGameModes.submissionId })
           .from(gameSubmissionGameModes)
-          // .where(inArray(gameSubmissionGameModes.gameModeId, parsedGameModes))
-          // .groupBy(gameSubmissionGameModes.submissionId)
-          // .having(
-          //   sql`COUNT(DISTINCT game_mode_id) = ${parsedGameModes.length}`
-          // )
           .where(inArray(gameSubmissionGameModes.gameModeId, parsedGameModes));
 
         conditions = and(conditions, sql`id IN (${gameModeQuery})`);
@@ -158,14 +118,18 @@ export default defineCachedEventHandler(
       // Get filtered count of games
       const filteredCountResult = await db
         .select({ count: count() })
-        .from(games)
+        .from(gamesTable)
         .where(conditions)
         .then(rows => rows[0] as CountResult);
 
       // Retrieve filtered game data with related entities
-      const data = await db.query.games.findMany({
+      const gameResults = await db.query.games.findMany({
         with: {
-          crossplayInformation: true,
+          crossplayInformation: {
+            columns: {
+              isOfficial: true,
+            },
+          },
           platformGroups: {
             columns: {
               id: true,
@@ -175,28 +139,6 @@ export default defineCachedEventHandler(
                 columns: {
                   platformId: true,
                   platformGroupId: true,
-                },
-                with: {
-                  platform: {
-                    columns: {
-                      id: true,
-                      name: true,
-                      slug: true,
-                    },
-                  },
-                },
-              },
-            },
-          },
-          storePlatforms: {
-            columns: {
-              id: true,
-              storeSlug: true,
-            },
-            with: {
-              crossplayEntries: {
-                columns: {
-                  platformId: true,
                 },
                 with: {
                   platform: {
@@ -235,14 +177,14 @@ export default defineCachedEventHandler(
                 : sql`first_release_date ASC NULLS LAST`
               : isDescending
                 ? desc(
-                    games[
+                    gamesTable[
                       parsedSortField === "created_at"
                         ? "createdAt"
                         : "updatedAt"
                     ]
                   )
                 : asc(
-                    games[
+                    gamesTable[
                       parsedSortField === "created_at"
                         ? "createdAt"
                         : "updatedAt"
@@ -253,32 +195,14 @@ export default defineCachedEventHandler(
         offset: parsedOffset,
       });
 
-      // Sanitize HTML content in crossplay information
-      const sanitizedData = data.map(game => {
-        const sanitizedCrossplayInfo = game.crossplayInformation
-          ? {
-              evidenceUrl: game.crossplayInformation.evidenceUrl,
-              information: sanitizeHtml(game.crossplayInformation.information),
-              isOfficial: game.crossplayInformation.isOfficial,
-            }
-          : null;
-
-        return {
-          ...game,
-          crossplayInformation: sanitizedCrossplayInfo,
-        };
-      }) as GameSubmissionWithRelations[];
-
-      // Return the response with total, count, and sanitized data
+      // Return the response with total, count, and data
       return {
         total: filteredCountResult.count,
-        count: sanitizedData.length,
-        data: sanitizedData,
         limit: parsedLimit,
         offset: parsedOffset,
-      } satisfies PaginatedResponse<GameSubmissionWithRelations>;
+        data: gameResults,
+      };
     } catch (error: unknown) {
-      // Handle errors and throw appropriate error messages
       if (isH3ErrorLike(error)) {
         throw error;
       }
@@ -291,7 +215,6 @@ export default defineCachedEventHandler(
     }
   },
   {
-    // Cache settings: 5 minutes in production, 5 seconds in development
     maxAge: process.env.NODE_ENV === "production" ? 5 * 60 : 5,
     swr: false,
   }
