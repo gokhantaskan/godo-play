@@ -26,10 +26,14 @@ if (!igdbGame.value) {
   });
 }
 
-const { data: game, refresh: refreshGame } =
-  await useFetch<GameSubmissionWithRelations>(`/api/game-details/${slug}`, {
-    key: `game-details-${slug}`,
-  });
+const { data: dbGame, refresh: refreshDbGame } =
+  await useCachedFetch<GameSubmissionWithRelations>(
+    `/api/game-details/${slug}`
+  );
+
+const gameName = computed(() => {
+  return dbGame.value?.name ?? igdbGame.value?.name;
+});
 
 // Computed properties for better reactivity
 const hasAgeRatings = computed(() => {
@@ -38,17 +42,20 @@ const hasAgeRatings = computed(() => {
 });
 
 const hasPlatformGroups = computed(() => {
-  const groups = game.value?.platformGroups;
+  const groups = dbGame.value?.platformGroups;
   return Array.isArray(groups) && groups.length > 0;
 });
 
-const gameRating = computed(() => {
-  if (!igdbGame.value?.aggregated_rating) {
+const roundedGameRating = computed(() => {
+  const dbGameRating = dbGame.value?.external?.igdbAggregatedRating;
+  const igdbGameRating = igdbGame.value?.aggregated_rating;
+  const rating = dbGameRating || igdbGameRating;
+
+  if (!rating) {
     return null;
   }
-  return Number(parseFloat(`${igdbGame.value.aggregated_rating}`) / 10).toFixed(
-    1
-  );
+
+  return Number(parseFloat(`${rating}`) / 10).toFixed(1);
 });
 
 // Add this computed property
@@ -67,19 +74,23 @@ const groupedCompanies = computed(() => {
   };
 });
 
-// useHead({
-//   title: `${igdbGame.value.name}`,
-// });
+const seoMeta = computed(() => {
+  return {
+    seoTitle: `${gameName.value} Crossplay Information`,
+    seoDescription: `Learn about ${gameName.value} and its crossplay support.`,
+    seoImage: `https://images.igdb.com/igdb/image/upload/t_screenshot_med/${dbGame.value?.external?.igdbImageId}.jpg`,
+  };
+});
 
 useSeoMeta({
-  title: `${igdbGame.value.name}`,
-  ogTitle: `${igdbGame.value.name}`,
-  twitterTitle: `${igdbGame.value.name}`,
-  description: `${igdbGame.value.summary?.slice(0, 147)}...`,
-  ogDescription: `${igdbGame.value.summary?.slice(0, 147)}...`,
-  twitterDescription: `${igdbGame.value.summary?.slice(0, 147)}...`,
-  ogImage: `https://images.igdb.com/igdb/image/upload/t_screenshot_med/${igdbGame.value.cover.image_id}.jpg`,
-  twitterImage: `https://images.igdb.com/igdb/image/upload/t_screenshot_med/${igdbGame.value.cover.image_id}.jpg`,
+  title: seoMeta.value.seoTitle,
+  ogTitle: `${seoMeta.value.seoTitle} - GodoPlay`,
+  twitterTitle: `${seoMeta.value.seoTitle} - GodoPlay`,
+  description: seoMeta.value.seoDescription,
+  ogDescription: seoMeta.value.seoDescription,
+  twitterDescription: seoMeta.value.seoDescription,
+  ogImage: seoMeta.value.seoImage,
+  twitterImage: seoMeta.value.seoImage,
 });
 
 // Pure function for getting age rating image URL
@@ -113,7 +124,7 @@ function getAgeRatingImageUrl(
 
 async function refreshGameData() {
   await refreshIgdbGame();
-  await refreshGame();
+  await refreshDbGame();
 }
 
 function formatDate(date: number) {
@@ -150,23 +161,23 @@ function formatDate(date: number) {
               </span>
               <span>•</span>
               <span
-                v-if="gameRating"
+                v-if="roundedGameRating"
                 class="game__rating"
               >
                 <Icon
                   name="lucide:star"
                   class="game__rating-icon"
                 />
-                {{ gameRating }}/10
+                {{ roundedGameRating }}/10
               </span>
             </div>
             <!-- Game Modes -->
             <div
-              v-if="game?.gameSubmissionGameModes?.length"
-              class="tw:flex tw:gap-2 tw:mt-1"
+              v-if="dbGame?.gameSubmissionGameModes?.length"
+              class="tw:flex tw:flex-wrap tw:gap-2 tw:mt-1"
             >
               <template
-                v-for="{ gameMode } in game.gameSubmissionGameModes"
+                v-for="{ gameMode } in dbGame.gameSubmissionGameModes"
                 :key="gameMode.id"
               >
                 <TheChip variant="gray">{{ gameMode.name }}</TheChip>
@@ -291,11 +302,11 @@ function formatDate(date: number) {
             </section>
 
             <!-- Platform Groups -->
-            <section v-if="hasPlatformGroups && game?.platformGroups">
+            <section v-if="hasPlatformGroups && dbGame?.platformGroups">
               <GameDetailsCrossplayInfo
-                :platform-groups="game.platformGroups"
-                :store-platforms="game.storePlatforms"
-                :crossplay-information="game.crossplayInformation"
+                :platform-groups="dbGame.platformGroups"
+                :store-platforms="dbGame.storePlatforms"
+                :crossplay-information="dbGame.crossplayInformation"
               />
             </section>
           </TabsContent>

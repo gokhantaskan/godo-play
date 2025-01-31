@@ -14,6 +14,7 @@ export default defineNuxtConfig({
   nitro: {
     experimental: {
       tasks: true,
+      asyncContext: true,
     },
   },
   runtimeConfig: {
