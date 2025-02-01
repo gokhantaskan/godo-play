@@ -239,7 +239,7 @@ function formatDate(date: number) {
                 </template>
                 <template #default>
                   <p>
-                    This game's crossplay compatilibity is checked from the
+                    This game's crossplay compatibility is verified through
                     official resources.
                   </p>
                 </template>

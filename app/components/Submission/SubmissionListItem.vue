@@ -74,6 +74,13 @@ async function handleDelete() {
         <h2 class="submission-card__title">{{ game.name }}</h2>
         <div class="tw:flex tw:items-center tw:gap-2">
           <span
+            v-if="game.crossplayInformation?.isOfficial"
+            class="submission-card__status tw:text-green-800 tw:text-center"
+          >
+            <Icon name="local:badge-check" />
+            <span>Official</span>
+          </span>
+          <span
             class="submission-card__status"
             :class="{
               'tw:bg-yellow-100 tw:text-yellow-800': game.status === 'pending',

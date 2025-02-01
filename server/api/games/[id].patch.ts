@@ -223,7 +223,7 @@ export default defineEventHandler(async event => {
                 .set({
                   evidenceUrl: body.crossplayInformation.evidenceUrl,
                   information: body.crossplayInformation.information,
-                  isOfficial: body.crossplayInformation.isOfficial,
+                  isOfficial: body.crossplayInformation.isOfficial ?? false,
                 })
                 .where(eq(crossplayInformation.gameId, submissionId));
             } else {
@@ -231,6 +231,7 @@ export default defineEventHandler(async event => {
                 gameId: submissionId,
                 evidenceUrl: body.crossplayInformation.evidenceUrl,
                 information: body.crossplayInformation.information,
+                isOfficial: body.crossplayInformation.isOfficial ?? false,
               });
             }
           }

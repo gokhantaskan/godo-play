@@ -57,7 +57,11 @@ const crossplayInformation = defineModel<CrossplayInformation>(
   "crossplayInformation",
   {
     required: true,
-    default: null,
+    default: () => ({
+      evidenceUrl: "",
+      information: "",
+      isOfficial: false,
+    }),
   }
 );
 
