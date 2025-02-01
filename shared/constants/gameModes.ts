@@ -36,37 +36,37 @@ export const GAME_MODES: {
   },
   // Custom
   {
-    id: 100,
+    id: 7,
     name: "Campaign",
     slug: "campaign",
   },
   {
-    id: 101,
+    id: 8,
     name: "Competitive",
     slug: "competitive",
   },
   {
-    id: 102,
+    id: 9,
     name: "Local & Party",
     slug: "local-and-party",
   },
   {
-    id: 103,
+    id: 10,
     name: "PvP",
     slug: "pvp",
   },
   {
-    id: 104,
+    id: 11,
     name: "PvE",
     slug: "pve",
   },
   {
-    id: 105,
+    id: 12,
     name: "Time Trial / Score Attack",
     slug: "time-trial-score-attack",
   },
   {
-    id: 106,
+    id: 13,
     name: "Sandbox / Creative",
     slug: "sandbox-creative",
   },

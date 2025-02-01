@@ -5,6 +5,7 @@ import { gameModes } from "~~/server/db/schema";
 
 export default defineEventHandler(async event => {
   const id = Number(getRouterParam(event, "id"));
+  const body = await readBody(event);
 
   if (!id || isNaN(id)) {
     throw createError({
@@ -13,17 +14,18 @@ export default defineEventHandler(async event => {
     });
   }
 
-  const [deletedGameMode] = await db
-    .delete(gameModes)
+  const [updatedGameMode] = await db
+    .update(gameModes)
+    .set(body)
     .where(eq(gameModes.id, id))
     .returning();
 
-  if (!deletedGameMode) {
+  if (!updatedGameMode) {
     throw createError({
       statusCode: 404,
       message: "Game mode not found",
     });
   }
 
-  return deletedGameMode;
+  return updatedGameMode;
 });
