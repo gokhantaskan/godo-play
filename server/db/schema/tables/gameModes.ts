@@ -28,7 +28,7 @@ export const gameSubmissionGameModes = pgTable(
       .references(() => games.id, { onDelete: "cascade" })
       .notNull(),
     gameModeId: integer("game_mode_id")
-      .references(() => gameModes.id)
+      .references(() => gameModes.id, { onDelete: "cascade" })
       .notNull(),
   },
   table => [primaryKey({ columns: [table.submissionId, table.gameModeId] })]
