@@ -14,6 +14,16 @@ $alert-colors: (
     fg: color-mix(in oklab, var(--tw-color-yellow) 50%, black),
     border: color-mix(in oklab, var(--tw-color-yellow) 20%, black 5%),
   ),
+  success: (
+    bg: color-mix(in oklab, var(--tw-color-green) 20%, white),
+    fg: color-mix(in oklab, var(--tw-color-green) 50%, black),
+    border: color-mix(in oklab, var(--tw-color-green) 20%, black 5%),
+  ),
+  error: (
+    bg: color-mix(in oklab, var(--tw-color-red) 20%, white),
+    fg: color-mix(in oklab, var(--tw-color-red) 50%, black),
+    border: color-mix(in oklab, var(--tw-color-red) 20%, black 5%),
+  ),
 );
 
 .alert {
@@ -83,5 +93,21 @@ $alert-colors: (
     flex-direction: column;
     gap: var(--padding);
     margin-block-start: var(--padding);
+  }
+
+  &--sm {
+    --padding: 0.75rem;
+    --title-font-size: 1rem;
+    --title-line-height: 1.25;
+    --title-margin-bottom: 0.25rem;
+    --message-font-size: 0.875rem;
+  }
+
+  &--lg {
+    --padding: 1.5rem;
+    --title-font-size: 1.25rem;
+    --title-line-height: 1.25;
+    --title-margin-bottom: 0.5rem;
+    --message-font-size: 1.125rem;
   }
 }

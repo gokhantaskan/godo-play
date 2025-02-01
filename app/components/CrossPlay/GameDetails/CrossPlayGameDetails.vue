@@ -228,6 +228,23 @@ function formatDate(date: number) {
             value="details"
             class="game__tabs-content tw:space-y-4"
           >
+            <!-- Official Doc Badge -->
+            <section v-if="dbGame?.crossplayInformation?.isOfficial">
+              <TheAlert
+                variant="success"
+                size="sm"
+              >
+                <template #icon>
+                  <Icon name="local:badge-check" />
+                </template>
+                <template #default>
+                  <p>
+                    This game's crossplay compatilibity is checked from the
+                    official resources.
+                  </p>
+                </template>
+              </TheAlert>
+            </section>
             <section>
               <h2 class="tw:sr-only">About the Game</h2>
               <ReadMore>{{ igdbGame?.summary }}</ReadMore>

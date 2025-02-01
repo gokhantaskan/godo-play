@@ -35,16 +35,27 @@ onUnmounted(() => {
       @click="openDialog"
     >
       <img
-        :src="`https://images.igdb.com/igdb/image/upload/t_720p/${props.game.external?.igdbImageId}.jpg`"
-        :alt="props.game.name"
+        :src="`https://images.igdb.com/igdb/image/upload/t_720p/${game.external?.igdbImageId}.jpg`"
+        :alt="game.name"
         preload
         loading="lazy"
       />
+
+      <!-- Official Doc Badge -->
+      <span
+        v-if="game.crossplayInformation?.isOfficial"
+        class="game-card__official-doc-badge"
+      >
+        <Icon
+          name="local:badge-check"
+          class="game-card__official-doc-badge-icon"
+        />
+      </span>
     </button>
 
     <CrossPlayGameCardDialog
       v-model:open="isDialogOpen"
-      :slug="props.game.slug"
+      :slug="game.slug"
     />
 
     <!-- Content Section -->
