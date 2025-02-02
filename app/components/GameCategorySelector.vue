@@ -1,17 +1,10 @@
 <script setup lang="ts">
-import { SUPPORTED_GAME_MODES } from "~~/shared/constants/gameModes";
-
-interface Props {
-  external?: boolean;
-  include?: ("gameModes" | "playerPerspectives" | "genres" | "themes")[];
-}
-
-const props = withDefaults(defineProps<Props>(), {
-  external: false,
-  include: () => ["gameModes"],
-});
-
 const isDrawerOpen = ref(false);
+const gameModes = ref<ReadGameMode[]>([]);
+
+if (import.meta.client) {
+  gameModes.value = useSessionState().gameModes.value;
+}
 
 const selectedGameModes = defineModel<number[]>("gameModes", {
   default: [],
@@ -21,7 +14,7 @@ const selectedGameModes = defineModel<number[]>("gameModes", {
 const draftGameModes = ref<number[]>([]);
 
 const currentGameModes = computed(() => {
-  return SUPPORTED_GAME_MODES;
+  return gameModes.value.toSorted((a, b) => a.name.localeCompare(b.name));
 });
 
 // Initialize draft states when drawer opens
@@ -88,17 +81,12 @@ function isArrayEqual(arr1: number[], arr2: number[]) {
     >
       <div class="tw:space-y-6">
         <!-- Game Modes -->
-        <fieldset
-          v-if="props.include?.includes('gameModes')"
-          class="tw:flex tw:flex-wrap tw:gap-2"
-        >
+        <fieldset class="tw:flex tw:flex-wrap tw:gap-4">
           <legend class="tw:font-title tw:font-medium tw:text-sm tw:mb-2">
             Game Modes
           </legend>
           <label
-            v-for="gameMode in currentGameModes.toSorted((a, b) =>
-              a.name.localeCompare(b.name)
-            )"
+            v-for="gameMode in currentGameModes"
             :key="gameMode.id"
             class="tw:flex tw:items-center tw:gap-2 tw:cursor-pointer"
           >

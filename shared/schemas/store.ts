@@ -6,15 +6,8 @@ import {
 } from "~~/server/db/schema/tables/stores";
 
 // Extend base schemas with additional validation/transformation
-export const StoreSchema = BaseStoreSchema.extend({
-  // Add any additional validation or transformations here
-  createdAt: z.coerce.date(),
-  updatedAt: z.coerce.date(),
-});
-
-export const InsertStoreSchema = BaseInsertStoreSchema.extend({
-  // Add any additional validation or transformations here
-});
+export const StoreSchema = BaseStoreSchema;
+export const InsertStoreSchema = BaseInsertStoreSchema;
 
 // Store with relations schema
 export const StoreWithRelationsSchema = StoreSchema.extend({

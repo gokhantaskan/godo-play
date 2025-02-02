@@ -7,7 +7,8 @@ definePageMeta({
   name: "AdminGameModesPage",
 });
 
-const { data: gameModes } = useGameModes();
+const { data: gameModes, status: gameModesStatus } = useGameModes();
+const pending = computed(() => gameModesStatus.value === "pending");
 
 const isCreateModalOpen = ref(false);
 </script>
@@ -27,22 +28,31 @@ const isCreateModalOpen = ref(false);
 
     <section>
       <div
-        role="list"
-        class="tw:space-y-4"
+        v-if="pending"
+        class="tw:flex tw:items-center tw:justify-center"
       >
-        <AdminGameModeListItem
-          v-for="gameMode in gameModes"
-          :key="gameMode.id"
-          :game-mode="gameMode"
+        <Icon
+          name="lucide:loader"
+          class="tw:animate-spin"
         />
       </div>
 
-      <p
-        v-if="gameModes?.length === 0"
-        class="tw:text-center tw:text-gray-500"
+      <div
+        v-else-if="gameModes"
+        role="list"
+        class="tw:space-y-4"
       >
-        No game modes found
-      </p>
+        <template v-if="gameModes.length">
+          <AdminGameModeListItem
+            v-for="gameMode in gameModes"
+            :key="gameMode.id"
+            :game-mode="gameMode"
+          />
+        </template>
+        <template v-else>
+          <p class="tw:text-center tw:text-gray-500">No game modes found</p>
+        </template>
+      </div>
     </section>
 
     <TheModal

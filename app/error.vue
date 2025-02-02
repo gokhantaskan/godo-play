@@ -37,7 +37,13 @@ function handleError(options?: ErrorOptions) {
             <strong>{{ error.message }}</strong>
           </p>
           <p class="error-page__description">
-            Our team has been notified and we're working on fixing this issue.
+            <NuxtLink
+              class="tw:text-red"
+              href="https://form.jotform.com/250315399207053"
+              target="_blank"
+            >
+              Report issue
+            </NuxtLink>
           </p>
         </template>
       </div>

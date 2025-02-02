@@ -1,4 +1,4 @@
-import { z } from "zod";
+import type { z } from "zod";
 
 import {
   BaseInsertPlatformSchema,
@@ -6,10 +6,7 @@ import {
 } from "~~/server/db/schema/tables/platforms";
 
 // Extend base schemas only if you need runtime date coercion:
-export const PlatformSchema = BasePlatformSchema.extend({
-  createdAt: z.coerce.date(),
-  updatedAt: z.coerce.date(),
-});
+export const PlatformSchema = BasePlatformSchema;
 
 // If no extra validation is needed, you can directly export BaseInsertPlatformSchema
 export const InsertPlatformSchema = BaseInsertPlatformSchema;

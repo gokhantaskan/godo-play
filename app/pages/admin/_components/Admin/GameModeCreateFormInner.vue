@@ -5,7 +5,7 @@ import type { InsertGameMode } from "~~/server/db/schema";
 
 type Props = {
   modelValue: Pick<InsertGameMode, "name" | "slug">;
-  errors?: Record<string, string>;
+  autoSlugify?: boolean;
 };
 
 type Emits = {
@@ -15,6 +15,8 @@ type Emits = {
 const props = defineProps<Props>();
 const emit = defineEmits<Emits>();
 
+const isSlugTouched = ref(false);
+
 const modelValue = computed<Props["modelValue"]>({
   get: () => props.modelValue,
   set: value => emit("update:modelValue", value),
@@ -23,7 +25,10 @@ const modelValue = computed<Props["modelValue"]>({
 function handleNameChange(event: Event) {
   const input = event.target as HTMLInputElement;
   modelValue.value.name = input.value;
-  modelValue.value.slug = slugify(input.value, { lower: true });
+
+  if (props.autoSlugify && !isSlugTouched.value) {
+    modelValue.value.slug = slugify(input.value, { lower: true });
+  }
 }
 </script>
 
@@ -36,15 +41,8 @@ function handleNameChange(event: Event) {
         v-model="modelValue.name"
         type="text"
         class="tw:rounded-lg"
-        :class="{ 'tw:border-red-500': errors?.name }"
         @input="handleNameChange"
       />
-      <p
-        v-if="errors?.name"
-        class="tw:text-sm tw:text-red-500"
-      >
-        {{ errors.name }}
-      </p>
     </div>
 
     <div class="tw:flex tw:flex-col tw:gap-1">
@@ -54,14 +52,8 @@ function handleNameChange(event: Event) {
         v-model="modelValue.slug"
         type="text"
         class="tw:rounded-lg"
-        :class="{ 'tw:border-red-500': errors?.slug }"
+        @focus="isSlugTouched = true"
       />
-      <p
-        v-if="errors?.slug"
-        class="tw:text-sm tw:text-red-500"
-      >
-        {{ errors.slug }}
-      </p>
     </div>
   </div>
 </template>
