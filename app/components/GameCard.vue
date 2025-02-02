@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { GAME_TYPES } from "~~/shared/constants";
+import { SUPPORTED_GAME_TYPES } from "~~/shared/constants";
 import type { DashboardGame } from "~~/shared/types/igdb/dashboardGames";
 
 interface Props {
@@ -29,7 +29,7 @@ const categories = computed(() => {
 });
 
 const gameType = computed(() => {
-  return GAME_TYPES[props.game.category];
+  return SUPPORTED_GAME_TYPES[props.game.category];
 });
 
 const cacheKey = computed(() => `game-${props.game.id}`);

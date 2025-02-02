@@ -4,8 +4,7 @@ const LINKS = [
     title: "Links",
     links: [
       { label: "Home", to: "/" },
-      { label: "Multiplatform Games", to: { name: "MultiPlatformGamesPage" } },
-      { label: "Cross-play Games", to: { name: "CrossPlayGamesPage" } },
+      { label: "Games", to: { name: "CrossPlayGamesPage" } },
       { label: "About", to: "/about" },
     ],
   },

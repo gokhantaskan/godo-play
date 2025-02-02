@@ -1,4 +1,4 @@
-export const GAME_TYPES: {
+export const SUPPORTED_GAME_TYPES: {
   [key: number]: {
     label: string;
     slug: string;

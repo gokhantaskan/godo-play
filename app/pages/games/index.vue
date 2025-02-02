@@ -2,7 +2,7 @@
 import { refDebounced } from "@vueuse/core";
 
 import type { PlatformId } from "~/types/crossPlay";
-import { GAME_MODES, SUPPORTED_PLATFORMS } from "~~/shared/constants";
+import { SUPPORTED_GAME_MODES, SUPPORTED_PLATFORMS } from "~~/shared/constants";
 import type { GameSubmissionWithRelations } from "~~/shared/types";
 
 interface InitialRouteQuery {
@@ -57,8 +57,6 @@ const {
   sort: initialQuerySort = "-popularity",
 } = route.query as InitialRouteQuery;
 
-console.log(route.query);
-
 // Platform Selection Management
 const selectedPlatforms = ref<SelectedPlatforms>({
   p1: initialQueryPlatforms
@@ -73,11 +71,11 @@ const selectedPlatforms = ref<SelectedPlatforms>({
 });
 
 const supportedModesMap = {
-  idToSlug: GAME_MODES.reduce<Record<number, string>>((acc, curr) => {
+  idToSlug: SUPPORTED_GAME_MODES.reduce<Record<number, string>>((acc, curr) => {
     acc[curr.id] = curr.slug;
     return acc;
   }, {}),
-  slugToId: GAME_MODES.reduce<Record<string, number>>((acc, curr) => {
+  slugToId: SUPPORTED_GAME_MODES.reduce<Record<string, number>>((acc, curr) => {
     acc[curr.slug] = curr.id;
     return acc;
   }, {}),
@@ -85,7 +83,7 @@ const supportedModesMap = {
 
 // Convert game mode slugs to IDs
 function getGameModeIdFromSlug(slug: string): number | null {
-  const gameMode = GAME_MODES.find(mode => mode.slug === slug);
+  const gameMode = SUPPORTED_GAME_MODES.find(mode => mode.slug === slug);
   return gameMode ? gameMode.id : null;
 }
 
@@ -341,7 +339,7 @@ const activeFilterChips = computed(() => {
   const chips: Array<{ type: string; id: number; name: string }> = [];
 
   selectedFilters.value.gameModes.forEach(id => {
-    const mode = GAME_MODES.find(m => m.id === id);
+    const mode = SUPPORTED_GAME_MODES.find(m => m.id === id);
     if (mode) {
       chips.push({ type: "gameMode", id, name: mode.name });
     }

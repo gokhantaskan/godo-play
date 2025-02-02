@@ -1,8 +1,9 @@
+import { sql } from "drizzle-orm";
 import {
   integer,
+  pgSequence,
   pgTable,
   primaryKey,
-  serial,
   text,
 } from "drizzle-orm/pg-core";
 import { createInsertSchema, createSelectSchema } from "drizzle-zod";
@@ -10,8 +11,17 @@ import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 import { defaultInsertTimestamps } from "../helpers/defaults";
 import { games } from "./games";
 
+// Define a custom sequence starting from 100
+export const gameModeIdSeq = pgSequence("game_mode_id_seq", {
+  startWith: 100,
+  increment: 1,
+  minValue: 100,
+});
+
 export const gameModes = pgTable("game_modes", {
-  id: serial("id").primaryKey(),
+  id: integer("id")
+    .primaryKey()
+    .default(sql`nextval('game_mode_id_seq')`),
   name: text("name").notNull(),
   slug: text("slug").notNull().unique(),
   ...defaultInsertTimestamps,
@@ -28,7 +38,7 @@ export const gameSubmissionGameModes = pgTable(
       .references(() => games.id, { onDelete: "cascade" })
       .notNull(),
     gameModeId: integer("game_mode_id")
-      .references(() => gameModes.id)
+      .references(() => gameModes.id, { onDelete: "cascade" })
       .notNull(),
   },
   table => [primaryKey({ columns: [table.submissionId, table.gameModeId] })]

@@ -3,7 +3,7 @@ import { eq } from "drizzle-orm";
 import { db } from "~~/server/db";
 import type { GameMode } from "~~/server/db/schema/tables/gameModes";
 import { gameModes } from "~~/server/db/schema/tables/gameModes";
-import { GAME_MODES } from "~~/shared/constants/gameModes";
+import { SUPPORTED_GAME_MODES } from "~~/shared/constants/gameModes";
 
 export async function seedGameModes() {
   try {
@@ -13,7 +13,7 @@ export async function seedGameModes() {
       console.log("🌱 Seeding game modes...");
 
       await db.insert(gameModes).values(
-        GAME_MODES.map(mode => ({
+        SUPPORTED_GAME_MODES.map(mode => ({
           id: mode.id,
           name: mode.name,
           slug: mode.slug,
@@ -27,7 +27,7 @@ export async function seedGameModes() {
       const updates: Promise<any>[] = [];
       const inserts: Pick<GameMode, "id" | "name" | "slug">[] = [];
 
-      GAME_MODES.forEach(mode => {
+      SUPPORTED_GAME_MODES.forEach(mode => {
         const existingMode = existingGameModes.find(p => p.id === mode.id);
 
         if (!existingMode) {

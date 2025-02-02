@@ -3,7 +3,7 @@ import { z } from "zod";
 
 import GameCrossplayInformationForm from "~~/app/components/GameDetails/GameCrossplayInformationForm.vue";
 import {
-  GAME_MODES,
+  SUPPORTED_GAME_MODES,
   SUPPORTED_PLATFORMS,
   SUPPORTED_STORES,
 } from "~~/shared/constants";
@@ -239,7 +239,7 @@ watch(
       </p>
       <div class="tw:space-y-2">
         <div
-          v-for="mode in GAME_MODES"
+          v-for="mode in SUPPORTED_GAME_MODES"
           :key="mode.id"
           class="tw:flex tw:items-center tw:gap-2"
         >
