@@ -23,10 +23,13 @@ export const storeSupportedPlatforms = pgTable(
   "store_supported_platforms",
   {
     storeId: integer("store_id")
-      .references(() => stores.id, { onDelete: "cascade" })
+      .references(() => stores.id, { onDelete: "cascade", onUpdate: "cascade" })
       .notNull(),
     platformId: integer("platform_id")
-      .references(() => platforms.id, { onDelete: "cascade" })
+      .references(() => platforms.id, {
+        onDelete: "cascade",
+        onUpdate: "cascade",
+      })
       .notNull(),
   },
   table => [primaryKey({ columns: [table.storeId, table.platformId] })]
@@ -47,6 +50,7 @@ export const BaseInsertStoreSupportedPlatformSchema = createInsertSchema(
 // Types for internal database usage
 export type Store = typeof stores.$inferSelect;
 export type InsertStore = typeof stores.$inferInsert;
+
 export type StoreSupportedPlatform =
   typeof storeSupportedPlatforms.$inferSelect;
 export type InsertStoreSupportedPlatform =

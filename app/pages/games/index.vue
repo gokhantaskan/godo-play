@@ -10,9 +10,6 @@ interface InitialRouteQuery {
   stores: string;
   gameModes: string;
   search: string;
-  playerPerspectives: string;
-  genres: string;
-  themes: string;
   sort: string;
   [key: string]: string | string[];
 }
@@ -28,9 +25,6 @@ interface SelectedPlatforms {
 interface Filters {
   stores: number[];
   gameModes: number[];
-  playerPerspectives: number[];
-  genres: number[];
-  themes: number[];
 }
 
 interface GamesResponse {
@@ -51,9 +45,6 @@ const {
   platforms: initialQueryPlatforms,
   gameModes: initialQueryGameModes,
   search: initialQuerySearch,
-  playerPerspectives: initialQueryPlayerPerspectives,
-  genres: initialQueryGenres,
-  themes: initialQueryThemes,
   sort: initialQuerySort = "-popularity",
 } = route.query as InitialRouteQuery;
 
@@ -96,11 +87,6 @@ const selectedFilters = ref<Filters>({
         .map(slug => getGameModeIdFromSlug(slug))
         .filter((id): id is number => id !== null)
     : [],
-  playerPerspectives: initialQueryPlayerPerspectives
-    ? initialQueryPlayerPerspectives.split(",").map(Number)
-    : [],
-  genres: initialQueryGenres ? initialQueryGenres.split(",").map(Number) : [],
-  themes: initialQueryThemes ? initialQueryThemes.split(",").map(Number) : [],
 });
 
 const search = ref<string>(initialQuerySearch);
@@ -140,19 +126,6 @@ const urlQuery = computed(() => {
     queryToSet.stores = selectedFilters.value.stores.join(",");
   }
 
-  if (selectedFilters.value.playerPerspectives.length) {
-    queryToSet.playerPerspectives =
-      selectedFilters.value.playerPerspectives.join(",");
-  }
-
-  if (selectedFilters.value.genres.length) {
-    queryToSet.genres = selectedFilters.value.genres.join(",");
-  }
-
-  if (selectedFilters.value.themes.length) {
-    queryToSet.themes = selectedFilters.value.themes.join(",");
-  }
-
   if (debouncedSearch.value) {
     queryToSet.search = debouncedSearch.value;
   }
@@ -186,19 +159,6 @@ const apiQueryParams = computed(() => {
 
   if (selectedFilters.value.stores.length) {
     query.stores = selectedFilters.value.stores.join(",");
-  }
-
-  if (selectedFilters.value.playerPerspectives.length) {
-    query.playerPerspectives =
-      selectedFilters.value.playerPerspectives.join(",");
-  }
-
-  if (selectedFilters.value.genres.length) {
-    query.genres = selectedFilters.value.genres.join(",");
-  }
-
-  if (selectedFilters.value.themes.length) {
-    query.themes = selectedFilters.value.themes.join(",");
   }
 
   if (debouncedSearch.value) {

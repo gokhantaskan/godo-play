@@ -5,7 +5,8 @@ definePageMeta({
   name: "AdminStoresPage",
 });
 
-const { data: stores, refresh } = useFetch<StoreWithRelations[]>("/api/stores");
+const { data: stores, refresh } =
+  await useFetch<StoreWithRelations[]>("/api/stores");
 
 const selectedStore = ref<StoreWithRelations | null>(null);
 const isUpdateModalOpen = ref(false);

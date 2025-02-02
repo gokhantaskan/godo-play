@@ -1,4 +1,4 @@
-import { z } from "zod";
+import type { z } from "zod";
 
 import {
   BaseInsertStoreCrossplayPlatformSchema,
@@ -7,15 +7,8 @@ import {
   BaseStorePlatformSchema,
 } from "~~/server/db/schema/tables/storePlatforms";
 
-export const StorePlatformSchema = BaseStorePlatformSchema.extend({
-  // Add any additional validation or transformations here
-  createdAt: z.coerce.date(),
-  updatedAt: z.coerce.date(),
-});
-
-export const InsertStorePlatformSchema = BaseInsertStorePlatformSchema.extend({
-  // Add any additional validation or transformations here
-});
+export const StorePlatformSchema = BaseStorePlatformSchema;
+export const InsertStorePlatformSchema = BaseInsertStorePlatformSchema;
 
 export const StoreCrossplayPlatformSchema =
   BaseStoreCrossplayPlatformSchema.extend({

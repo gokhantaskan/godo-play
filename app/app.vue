@@ -2,8 +2,27 @@
 import { Analytics } from "@vercel/analytics/nuxt";
 
 import { useScripts } from "@/composables/useScripts";
+import { useSessionState } from "~/composables/useSessionState";
+
+import { getGameModes, getStores } from "./services/api.service";
 
 const { initScripts } = useScripts();
+
+onMounted(async () => {
+  initScripts();
+
+  if (import.meta.client) {
+    const { gameModes, stores } = useSessionState();
+
+    if (!gameModes.value.length) {
+      gameModes.value = await getGameModes();
+    }
+
+    if (!stores.value.length) {
+      stores.value = await getStores();
+    }
+  }
+});
 
 useHead({
   htmlAttrs: {
@@ -44,10 +63,6 @@ useSeoMeta({
   twitterDescription:
     "Discover the best multi-platform and cross-play co-op and multiplayer games for PC, PlayStation, Xbox, and Nintendo Switch—team up or compete with friends on any platform.",
   twitterImage: "/og_img.jpg",
-});
-
-onMounted(() => {
-  initScripts();
 });
 </script>
 
