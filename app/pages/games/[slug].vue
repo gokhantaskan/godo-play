@@ -6,7 +6,24 @@ definePageMeta({
   name: "CrossPlayGameDetailsPage",
 });
 
+useNuxtApp().hook("page:finish", () => {
+  window.scrollTo({ top: 0, behavior: "smooth" });
+});
+
 const { slug } = useRoute().params;
+
+const { data: dbGame, refresh: refreshDbGame } =
+  await useCachedFetch<GameSubmissionWithRelations>(
+    `/api/game-details/${slug}`
+  );
+
+// Throw 404 if game is not found
+if (!dbGame.value) {
+  throw createError({
+    statusCode: 404,
+    message: "Game not found",
+  });
+}
 
 // Composable for game data fetching
 const { data: igdbGame, refresh: refreshIgdbGame } =
@@ -14,27 +31,10 @@ const { data: igdbGame, refresh: refreshIgdbGame } =
     key: `igdb-game-${slug}`,
   });
 
-// Throw 404 if game is not found
-if (!igdbGame.value) {
-  throw createError({
-    statusCode: 404,
-    message: "Game not found",
-  });
-}
-
-const { data: dbGame, refresh: refreshDbGame } =
-  await useCachedFetch<GameSubmissionWithRelations>(
-    `/api/game-details/${slug}`
-  );
-
-const gameName = computed(() => {
-  return dbGame.value?.name ?? igdbGame.value?.name ?? "";
-});
-
 const seoMeta = computed(() => {
   return {
-    seoTitle: `${gameName.value} Crossplay Information`,
-    seoDescription: `Learn about ${gameName.value} and its crossplay support.`,
+    seoTitle: `${dbGame.value?.name} Crossplay Information`,
+    seoDescription: `Learn about ${dbGame.value?.name} and its crossplay support.`,
     seoImage: `https://images.igdb.com/igdb/image/upload/t_screenshot_med/${dbGame.value?.external?.igdbImageId}.jpg`,
   };
 });
@@ -61,7 +61,7 @@ async function refreshGameData() {
     <CrossPlayGameDetails
       :igdb-game="igdbGame ?? null"
       :db-game="dbGame ?? null"
-      :game-name="gameName"
+      :game-name="dbGame?.name ?? ''"
     />
 
     <div v-if="IS_DEV">

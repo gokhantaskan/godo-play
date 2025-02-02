@@ -1,4 +1,4 @@
-export const GAME_MODES: {
+export const SUPPORTED_GAME_MODES: {
   id: number;
   name: string;
   slug: string;
@@ -35,42 +35,6 @@ export const GAME_MODES: {
     slug: "battle-royale",
   },
   // Custom
-  {
-    id: 7,
-    name: "Campaign",
-    slug: "campaign",
-  },
-  {
-    id: 8,
-    name: "Competitive",
-    slug: "competitive",
-  },
-  {
-    id: 9,
-    name: "Local & Party",
-    slug: "local-and-party",
-  },
-  {
-    id: 10,
-    name: "PvP",
-    slug: "pvp",
-  },
-  {
-    id: 11,
-    name: "PvE",
-    slug: "pve",
-  },
-  {
-    id: 12,
-    name: "Time Trial / Score Attack",
-    slug: "time-trial-score-attack",
-  },
-  {
-    id: 13,
-    name: "Sandbox / Creative",
-    slug: "sandbox-creative",
-  },
 ];
 
-export const EXTERNAL_GAME_MODES = GAME_MODES.filter(mode => mode.id < 100);
-export const GAME_MODE_IDS: number[] = GAME_MODES.map(tag => tag.id);
+export const GAME_MODE_IDS: number[] = SUPPORTED_GAME_MODES.map(tag => tag.id);

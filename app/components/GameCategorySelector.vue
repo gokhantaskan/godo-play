@@ -1,8 +1,5 @@
 <script setup lang="ts">
-import { EXTERNAL_GAME_MODES, GAME_MODES } from "~~/shared/constants/gameModes";
-import { GENRES } from "~~/shared/constants/genres";
-import { PLAYER_PERSPECTIVES } from "~~/shared/constants/playerPerspectives";
-import { THEMES } from "~~/shared/constants/themes";
+import { SUPPORTED_GAME_MODES } from "~~/shared/constants/gameModes";
 
 interface Props {
   external?: boolean;
@@ -11,111 +8,42 @@ interface Props {
 
 const props = withDefaults(defineProps<Props>(), {
   external: false,
-  include: () => ["gameModes", "playerPerspectives", "genres", "themes"],
+  include: () => ["gameModes"],
 });
 
 const isDrawerOpen = ref(false);
-
-const selectedGenres = defineModel<number[]>("genres", {
-  default: [],
-});
-
-const selectedThemes = defineModel<number[]>("themes", {
-  default: [],
-});
 
 const selectedGameModes = defineModel<number[]>("gameModes", {
   default: [],
 });
 
-const selectedPlayerPerspectives = defineModel<number[]>("playerPerspectives", {
-  default: [],
-});
-
 // Draft states
-const draftGenres = ref<number[]>([]);
-const draftThemes = ref<number[]>([]);
 const draftGameModes = ref<number[]>([]);
-const draftPlayerPerspectives = ref<number[]>([]);
 
 const currentGameModes = computed(() => {
-  return props.external ? EXTERNAL_GAME_MODES : GAME_MODES;
+  return SUPPORTED_GAME_MODES;
 });
 
 // Initialize draft states when drawer opens
 watch(isDrawerOpen, newValue => {
   if (newValue) {
-    draftGenres.value = [...selectedGenres.value];
-    draftThemes.value = [...selectedThemes.value];
     draftGameModes.value = [...selectedGameModes.value];
-    draftPlayerPerspectives.value = [...selectedPlayerPerspectives.value];
   }
 });
 
-// const hasSelectedGenres = computed(() => selectedGenres.value.length > 0);
-// const hasSelectedThemes = computed(() => selectedThemes.value.length > 0);
-// const hasSelectedGameModes = computed(() => selectedGameModes.value.length > 0);
-// const hasSelectedPlayerPerspectives = computed(
-//   () => selectedPlayerPerspectives.value.length > 0
-// );
-
-// const hasSelectedCategories = computed(
-//   () =>
-//     hasSelectedGenres.value ||
-//     hasSelectedThemes.value ||
-//     hasSelectedGameModes.value ||
-//     hasSelectedPlayerPerspectives.value
-// );
-
-// const totalSelectedCount = computed(
-//   () =>
-//     selectedGenres.value.length +
-//     selectedThemes.value.length +
-//     selectedGameModes.value.length +
-//     selectedPlayerPerspectives.value.length
-// );
-
 // Draft computeds
 const hasDraftChanges = computed(() => {
-  return (
-    !isArrayEqual(draftGenres.value, selectedGenres.value) ||
-    !isArrayEqual(draftThemes.value, selectedThemes.value) ||
-    !isArrayEqual(draftGameModes.value, selectedGameModes.value) ||
-    !isArrayEqual(
-      draftPlayerPerspectives.value,
-      selectedPlayerPerspectives.value
-    )
-  );
+  return !isArrayEqual(draftGameModes.value, selectedGameModes.value);
 });
-
-const hasDraftSelections = computed(
-  () =>
-    draftGenres.value.length > 0 ||
-    draftThemes.value.length > 0 ||
-    draftGameModes.value.length > 0 ||
-    draftPlayerPerspectives.value.length > 0
-);
-
-const totalDraftCount = computed(
-  () =>
-    draftGenres.value.length +
-    draftThemes.value.length +
-    draftGameModes.value.length +
-    draftPlayerPerspectives.value.length
-);
+const hasDraftSelections = computed(() => draftGameModes.value.length > 0);
+const totalDraftCount = computed(() => draftGameModes.value.length);
 
 function clearAll() {
-  draftGenres.value = [];
-  draftThemes.value = [];
   draftGameModes.value = [];
-  draftPlayerPerspectives.value = [];
 }
 
 function applyChanges() {
-  selectedGenres.value = [...draftGenres.value];
-  selectedThemes.value = [...draftThemes.value];
   selectedGameModes.value = [...draftGameModes.value];
-  selectedPlayerPerspectives.value = [...draftPlayerPerspectives.value];
   isDrawerOpen.value = false;
 }
 
@@ -181,81 +109,6 @@ function isArrayEqual(arr1: number[], arr2: number[]) {
               class="tw:w-4 tw:h-4"
             />
             <span class="tw:text-sm">{{ gameMode.name }}</span>
-          </label>
-        </fieldset>
-
-        <!-- Player Perspectives -->
-        <fieldset
-          v-if="props.include?.includes('playerPerspectives')"
-          class="tw:flex tw:flex-wrap tw:gap-2"
-        >
-          <legend class="tw:font-title tw:font-medium tw:text-sm tw:mb-2">
-            Player Perspectives
-          </legend>
-          <label
-            v-for="playerPerspective in PLAYER_PERSPECTIVES.toSorted((a, b) =>
-              a.name.localeCompare(b.name)
-            )"
-            :key="playerPerspective.id"
-            class="tw:flex tw:items-center tw:gap-2 tw:cursor-pointer"
-          >
-            <input
-              v-model="draftPlayerPerspectives"
-              type="checkbox"
-              :value="playerPerspective.id"
-              class="tw:w-4 tw:h-4"
-            />
-            <span class="tw:text-sm">{{ playerPerspective.name }}</span>
-          </label>
-        </fieldset>
-
-        <!-- Genres -->
-        <fieldset
-          v-if="props.include?.includes('genres')"
-          class="tw:flex tw:flex-wrap tw:gap-2"
-        >
-          <legend class="tw:font-title tw:font-medium tw:text-sm tw:mb-2">
-            Genres
-          </legend>
-          <label
-            v-for="genre in GENRES.toSorted((a, b) =>
-              a.name.localeCompare(b.name)
-            )"
-            :key="genre.id"
-            class="tw:flex tw:items-center tw:gap-2 tw:cursor-pointer"
-          >
-            <input
-              v-model="draftGenres"
-              type="checkbox"
-              :value="genre.id"
-              class="tw:w-4 tw:h-4"
-            />
-            <span class="tw:text-sm">{{ genre.name }}</span>
-          </label>
-        </fieldset>
-
-        <!-- Themes -->
-        <fieldset
-          v-if="props.include?.includes('themes')"
-          class="tw:flex tw:flex-wrap tw:gap-2"
-        >
-          <legend class="tw:font-title tw:font-medium tw:text-sm tw:mb-2">
-            Themes
-          </legend>
-          <label
-            v-for="theme in THEMES.toSorted((a, b) =>
-              a.name.localeCompare(b.name)
-            )"
-            :key="theme.id"
-            class="tw:flex tw:items-center tw:gap-2 tw:cursor-pointer"
-          >
-            <input
-              v-model="draftThemes"
-              type="checkbox"
-              :value="theme.id"
-              class="tw:w-4 tw:h-4"
-            />
-            <span class="tw:text-sm">{{ theme.name }}</span>
           </label>
         </fieldset>
       </div>
