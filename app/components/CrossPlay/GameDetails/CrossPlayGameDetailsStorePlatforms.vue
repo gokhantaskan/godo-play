@@ -139,6 +139,14 @@ function getConsolidatedPlatforms(
                 <span class="tw:sr-only">None</span>
               </span>
             </template>
+            <template v-if="store.storeUrl">
+              <span> - </span>
+              <NuxtLink
+                :href="store.storeUrl"
+                target="_blank"
+                >link</NuxtLink
+              >
+            </template>
           </dd>
         </template>
       </dl>

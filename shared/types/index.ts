@@ -111,6 +111,7 @@ export interface GameSubmissionWithRelations extends ReadGame {
   storePlatforms: Array<{
     id: number;
     storeSlug: string;
+    storeUrl: string | null;
     crossplayEntries: Array<{
       platform: {
         id: number;
