@@ -40,14 +40,14 @@
   "-Ark: Survival Ascended": ["Steam", "MS", "PS5", "XBSX/XBSS"],
   "-Armello": ["Steam", "PS4", "XBO", "Switch"],
   "-The Ascent": ["MS", "XBO", "XBSX/XBSS"],
-  "Assetto Corsa Competizione": ["PS5", "XBSX/XBSS"],
-  "Astroneer": ["MS", "XBO"],
+  "-Assetto Corsa Competizione": ["PS5", "XBSX/XBSS"],
+  "-Astroneer": ["MS", "XBO"],
   "-Back 4 Blood": ["Steam", "MS", "Epic", "PS4", "XBO", "PS5", "XBSX/XBSS"],
   "-Battlefield 2042": ["PS4", "XBO", "Steam", "EA, Epic", "PS5", "XBSX/XBSS"],
   "Black Desert Online": ["PS4", "XBO"],
   "-Borderlands 3": ["Mac", "Steam", "Epic", "PS4", "XBO", "PS5", "XBSX/XBSS"],
   "Boundless": ["Mac", "Steam", "PS4", "PS5"],
-  "Brawlhalla": [
+  "-Brawlhalla": [
     "Mac",
     "Steam",
     "iOS",
