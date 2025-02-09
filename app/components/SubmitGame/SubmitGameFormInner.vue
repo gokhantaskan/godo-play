@@ -24,6 +24,7 @@ type StoreData = Partial<
     StoreHardcoded["slug"],
     {
       crossplayPlatforms: PlatformId[];
+      storeUrl?: string;
     }
   >
 >;
@@ -122,30 +123,46 @@ function removePlatformGroup(index: number): void {
 
 function updateStorePlatforms(
   store: Store["slug"],
-  platforms: PlatformId[]
+  data: {
+    crossplayPlatforms?: PlatformId[];
+    storeUrl?: string;
+  }
 ): void {
   try {
     // Validate the store slug
     InsertStorePlatformSchema.parse({
       storeSlug: store,
       submissionId: 0, // This will be set by the server
+      storeUrl: data.storeUrl,
     });
 
     storePlatforms.value[store] = {
-      crossplayPlatforms: platforms,
+      crossplayPlatforms: data.crossplayPlatforms ?? [],
+      storeUrl: data.storeUrl,
     };
 
     // Clear any previous errors
     errors.value = {
       ...errors.value,
       [`storePlatforms.${store}`]: "",
+      [`storePlatforms.${store}.url`]: "",
     };
   } catch (error) {
     if (error instanceof z.ZodError) {
-      errors.value = {
-        ...errors.value,
-        [`storePlatforms.${store}`]: error.errors[0]?.message || "Invalid data",
-      };
+      const fieldError = error.errors[0];
+      const errorPath = fieldError?.path[0];
+
+      if (errorPath === "storeUrl") {
+        errors.value = {
+          ...errors.value,
+          [`storePlatforms.${store}.url`]: fieldError?.message || "Invalid URL",
+        };
+      } else {
+        errors.value = {
+          ...errors.value,
+          [`storePlatforms.${store}`]: fieldError?.message || "Invalid data",
+        };
+      }
     }
   }
 }
@@ -332,7 +349,33 @@ watch(
             <span>{{ store.name }}</span>
           </label>
 
-          <div v-if="stores.includes(store.slug)">
+          <div
+            v-if="stores.includes(store.slug)"
+            class="tw:space-y-2"
+          >
+            <!-- Store URL Input -->
+            <div>
+              <input
+                type="url"
+                :placeholder="`${store.name} store URL`"
+                class="input tw:w-full"
+                :value="storePlatforms[store.slug]?.storeUrl"
+                @input="
+                  updateStorePlatforms(store.slug, {
+                    ...storePlatforms[store.slug],
+                    storeUrl: ($event.target as HTMLInputElement).value,
+                  })
+                "
+              />
+              <p
+                v-if="errors[`storePlatforms.${store.slug}.url`]"
+                class="tw:text-sm tw:text-error tw:mt-1"
+              >
+                {{ errors[`storePlatforms.${store.slug}.url`] }}
+              </p>
+            </div>
+
+            <!-- Crossplay Platforms Select -->
             <PlatformSelect
               :model-value="
                 storePlatforms[store.slug]?.crossplayPlatforms ?? []
@@ -343,10 +386,10 @@ watch(
                 platformsWithPC?.filter(platform => platform !== 6)
               "
               @update:model-value="
-                updateStorePlatforms(
-                  store.slug,
-                  Array.isArray($event) ? $event : [$event]
-                )
+                updateStorePlatforms(store.slug, {
+                  ...storePlatforms[store.slug],
+                  crossplayPlatforms: Array.isArray($event) ? $event : [$event],
+                })
               "
             />
             <p

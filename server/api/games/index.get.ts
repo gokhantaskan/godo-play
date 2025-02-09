@@ -192,6 +192,7 @@ export default defineCachedEventHandler(
             columns: {
               id: true,
               storeSlug: true,
+              storeUrl: true,
             },
             with: {
               crossplayEntries: {

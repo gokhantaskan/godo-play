@@ -33,6 +33,7 @@ const updateSubmissionSchema = z.object({
       z.string(),
       z.object({
         crossplayPlatforms: z.array(z.number()).default([]),
+        storeUrl: z.string().url().optional(),
       })
     )
     .optional(),
@@ -125,15 +126,17 @@ export default defineEventHandler(async event => {
           .delete(storePlatforms)
           .where(eq(storePlatforms.submissionId, submissionId));
 
-        for (const [storeSlug, { crossplayPlatforms }] of Object.entries(
-          body.storesPlatforms
-        )) {
+        for (const [
+          storeSlug,
+          { crossplayPlatforms, storeUrl },
+        ] of Object.entries(body.storesPlatforms)) {
           const [store] = await tx
             .insert(storePlatforms)
             .values(
               InsertStorePlatformSchema.parse({
                 submissionId,
                 storeSlug,
+                storeUrl,
               })
             )
             .returning();

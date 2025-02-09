@@ -80,6 +80,7 @@ export const DbGameWithRelationsSchema = DbGameSchema.extend({
     z.object({
       id: z.number(),
       storeSlug: z.string(),
+      storeUrl: z.string().url().optional(),
       crossplayEntries: z.array(
         z.object({
           platform: z.object({

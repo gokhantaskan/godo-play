@@ -1,0 +1,1 @@
+ALTER TABLE "store_platforms" ADD COLUMN "store_url" text;

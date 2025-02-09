@@ -23,6 +23,7 @@ export const storePlatforms = pgTable("store_platforms", {
     .references(() => games.id, { onDelete: "cascade" })
     .notNull(),
   storeSlug: text("store_slug").notNull(),
+  storeUrl: text("store_url"),
   ...defaultInsertTimestamps,
 });
 

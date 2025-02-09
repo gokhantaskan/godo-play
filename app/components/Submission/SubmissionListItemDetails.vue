@@ -12,9 +12,10 @@ type PlatformGroups = PlatformId[][];
 type Store = StoreHardcoded;
 type StoreData = Partial<
   Record<
-    StoreHardcoded["slug"],
+    Store["slug"],
     {
       crossplayPlatforms: PlatformId[];
+      storeUrl?: string;
     }
   >
 >;
@@ -120,11 +121,19 @@ function transformSubmissionToFormData(
   // Transform PC store platforms
   const stores = submission.storePlatforms.map(store => store.storeSlug);
   const storePlatforms: StoreData = submission.storePlatforms.reduce(
-    (acc: StoreData, store) => {
+    (
+      acc: StoreData,
+      store: {
+        storeSlug: string;
+        storeUrl?: string | null;
+        crossplayEntries: any[];
+      }
+    ) => {
       acc[store.storeSlug] = {
         crossplayPlatforms: store.crossplayEntries.map(
           entry => entry.platform.id
         ),
+        ...(store.storeUrl ? { storeUrl: store.storeUrl } : {}),
       };
       return acc;
     },
@@ -166,15 +175,23 @@ function syncStorePlatforms() {
   // Update each PC store's crossplay platforms
   storePlatformsModel.value = Object.fromEntries(
     storesModel.value.map((storeSlug: Store["slug"]) => {
-      const currentCrossplayPlatforms =
-        storePlatformsModel.value[storeSlug]?.crossplayPlatforms ?? [];
+      const currentStore = storePlatformsModel.value[storeSlug];
+      const currentCrossplayPlatforms = currentStore?.crossplayPlatforms ?? [];
 
       // Keep only platforms that are in both the current list and the PC group
       const validPlatforms = currentCrossplayPlatforms.filter(
         (platformId: PlatformId) => availablePlatforms.includes(platformId)
       );
 
-      return [storeSlug, { crossplayPlatforms: validPlatforms }];
+      return [
+        storeSlug,
+        {
+          crossplayPlatforms: validPlatforms,
+          ...(currentStore?.storeUrl
+            ? { storeUrl: currentStore.storeUrl }
+            : {}),
+        },
+      ];
     })
   );
 }

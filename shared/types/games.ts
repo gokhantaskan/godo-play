@@ -43,6 +43,7 @@ export interface GameSubmissionCrossplayEntry {
 export interface GameSubmissionStorePlatform {
   id: number;
   storeSlug: string;
+  storeUrl?: string | null;
   crossplayEntries: GameSubmissionCrossplayEntry[];
 }
 
