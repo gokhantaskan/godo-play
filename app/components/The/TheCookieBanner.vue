@@ -1,8 +1,16 @@
 <script setup lang="ts">
+import { usePrismic } from "@prismicio/vue";
+
 import { useCookieConsent } from "@/composables/useCookieConsent";
+import type { CookieConsentDocument } from "~~/prismicio-types";
 
 const route = useRoute();
 const dialogRef = ref<HTMLDialogElement | null>(null);
+const prismic = usePrismic();
+
+const { data: cookieContent } = await useAsyncData("cookie-consent", () =>
+  prismic.client.getSingle<CookieConsentDocument>("cookie_consent")
+);
 
 const { cookieConsent, isLoading, acceptCookies, rejectCookies } =
   useCookieConsent();
@@ -13,6 +21,7 @@ const isLegalPage = computed(() => {
     "/terms-of-service",
     "/cookie-policy",
   ];
+
   return legalRoutes.includes(route.path);
 });
 
@@ -33,6 +42,7 @@ const shouldShow = computed(() => {
 
 // Add mounted state to prevent flash
 const isMounted = ref(false);
+
 onMounted(() => {
   dialogRef.value?.addEventListener("cancel", preventDefaultCancel);
   // Set mounted after a tick to ensure cookie is checked
@@ -40,18 +50,6 @@ onMounted(() => {
     isMounted.value = true;
   });
 });
-
-function handleAccept() {
-  acceptCookies();
-}
-
-function handleReject() {
-  rejectCookies();
-}
-
-function preventDefaultCancel(e: Event) {
-  e.preventDefault();
-}
 
 onBeforeUnmount(() => {
   dialogRef.value?.removeEventListener("cancel", preventDefaultCancel);
@@ -68,6 +66,18 @@ watchEffect(() => {
     dialogRef.value.close();
   }
 });
+
+function handleAccept() {
+  acceptCookies();
+}
+
+function handleReject() {
+  rejectCookies();
+}
+
+function preventDefaultCancel(e: Event) {
+  e.preventDefault();
+}
 </script>
 
 <template>
@@ -82,27 +92,36 @@ watchEffect(() => {
       class="cookie-banner__content tw:shadow-md"
     >
       <div class="cookie-banner__text">
-        <h2 class="cookie-banner__title">Cookie Policy</h2>
-        <p class="cookie-banner__description">
-          We use cookies to analyze our traffic and enhance your experience. You
-          can choose to accept or reject these cookies. For more information,
-          please read our
-          <NuxtLink to="/privacy-policy">Privacy Policy</NuxtLink>.
-        </p>
+        <h2
+          v-if="cookieContent?.data.title"
+          class="cookie-banner__title"
+        >
+          {{ cookieContent?.data.title }}
+        </h2>
+        <div
+          v-if="cookieContent?.data.content"
+          class="cookie-banner__description"
+        >
+          <PrismicRichText :field="cookieContent?.data.content" />
+        </div>
+        <div v-else>
+          This website uses cookies to ensure you get the best experience on our
+          website.
+        </div>
       </div>
       <div class="cookie-banner__actions">
         <TheButton
           size="sm"
           @click="handleAccept"
         >
-          Accept
+          {{ cookieContent?.data.approve_label || "Accept" }}
         </TheButton>
         <TheButton
           size="sm"
           variant="secondary"
           @click="handleReject"
         >
-          Decline
+          {{ cookieContent?.data.decline_label || "Decline" }}
         </TheButton>
       </div>
     </div>
@@ -115,6 +134,7 @@ watchEffect(() => {
 
 .cookie-banner {
   --edge-offset: 1rem;
+
   padding: var(--edge-offset);
   width: 100%;
   max-width: 100%;
@@ -133,7 +153,7 @@ watchEffect(() => {
     position: fixed;
     inset-inline: 0;
     inset-block-end: 0;
-    max-width: map.get($breakpoints, "md");
+    max-width: map.get($breakpoints, "lg");
     margin-inline: auto;
     padding: 1.5rem;
     border-radius: var(--tw-radius-lg) var(--tw-radius-lg) 0 0;
@@ -157,8 +177,8 @@ watchEffect(() => {
 
   &__title {
     font-size: 1.125rem;
-    font-weight: 600;
-    margin-block-end: 0.5rem;
+    font-weight: 500;
+    margin-block-end: 0.25rem;
   }
 
   &__description {
@@ -170,22 +190,15 @@ watchEffect(() => {
     flex-direction: row-reverse;
     gap: 0.5rem;
     flex-shrink: 0;
-  }
 
-  &__button--flash {
-    animation: flash 0.3s ease 2;
-  }
-}
+    @media (min-width: map.get($breakpoints, "md")) {
+      flex-direction: column;
+    }
 
-@keyframes flash {
-  0%,
-  100% {
-    opacity: 1;
-    scale: 1;
-  }
-  50% {
-    opacity: 0.88;
-    scale: 0.98;
+    > * {
+      flex-basis: 0;
+      flex-grow: 1;
+    }
   }
 }
 </style>

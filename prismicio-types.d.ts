@@ -4,6 +4,71 @@ import type * as prismic from "@prismicio/client";
 
 type Simplify<T> = { [KeyType in keyof T]: T[KeyType] };
 
+/**
+ * Content for Cookie Consent documents
+ */
+interface CookieConsentDocumentData {
+  /**
+   * content field in *Cookie Consent*
+   *
+   * - **Field Type**: Rich Text
+   * - **Placeholder**: Cookie consent description
+   * - **API ID Path**: cookie_consent.content
+   * - **Tab**: Main
+   * - **Documentation**: https://prismic.io/docs/field#rich-text-title
+   */
+  content: prismic.RichTextField;
+
+  /**
+   * title field in *Cookie Consent*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: Cookie consent banner title
+   * - **API ID Path**: cookie_consent.title
+   * - **Tab**: Main
+   * - **Documentation**: https://prismic.io/docs/field#key-text
+   */
+  title: prismic.KeyTextField;
+
+  /**
+   * approve_label field in *Cookie Consent*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: Cookie consent approve button text
+   * - **API ID Path**: cookie_consent.approve_label
+   * - **Tab**: Main
+   * - **Documentation**: https://prismic.io/docs/field#key-text
+   */
+  approve_label: prismic.KeyTextField;
+
+  /**
+   * decline_label field in *Cookie Consent*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: Cookie consent decline button text
+   * - **API ID Path**: cookie_consent.decline_label
+   * - **Tab**: Main
+   * - **Documentation**: https://prismic.io/docs/field#key-text
+   */
+  decline_label: prismic.KeyTextField;
+}
+
+/**
+ * Cookie Consent document from Prismic
+ *
+ * - **API ID**: `cookie_consent`
+ * - **Repeatable**: `false`
+ * - **Documentation**: https://prismic.io/docs/custom-types
+ *
+ * @typeParam Lang - Language API ID of the document.
+ */
+export type CookieConsentDocument<Lang extends string = string> =
+  prismic.PrismicDocumentWithoutUID<
+    Simplify<CookieConsentDocumentData>,
+    "cookie_consent",
+    Lang
+  >;
+
 type HomePageDocumentDataSlicesSlice =
   | ExplanatorySectionSlice
   | FaqSectionSlice
@@ -137,7 +202,10 @@ export type ProsePageDocument<Lang extends string = string> =
     Lang
   >;
 
-export type AllDocumentTypes = HomePageDocument | ProsePageDocument;
+export type AllDocumentTypes =
+  | CookieConsentDocument
+  | HomePageDocument
+  | ProsePageDocument;
 
 /**
  * Primary content in *ExplanatorySection → Left Image → Primary*
@@ -727,6 +795,8 @@ declare module "@prismicio/client" {
 
   namespace Content {
     export type {
+      CookieConsentDocument,
+      CookieConsentDocumentData,
       HomePageDocument,
       HomePageDocumentData,
       HomePageDocumentDataSlicesSlice,

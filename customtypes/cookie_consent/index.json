@@ -1,0 +1,41 @@
+{
+  "format": "custom",
+  "id": "cookie_consent",
+  "label": "Cookie Consent",
+  "repeatable": false,
+  "status": true,
+  "json": {
+    "Main": {
+      "content": {
+        "type": "StructuredText",
+        "config": {
+          "label": "content",
+          "placeholder": "Cookie consent description",
+          "allowTargetBlank": true,
+          "multi": "paragraph,heading6,strong,em,hyperlink,rtl"
+        }
+      },
+      "title": {
+        "type": "Text",
+        "config": {
+          "label": "title",
+          "placeholder": "Cookie consent banner title"
+        }
+      },
+      "approve_label": {
+        "type": "Text",
+        "config": {
+          "label": "approve_label",
+          "placeholder": "Cookie consent approve button text"
+        }
+      },
+      "decline_label": {
+        "type": "Text",
+        "config": {
+          "label": "decline_label",
+          "placeholder": "Cookie consent decline button text"
+        }
+      }
+    }
+  }
+}

@@ -247,7 +247,7 @@ function formatDate(date: number) {
             </section>
             <section>
               <h2 class="tw:sr-only">About the Game</h2>
-              <ReadMore>{{ igdbGame?.summary }}</ReadMore>
+              <ReadMore :key="currentTab">{{ igdbGame?.summary }}</ReadMore>
               <div
                 role="list"
                 class="tw:w-full tw:mt-2"
