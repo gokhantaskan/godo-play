@@ -56,6 +56,7 @@ export const SubmitGameSchema = z.object({
     z.string(),
     z.object({
       crossplayPlatforms: z.array(z.number()).default([]),
+      storeUrl: z.string().url().optional(),
     })
   ),
   gameModeIds: z.array(z.number()).min(1, "At least one game mode is required"),

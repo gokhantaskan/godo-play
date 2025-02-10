@@ -3,6 +3,7 @@ import { z } from "zod";
 
 import { db } from "~~/server/db";
 import {
+  crossplayInformation,
   games,
   gameSubmissionGameModes,
   platformGroupPlatforms,
@@ -56,6 +57,16 @@ export default defineEventHandler(async event => {
         throw createError({
           statusCode: 500,
           message: "Failed to create game submission",
+        });
+      }
+
+      // Insert crossplay information if provided
+      if (body.crossplayInformation) {
+        await tx.insert(crossplayInformation).values({
+          gameId: submission.id,
+          evidenceUrl: body.crossplayInformation.evidenceUrl,
+          information: body.crossplayInformation.information,
+          isOfficial: body.crossplayInformation.isOfficial ?? false,
         });
       }
 
@@ -124,15 +135,17 @@ export default defineEventHandler(async event => {
       }
 
       // Process PC store platforms sequentially
-      for (const [storeSlug, { crossplayPlatforms }] of Object.entries(
-        body.storesPlatforms
-      )) {
+      for (const [
+        storeSlug,
+        { crossplayPlatforms, storeUrl },
+      ] of Object.entries(body.storesPlatforms)) {
         const [store] = await tx
           .insert(storePlatforms)
           .values(
             InsertStorePlatformSchema.parse({
               submissionId: submission.id,
               storeSlug,
+              storeUrl,
             })
           )
           .returning();
