@@ -10,61 +10,46 @@ const model = defineModel<boolean>("open", { required: false, default: false });
 const contentRef = ref<HTMLElement>();
 const isOverflowing = ref(false);
 
-/**
- * Creates a debounced function that delays invoking func until after wait milliseconds
- */
-function createDebounce<T extends (...args: any[]) => any>(
-  func: T,
-  wait: number
-) {
-  let timeout: ReturnType<typeof setTimeout> | undefined;
-
-  const debounced = (...args: Parameters<T>) => {
-    const later = () => {
-      timeout = undefined;
-      func(...args);
-    };
-
-    clearTimeout(timeout);
-    timeout = setTimeout(later, wait);
-  };
-
-  debounced.cancel = () => {
-    clearTimeout(timeout);
-    timeout = undefined;
-  };
-
-  return debounced;
-}
-
 function checkOverflow() {
   if (!contentRef.value) {
     return;
   }
 
-  const lineHeight = parseInt(getComputedStyle(contentRef.value).lineHeight);
+  const computedStyle = getComputedStyle(contentRef.value);
+  const lineHeight = parseFloat(computedStyle.lineHeight);
   const maxHeight = (props.lineCount || 3) * lineHeight;
 
   isOverflowing.value = contentRef.value.scrollHeight > maxHeight;
 
-  // Reset expanded state if content is not overflowing
   if (!isOverflowing.value) {
     model.value = false;
   }
 }
 
-// Create debounced version for resize handler
-const debouncedCheckOverflow = createDebounce(checkOverflow, 150);
+// Simplified debounce with a longer delay
+let debounceTimeout: ReturnType<typeof setTimeout>;
+const debouncedCheck = () => {
+  clearTimeout(debounceTimeout);
+  debounceTimeout = setTimeout(checkOverflow, 200);
+};
 
 onMounted(() => {
-  checkOverflow();
-  window.addEventListener("resize", debouncedCheckOverflow);
+  // Initial check after a short delay to ensure content is rendered
+  setTimeout(checkOverflow, 50);
+
+  // Use ResizeObserver for size changes
+  const resizeObserver = new ResizeObserver(debouncedCheck);
+  resizeObserver.observe(contentRef.value!);
+
+  // Cleanup
+  onUnmounted(() => {
+    resizeObserver.disconnect();
+    clearTimeout(debounceTimeout);
+  });
 });
 
-onUnmounted(() => {
-  window.removeEventListener("resize", debouncedCheckOverflow);
-  debouncedCheckOverflow.cancel();
-});
+// Watch for prop changes
+watch(() => props.lineCount, checkOverflow);
 </script>
 
 <template>
@@ -75,23 +60,26 @@ onUnmounted(() => {
         'read-more__content',
         {
           [`read-more__content--fade-${fadeStyle || 'gradient'}`]:
-            isOverflowing,
+            isOverflowing && !model,
           'read-more__content--expanded': model,
         },
       ]"
-      :style="{ '--line-count': props.lineCount || 3 }"
+      :style="{
+        '--line-count': props.lineCount || 3,
+        '--line-clamp': model ? 'none' : props.lineCount || 3,
+      }"
     >
       <slot />
     </div>
 
-    <button
+    <TheButton
       v-if="isOverflowing"
-      type="button"
-      class="read-more__button"
+      size="sm"
+      variant="secondary"
       @click="model = !model"
     >
       {{ model ? "Show Less" : "Read More" }}
-    </button>
+    </TheButton>
   </div>
 </template>
 
@@ -101,23 +89,25 @@ onUnmounted(() => {
     position: relative;
     display: -webkit-box;
     -webkit-box-orient: vertical;
-    -webkit-line-clamp: var(--line-count);
+    -webkit-line-clamp: var(--line-clamp);
     overflow: hidden;
 
     &--fade-gradient {
-      mask-image: linear-gradient(
-        to bottom,
-        black calc(100% - 1.5em),
-        transparent 100%
-      );
-      -webkit-mask-image: linear-gradient(
-        to bottom,
-        black calc(100% - 1.75em),
-        transparent 100%
-      );
+      &:not(.read-more__content--expanded) {
+        mask-image: linear-gradient(
+          to bottom,
+          black calc(100% - 1.5em),
+          transparent 100%
+        );
+        -webkit-mask-image: linear-gradient(
+          to bottom,
+          black calc(100% - 1.75em),
+          transparent 100%
+        );
+      }
     }
 
-    &--fade-solid::after {
+    &--fade-solid:not(.read-more__content--expanded)::after {
       content: "";
       position: absolute;
       inset-block-end: 0;
@@ -132,10 +122,6 @@ onUnmounted(() => {
       -webkit-line-clamp: unset;
       mask-image: none;
       -webkit-mask-image: none;
-
-      &::after {
-        content: none;
-      }
     }
   }
 
@@ -151,6 +137,11 @@ onUnmounted(() => {
 
     &:hover {
       background-color: rgb(0 0 0 / 0.05);
+    }
+
+    &:focus-visible {
+      outline: 2px solid currentColor;
+      outline-offset: 2px;
     }
   }
 }
