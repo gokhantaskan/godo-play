@@ -1,5 +1,6 @@
 import { sql } from "drizzle-orm";
 import {
+  boolean,
   date,
   integer,
   jsonb,
@@ -26,6 +27,7 @@ export const games = pgTable("games", {
     .notNull()
     .references(() => gameCategories.pointer),
   firstReleaseDate: date("first_release_date", { mode: "string" }),
+  freeToPlay: boolean("free_to_play").notNull().default(false),
   name: text("name").notNull(),
   slug: text("slug").unique().notNull(),
   status: text("status", { enum: ["pending", "approved", "rejected"] })
@@ -41,18 +43,18 @@ interface ExternalData {
 }
 
 // Base Zod schemas for validation
-const ExternalDataSchema = z.object({
+const _ExternalDataSchema = z.object({
   igdbId: z.number(),
   igdbImageId: z.string().optional(),
   igdbAggregatedRating: z.number().optional(),
 });
 
 export const DbGameSchema = createSelectSchema(games, {
-  external: ExternalDataSchema,
+  external: _ExternalDataSchema,
 });
 
 export const DbInsertGameSchema = createInsertSchema(games, {
-  external: ExternalDataSchema,
+  external: _ExternalDataSchema,
   status: z.enum(["pending", "approved", "rejected"]),
 });
 

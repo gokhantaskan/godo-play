@@ -34,6 +34,11 @@ const category = defineModel<number>("category", {
   default: 0,
 });
 
+const freeToPlay = defineModel<boolean>("freeToPlay", {
+  required: true,
+  default: false,
+});
+
 const platformGroups = defineModel<PlatformGroups>("platformGroups", {
   required: true,
   default: [[]],
@@ -248,6 +253,19 @@ watch(
     </div>
 
     <GameCrossplayInformationForm v-model="crossplayInformation" />
+
+    <fieldset>
+      <legend>Is the game free to play?</legend>
+      <div class="tw:space-y-2">
+        <div>
+          <input
+            v-model="freeToPlay"
+            type="checkbox"
+          />
+          <label>Yes</label>
+        </div>
+      </div>
+    </fieldset>
 
     <fieldset>
       <legend>Game Modes</legend>

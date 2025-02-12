@@ -102,7 +102,7 @@ function preventDefaultCancel(e: Event) {
           v-if="cookieContent?.data.content"
           class="cookie-banner__description"
         >
-          <PrismicRichText :field="cookieContent?.data.content" />
+          <PrismicRichText :field="cookieContent.data.content" />
         </div>
         <div v-else>
           This website uses cookies to ensure you get the best experience on our

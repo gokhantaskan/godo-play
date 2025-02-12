@@ -44,6 +44,7 @@ export const SubmitGameSchema = z.object({
     slug: z.string().min(1, "Game slug is required"),
     category: z.number().min(0, "Game category is required"),
     firstReleaseDate: z.string().optional(),
+    freeToPlay: z.boolean().optional(),
     external: ExternalDataSchema,
   }),
   platformGroups: z

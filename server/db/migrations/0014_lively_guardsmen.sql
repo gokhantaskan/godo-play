@@ -1,0 +1,1 @@
+ALTER TABLE "games" ADD COLUMN "free_to_play" boolean DEFAULT false NOT NULL;

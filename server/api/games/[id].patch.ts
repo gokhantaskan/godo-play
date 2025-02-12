@@ -24,6 +24,7 @@ import {
 // Validate the request body
 const updateSubmissionSchema = z.object({
   category: z.number().optional(),
+  freeToPlay: z.boolean().optional(),
   platformGroups: z
     .array(z.array(z.number()))
     .min(1, "At least one platform group is required")
@@ -181,7 +182,8 @@ export default defineEventHandler(async event => {
       if (
         body.category !== undefined ||
         body.crossplayInformation ||
-        body.status
+        body.status ||
+        body.freeToPlay !== undefined
       ) {
         const updateData: Record<string, unknown> = {};
 
@@ -193,11 +195,18 @@ export default defineEventHandler(async event => {
           updateData.status = body.status;
         }
 
+        if (body.freeToPlay !== undefined) {
+          updateData.freeToPlay = body.freeToPlay;
+          console.log("Setting freeToPlay to:", body.freeToPlay);
+        }
+
         const [updatedGame] = await tx
           .update(games)
           .set(updateData)
           .where(eq(games.id, submissionId))
           .returning();
+
+        console.log("Updated game:", updatedGame);
 
         if (!updatedGame) {
           throw createError({

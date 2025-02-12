@@ -53,6 +53,7 @@ const selectedPlatformGroups = ref<PlatformGroups>([[]]);
 const selectedStores = ref<Store["slug"][]>([]);
 const selectedStoresPlatforms = ref<StoreData>({});
 const selectedGameModes = ref<number[]>([]);
+const selectedFreeToPlay = ref(false);
 const isSubmitting = ref(false);
 const formError = ref<string | null>(null);
 
@@ -76,6 +77,7 @@ function resetForm() {
   selectedStores.value = [];
   selectedStoresPlatforms.value = {};
   selectedGameModes.value = [];
+  selectedFreeToPlay.value = false;
   formError.value = null;
 }
 
@@ -183,6 +185,7 @@ async function handleSubmit(event: Event) {
     </div>
 
     <SubmitGameFormInner
+      v-model:free-to-play="selectedFreeToPlay"
       v-model:category="selectedCategory"
       v-model:platform-groups="selectedPlatformGroups"
       v-model:stores="selectedStores"

@@ -50,6 +50,7 @@ export default defineEventHandler(async event => {
           slug: body.game.slug,
           category: body.game.category,
           firstReleaseDate: body.game.firstReleaseDate,
+          freeToPlay: body.game.freeToPlay,
         })
         .returning();
 

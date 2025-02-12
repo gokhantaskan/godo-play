@@ -57,6 +57,7 @@ const storePlatformsModel = ref<StoreData>(storePlatforms);
 const gameModesModel = ref<number[]>(gameModeIds);
 const crossplayInformationModel =
   ref<CrossplayInformation>(crossplayInformation);
+const freeToPlayModel = ref(props.game.freeToPlay);
 
 async function fetchIgdbGame() {
   if (!props.game.external?.igdbId) {
@@ -90,6 +91,7 @@ async function handleSave() {
     await $fetch(`/api/games/${props.game.id}`, {
       method: "PATCH",
       body: {
+        freeToPlay: freeToPlayModel.value,
         category: categoryModel.value,
         platformGroups: platformGroupsModel.value,
         stores: storesModel.value,
@@ -111,16 +113,16 @@ defineExpose({
 });
 
 function transformSubmissionToFormData(
-  submission: Props["game"]
+  game: Props["game"]
 ): SubmitGameFormData {
   // Transform platform groups
-  const platformGroups: PlatformGroups = submission.platformGroups.map(group =>
+  const platformGroups: PlatformGroups = game.platformGroups.map(group =>
     group.platformGroupPlatforms.map(p => p.platform.id)
   );
 
   // Transform PC store platforms
-  const stores = submission.storePlatforms.map(store => store.storeSlug);
-  const storePlatforms: StoreData = submission.storePlatforms.reduce(
+  const stores = game.storePlatforms.map(store => store.storeSlug);
+  const storePlatforms: StoreData = game.storePlatforms.reduce(
     (
       acc: StoreData,
       store: {
@@ -141,11 +143,9 @@ function transformSubmissionToFormData(
   );
 
   // Transform game modes
-  const gameModeIds = submission.gameSubmissionGameModes.map(
-    mode => mode.gameModeId
-  );
+  const gameModeIds = game.gameSubmissionGameModes.map(mode => mode.gameModeId);
 
-  const crossplayInformation = submission.crossplayInformation;
+  const crossplayInformation = game.crossplayInformation;
 
   return {
     platformGroups,
@@ -251,6 +251,7 @@ onMounted(() => {
     </div>
 
     <SubmitGameFormInner
+      v-model:free-to-play="freeToPlayModel"
       v-model:crossplay-information="crossplayInformationModel"
       v-model:category="categoryModel"
       v-model:platform-groups="platformGroupsModel"

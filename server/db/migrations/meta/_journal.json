@@ -99,6 +99,13 @@
       "when": 1739130446765,
       "tag": "0013_handy_firelord",
       "breakpoints": true
+    },
+    {
+      "idx": 14,
+      "version": "7",
+      "when": 1739260194294,
+      "tag": "0014_lively_guardsmen",
+      "breakpoints": true
     }
   ]
 }
