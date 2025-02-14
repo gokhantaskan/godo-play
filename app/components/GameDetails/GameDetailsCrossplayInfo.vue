@@ -9,14 +9,36 @@ export interface GameDetailsCrossplayInfoProps {
 }
 
 defineProps<GameDetailsCrossplayInfoProps>();
+
+function generateCrossplayMessage(
+  platformGroups: GameDetailsCrossplayInfoProps["platformGroups"]
+) {
+  if (!platformGroups?.length) {
+    return "";
+  }
+
+  return platformGroups
+    .map(group => {
+      const platforms = group.platformGroupPlatforms;
+      const platformNames = platforms.map(p => p.platform.name);
+
+      if (platformNames.length === 1) {
+        return `${platformNames[0]} players can only play with other ${platformNames[0]} players`;
+      }
+
+      const lastPlatform = platformNames.pop();
+      return `${platformNames.join(", ")} and ${lastPlatform} players can play together`;
+    })
+    .join(". ");
+}
 </script>
 
 <template>
   <div class="tw:space-y-4">
     <section>
-      <h2>Platforms</h2>
+      <h2>{{ gameName }} Cross-platform Information</h2>
       <p class="tw:text-text-muted tw:text-sm tw:mb-2">
-        Each platform group can cross-play with each other.
+        {{ generateCrossplayMessage(platformGroups) }}.
       </p>
       <!-- <div v-if="IS_DEV">{{ platformGroups }}</div> -->
       <CrossPlayGameDetailsPlatformGroups :platform-groups="platformGroups" />
