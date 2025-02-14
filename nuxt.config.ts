@@ -1,3 +1,4 @@
+import { defineOrganization } from "nuxt-schema-org/schema";
 import svgLoader from "vite-svg-loader";
 
 import { repositoryName } from "./slicemachine.config.json";
@@ -93,6 +94,7 @@ export default defineNuxtConfig({
     "@nuxt/scripts",
     "@nuxtjs/prismic",
     "@primevue/nuxt-module",
+    "nuxt-schema-org",
   ],
   css: ["./app/assets/styles/tailwind.css", "./app/assets/styles/main.scss"],
   postcss: {
@@ -172,5 +174,20 @@ export default defineNuxtConfig({
     options: {
       theme: "none",
     },
+  },
+  schemaOrg: {
+    identity: defineOrganization({
+      name: "GodoPlay",
+      url: "https://godo-play.com",
+      logo: "/favicon.svg",
+      description:
+        "GodoPlay is a platform for discovering and playing games across different platforms.",
+      // sameAs: ["https://twitter.com/gamecrossplay"],
+      email: "contact@godo-play.com",
+      contactPoint: {
+        "@type": "ContactPoint",
+        email: "contact@godo-play.com",
+      },
+    }),
   },
 });
