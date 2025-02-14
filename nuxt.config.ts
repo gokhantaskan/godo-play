@@ -181,7 +181,7 @@ export default defineNuxtConfig({
       url: "https://godo-play.com",
       logo: "/favicon.svg",
       description:
-        "GodoPlay is a platform for discovering and playing games across different platforms.",
+        "GodoPlay is a platform for discovering cross-platform and cross-play games across different platforms including PC, Mac, PlayStation, Xbox, and Nintendo Switch.",
       // sameAs: ["https://twitter.com/gamecrossplay"],
       email: "contact@godo-play.com",
       contactPoint: {
