@@ -13,87 +13,90 @@ $button-variants: (
   ),
 );
 
-.clean-button {
-  border: none;
-  padding: 0;
-  margin: 0;
-  background: none;
-  cursor: pointer;
-}
-
-.button {
-  --radius: var(--form-radius);
-  --padding-inline: var(--form-padding-inline-md);
-  --padding-block: var(--form-padding-block-md);
-  --height: var(--form-height-md);
-
-  text-decoration: none;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-  border-radius: var(--radius);
-  padding-inline: var(--padding-inline);
-  padding-block: var(--padding-block);
-  height: var(--height);
-  font-weight: 500;
-  min-width: calc(
-    1lh + (var(--padding-inline) * 2) - var(--padding-block) - var(--tw-spacing)
-  );
-  transition:
-    background-color 0.2s ease-in-out,
-    border-color 0.2s ease-in-out,
-    color 0.2s ease-in-out;
-
-  @each $variant, $properties in $button-variants {
-    &--#{$variant} {
-      background-color: map.get($properties, "bg");
-      color: map.get($properties, "fg");
-      border: 1px solid map.get($properties, "border");
-
-      &:hover:not(:is(:disabled, .button--disabled)) {
-        background-color: color-mix(
-          in srgb,
-          map.get($properties, "bg") 93%,
-          black
-        );
-      }
-
-      &:active:not(:is(:disabled, .button--disabled)) {
-        border-color: var(--form-border-color-focus);
-      }
-    }
+@layer components {
+  .clean-button {
+    border: none;
+    padding: 0;
+    margin: 0;
+    background: none;
+    cursor: pointer;
   }
 
-  // Sizes
-  &--sm {
-    --padding-inline: var(--form-padding-inline-sm);
-    --padding-block: var(--form-padding-block-sm);
-    --height: var(--form-height-sm);
-    font-size: var(--form-text-sm);
-  }
-
-  &--md {
+  .button {
+    --radius: var(--form-radius);
     --padding-inline: var(--form-padding-inline-md);
     --padding-block: var(--form-padding-block-md);
     --height: var(--form-height-md);
-    font-size: var(--form-text-md);
-  }
 
-  &--lg {
-    --padding-inline: var(--form-padding-inline-lg);
-    --padding-block: var(--form-padding-block-lg);
-    --height: var(--form-height-lg);
-    font-size: var(--form-text-lg);
-  }
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    border-radius: var(--radius);
+    padding-inline: var(--padding-inline);
+    padding-block: var(--padding-block);
+    height: var(--height);
+    font-weight: 500;
+    min-width: calc(
+      1lh +
+        (var(--padding-inline) * 2) - var(--padding-block) - var(--tw-spacing)
+    );
+    transition:
+      background-color 0.2s ease-in-out,
+      border-color 0.2s ease-in-out,
+      color 0.2s ease-in-out;
 
-  &__prefix,
-  &__suffix {
-    flex-shrink: 0;
-  }
+    @each $variant, $properties in $button-variants {
+      &--#{$variant} {
+        background-color: map.get($properties, "bg");
+        color: map.get($properties, "fg");
+        border: 1px solid map.get($properties, "border");
 
-  &--disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
+        &:hover:not(:is(:disabled, .button--disabled)) {
+          background-color: color-mix(
+            in srgb,
+            map.get($properties, "bg") 93%,
+            black
+          );
+        }
+
+        &:active:not(:is(:disabled, .button--disabled)) {
+          border-color: var(--form-border-color-focus);
+        }
+      }
+    }
+
+    // Sizes
+    &--sm {
+      --padding-inline: var(--form-padding-inline-sm);
+      --padding-block: var(--form-padding-block-sm);
+      --height: var(--form-height-sm);
+      font-size: var(--form-text-sm);
+    }
+
+    &--md {
+      --padding-inline: var(--form-padding-inline-md);
+      --padding-block: var(--form-padding-block-md);
+      --height: var(--form-height-md);
+      font-size: var(--form-text-md);
+    }
+
+    &--lg {
+      --padding-inline: var(--form-padding-inline-lg);
+      --padding-block: var(--form-padding-block-lg);
+      --height: var(--form-height-lg);
+      font-size: var(--form-text-lg);
+    }
+
+    &__prefix,
+    &__suffix {
+      flex-shrink: 0;
+    }
+
+    &--disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
   }
 }

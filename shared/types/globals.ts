@@ -31,6 +31,7 @@ export interface FilterParams {
   offset?: number;
   platforms?: string;
   gameModes?: string;
+  freeToPlay?: string;
 }
 
 export interface PaginatedResponse<T> {

@@ -38,6 +38,7 @@ export default defineCachedEventHandler(
         search,
         status,
         sort = "-popularity",
+        freeToPlay,
       } = query as Partial<Record<keyof FilterParams, string>>;
 
       // Parse query parameters
@@ -45,6 +46,7 @@ export default defineCachedEventHandler(
       const parsedGameModes = parseArrayParam(gameModes);
       const parsedLimit = parseInt(limit);
       const parsedOffset = parseInt(offset);
+      const parsedFreeToPlay = freeToPlay === "true";
 
       // Parse sort parameter
       const sortField = sort.slice(1) as SortableField;
@@ -82,6 +84,11 @@ export default defineCachedEventHandler(
       if (search) {
         const decodedSearch = decodeURIComponent(search);
         conditions = and(conditions, sql`name ILIKE ${`%${decodedSearch}%`}`);
+      }
+
+      // Add free-to-play filtering condition
+      if (parsedFreeToPlay) {
+        conditions = and(conditions, sql`free_to_play = true`);
       }
 
       // Add platform filtering condition

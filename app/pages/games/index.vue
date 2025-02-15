@@ -11,6 +11,7 @@ interface InitialRouteQuery {
   gameModes: string;
   search: string;
   sort: string;
+  freeToPlay: string;
   [key: string]: string | string[];
 }
 
@@ -25,6 +26,7 @@ interface SelectedPlatforms {
 interface Filters {
   stores: number[];
   gameModes: number[];
+  freeToPlay: boolean;
 }
 
 interface GamesResponse {
@@ -46,6 +48,7 @@ const {
   gameModes: initialQueryGameModes,
   search: initialQuerySearch,
   sort: initialQuerySort = "-popularity",
+  freeToPlay: initialQueryFreeToPlay,
 } = route.query as InitialRouteQuery;
 
 // Platform Selection Management
@@ -87,6 +90,7 @@ const selectedFilters = ref<Filters>({
         .map(slug => getGameModeIdFromSlug(slug))
         .filter((id): id is number => id !== null)
     : [],
+  freeToPlay: initialQueryFreeToPlay === "true",
 });
 
 const search = ref<string>(initialQuerySearch);
@@ -134,6 +138,10 @@ const urlQuery = computed(() => {
     queryToSet.sort = sort.value;
   }
 
+  if (selectedFilters.value.freeToPlay) {
+    queryToSet.freeToPlay = "true";
+  }
+
   return Object.keys(queryToSet).length ? queryToSet : undefined;
 });
 
@@ -163,6 +171,10 @@ const apiQueryParams = computed(() => {
 
   if (debouncedSearch.value) {
     query.search = debouncedSearch.value;
+  }
+
+  if (selectedFilters.value.freeToPlay) {
+    query.freeToPlay = "true";
   }
 
   return Object.keys(query).length ? query : undefined;
@@ -284,19 +296,22 @@ function clearQueryAndRefreshPage() {
 }
 
 // Add function to remove individual filters
-function removeFilter(chip: { type: string; id: number }) {
+function removeFilter(chip: { type: string; id: number | string }) {
   switch (chip.type) {
     case "gameMode":
       selectedFilters.value.gameModes = selectedFilters.value.gameModes.filter(
         id => id !== chip.id
       );
       break;
+    case "freeToPlay":
+      selectedFilters.value.freeToPlay = false;
+      break;
   }
 }
 
 // Add computed for active filter chips
 const activeFilterChips = computed(() => {
-  const chips: Array<{ type: string; id: number; name: string }> = [];
+  const chips: Array<{ type: string; id: number | string; name: string }> = [];
 
   selectedFilters.value.gameModes.forEach(id => {
     const mode = SUPPORTED_GAME_MODES.find(m => m.id === id);
@@ -304,6 +319,10 @@ const activeFilterChips = computed(() => {
       chips.push({ type: "gameMode", id, name: mode.name });
     }
   });
+
+  if (selectedFilters.value.freeToPlay) {
+    chips.push({ type: "freeToPlay", id: "freeToPlay", name: "Free to Play" });
+  }
 
   return chips;
 });
@@ -395,6 +414,7 @@ function handleSortChange(value: string | string[]) {
         />
         <GameCategorySelector
           v-model:game-modes="selectedFilters.gameModes"
+          v-model:free-to-play="selectedFilters.freeToPlay"
           :include="['gameModes']"
         />
       </div>

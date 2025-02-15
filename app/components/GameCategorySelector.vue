@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { Disclosure, DisclosureButton, DisclosurePanel } from "@headlessui/vue";
+
 const isDrawerOpen = ref(false);
 const gameModes = ref<ReadGameMode[]>([]);
 
@@ -10,8 +12,13 @@ const selectedGameModes = defineModel<number[]>("gameModes", {
   default: [],
 });
 
+const freeToPlay = defineModel<boolean>("freeToPlay", {
+  default: false,
+});
+
 // Draft states
 const draftGameModes = ref<number[]>([]);
+const draftFreeToPlay = ref(false);
 
 const currentGameModes = computed(() => {
   return gameModes.value.toSorted((a, b) => a.name.localeCompare(b.name));
@@ -21,22 +28,36 @@ const currentGameModes = computed(() => {
 watch(isDrawerOpen, newValue => {
   if (newValue) {
     draftGameModes.value = [...selectedGameModes.value];
+    draftFreeToPlay.value = freeToPlay.value;
   }
 });
 
 // Draft computeds
 const hasDraftChanges = computed(() => {
-  return !isArrayEqual(draftGameModes.value, selectedGameModes.value);
+  return (
+    !isArrayEqual(draftGameModes.value, selectedGameModes.value) ||
+    draftFreeToPlay.value !== freeToPlay.value
+  );
 });
-const hasDraftSelections = computed(() => draftGameModes.value.length > 0);
-const totalDraftCount = computed(() => draftGameModes.value.length);
+const hasDraftSelections = computed(
+  () => draftGameModes.value.length > 0 || draftFreeToPlay.value
+);
+const totalDraftCount = computed(() => {
+  let count = draftGameModes.value.length;
+  if (draftFreeToPlay.value) {
+    count++;
+  }
+  return count;
+});
 
 function clearAll() {
   draftGameModes.value = [];
+  draftFreeToPlay.value = false;
 }
 
 function applyChanges() {
   selectedGameModes.value = [...draftGameModes.value];
+  freeToPlay.value = draftFreeToPlay.value;
   isDrawerOpen.value = false;
 }
 
@@ -70,6 +91,7 @@ function isArrayEqual(arr1: number[], arr2: number[]) {
 
     <TheDrawer
       v-model:open="isDrawerOpen"
+      class="category-drawer"
       :before-close="handleBeforeClose"
       title="Categories"
       size="30rem"
@@ -79,24 +101,45 @@ function isArrayEqual(arr1: number[], arr2: number[]) {
           : 'Select categories to filter games'
       "
     >
-      <div class="tw:space-y-6">
+      <div class="tw:space-y-6 tw:divide-y tw:divide-y-gray-200">
         <!-- Game Modes -->
+        <Disclosure
+          v-slot="{ open }"
+          as="div"
+        >
+          <DisclosureButton :class="['clean-button disclosure-button']">
+            Game Modes
+            <Icon :name="open ? 'lucide:chevron-up' : 'lucide:chevron-down'" />
+          </DisclosureButton>
+          <DisclosurePanel class="disclosure-panel">
+            <label
+              v-for="gameMode in currentGameModes"
+              :key="gameMode.id"
+              class="tw:flex tw:items-center tw:gap-2 tw:cursor-pointer"
+            >
+              <input
+                v-model="draftGameModes"
+                type="checkbox"
+                :value="gameMode.id"
+                class="tw:w-4 tw:h-4"
+              />
+              <span class="tw:text-sm">{{ gameMode.name }}</span>
+            </label>
+          </DisclosurePanel>
+        </Disclosure>
+
+        <!-- Price -->
         <fieldset class="tw:flex tw:flex-wrap tw:gap-4">
           <legend class="tw:font-title tw:font-medium tw:text-sm tw:mb-2">
-            Game Modes
+            Price
           </legend>
-          <label
-            v-for="gameMode in currentGameModes"
-            :key="gameMode.id"
-            class="tw:flex tw:items-center tw:gap-2 tw:cursor-pointer"
-          >
+          <label class="tw:flex tw:items-center tw:gap-2 tw:cursor-pointer">
             <input
-              v-model="draftGameModes"
+              v-model="draftFreeToPlay"
               type="checkbox"
-              :value="gameMode.id"
               class="tw:w-4 tw:h-4"
             />
-            <span class="tw:text-sm">{{ gameMode.name }}</span>
+            <span class="tw:text-sm">Free to Play</span>
           </label>
         </fieldset>
       </div>
@@ -121,3 +164,33 @@ function isArrayEqual(arr1: number[], arr2: number[]) {
     </TheDrawer>
   </div>
 </template>
+
+<style lang="scss" scoped>
+$space: 0.5rem;
+
+.disclosure-button {
+  width: 100%;
+  padding-block: 0.5rem;
+  padding-inline: 0;
+  font-family: var(--font-title);
+  font-weight: 500;
+  font-size: 1rem;
+  margin-block-end: $space;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: $space;
+}
+
+.disclosure-panel {
+  display: grid;
+  gap: calc($space * 1.5);
+  margin-block-end: calc($space * 2);
+}
+
+.category-drawer {
+  :deep(.drawer__backdrop) {
+    backdrop-filter: unset !important;
+  }
+}
+</style>
