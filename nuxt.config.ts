@@ -3,7 +3,13 @@ import svgLoader from "vite-svg-loader";
 
 import { repositoryName } from "./slicemachine.config.json";
 
-const disallowedPaths = ["/_ipx/", "/admin/", "/preview", "/slice-simulator"];
+const disallowedPaths = [
+  "/_ipx/",
+  "/api/",
+  "/admin/",
+  "/preview",
+  "/slice-simulator",
+];
 
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
@@ -78,11 +84,11 @@ export default defineNuxtConfig({
   typescript: {
     typeCheck: true,
   },
-  // routeRules: {
-  //   "/games/cross-play": {
-  //     headers: { "cache-control": "public, max-age=1" },
-  //   },
-  // },
+  routeRules: {
+    "/games/cross-play": {
+      redirect: { to: "/games", statusCode: 301 },
+    },
+  },
   modules: [
     "@nuxt/eslint",
     "@nuxt/fonts",
