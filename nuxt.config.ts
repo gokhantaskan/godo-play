@@ -5,7 +5,7 @@ import { repositoryName } from "./slicemachine.config.json";
 
 const disallowedPaths = [
   "/_ipx/",
-  "/api/",
+  // "/api/",
   "/admin/",
   "/preview",
   "/slice-simulator",
@@ -143,21 +143,20 @@ export default defineNuxtConfig({
     ],
   },
   site: {
-    url: FRONTEND_URL,
+    // url: FRONTEND_URL,
     name: "GōdōPlay",
   },
   sitemap: {
     exclude: disallowedPaths,
-    sitemapsPathPrefix: "/",
+    // sitemapsPathPrefix: "/",
     sitemaps: {
-      ["sitemap_pages"]: {
+      pages: {
         includeAppSources: true,
-        exclude: ["/games/**"],
+        // exclude: ["/games/**"],
       },
-      ["sitemap_games"]: {
-        includeAppSources: true,
-        include: ["/games/**"],
-        sources: [`/api/__sitemap__/urls/games`],
+      games: {
+        includeAppSources: false,
+        sources: ["/api/__sitemap__/urls/games"],
       },
     },
   },
