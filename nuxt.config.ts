@@ -148,12 +148,13 @@ export default defineNuxtConfig({
   },
   sitemap: {
     exclude: disallowedPaths,
+    sitemapsPathPrefix: "/",
     sitemaps: {
-      pages: {
+      ["sitemap_pages"]: {
         includeAppSources: true,
         exclude: ["/games/**"],
       },
-      games: {
+      ["sitemap_games"]: {
         includeAppSources: true,
         include: ["/games/**"],
         sources: [`/api/__sitemap__/urls/games`],
