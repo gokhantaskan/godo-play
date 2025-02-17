@@ -4,7 +4,14 @@ import type { SitemapUrl } from "#sitemap/types";
 import { db } from "~~/server/db";
 import { games as gamesTable } from "~~/server/db/schema";
 
-export default defineSitemapEventHandler(async () => {
+export default defineSitemapEventHandler(async event => {
+  if (event.method !== "GET") {
+    throw createError({
+      statusCode: 405,
+      message: "Method not allowed",
+    });
+  }
+
   try {
     const games = await db
       .select({

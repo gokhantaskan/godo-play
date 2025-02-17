@@ -68,7 +68,7 @@
     "unstorage": "^1.14.4",
     "vue": "latest",
     "vue-router": "latest",
-    "vue-tsc": "~2.2.2",
+    "vue-tsc": "~2.1.6",
     "zod": "^3.24.2"
   },
   "devDependencies": {

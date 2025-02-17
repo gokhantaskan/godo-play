@@ -156,7 +156,7 @@ export default defineNuxtConfig({
       games: {
         includeAppSources: true,
         include: ["/games/**"],
-        sources: [`/api/sitemap/urls/games`],
+        sources: [`/api/__sitemap__/urls/games`],
       },
     },
   },

@@ -2,7 +2,6 @@
 
 set -a
 source .env
-source .env.development
 source .env.local
 set +a
 
