@@ -145,6 +145,11 @@ export default defineNuxtConfig({
   },
   sitemap: {
     exclude: disallowedPaths,
+    sitemaps: {
+      games: {
+        sources: ["/api/__sitemap/games"],
+      },
+    },
   },
   robots: {
     disallow: disallowedPaths,
