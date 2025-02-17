@@ -64,6 +64,10 @@ useSeoMeta({
     "Discover the best multi-platform and cross-play co-op and multiplayer games for PC, PlayStation, Xbox, and Nintendo Switch—team up or compete with friends on any platform.",
   twitterImage: "/og_img.jpg",
 });
+
+onMounted(async () => {
+  $fetch("/api/sitemap/urls/games").then(console.log);
+});
 </script>
 
 <template>

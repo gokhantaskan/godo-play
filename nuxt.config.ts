@@ -11,6 +11,8 @@ const disallowedPaths = [
   "/slice-simulator",
 ];
 
+const FRONTEND_URL = process.env.NUXT_PUBLIC_FRONTEND_URL;
+
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   compatibilityDate: "2024-11-01",
@@ -57,6 +59,7 @@ export default defineNuxtConfig({
       gtag: {
         id: "",
       },
+      frontendUrl: FRONTEND_URL,
     },
   },
   devServer: {
@@ -140,21 +143,20 @@ export default defineNuxtConfig({
     ],
   },
   site: {
-    url: "https://godo-play.com",
+    url: FRONTEND_URL,
     name: "GōdōPlay",
   },
   sitemap: {
     exclude: disallowedPaths,
-    sitemapsPathPrefix: "/",
     sitemaps: {
-      ["sitemap_pages"]: {
+      pages: {
         includeAppSources: true,
         exclude: ["/games/**"],
       },
-      ["sitemap_games"]: {
-        sources: ["/api/__sitemap__/urls/games"],
+      games: {
         includeAppSources: true,
         include: ["/games/**"],
+        sources: [`/api/sitemap/urls/games`],
       },
     },
   },

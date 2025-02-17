@@ -406,7 +406,10 @@ watch(
               @update:model-value="
                 updateStorePlatforms(store.slug, {
                   ...storePlatforms[store.slug],
-                  crossplayPlatforms: Array.isArray($event) ? $event : [$event],
+                  crossplayPlatforms: (Array.isArray($event)
+                    ? $event
+                    : [$event]
+                  ).filter((p): p is number => p !== undefined),
                 })
               "
             />

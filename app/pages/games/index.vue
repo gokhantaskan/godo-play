@@ -328,7 +328,7 @@ const activeFilterChips = computed(() => {
 });
 
 // Add sort change handler
-function handleSortChange(value: string | string[]) {
+function handleSortChange(value: string | string[] | undefined) {
   if (typeof value === "string") {
     sort.value = value;
   }
