@@ -8,6 +8,15 @@ definePageMeta({
   name: "PrivacyPolicyPage",
 });
 
+useHead({
+  link: [
+    {
+      rel: "canonical",
+      href: "https://godo-play.com/privacy-policy",
+    },
+  ],
+});
+
 const { client } = usePrismic();
 
 const { data: page } = await useAsyncData("privacy-policy", () =>

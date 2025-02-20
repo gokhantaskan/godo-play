@@ -8,6 +8,15 @@ definePageMeta({
   name: "AboutUsPage",
 });
 
+useHead({
+  link: [
+    {
+      rel: "canonical",
+      href: "https://godo-play.com/about",
+    },
+  ],
+});
+
 const { client } = usePrismic();
 
 const { data: page } = await useAsyncData("about-us", () =>

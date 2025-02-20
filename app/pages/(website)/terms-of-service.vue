@@ -8,6 +8,15 @@ definePageMeta({
   name: "TermsOfServicePage",
 });
 
+useHead({
+  link: [
+    {
+      rel: "canonical",
+      href: "https://godo-play.com/terms-of-service",
+    },
+  ],
+});
+
 const { client } = usePrismic();
 
 const { data: page } = await useAsyncData("terms-of-service", () =>

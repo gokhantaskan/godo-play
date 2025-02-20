@@ -12,6 +12,15 @@ useNuxtApp().hook("page:finish", () => {
 
 const { slug } = useRoute().params;
 
+useHead({
+  link: [
+    {
+      rel: "canonical",
+      href: `https://godo-play.com/games/${slug}`,
+    },
+  ],
+});
+
 const { data: dbGame, refresh: refreshDbGame } =
   await useCachedFetch<GameSubmissionWithRelations>(
     `/api/game-details/${slug}`

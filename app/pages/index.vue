@@ -8,6 +8,15 @@ const { data: page } = await useAsyncData("PrismicHomePage", () =>
   prismic.client.getSingle<HomePageDocument>("home_page")
 );
 
+useHead({
+  link: [
+    {
+      rel: "canonical",
+      href: "https://godo-play.com",
+    },
+  ],
+});
+
 useSeoMeta({
   title: page.value?.data.meta_title,
   ogTitle: page.value?.data.meta_title,

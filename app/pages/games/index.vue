@@ -40,6 +40,15 @@ definePageMeta({
   name: "CrossPlayGamesPage",
 });
 
+useHead({
+  link: [
+    {
+      rel: "canonical",
+      href: "https://godo-play.com/games",
+    },
+  ],
+});
+
 const ITEMS_PER_PAGE = 48;
 
 const route = useRoute();
@@ -328,7 +337,7 @@ const activeFilterChips = computed(() => {
 });
 
 // Add sort change handler
-function handleSortChange(value: string | string[]) {
+function handleSortChange(value: string | string[] | undefined) {
   if (typeof value === "string") {
     sort.value = value;
   }
