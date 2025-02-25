@@ -17,12 +17,4 @@ export default defineEventHandler(event => {
       message: "Access denied",
     });
   }
-
-  // Block all non-GET requests in production
-  if (process.env.NODE_ENV === "production") {
-    throw createError({
-      statusCode: 403,
-      message: "Only GET requests are allowed in production",
-    });
-  }
 });
