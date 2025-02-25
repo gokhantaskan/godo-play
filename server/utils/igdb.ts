@@ -1,5 +1,6 @@
 export async function getIGDBClient() {
   const config = useRuntimeConfig();
+
   await tokenStorage.retrieveSession({
     clientId: config.tw.clientId,
     clientSecret: config.tw.clientSecret,

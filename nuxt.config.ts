@@ -45,6 +45,10 @@ export default defineNuxtConfig({
         secretKey: process.env.GOOGLE_RECAPTCHA_SECRET_KEY,
       },
     },
+    supabase: {
+      url: process.env.SUPABASE_URL,
+      secret: process.env.SUPABASE_SECRET,
+    },
     public: {
       hotjar: {
         siteId: "",
@@ -56,6 +60,10 @@ export default defineNuxtConfig({
       },
       gtag: {
         id: "",
+      },
+      supabase: {
+        url: process.env.SUPABASE_URL,
+        key: process.env.SUPABASE_KEY,
       },
     },
   },

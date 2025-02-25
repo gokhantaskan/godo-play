@@ -1,3 +1,6 @@
+// Protected URLs that require special handling
+const PROTECTED_URLS: string[] = [];
+
 export default defineEventHandler(event => {
   const requestURL = getRequestURL(event);
   const method = event.method;
@@ -7,19 +10,8 @@ export default defineEventHandler(event => {
     return;
   }
 
-  // Check if we're in production and the URL contains 'games'
-  if (
-    process.env.NODE_ENV === "production" &&
-    requestURL.href.includes("api/games")
-  ) {
-    throw createError({
-      statusCode: 403,
-      message: "Only GET requests are allowed in production",
-    });
-  }
-
-  // Keep existing admin check
-  if (requestURL.href.includes("admin")) {
+  // Check protected URLs first
+  if (PROTECTED_URLS.some(url => requestURL.href.includes(url))) {
     throw createError({
       statusCode: 403,
       message: "Access denied",
