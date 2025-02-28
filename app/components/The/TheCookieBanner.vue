@@ -4,6 +4,10 @@ import { usePrismic } from "@prismicio/vue";
 import { useCookieConsent } from "@/composables/useCookieConsent";
 import type { CookieConsentDocument } from "~~/prismicio-types";
 
+defineOptions({
+  inheritAttrs: false,
+});
+
 const route = useRoute();
 const dialogRef = ref<HTMLDialogElement | null>(null);
 const prismic = usePrismic();
@@ -15,19 +19,20 @@ const { data: cookieContent } = await useAsyncData("cookie-consent", () =>
 const { cookieConsent, isLoading, acceptCookies, rejectCookies } =
   useCookieConsent();
 
-const isLegalPage = computed(() => {
-  const legalRoutes = [
+const ignoredPages = computed(() => {
+  const _ignoredPages = [
     "/privacy-policy",
     "/terms-of-service",
     "/cookie-policy",
+    "/admin",
   ];
 
-  return legalRoutes.includes(route.path);
+  return _ignoredPages.includes(route.path);
 });
 
 const shouldShow = computed(() => {
   // Don't show on legal pages
-  if (isLegalPage.value) {
+  if (ignoredPages.value) {
     return false;
   }
 
