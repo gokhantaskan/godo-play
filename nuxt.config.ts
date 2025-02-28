@@ -103,6 +103,7 @@ export default defineNuxtConfig({
     "@nuxt/image",
     "@nuxt/icon",
     "@nuxtjs/sitemap",
+    "@nuxtjs/supabase",
     "@nuxtjs/robots",
     "nuxt-gtag",
     "@nuxt/scripts",
@@ -203,5 +204,13 @@ export default defineNuxtConfig({
         email: "contact@godo-play.com",
       },
     }),
+  },
+  supabase: {
+    redirectOptions: {
+      login: "/auth/login",
+      callback: "/auth/confirm",
+      include: ["/admin(/*)?"],
+      cookieRedirect: true,
+    },
   },
 });
