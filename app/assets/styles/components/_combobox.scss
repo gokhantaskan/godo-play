@@ -1,119 +1,474 @@
-.combobox {
-  --radius: var(--form-radius);
-  --padding-inline: var(--form-padding-inline-md);
-  --padding-block: var(--form-padding-block-md);
-  --height: var(--form-height-md);
-  --icon-size: var(--form-icon-size-md);
-
-  position: relative;
-  width: 100%;
-  display: flex;
-  align-items: center;
-  height: var(--height);
-  background-color: var(--form-bg);
-  border: 1px solid var(--form-border-color);
-  border-radius: var(--radius);
-  color: var(--form-text-color);
-  font-size: var(--form-text-md);
-  padding-inline-end: var(--padding-inline);
-  transition: border-color 0.2s ease;
-
-  &:focus-within {
-    outline: none;
-    border-color: var(--form-border-color-focus);
-  }
-
-  // Special case
-  .p-hidden-accessible {
-    border: 0;
-    clip: rect(0, 0, 0, 0);
-    height: 1px;
-    margin: -1px;
-    overflow: hidden;
-    padding: 0;
-    position: absolute;
-    width: 1px;
-  }
-
-  &__input {
-    flex: 1 0 0;
-    border: none;
-    outline: none;
-    background-color: transparent;
-    padding-inline: var(--padding-inline);
-    padding-block: var(--padding-block);
-    flex: 1;
-    field-sizing: content;
-    inline-size: 100%;
-    font-size: var(--form-text-md);
-    color: var(--form-text-color);
-
-    &::placeholder {
-      color: var(--form-text-muted);
-    }
-  }
-
-  &__dropdown-menu {
+@layer components {
+  // Combobox component - Radix Vue Implementation
+  .combobox {
     --radius: var(--form-radius);
     --padding-inline: var(--form-padding-inline-md);
     --padding-block: var(--form-padding-block-md);
     --height: var(--form-height-md);
     --icon-size: var(--form-icon-size-md);
 
-    position: absolute;
-    z-index: 10;
-    margin-top: 0.25rem;
-    overflow: auto;
-    max-height: 15rem;
-    border-radius: var(--form-radius);
-    background-color: var(--form-bg);
-    border: 1px solid var(--form-border-color);
-    box-shadow: var(--form-overlay-shadow);
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    position: relative;
+    width: 100%;
+
+    &__label {
+      font-weight: 500;
+      color: var(--tw-color-text-dark);
+      margin-bottom: 0.25rem;
+      font-size: var(--form-text-sm);
+
+      &-required {
+        color: var(--tw-color-error);
+      }
+    }
+
+    &__anchor {
+      position: relative;
+      width: 100%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: space-between;
+      height: var(--height);
+      border-radius: var(--radius);
+      border: 1px solid var(--form-border-color);
+      background: var(--form-bg);
+      padding-inline: var(--padding-inline);
+      transition: border-color 0.15s ease;
+
+      &:hover,
+      &:focus-within {
+        border-color: var(--form-border-color-focus);
+      }
+    }
+
+    &__input {
+      flex: 1;
+      height: 100%;
+      font-size: var(--form-text-md);
+      color: var(--form-text-color);
+      background: transparent;
+      padding: 0;
+      margin: 0;
+      border: none;
+      outline: none;
+
+      &::placeholder {
+        color: var(--form-text-muted);
+      }
+    }
+
+    &__trigger {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--form-text-muted);
+    }
+
+    &__cancel {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--form-text-muted);
+      cursor: pointer;
+    }
+
+    &__spinner {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-left: var(--padding-inline-sm);
+
+      &-icon {
+        width: var(--icon-size);
+        height: var(--icon-size);
+        border-radius: 9999px;
+        border: 2px solid var(--tw-color-primary);
+        border-top-color: transparent;
+        animation: spin 0.6s linear infinite;
+      }
+    }
+
+    &__content {
+      position: fixed;
+      z-index: 50;
+      width: var(--radix-combobox-content-width);
+      margin-top: 0.5rem;
+      overflow: hidden;
+      border-radius: var(--radius);
+      border: 1px solid var(--form-border-color);
+      background: var(--form-bg);
+      color: var(--form-text-color);
+      box-shadow: var(--form-overlay-shadow);
+      max-height: var(--dropdown-max-height);
+
+      &[data-state="open"] {
+        animation: dropdownIn 150ms ease-out;
+      }
+
+      &[data-state="closed"] {
+        animation: dropdownOut 150ms ease-in;
+      }
+    }
+
+    &__viewport {
+      padding: var(--form-padding-block-sm);
+      max-height: calc(
+        var(--dropdown-max-height) - 2 * var(--form-padding-block-sm)
+      );
+      overflow-y: auto;
+    }
+
+    &__group {
+      margin-bottom: 0.25rem;
+    }
+
+    &__label {
+      padding: var(--form-padding-block-sm) var(--padding-inline);
+      font-size: var(--form-text-sm);
+      font-weight: 500;
+      color: var(--form-text-muted);
+    }
+
+    &__loading,
+    &__message {
+      padding: var(--form-padding-block-md);
+      font-size: var(--form-text-md);
+      text-align: center;
+    }
+
+    &__loading {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      color: var(--form-text-muted);
+    }
+
+    &__error {
+      color: var(--tw-color-error);
+    }
+
+    &__empty {
+      color: var(--form-text-muted);
+    }
+
+    &__item {
+      position: relative;
+      display: flex;
+      width: 100%;
+      cursor: pointer;
+      user-select: none;
+      align-items: center;
+      border-radius: var(--radius);
+      padding: var(--form-padding-block-md) var(--padding-inline);
+      font-size: var(--form-text-md);
+      outline: none;
+      transition: all 150ms ease;
+
+      &[data-highlighted] {
+        background-color: var(--tw-color-primary);
+        color: white;
+      }
+
+      &[data-disabled] {
+        pointer-events: none;
+        opacity: 0.5;
+      }
+
+      &-content {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        width: 100%;
+      }
+
+      &-indicator {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--tw-color-primary);
+        margin-right: 0.5rem;
+
+        [data-highlighted] & {
+          color: white;
+        }
+      }
+
+      &-image {
+        width: var(--form-height-sm);
+        height: var(--form-height-sm);
+        border-radius: var(--radius);
+        overflow: hidden;
+        background: var(--tw-color-border);
+        flex-shrink: 0;
+
+        img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+        }
+      }
+
+      &-info {
+        flex: 1;
+        min-width: 0;
+
+        &-title {
+          font-weight: 500;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          color: var(--tw-color-text-dark);
+
+          [data-highlighted] & {
+            color: white;
+          }
+        }
+
+        &-year {
+          font-size: var(--form-text-sm);
+          color: var(--form-text-muted);
+
+          [data-highlighted] & {
+            color: rgba(255, 255, 255, 0.8);
+          }
+        }
+      }
+    }
+
+    &__separator {
+      height: 1px;
+      background-color: var(--form-border-color);
+      margin: 0.25rem 0;
+    }
+
+    // Size variations
+    &--sm {
+      --padding-inline: var(--form-padding-inline-sm);
+      --padding-block: var(--form-padding-block-sm);
+      --height: var(--form-height-sm);
+      --icon-size: var(--form-icon-size-sm);
+
+      .combobox__input,
+      .combobox__item {
+        font-size: var(--form-text-sm);
+      }
+    }
+
+    &--lg {
+      --padding-inline: var(--form-padding-inline-lg);
+      --padding-block: var(--form-padding-block-lg);
+      --height: var(--form-height-lg);
+      --icon-size: var(--form-icon-size-lg);
+
+      .combobox__input,
+      .combobox__item {
+        font-size: var(--form-text-lg);
+      }
+    }
   }
 
-  &__dropdown-list {
+  // Legacy game-search classes for backward compatibility
+  .game-search-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    position: relative;
+  }
+
+  .game-search-label {
+    font-weight: 500;
+    color: var(--tw-color-text-dark);
+  }
+
+  .game-search-anchor {
+    position: relative;
+    width: 100%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: space-between;
+    height: var(--height);
+    border-radius: var(--radius);
+    border: 1px solid var(--form-border-color);
+    background: var(--form-bg);
+    padding-inline: var(--padding-inline);
+    transition: border-color 0.15s ease;
+
+    &:hover,
+    &:focus-within {
+      border-color: var(--form-border-color-focus);
+    }
+  }
+
+  .game-search-input {
+    flex: 1;
+    height: 100%;
+    font-size: var(--form-text-md);
+    color: var(--form-text-color);
+    background: transparent;
     padding: 0;
     margin: 0;
-    list-style: none;
-  }
+    border: none;
+    outline: none;
 
-  &__dropdown-list-item {
-    position: relative;
-    cursor: pointer;
-    user-select: none;
-    padding-inline: var(--padding-inline);
-    padding-block: calc(var(--padding-block) + 0.125rem);
-    padding-inline-end: calc(var(--clear-size) + var(--padding-inline));
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    font-size: var(--form-text-md);
-
-    &.p-focus,
-    &--focus {
-      background-color: color-mix(
-        in oklch,
-        var(--tw-color-primary) 10%,
-        transparent
-      );
-      color: var(--tw-color-primary);
-    }
-
-    &--selected {
-      font-weight: 500;
-    }
-
-    &-icon {
-      inline-size: var(--icon-size);
-      block-size: var(--icon-size);
-      flex-shrink: 0;
+    &::placeholder {
       color: var(--form-text-muted);
     }
   }
 
-  &__empty-message {
-    color: var(--form-text-muted);
+  .game-search-spinner-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: var(--padding-inline-sm);
+  }
+
+  .game-search-loading-spinner {
+    width: var(--icon-size);
+    height: var(--icon-size);
+    border-radius: 9999px;
+    border: 2px solid var(--tw-color-primary);
+    border-top-color: transparent;
+    animation: spin 0.6s linear infinite;
+  }
+
+  .game-search-content {
+    position: fixed;
+    z-index: 50;
+    width: var(--radix-combobox-content-width);
+    margin-top: 0.5rem;
+    overflow: hidden;
+    border-radius: var(--radius);
+    border: 1px solid var(--form-border-color);
+    background: var(--form-bg);
+    color: var(--form-text-color);
+    box-shadow: var(--form-overlay-shadow);
+    max-height: var(--dropdown-max-height);
+
+    &[data-state="open"] {
+      animation: dropdownIn 150ms ease-out;
+    }
+
+    &[data-state="closed"] {
+      animation: dropdownOut 150ms ease-in;
+    }
+  }
+
+  .game-search-viewport {
+    padding: var(--form-padding-block-sm);
+    max-height: calc(
+      var(--dropdown-max-height) - 2 * var(--form-padding-block-sm)
+    );
+    overflow-y: auto;
+  }
+
+  .game-search-loading,
+  .game-search-message {
+    padding: var(--form-padding-block-md);
+    font-size: var(--form-text-md);
     text-align: center;
-    padding-block: var(--padding-block);
+  }
+
+  .game-search-loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    color: var(--form-text-muted);
+  }
+
+  .game-search-error {
+    color: var(--tw-color-error);
+  }
+
+  .game-search-empty {
+    color: var(--form-text-muted);
+  }
+
+  .game-search-item {
+    position: relative;
+    display: flex;
+    width: 100%;
+    cursor: pointer;
+    user-select: none;
+    align-items: center;
+    border-radius: var(--radius);
+    padding: var(--form-padding-block-md) var(--padding-inline);
+    font-size: var(--form-text-md);
+    outline: none;
+    transition: all 150ms ease;
+
+    &[data-highlighted] {
+      background-color: var(--tw-color-primary);
+      color: white;
+
+      .game-search-item-info-title {
+        color: white;
+      }
+
+      .game-search-item-info-year {
+        color: rgba(255, 255, 255, 0.8);
+      }
+    }
+
+    &[data-disabled] {
+      pointer-events: none;
+      opacity: 0.5;
+    }
+  }
+
+  // Size variations for legacy classes
+  .game-search-wrapper--sm {
+    --padding-inline: var(--form-padding-inline-sm);
+    --padding-block: var(--form-padding-block-sm);
+    --height: var(--form-height-sm);
+    --icon-size: var(--form-icon-size-sm);
+
+    .game-search-input,
+    .game-search-item {
+      font-size: var(--form-text-sm);
+    }
+  }
+
+  .game-search-wrapper--lg {
+    --padding-inline: var(--form-padding-inline-lg);
+    --padding-block: var(--form-padding-block-lg);
+    --height: var(--form-height-lg);
+    --icon-size: var(--form-icon-size-lg);
+
+    .game-search-input,
+    .game-search-item {
+      font-size: var(--form-text-lg);
+    }
+  }
+
+  @keyframes dropdownIn {
+    from {
+      opacity: 0;
+      transform: scale(0.95);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+
+  @keyframes dropdownOut {
+    from {
+      opacity: 1;
+      transform: scale(1);
+    }
+    to {
+      opacity: 0;
+      transform: scale(0.95);
+    }
+  }
+
+  @keyframes spin {
+    to {
+      transform: rotate(360deg);
+    }
   }
 }

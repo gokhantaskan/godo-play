@@ -1,6 +1,16 @@
 <script setup lang="ts">
+import { watchDebounced } from "@vueuse/core";
+import {
+  ComboboxAnchor,
+  ComboboxContent,
+  ComboboxInput,
+  ComboboxItem,
+  ComboboxPortal,
+  ComboboxRoot,
+  ComboboxViewport,
+} from "radix-vue";
+
 import igdbService from "@/lib/services/igdb.service";
-import { autoCompletePt } from "@/utils/pt";
 import type { DashboardGame } from "~~/shared/types/igdb/dashboardGames";
 
 export interface GameOption {
@@ -15,7 +25,7 @@ export interface GameOption {
   firstReleaseDate?: number;
 }
 
-export type GameOptionOrString = GameOption | string | null;
+export type GameOptionOrString = GameOption | string | null | undefined;
 
 const value = defineModel<GameOptionOrString>("modelValue", {
   required: true,
@@ -23,17 +33,19 @@ const value = defineModel<GameOptionOrString>("modelValue", {
 
 const isLoading = ref(false);
 const games = ref<GameOption[]>([]);
+const searchTerm = ref<string>("");
+const error = ref<string | null>(null);
 
-async function searchGames(event: { query: string }) {
-  const query = event.query;
-
+async function searchGames(query: string) {
   if (!query) {
     games.value = [];
+    error.value = null;
     return;
   }
 
   try {
     isLoading.value = true;
+    error.value = null;
     const response = await igdbService.searchGames(query);
 
     games.value = (response ?? []).map((game: DashboardGame) => ({
@@ -47,50 +59,122 @@ async function searchGames(event: { query: string }) {
       category: game.category,
       firstReleaseDate: game.first_release_date,
     }));
-  } catch (error) {
-    console.error("Error searching games:", error);
+  } catch (err: unknown) {
+    console.error("Error searching games:", err);
     games.value = [];
+    error.value = "Failed to search games. Please try again.";
   } finally {
     isLoading.value = false;
   }
 }
+
+// Watch for changes in searchTerm to trigger the search
+watchDebounced(
+  searchTerm,
+  newValue => {
+    if (newValue) {
+      searchGames(newValue.toString());
+    } else {
+      games.value = [];
+      error.value = null;
+    }
+  },
+  { debounce: 500 }
+);
 </script>
 
 <template>
-  <div class="tw:flex tw:flex-col tw:gap-1">
+  <div class="combobox">
     <label
       for="game-search"
-      class="tw:font-medium"
+      class="combobox__label"
       >Game</label
     >
-    <PAutoComplete
-      v-model="value"
-      input-id="game-search"
-      :suggestions="games"
-      :loading="isLoading"
-      placeholder="Search for a game name..."
-      option-label="name"
-      :pt="autoCompletePt"
-      :delay="500"
-      required
-      force-selection
-      @complete="searchGames"
+    <ComboboxRoot
+      v-model:search-term="searchTerm"
+      :model-value="value ?? undefined"
+      :display-value="
+        option => (typeof option === 'object' && option ? option.name : '')
+      "
+      @update:model-value="newVal => (value = newVal)"
     >
-      <template #option="{ option }">
-        <div class="tw:flex tw:items-center tw:gap-2">
-          <div class="tw:size-8 tw:rounded tw:overflow-hidden tw:bg-border">
-            <img
-              v-if="option.imageId"
-              :src="`https://images.igdb.com/igdb/image/upload/t_cover_small/${option.imageId}.jpg`"
-              :alt="option.name"
-              class="tw:w-8 tw:h-8 tw:object-cover"
-            />
-          </div>
-          <div class="tw:flex-1">
-            <div class="tw:font-medium">{{ option.name }}</div>
-          </div>
+      <ComboboxAnchor class="combobox__anchor">
+        <ComboboxInput
+          id="game-search"
+          class="combobox__input"
+          placeholder="Search for a game name..."
+          required
+        />
+        <div
+          v-if="isLoading"
+          class="combobox__spinner"
+        >
+          <div class="combobox__spinner-icon"></div>
         </div>
-      </template>
-    </PAutoComplete>
+      </ComboboxAnchor>
+
+      <ComboboxPortal>
+        <ComboboxContent
+          class="combobox__content"
+          :position="'popper'"
+          :side-offset="5"
+          :align="'start'"
+        >
+          <ComboboxViewport class="combobox__viewport">
+            <div
+              v-if="isLoading && games.length === 0"
+              class="combobox__message combobox__empty"
+            >
+              Searching games...
+            </div>
+            <div
+              v-else-if="error"
+              class="combobox__message combobox__error"
+            >
+              {{ error }}
+            </div>
+            <div
+              v-else-if="!searchTerm"
+              class="combobox__message combobox__empty"
+            >
+              Type to search for games...
+            </div>
+            <div
+              v-else-if="games.length === 0"
+              class="combobox__message combobox__empty"
+            >
+              No games found
+            </div>
+            <ComboboxItem
+              v-for="game in games"
+              :key="game.id"
+              :value="game"
+              class="combobox__item"
+            >
+              <div class="combobox__item-content">
+                <div class="combobox__item-image">
+                  <img
+                    v-if="game.imageId"
+                    :src="`https://images.igdb.com/igdb/image/upload/t_cover_small/${game.imageId}.jpg`"
+                    :alt="game.name"
+                  />
+                </div>
+                <div class="combobox__item-info">
+                  <div class="combobox__item-info-title">{{ game.name }}</div>
+                  <div
+                    v-if="game.firstReleaseDate"
+                    class="combobox__item-info-year"
+                  >
+                    {{ new Date(game.firstReleaseDate * 1000).getFullYear() }}
+                  </div>
+                </div>
+              </div>
+            </ComboboxItem>
+          </ComboboxViewport>
+        </ComboboxContent>
+      </ComboboxPortal>
+    </ComboboxRoot>
   </div>
 </template>
+
+<!-- Styles are now imported from app/assets/styles/components/_combobox.scss -->
