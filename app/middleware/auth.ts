@@ -1,12 +1,10 @@
 import type { RouteLocationNormalizedGeneric } from "vue-router";
 
-import type { RouteMetaWithAuth } from "@/types/page";
-
 export default defineNuxtRouteMiddleware(async to => {
   const supabase = useSupabaseClient();
 
   // Get the route meta
-  const authMeta = (to.meta as RouteMetaWithAuth).auth;
+  const authMeta = to.meta.auth;
 
   // If route doesn't require auth, allow navigation
   if (!authMeta?.required) {
