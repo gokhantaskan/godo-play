@@ -1,3 +1,4 @@
+import tailwindcss from "@tailwindcss/vite";
 import { defineOrganization } from "nuxt-schema-org/schema";
 import svgLoader from "vite-svg-loader";
 
@@ -75,8 +76,19 @@ export default defineNuxtConfig({
       key: "./localhost+2-key.pem",
     },
   },
+  app: {
+    head: {
+      link: [
+        {
+          rel: "stylesheet",
+          href: "https://fonts.googleapis.com/css2?family=Figtree:ital,wght@0,300..900;1,300..900&family=Lexend:wght@100..900&display=swap",
+        },
+      ],
+    },
+  },
   vite: {
     plugins: [
+      tailwindcss(),
       svgLoader({
         defaultImport: "component",
         svgoConfig: {
@@ -99,7 +111,7 @@ export default defineNuxtConfig({
   },
   modules: [
     "@nuxt/eslint",
-    "@nuxt/fonts",
+    // "@nuxt/fonts",
     "@nuxt/image",
     "@nuxt/icon",
     "@nuxtjs/sitemap",
@@ -114,7 +126,6 @@ export default defineNuxtConfig({
   css: ["./app/assets/styles/tailwind.css", "./app/assets/styles/main.scss"],
   postcss: {
     plugins: {
-      "@tailwindcss/postcss": {},
       "postcss-preset-env": {
         stage: 3,
         minimumVendorImplementations: 2,
@@ -125,11 +136,16 @@ export default defineNuxtConfig({
       },
     },
   },
-  fonts: {
-    experimental: {
-      processCSSVariables: true,
-    },
-  },
+  // fonts: {
+  //   families: [
+  //     { name: "Figtree", provider: "google", global: true },
+  //     { name: "Lexend", provider: "google", global: true },
+  //     { name: "Roboto Mono", provider: "google" },
+  //   ],
+  //   experimental: {
+  //     processCSSVariables: true,
+  //   },
+  // },
   icon: {
     mode: "svg",
     size: "inherit",

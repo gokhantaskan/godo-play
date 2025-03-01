@@ -3,6 +3,13 @@
 @layer theme {
   :root {
     accent-color: var(--tw-color-primary);
+
+    // Fonts
+    --font-body: "Figtree", system-ui;
+    --font-heading: "Lexend", system-ui;
+    --font-mono: "Roboto Mono", monospace;
+
+    // Layout
     --navbar-height: 64px;
     --dropdown-max-height: 320px;
   }
