@@ -7,6 +7,7 @@ import { repositoryName } from "./slicemachine.config.json";
 const disallowedPaths = [
   "/_ipx/",
   "/api/",
+  "/auth/",
   "/admin/",
   "/preview",
   "/slice-simulator",
