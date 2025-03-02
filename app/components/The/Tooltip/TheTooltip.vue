@@ -9,7 +9,7 @@ import {
   type TooltipRootProps,
   TooltipTrigger,
   useForwardPropsEmits,
-} from "radix-vue";
+} from "reka-ui";
 
 type TooltipProps = TooltipRootProps & {
   content?: string;

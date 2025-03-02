@@ -8,7 +8,7 @@ import {
   ComboboxPortal,
   ComboboxRoot,
   ComboboxViewport,
-} from "radix-vue";
+} from "reka-ui";
 
 import igdbService from "@/lib/services/igdb.service";
 import type { DashboardGame } from "~~/shared/types/igdb/dashboardGames";
@@ -91,16 +91,18 @@ watchDebounced(
       >Game</label
     >
     <ComboboxRoot
-      v-model:search-term="searchTerm"
       :model-value="value ?? undefined"
       :display-value="
-        option => (typeof option === 'object' && option ? option.name : '')
+        (option: GameOptionOrString) =>
+          typeof option === 'object' && option ? option.name : ''
       "
+      :ignore-filter="true"
       @update:model-value="newVal => (value = newVal)"
     >
       <ComboboxAnchor class="combobox__anchor">
         <ComboboxInput
           id="game-search"
+          v-model="searchTerm"
           class="combobox__input"
           placeholder="Search for a game name..."
           required
