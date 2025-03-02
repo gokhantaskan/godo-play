@@ -165,11 +165,21 @@ export default defineNuxtConfig({
     ],
   },
   site: {
-    url: "https://godo-play.com",
-    name: "GōdōPlay",
+    name: "GodoPlay",
   },
   sitemap: {
     exclude: disallowedPaths,
+    // sitemapsPathPrefix: "/",
+    sitemaps: {
+      pages: {
+        includeAppSources: true,
+        // exclude: ["/games/**"],
+      },
+      games: {
+        includeAppSources: false,
+        sources: ["/api/__sitemap__/urls/games"],
+      },
+    },
   },
   robots: {
     disallow: disallowedPaths,
