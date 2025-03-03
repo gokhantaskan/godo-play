@@ -18,7 +18,8 @@ export default defineEventHandler(async event => {
     !path.startsWith("/api/") ||
     path.startsWith("/api/_nuxt") ||
     path.startsWith("/api/auth") ||
-    path.startsWith("/api/public")
+    path.startsWith("/api/public") ||
+    path.startsWith("/api/__sitemap__")
   ) {
     return;
   }

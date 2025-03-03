@@ -1,8 +1,4 @@
-import { sql } from "drizzle-orm";
-
 import type { SitemapUrl } from "#sitemap/types";
-import { db } from "~~/server/db";
-import { games as gamesTable } from "~~/server/db/schema";
 
 export default defineSitemapEventHandler(async event => {
   if (event.method !== "GET") {
@@ -13,13 +9,13 @@ export default defineSitemapEventHandler(async event => {
   }
 
   try {
-    const games = await db
-      .select({
-        slug: gamesTable.slug,
-        updatedAt: gamesTable.updatedAt,
-      })
-      .from(gamesTable)
-      .where(sql`status = 'approved'`);
+    // Use the public API endpoint instead of direct database query
+    const { data: games } = await event.$fetch("/api/public/games", {
+      params: {
+        limit: 1000, // Adjust limit as needed for your sitemap
+        status: "approved",
+      },
+    });
 
     return games.map(
       game =>
@@ -31,9 +27,6 @@ export default defineSitemapEventHandler(async event => {
     );
   } catch (error) {
     console.error("[Sitemap Games]", error);
-    throw createError({
-      statusCode: 500,
-      message: "Failed to generate games sitemap",
-    });
+    return [];
   }
 });
