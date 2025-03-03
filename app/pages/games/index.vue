@@ -196,9 +196,8 @@ const totalGames = useState<number>("crossplay-total", () => 0);
 // Track loading state for "Show More"
 const isLoadingMore = ref(false);
 
-// Update useFetch to use dashboard-games endpoint
 const { data: gamesResponse, status } = await useFetch<GamesResponse>(
-  "/api/dashboard-games",
+  "/api/public/games",
   {
     query: computed(() => ({
       ...apiQueryParams.value,

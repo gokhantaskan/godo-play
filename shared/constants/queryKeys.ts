@@ -1,5 +1,5 @@
 export const QUERY_KEYS = {
-  DashboardGames: "dashboard-games",
-  IGDBGame: (slug: string) => `/api/games/igdb/${slug}`,
-  DbGame: (slug: string) => `/api/game-details/${slug}`,
+  DashboardGames: "/api/public/games",
+  IGDBGame: (slug: string) => `/api/public/igdb/${slug}`,
+  DbGame: (slug: string) => `/api/public/games/${slug}`,
 } as const;

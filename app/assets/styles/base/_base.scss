@@ -9,6 +9,13 @@
     --font-heading: "Lexend", system-ui;
     --font-mono: "Roboto Mono", monospace;
 
+    // Colors
+    --color-overlay: color-mix(
+      in oklch,
+      var(--tw-color-text-dark) 50%,
+      transparent
+    );
+
     // Layout
     --navbar-height: 64px;
     --dropdown-max-height: 320px;
