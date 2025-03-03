@@ -114,8 +114,8 @@ importers:
         specifier: ^1.6.6
         version: 1.6.6
       tailwindcss:
-        specifier: 4.0.9
-        version: 4.0.9
+        specifier: 4.0.0-beta.8
+        version: 4.0.0-beta.8
       unstorage:
         specifier: ^1.15.0
         version: 1.15.0(db0@0.2.4(drizzle-orm@0.40.0(@types/pg@8.11.11)(gel@2.0.0)(pg@8.13.3)))(ioredis@5.5.0)
@@ -150,9 +150,9 @@ importers:
       '@slicemachine/adapter-nuxt':
         specifier: ^0.3.68
         version: 0.3.68(nuxt@3.15.4(@parcel/watcher@2.5.1)(@types/node@22.13.8)(db0@0.2.4(drizzle-orm@0.40.0(@types/pg@8.11.11)(gel@2.0.0)(pg@8.13.3)))(drizzle-orm@0.40.0(@types/pg@8.11.11)(gel@2.0.0)(pg@8.13.3))(eslint@9.21.0(jiti@2.4.2))(ioredis@5.5.0)(lightningcss@1.29.1)(magicast@0.3.5)(optionator@0.9.4)(rollup@4.34.9)(sass-embedded@1.85.1)(terser@5.39.0)(typescript@5.7.3)(vite@6.2.0(@types/node@22.13.8)(jiti@2.4.2)(lightningcss@1.29.1)(sass-embedded@1.85.1)(terser@5.39.0)(yaml@2.7.0))(vue-tsc@2.1.10(typescript@5.7.3))(yaml@2.7.0))
-      '@tailwindcss/vite':
+      '@tailwindcss/postcss':
         specifier: ^4.0.9
-        version: 4.0.9(vite@6.2.0(@types/node@22.13.8)(jiti@2.4.2)(lightningcss@1.29.1)(sass-embedded@1.85.1)(terser@5.39.0)(yaml@2.7.0))
+        version: 4.0.9
       '@types/jsdom':
         specifier: ^21.1.7
         version: 21.1.7
@@ -227,6 +227,10 @@ importers:
         version: 2.1.10(typescript@5.7.3)
 
 packages:
+
+  '@alloc/quick-lru@5.2.0':
+    resolution: {integrity: sha512-UrcABB+4bUrFABwbluTIBErXwvbsU/V7TZWfmbgJfbkwiBuziS9gxdODUyuiecfdGQ85jglMW6juS3+z5TsKLw==}
+    engines: {node: '>=10'}
 
   '@ampproject/remapping@2.3.0':
     resolution: {integrity: sha512-30iZtAPgz+LTIYoeivqYo853f02jBYSd5uGnGpkFV0M3xOt9aN73erkgYAmZU43x4VfqcnLxW9Kpg3R5LC4YYw==}
@@ -2183,10 +2187,8 @@ packages:
     resolution: {integrity: sha512-eLizHmXFqHswJONwfqi/WZjtmWZpIalpvMlNhTM99/bkHtUs6IqgI1XQ0/W5eO2HiRQcIlXUogI2ycvKhVLNcA==}
     engines: {node: '>= 10'}
 
-  '@tailwindcss/vite@4.0.9':
-    resolution: {integrity: sha512-BIKJO+hwdIsN7V6I7SziMZIVHWWMsV/uCQKYEbeiGRDRld+TkqyRRl9+dQ0MCXbhcVr+D9T/qX2E84kT7V281g==}
-    peerDependencies:
-      vite: ^5.2.0 || ^6
+  '@tailwindcss/postcss@4.0.9':
+    resolution: {integrity: sha512-BT/E+pdMqulavEAVM5NCpxmGEwHiLDPpkmg/c/X25ZBW+izTe+aZ+v1gf/HXTrihRoCxrUp5U4YyHsBTzspQKQ==}
 
   '@tanstack/virtual-core@3.13.2':
     resolution: {integrity: sha512-Qzz4EgzMbO5gKrmqUondCjiHcuu4B1ftHb0pjCut661lXZdGoHeze9f/M8iwsK1t5LGR6aNuNGU7mxkowaW6RQ==}
@@ -6835,6 +6837,9 @@ packages:
     resolution: {integrity: sha512-ulAk51I9UVUyJgxlv9M6lFot2WP3e7t8Kz9+IS6D4rVba1tR9kON+Ey69f+1R4Q8cd45Lod6a4IcJIxnzGc/zA==}
     engines: {node: '>=18'}
 
+  tailwindcss@4.0.0-beta.8:
+    resolution: {integrity: sha512-21HmdRq9tHDLJZavb2cRBGJxBvRODpwb0/t3tRbMOl65hJE6zG6K6lD6lLS3IOC35u4SOjKjdZiJJi9AuWCf+Q==}
+
   tailwindcss@4.0.9:
     resolution: {integrity: sha512-12laZu+fv1ONDRoNR9ipTOpUD7RN9essRVkX36sjxuRUInpN7hIiHN4lBd/SIFjbISvnXzp8h/hXzmU8SQQYhw==}
 
@@ -7562,6 +7567,8 @@ packages:
     resolution: {integrity: sha512-lY7CDW43ECgW9u1TcT3IoXHflywfVqDYze4waEz812jR/bZ8FHDsl7pFQoSZTz5N+2NqRXs8GBwnAwo3ZNxqhQ==}
 
 snapshots:
+
+  '@alloc/quick-lru@5.2.0': {}
 
   '@ampproject/remapping@2.3.0':
     dependencies:
@@ -9786,13 +9793,14 @@ snapshots:
       '@tailwindcss/oxide-win32-arm64-msvc': 4.0.9
       '@tailwindcss/oxide-win32-x64-msvc': 4.0.9
 
-  '@tailwindcss/vite@4.0.9(vite@6.2.0(@types/node@22.13.8)(jiti@2.4.2)(lightningcss@1.29.1)(sass-embedded@1.85.1)(terser@5.39.0)(yaml@2.7.0))':
+  '@tailwindcss/postcss@4.0.9':
     dependencies:
+      '@alloc/quick-lru': 5.2.0
       '@tailwindcss/node': 4.0.9
       '@tailwindcss/oxide': 4.0.9
       lightningcss: 1.29.1
+      postcss: 8.5.3
       tailwindcss: 4.0.9
-      vite: 6.2.0(@types/node@22.13.8)(jiti@2.4.2)(lightningcss@1.29.1)(sass-embedded@1.85.1)(terser@5.39.0)(yaml@2.7.0)
 
   '@tanstack/virtual-core@3.13.2': {}
 
@@ -15199,6 +15207,8 @@ snapshots:
       tslib: 2.8.1
 
   system-architecture@0.1.0: {}
+
+  tailwindcss@4.0.0-beta.8: {}
 
   tailwindcss@4.0.9: {}
 

@@ -1,4 +1,3 @@
-import tailwindcss from "@tailwindcss/vite";
 import { defineOrganization } from "nuxt-schema-org/schema";
 import svgLoader from "vite-svg-loader";
 
@@ -89,7 +88,6 @@ export default defineNuxtConfig({
   },
   vite: {
     plugins: [
-      tailwindcss(),
       svgLoader({
         defaultImport: "component",
         svgoConfig: {
@@ -127,6 +125,7 @@ export default defineNuxtConfig({
   css: ["./app/assets/styles/tailwind.css", "./app/assets/styles/main.scss"],
   postcss: {
     plugins: {
+      "@tailwindcss/postcss": {},
       "postcss-preset-env": {
         stage: 3,
         minimumVendorImplementations: 2,

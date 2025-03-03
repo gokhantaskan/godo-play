@@ -129,19 +129,25 @@ function isArrayEqual(arr1: number[], arr2: number[]) {
         </Disclosure>
 
         <!-- Price -->
-        <fieldset class="tw:flex tw:flex-wrap tw:gap-4">
-          <legend class="tw:font-title tw:font-medium tw:text-sm tw:mb-2">
+        <Disclosure
+          v-slot="{ open }"
+          as="div"
+        >
+          <DisclosureButton :class="['clean-button disclosure-button']">
             Price
-          </legend>
-          <label class="tw:flex tw:items-center tw:gap-2 tw:cursor-pointer">
-            <input
-              v-model="draftFreeToPlay"
-              type="checkbox"
-              class="tw:w-4 tw:h-4"
-            />
-            <span class="tw:text-sm">Free to Play</span>
-          </label>
-        </fieldset>
+            <Icon :name="open ? 'lucide:chevron-up' : 'lucide:chevron-down'" />
+          </DisclosureButton>
+          <DisclosurePanel class="disclosure-panel">
+            <label class="tw:flex tw:items-center tw:gap-2 tw:cursor-pointer">
+              <input
+                v-model="draftFreeToPlay"
+                type="checkbox"
+                class="tw:w-4 tw:h-4"
+              />
+              <span class="tw:text-sm">Free to Play</span>
+            </label>
+          </DisclosurePanel>
+        </Disclosure>
       </div>
 
       <template #footer>
