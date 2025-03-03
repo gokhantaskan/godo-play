@@ -23,7 +23,7 @@ useHead({
 
 const { data: dbGame, refresh: refreshDbGame } =
   await useCachedFetch<GameSubmissionWithRelations>(
-    `/api/game-details/${slug}`
+    `/api/public/games/${slug}`
   );
 
 // Throw 404 if game is not found
@@ -36,9 +36,7 @@ if (!dbGame.value) {
 
 // Composable for game data fetching
 const { data: igdbGame, refresh: refreshIgdbGame } =
-  await useFetch<GameDetails>(`/api/games/igdb/${slug}`, {
-    key: `igdb-game-${slug}`,
-  });
+  await useCachedFetch<GameDetails>(`/api/public/igdb/${slug}`);
 
 const seoMeta = computed(() => {
   return {

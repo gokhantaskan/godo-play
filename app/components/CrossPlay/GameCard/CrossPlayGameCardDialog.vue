@@ -19,7 +19,7 @@ const {
   data: fetchedIGDBGame,
   status: igdbStatus,
   refresh: refreshIgdbGame,
-} = useFetch<GameDetails>(() => `/api/games/igdb/${props.slug}`, {
+} = useFetch<GameDetails>(() => `/api/public/igdb/${props.slug}`, {
   key: QUERY_KEYS.IGDBGame(props.slug),
   server: false,
   immediate: false,

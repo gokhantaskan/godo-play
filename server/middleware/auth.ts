@@ -13,32 +13,26 @@ import { authHandler } from "../utils/authHandler";
 export default defineEventHandler(async event => {
   // Skip auth check for non-API routes
   const path = event.path || "";
-  if (!path.startsWith("/api/")) {
+
+  if (
+    !path.startsWith("/api/") ||
+    path.startsWith("/api/_nuxt") ||
+    path.startsWith("/api/auth") ||
+    path.startsWith("/api/public")
+  ) {
     return;
   }
 
   // Define resources that allow public GET requests
-  const publicGetResources = ["games", "game-modes", "stores"];
-
-  // Define paths that are always public (regardless of HTTP method)
-  const alwaysPublicPaths = [
-    "/api/auth/login",
-    "/api/auth/register",
-    "/api/auth/callback",
-  ];
+  const publicGetResources = ["/api/games", "/api/game-modes", "/api/stores"];
 
   // Check if the current path is for a public GET resource
   const isPublicGetResource = publicGetResources.some(resource =>
-    path.startsWith(`/api/${resource}`)
+    path.startsWith(resource)
   );
 
   // Allow public access to GET requests for public resources
   if (isPublicGetResource && event.method === "GET") {
-    return;
-  }
-
-  // Skip auth check for always public paths
-  if (alwaysPublicPaths.some(p => path.startsWith(p))) {
     return;
   }
 
