@@ -1,4 +1,10 @@
-import { integer, pgTable, primaryKey, serial } from "drizzle-orm/pg-core";
+import {
+  index,
+  integer,
+  pgTable,
+  primaryKey,
+  serial,
+} from "drizzle-orm/pg-core";
 import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 
 import { defaultInsertTimestamps } from "../helpers/defaults";
@@ -10,13 +16,21 @@ import { platforms } from "./platforms";
  * Represents a grouping concept for platforms associated with a single submission.
  * Instead of using an array, we'll create a junction table that links each platform individually.
  */
-export const platformGroups = pgTable("platform_groups", {
-  id: serial("id").primaryKey(),
-  submissionId: integer("submission_id")
-    .references(() => games.id, { onDelete: "cascade" })
-    .notNull(),
-  ...defaultInsertTimestamps,
-});
+export const platformGroups = pgTable(
+  "platform_groups",
+  {
+    id: serial("id").primaryKey(),
+    submissionId: integer("submission_id")
+      .references(() => games.id, { onDelete: "cascade" })
+      .notNull(),
+    ...defaultInsertTimestamps,
+  },
+  table => {
+    return {
+      submissionIdIdx: index("submission_id_idx").on(table.submissionId),
+    };
+  }
+);
 
 /**
  * Junction table between platform_groups and platforms.
@@ -29,7 +43,10 @@ export const platformGroupPlatforms = pgTable(
       .references(() => platformGroups.id, { onDelete: "cascade" })
       .notNull(),
     platformId: integer("platform_id")
-      .references(() => platforms.id)
+      .references(() => platforms.id, {
+        onDelete: "cascade",
+        onUpdate: "cascade",
+      })
       .notNull(),
   },
   table => [primaryKey({ columns: [table.platformGroupId, table.platformId] })]

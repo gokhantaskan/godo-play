@@ -1,6 +1,7 @@
 import { relations } from "drizzle-orm";
 
 import { crossplayInformation } from "../tables/crossplayInformation";
+import { gameCategories } from "../tables/gameCategories";
 import { gameModes, gameSubmissionGameModes } from "../tables/gameModes";
 import { games } from "../tables/games";
 import {
@@ -120,5 +121,26 @@ export const storeSupportedPlatformsRelations = relations(
       fields: [storeSupportedPlatforms.platformId],
       references: [platforms.id],
     }),
+  })
+);
+
+// Add bidirectional relations for platforms table
+export const platformsRelations = relations(platforms, ({ many }) => ({
+  // Platform can be in many platform groups via the junction table
+  platformGroupLinks: many(platformGroupPlatforms),
+
+  // Platform can be linked to many store platforms for crossplay
+  storeCrossplayLinks: many(storeCrossplayPlatforms),
+
+  // Platform can be supported by many stores
+  storeSupportedLinks: many(storeSupportedPlatforms),
+}));
+
+// Add bidirectional relations for game categories
+export const gameCategoriesRelations = relations(
+  gameCategories,
+  ({ many }) => ({
+    // A category can have many games
+    games: many(games),
   })
 );
