@@ -9,6 +9,10 @@
     --font-heading: "Lexend", system-ui;
     --font-mono: "Roboto Mono", monospace;
 
+    --text-xs: 0.75rem;
+    --text-sm: 0.875rem;
+    --text-base: 1rem;
+
     // Colors
     --color-overlay: color-mix(
       in oklch,
