@@ -105,7 +105,6 @@ watchDebounced(
           v-model="searchTerm"
           class="combobox__input"
           placeholder="Search for a game name..."
-          required
         />
         <div
           v-if="isLoading"
