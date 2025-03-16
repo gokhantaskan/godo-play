@@ -41,7 +41,7 @@ const { data: igdbGame, refresh: refreshIgdbGame } =
 const seoMeta = computed(() => {
   return {
     seoTitle: `${dbGame.value?.name} Crossplay Information`,
-    seoDescription: `Learn about ${dbGame.value?.name} and its crossplay support.`,
+    seoDescription: `Learn about ${dbGame.value?.name}'s cross platform and cross save features.`,
     seoImage: `https://images.igdb.com/igdb/image/upload/t_screenshot_med/${dbGame.value?.external?.igdbImageId}.jpg`,
   };
 });
@@ -55,6 +55,7 @@ useSeoMeta({
   twitterDescription: seoMeta.value.seoDescription,
   ogImage: seoMeta.value.seoImage,
   twitterImage: seoMeta.value.seoImage,
+  ogUrl: `https://godo-play.com/games/${slug}`,
 });
 
 async function refreshGameData() {
