@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { TabsContent, TabsList, TabsRoot, TabsTrigger } from "reka-ui";
+import type { LocationQuery } from "vue-router";
 
 import { ageRatingHumanizedRatings } from "~~/shared/constants";
 import type { GameSubmissionWithRelations } from "~~/shared/types";
@@ -15,8 +16,16 @@ interface Props {
 }
 
 const props = defineProps<Props>();
+const route = useRoute();
 
 const currentTab = ref<"details" | "gallery">("details");
+const routeFrom = ref<LocationQuery>({});
+
+onBeforeMount(() => {
+  if (import.meta.client && route.name === "CrossPlayGamesPage") {
+    routeFrom.value = route.query;
+  }
+});
 
 // Computed properties for better reactivity
 const hasAgeRatings = computed(() => {
@@ -55,6 +64,13 @@ const groupedCompanies = computed(() => {
       .map((company: InvolvedCompany) => company.company.name),
   };
 });
+
+function generateLink(gameMode: string) {
+  return `/games?${new URLSearchParams({
+    ...routeFrom.value,
+    gameModes: gameMode,
+  })}`;
+}
 
 // Pure function for getting age rating image URL
 function getAgeRatingImageUrl(
@@ -101,11 +117,11 @@ function formatDate(date: number) {
               <span v-if="igdbGame?.first_release_date">
                 {{ formatDate(igdbGame?.first_release_date) }}
               </span>
-              <span>•</span>
               <span
                 v-if="roundedGameRating"
                 class="game__rating"
               >
+                <span>•</span>
                 <Icon
                   name="lucide:star"
                   class="game__rating-icon"
@@ -122,7 +138,12 @@ function formatDate(date: number) {
                 v-for="{ gameMode } in dbGame.gameSubmissionGameModes"
                 :key="gameMode.id"
               >
-                <TheChip variant="gray">{{ gameMode.name }}</TheChip>
+                <a
+                  :href="generateLink(gameMode.slug)"
+                  target="_blank"
+                >
+                  <TheChip variant="gray">{{ gameMode.name }}</TheChip>
+                </a>
               </template>
             </div>
           </div>

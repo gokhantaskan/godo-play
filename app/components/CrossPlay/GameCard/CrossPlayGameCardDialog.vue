@@ -12,9 +12,6 @@ export interface CrossPlayGameCardDialogProps {
 const props = defineProps<CrossPlayGameCardDialogProps>();
 const isOpen = defineModel<boolean>("open");
 
-// const { data: cachedIGDBGame } = useNuxtData(QUERY_KEYS.IGDBGame(props.slug));
-// const { data: cachedDbGame } = useNuxtData(QUERY_KEYS.DbGame(props.slug));
-
 const {
   data: fetchedIGDBGame,
   status: igdbStatus,
@@ -23,7 +20,6 @@ const {
   key: QUERY_KEYS.IGDBGame(props.slug),
   server: false,
   immediate: false,
-  // lazy: !!cachedIGDBGame.value,
 });
 
 const {
@@ -34,17 +30,11 @@ const {
   key: QUERY_KEYS.DbGame(props.slug),
   server: false,
   immediate: false,
-  // lazy: !!cachedDbGame.value,
 });
 
 const isLoading = computed(
   () => igdbStatus.value === "pending" || dbStatus.value === "pending"
 );
-// const hasData = computed(() => {
-//   const igdbGame = fetchedIGDBGame.value ?? cachedIGDBGame.value;
-//   const dbGame = fetchedDbGame.value ?? cachedDbGame.value;
-//   return igdbGame && dbGame;
-// });
 
 // Watch modal state to fetch data when opened
 watch(isOpen, async newValue => {

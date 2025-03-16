@@ -190,8 +190,8 @@ const apiQueryParams = computed(() => {
 });
 
 // Add pagination state
-const currentOffset = useState<number>("crossplay-offset", () => 0);
-const totalGames = useState<number>("crossplay-total", () => 0);
+const currentOffset = ref<number>(0);
+const totalGames = ref<number>(0);
 
 // Track loading state for "Show More"
 const isLoadingMore = ref(false);
@@ -208,11 +208,7 @@ const { data: gamesResponse, status } = await useFetch<GamesResponse>(
   }
 );
 
-// Track all loaded games
-const games = useState<GameSubmissionWithRelations[]>(
-  "crossplay-games",
-  () => []
-);
+const games = useCrossplayGames();
 
 // Update games when response changes
 watch(

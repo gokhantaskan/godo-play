@@ -119,7 +119,6 @@ export default defineNuxtConfig({
     "nuxt-gtag",
     "@nuxt/scripts",
     "@nuxtjs/prismic",
-    "@primevue/nuxt-module",
     "nuxt-schema-org",
   ],
   css: ["./app/assets/styles/tailwind.css", "./app/assets/styles/main.scss"],
@@ -203,18 +202,6 @@ export default defineNuxtConfig({
   },
   prismic: {
     endpoint: repositoryName,
-  },
-  primevue: {
-    usePrimeVue: true,
-    autoImport: false,
-    loadStyles: false,
-    components: {
-      prefix: "P",
-      include: ["AutoComplete", "Toast"],
-    },
-    options: {
-      theme: "none",
-    },
   },
   schemaOrg: {
     identity: defineOrganization({
