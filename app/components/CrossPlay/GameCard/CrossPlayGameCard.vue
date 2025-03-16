@@ -8,10 +8,13 @@ const props = defineProps<{
 const isDialogOpen = ref(false);
 const originalURL = ref("");
 
-function openDialog() {
+function openDialog(event: Event) {
+  event.preventDefault();
+  event.stopPropagation();
   originalURL.value = window.location.href;
   history.pushState({ dialogOpen: true }, "", `/games/${props.game.slug}`);
   isDialogOpen.value = true;
+  return false;
 }
 
 onMounted(() => {
@@ -30,8 +33,9 @@ onUnmounted(() => {
 <template>
   <article class="game-card">
     <!-- Image Section -->
-    <button
-      class="clean-button game-card__cover"
+    <a
+      :href="`/games/${game.slug}`"
+      class="game-card__cover"
       @click="openDialog"
     >
       <img
@@ -51,7 +55,7 @@ onUnmounted(() => {
           class="game-card__official-doc-badge-icon"
         />
       </span>
-    </button>
+    </a>
 
     <CrossPlayGameCardDialog
       v-model:open="isDialogOpen"
