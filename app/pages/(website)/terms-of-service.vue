@@ -17,6 +17,22 @@ useHead({
   ],
 });
 
+useSeoMeta({
+  title: "Terms of Service - GodoPlay",
+  description:
+    "Terms of Service for GodoPlay - A comprehensive overview of the terms and conditions that govern the usage of our services.",
+  ogTitle: "Terms of Service - GodoPlay",
+  ogDescription:
+    "Terms of Service for GodoPlay - A comprehensive overview of the terms and conditions that govern the usage of our services.",
+  ogImage: "/og_img.jpg",
+  ogUrl: "https://godo-play.com/terms-of-service",
+  twitterCard: "summary_large_image",
+  twitterTitle: "Terms of Service - GodoPlay",
+  twitterDescription:
+    "Terms of Service for GodoPlay - A comprehensive overview of the terms and conditions that govern the usage of our services.",
+  twitterImage: "/og_img.jpg",
+});
+
 const { client } = usePrismic();
 
 const { data: page } = await useAsyncData("terms-of-service", () =>

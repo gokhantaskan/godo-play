@@ -8,6 +8,22 @@ definePageMeta({
   name: "PrivacyPolicyPage",
 });
 
+useSeoMeta({
+  title: "Privacy Policy - GodoPlay",
+  description:
+    "Privacy Policy for GodoPlay - An overview of our methods for the collection, utilization, and safeguarding of your personal information.",
+  ogTitle: "Privacy Policy - GodoPlay",
+  ogDescription:
+    "Privacy Policy for GodoPlay - An overview of our methods for the collection, utilization, and safeguarding of your personal information.",
+  ogImage: "/og_img.jpg",
+  ogUrl: "https://godo-play.com/privacy-policy",
+  twitterCard: "summary_large_image",
+  twitterTitle: "Privacy Policy - GodoPlay",
+  twitterDescription:
+    "Privacy Policy for GodoPlay - An overview of our methods for the collection, utilization, and safeguarding of your personal information.",
+  twitterImage: "/og_img.jpg",
+});
+
 useHead({
   link: [
     {

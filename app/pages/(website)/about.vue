@@ -8,6 +8,22 @@ definePageMeta({
   name: "AboutUsPage",
 });
 
+useSeoMeta({
+  title: "About - GodoPlay",
+  description:
+    "Discover cross-platform co-op and multiplayer games at GōdōPlay - your ultimate destination to find games tailored to your unique gaming setup across platforms.",
+  ogTitle: "About - GodoPlay",
+  ogDescription:
+    "Discover cross-platform co-op and multiplayer games at GōdōPlay - your ultimate destination to find games tailored to your unique gaming setup across platforms.",
+  ogImage: "/og_img.jpg",
+  ogUrl: "https://godo-play.com/about",
+  twitterCard: "summary_large_image",
+  twitterTitle: "About - GodoPlay",
+  twitterDescription:
+    "Discover cross-platform co-op and multiplayer games at GōdōPlay - your ultimate destination to find games tailored to your unique gaming setup across platforms.",
+  twitterImage: "/og_img.jpg",
+});
+
 useHead({
   link: [
     {
