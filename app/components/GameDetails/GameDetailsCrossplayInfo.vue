@@ -57,7 +57,7 @@ function generateCrossplayMessage(
       <!-- <div v-if="IS_DEV">{{ storePlatforms }}</div> -->
       <CrossPlayGameDetailsStorePlatforms :store-platforms="storePlatforms" />
     </section>
-    <section v-if="crossplayInformation">
+    <section v-if="crossplayInformation?.information">
       <h2>Can {{ gameName }} be cross-played?</h2>
       <!-- eslint-disable vue/no-v-html -->
       <blockquote
