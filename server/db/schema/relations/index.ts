@@ -24,6 +24,10 @@ export const gameSubmissionsRelations = relations(games, ({ many, one }) => ({
     fields: [games.id],
     references: [crossplayInformation.gameId],
   }),
+  category: one(gameCategories, {
+    fields: [games.category],
+    references: [gameCategories.pointer],
+  }),
 }));
 
 export const gameModesRelations = relations(gameModes, ({ many }) => ({
