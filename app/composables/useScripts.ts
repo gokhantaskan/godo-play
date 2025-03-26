@@ -38,6 +38,20 @@ export function useScripts() {
       onInspectletLoaded(() => {
         console.info("insp loaded");
       });
+
+      const { onLoaded: onClarityLoaded } = useScript(
+        {
+          key: "clarity",
+          src: "/scripts/clarity.js",
+        },
+        {
+          trigger: agreedToCookiesScriptConsent,
+        }
+      );
+
+      onClarityLoaded(() => {
+        console.info("clarity loaded");
+      });
     }
   }
 
