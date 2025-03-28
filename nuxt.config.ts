@@ -29,6 +29,9 @@ export default defineNuxtConfig({
     registry: {
       clarity: {
         id: "",
+        scriptOptions: {
+          trigger: "manual",
+        },
       },
     },
   },
