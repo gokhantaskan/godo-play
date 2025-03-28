@@ -1,1 +1,1 @@
-(function(c,l,a,r,i,t,y){c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)},(t=l.createElement(r)).async=1,t.src="https://www.clarity.ms/tag/"+i,(y=l.getElementsByTagName(r)[0]).parentNode.insertBefore(t,y)}(window,document,"clarity","script","qu83h8jzpx"));
+(function (c, l, a, r, i, t, y) { c[a] = c[a] || function () { (c[a].q = c[a].q || []).push(arguments); }, (t = l.createElement(r)).async = 1, t.src = "https://www.clarity.ms/tag/" + i, (y = l.getElementsByTagName(r)[0]).parentNode.insertBefore(t, y); }(window, document, "clarity", "script", "qva34igu3c"));
