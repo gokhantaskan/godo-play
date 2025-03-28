@@ -269,6 +269,7 @@ useHead({
 });
 
 useSeoMeta({
+  ogUrl: `https://godo-play.com/games`,
   title: computed(() => `${getMetaTitle()} - GodoPlay`),
   ogTitle: computed(() => `${getMetaTitle()} - GodoPlay`),
   twitterTitle: computed(() => `${getMetaTitle()} - GodoPlay`),

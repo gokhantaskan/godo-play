@@ -57,7 +57,7 @@ useSeoMeta({
   ogDescription:
     "Discover the best multi-platform and cross-play co-op and multiplayer games for PC, PlayStation, Xbox, and Nintendo Switch—team up or compete with friends on any platform.",
   ogImage: "/og_img.jpg",
-  ogUrl: "https://godoplay.com",
+  ogUrl: "https://godo-play.com",
   twitterCard: "summary_large_image",
   twitterTitle: "The Ultimate Fusion for Co-Op and Multiplayer Gaming",
   twitterDescription:
