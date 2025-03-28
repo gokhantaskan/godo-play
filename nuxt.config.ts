@@ -25,6 +25,20 @@ export default defineNuxtConfig({
       asyncContext: true,
     },
   },
+  scripts: {
+    registry: {
+      clarity: {
+        id: "",
+      },
+    },
+  },
+  $development: {
+    scripts: {
+      registry: {
+        clarity: "mock",
+      },
+    },
+  },
   runtimeConfig: {
     igdb: {
       endpoint: process.env.IGDB_ENDPOINT,
@@ -51,8 +65,10 @@ export default defineNuxtConfig({
       secret: process.env.SUPABASE_SECRET,
     },
     public: {
-      hotjar: {
-        siteId: "",
+      scripts: {
+        clarity: {
+          id: "",
+        },
       },
       google: {
         recaptcha: {
