@@ -51,6 +51,9 @@ useHead({
 
 const ITEMS_PER_PAGE = 48;
 
+const {
+  proxy: { clarity },
+} = useClarityScript();
 const route = useRoute();
 const {
   platforms: initialQueryPlatforms,
@@ -254,7 +257,7 @@ const pending = computed(
 );
 
 // Watch for changes in selected platforms and update URL
-watch(
+const stopUrlQueryWatch = watch(
   urlQuery,
   newQuery => {
     useRouter().replace({
@@ -263,6 +266,54 @@ watch(
   },
   { deep: true }
 );
+
+// Track platform changes with Clarity
+const stopPlatformsWatch = watch(
+  selectedPlatforms,
+  (newPlatforms, oldPlatforms) => {
+    // Only run on actual changes, not initial setup
+    if (oldPlatforms && Object.values(newPlatforms).some(v => v !== null)) {
+      const platformNames = Object.values(newPlatforms)
+        .filter(Boolean)
+        .map(id => SUPPORTED_PLATFORMS.find(p => p.id === id)?.name)
+        .filter(Boolean);
+
+      clarity("set", "platformSelectionChanged", platformNames);
+    }
+  },
+  { deep: true }
+);
+
+// Track filter changes with Clarity
+const stopGameModesWatch = watch(
+  () => selectedFilters.value.gameModes,
+  (newModes, oldModes) => {
+    if (oldModes && newModes.length !== oldModes.length) {
+      const modeNames = newModes
+        .map(id => SUPPORTED_GAME_MODES.find(m => m.id === id)?.name)
+        .filter(Boolean);
+
+      clarity("set", "gameModesChanged", modeNames);
+    }
+  }
+);
+
+const stopFreeToPlayWatch = watch(
+  () => selectedFilters.value.freeToPlay,
+  (newValue, oldValue) => {
+    if (oldValue !== undefined && newValue !== oldValue) {
+      clarity("set", "freeToPlayFilterChanged", newValue);
+    }
+  }
+);
+
+// Clean up all watchers when component is unmounted
+onUnmounted(() => {
+  stopUrlQueryWatch();
+  stopPlatformsWatch();
+  stopGameModesWatch();
+  stopFreeToPlayWatch();
+});
 
 useHead({
   title: computed(() => getMetaTitle()),
@@ -292,6 +343,8 @@ function getMetaTitle() {
 
 // Add function to clear filters and refresh page
 function clearQueryAndRefreshPage() {
+  clarity("event", "refreshGamesPage");
+
   if (import.meta.client) {
     const url = new URL(window.location.href);
     const baseUrl = `${url.origin}${url.pathname}`;

@@ -2,18 +2,21 @@
 import { nextTick, ref } from "vue";
 
 const route = useRoute();
+const {
+  proxy: { clarity },
+} = useClarityScript();
 
 const dialogRef = useTemplateRef("dialogRef");
 const isDialogOpen = ref(false);
 const shouldRender = ref(true);
-
-console.log(route.path);
 
 if (route.path.startsWith("/admin")) {
   shouldRender.value = false;
 }
 
 function openFeedback() {
+  clarity("event", "feedbackClicked");
+
   isDialogOpen.value = true;
   // Need to wait for next tick to ensure dialog is mounted
   nextTick(() => {

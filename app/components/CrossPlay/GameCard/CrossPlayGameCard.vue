@@ -5,12 +5,20 @@ const props = defineProps<{
   game: GameSubmissionWithRelations;
 }>();
 
+const {
+  proxy: { clarity },
+} = useClarityScript();
+
 const isDialogOpen = ref(false);
 const originalURL = ref("");
 
 function openDialog(event: Event) {
   event.preventDefault();
   event.stopPropagation();
+
+  // Track game click with Clarity
+  clarity("set", "gameCardClicked", props.game.name);
+
   originalURL.value = window.location.href;
   history.pushState({ dialogOpen: true }, "", `/games/${props.game.slug}`);
   isDialogOpen.value = true;
