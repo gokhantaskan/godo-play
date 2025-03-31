@@ -74,6 +74,16 @@ export const SUPPORTED_GAME_MODES: {
     name: "Couch / Local Co-op",
     slug: "couch-co-op",
   },
+  {
+    id: 109,
+    name: "Local PVP",
+    slug: "local-pvp",
+  },
+  {
+    id: 110,
+    name: "Online PVP",
+    slug: "online-pvp",
+  },
 ];
 
 export const GAME_MODE_IDS: number[] = SUPPORTED_GAME_MODES.map(tag => tag.id);

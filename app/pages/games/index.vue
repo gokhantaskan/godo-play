@@ -2,7 +2,7 @@
 import { refDebounced } from "@vueuse/core";
 
 import type { PlatformId } from "~/types/crossPlay";
-import { SUPPORTED_GAME_MODES, SUPPORTED_PLATFORMS } from "~~/shared/constants";
+import { SUPPORTED_PLATFORMS } from "~~/shared/constants";
 import type { GameSubmissionWithRelations } from "~~/shared/types";
 
 interface InitialRouteQuery {
@@ -76,34 +76,72 @@ const selectedPlatforms = ref<SelectedPlatforms>({
     : null,
 });
 
-const supportedModesMap = {
-  idToSlug: SUPPORTED_GAME_MODES.reduce<Record<number, string>>((acc, curr) => {
-    acc[curr.id] = curr.slug;
-    return acc;
-  }, {}),
-  slugToId: SUPPORTED_GAME_MODES.reduce<Record<string, number>>((acc, curr) => {
-    acc[curr.slug] = curr.id;
-    return acc;
-  }, {}),
-};
+// Use session state for game modes
+const { gameModes: sessionGameModes } = useSessionState();
+const gameModes = ref<ReadGameMode[]>([]);
+
+// Fetch game modes server-side if possible
+const { data: serverGameModes } = await useFetch<ReadGameMode[]>(
+  "/api/public/game-modes"
+);
+
+// Use server data first, then fall back to session state
+if (serverGameModes.value) {
+  gameModes.value = serverGameModes.value;
+  // Update session state with server data
+  sessionGameModes.value = [...serverGameModes.value];
+}
+
+// Watch for changes in session game modes
+watch(
+  sessionGameModes,
+  newValue => {
+    if (newValue.length > 0) {
+      gameModes.value = newValue;
+    }
+  },
+  { immediate: true }
+);
+
+// Create game modes maps for slug/ID conversions
+const supportedModesMap = computed(() => {
+  const idToSlug: Record<number, string> = {};
+  const slugToId: Record<string, number> = {};
+
+  gameModes.value.forEach(mode => {
+    idToSlug[mode.id] = mode.slug;
+    slugToId[mode.slug] = mode.id;
+  });
+
+  return { idToSlug, slugToId };
+});
 
 // Convert game mode slugs to IDs
 function getGameModeIdFromSlug(slug: string): number | null {
-  const gameMode = SUPPORTED_GAME_MODES.find(mode => mode.slug === slug);
+  const gameMode = gameModes.value.find(mode => mode.slug === slug);
   return gameMode ? gameMode.id : null;
 }
 
-// Initialize selectedFilters with game mode IDs from URL slugs
+// Initialize selectedFilters
 const selectedFilters = ref<Filters>({
   stores: [],
-  gameModes: initialQueryGameModes
-    ? initialQueryGameModes
-        .split(",")
-        .map(slug => getGameModeIdFromSlug(slug))
-        .filter((id): id is number => id !== null)
-    : [],
+  gameModes: [],
   freeToPlay: initialQueryFreeToPlay === "true",
 });
+
+// Update selected game modes when session data loads
+watch(
+  gameModes,
+  newValue => {
+    if (newValue.length > 0 && initialQueryGameModes) {
+      selectedFilters.value.gameModes = initialQueryGameModes
+        .split(",")
+        .map(slug => getGameModeIdFromSlug(slug))
+        .filter((id): id is number => id !== null);
+    }
+  },
+  { immediate: true }
+);
 
 const search = ref<string>(initialQuerySearch);
 const debouncedSearch = refDebounced(search, 500);
@@ -134,7 +172,7 @@ const urlQuery = computed(() => {
 
   if (selectedFilters.value.gameModes.length) {
     queryToSet.gameModes = selectedFilters.value.gameModes
-      .map(id => supportedModesMap.idToSlug[id])
+      .map(id => supportedModesMap.value.idToSlug[id])
       .join(",");
   }
 
@@ -290,7 +328,7 @@ const stopGameModesWatch = watch(
   (newModes, oldModes) => {
     if (oldModes && newModes.length !== oldModes.length) {
       const modeNames = newModes
-        .map(id => SUPPORTED_GAME_MODES.find(m => m.id === id)?.name)
+        .map(id => gameModes.value.find(m => m.id === id)?.name)
         .filter(Boolean);
 
       clarity("set", "gameModesChanged", modeNames);
@@ -372,7 +410,7 @@ const activeFilterChips = computed(() => {
   const chips: Array<{ type: string; id: number | string; name: string }> = [];
 
   selectedFilters.value.gameModes.forEach(id => {
-    const mode = SUPPORTED_GAME_MODES.find(m => m.id === id);
+    const mode = gameModes.value.find(m => m.id === id);
     if (mode) {
       chips.push({ type: "gameMode", id, name: mode.name });
     }
