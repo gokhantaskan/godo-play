@@ -4,7 +4,8 @@ import isEqual from "lodash/isEqual.js";
 
 const isDrawerOpen = ref(false);
 const gameModes = ref<ReadGameMode[]>([]);
-const { gameModes: sessionGameModes } = useSessionState();
+const tags = ref<ReadTag[]>([]);
+const { gameModes: sessionGameModes, tags: sessionTags } = useSessionState();
 
 // Watch for changes in session game modes
 watch(
@@ -17,7 +18,22 @@ watch(
   { immediate: true }
 );
 
+// Watch for changes in session tags
+watch(
+  sessionTags,
+  (newValue, oldValue) => {
+    if (!isEqual(newValue, oldValue)) {
+      tags.value = newValue;
+    }
+  },
+  { immediate: true }
+);
+
 const selectedGameModes = defineModel<number[]>("gameModes", {
+  default: [],
+});
+
+const selectedTags = defineModel<number[]>("tags", {
   default: [],
 });
 
@@ -27,16 +43,22 @@ const freeToPlay = defineModel<boolean>("freeToPlay", {
 
 // Draft states
 const draftGameModes = ref<number[]>([]);
+const draftTags = ref<number[]>([]);
 const draftFreeToPlay = ref(false);
 
 const currentGameModes = computed(() => {
   return gameModes.value.toSorted((a, b) => a.name.localeCompare(b.name));
 });
 
+const currentTags = computed(() => {
+  return tags.value.toSorted((a, b) => a.name.localeCompare(b.name));
+});
+
 // Initialize draft states when drawer opens
 watch(isDrawerOpen, newValue => {
   if (newValue) {
     draftGameModes.value = [...selectedGameModes.value];
+    draftTags.value = [...selectedTags.value];
     draftFreeToPlay.value = freeToPlay.value;
   }
 });
@@ -45,14 +67,18 @@ watch(isDrawerOpen, newValue => {
 const hasDraftChanges = computed(() => {
   return (
     !isArrayEqual(draftGameModes.value, selectedGameModes.value) ||
+    !isArrayEqual(draftTags.value, selectedTags.value) ||
     draftFreeToPlay.value !== freeToPlay.value
   );
 });
 const hasDraftSelections = computed(
-  () => draftGameModes.value.length > 0 || draftFreeToPlay.value
+  () =>
+    draftGameModes.value.length > 0 ||
+    draftTags.value.length > 0 ||
+    draftFreeToPlay.value
 );
 const totalDraftCount = computed(() => {
-  let count = draftGameModes.value.length;
+  let count = draftGameModes.value.length + draftTags.value.length;
   if (draftFreeToPlay.value) {
     count++;
   }
@@ -61,11 +87,13 @@ const totalDraftCount = computed(() => {
 
 function clearAll() {
   draftGameModes.value = [];
+  draftTags.value = [];
   draftFreeToPlay.value = false;
 }
 
 function applyChanges() {
   selectedGameModes.value = [...draftGameModes.value];
+  selectedTags.value = [...draftTags.value];
   freeToPlay.value = draftFreeToPlay.value;
   isDrawerOpen.value = false;
 }
@@ -133,6 +161,32 @@ function isArrayEqual(arr1: number[], arr2: number[]) {
                 class="tw:w-4 tw:h-4"
               />
               <span class="tw:text-sm">{{ gameMode.name }}</span>
+            </label>
+          </DisclosurePanel>
+        </Disclosure>
+
+        <!-- Tags -->
+        <Disclosure
+          v-slot="{ open }"
+          as="div"
+        >
+          <DisclosureButton :class="['clean-button disclosure-button']">
+            Tags
+            <Icon :name="open ? 'lucide:chevron-up' : 'lucide:chevron-down'" />
+          </DisclosureButton>
+          <DisclosurePanel class="disclosure-panel">
+            <label
+              v-for="tag in currentTags"
+              :key="tag.id"
+              class="tw:flex tw:items-center tw:gap-2 tw:cursor-pointer"
+            >
+              <input
+                v-model="draftTags"
+                type="checkbox"
+                :value="tag.id"
+                class="tw:w-4 tw:h-4"
+              />
+              <span class="tw:text-sm">{{ tag.name }}</span>
             </label>
           </DisclosurePanel>
         </Disclosure>

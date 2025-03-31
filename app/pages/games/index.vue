@@ -9,6 +9,7 @@ interface InitialRouteQuery {
   platforms: string;
   stores: string;
   gameModes: string;
+  tags: string;
   search: string;
   sort: string;
   freeToPlay: string;
@@ -26,6 +27,7 @@ interface SelectedPlatforms {
 interface Filters {
   stores: number[];
   gameModes: number[];
+  tags: number[];
   freeToPlay: boolean;
 }
 
@@ -58,6 +60,7 @@ const route = useRoute();
 const {
   platforms: initialQueryPlatforms,
   gameModes: initialQueryGameModes,
+  tags: initialQueryTags,
   search: initialQuerySearch,
   sort: initialQuerySort = "-popularity",
   freeToPlay: initialQueryFreeToPlay,
@@ -76,14 +79,18 @@ const selectedPlatforms = ref<SelectedPlatforms>({
     : null,
 });
 
-// Use session state for game modes
-const { gameModes: sessionGameModes } = useSessionState();
+// Use session state for game modes and tags
+const { gameModes: sessionGameModes, tags: sessionTags } = useSessionState();
 const gameModes = ref<ReadGameMode[]>([]);
+const tags = ref<ReadTag[]>([]);
 
 // Fetch game modes server-side if possible
 const { data: serverGameModes } = await useFetch<ReadGameMode[]>(
   "/api/public/game-modes"
 );
+
+// Fetch tags server-side if possible
+const { data: serverTags } = await useFetch<ReadTag[]>("/api/public/tags");
 
 // Use server data first, then fall back to session state
 if (serverGameModes.value) {
@@ -92,12 +99,30 @@ if (serverGameModes.value) {
   sessionGameModes.value = [...serverGameModes.value];
 }
 
+// Use server data first for tags, then fall back to session state
+if (serverTags.value) {
+  tags.value = serverTags.value;
+  // Update session state with server data
+  sessionTags.value = [...serverTags.value];
+}
+
 // Watch for changes in session game modes
 watch(
   sessionGameModes,
   newValue => {
     if (newValue.length > 0) {
       gameModes.value = newValue;
+    }
+  },
+  { immediate: true }
+);
+
+// Watch for changes in session tags
+watch(
+  sessionTags,
+  newValue => {
+    if (newValue.length > 0) {
+      tags.value = newValue;
     }
   },
   { immediate: true }
@@ -122,10 +147,30 @@ function getGameModeIdFromSlug(slug: string): number | null {
   return gameMode ? gameMode.id : null;
 }
 
+// Create tags maps for slug/ID conversions
+const supportedTagsMap = computed(() => {
+  const idToSlug: Record<number, string> = {};
+  const slugToId: Record<string, number> = {};
+
+  tags.value.forEach(tag => {
+    idToSlug[tag.id] = tag.slug;
+    slugToId[tag.slug] = tag.id;
+  });
+
+  return { idToSlug, slugToId };
+});
+
+// Convert tag slugs to IDs
+function getTagIdFromSlug(slug: string): number | null {
+  const tag = tags.value.find(tag => tag.slug === slug);
+  return tag ? tag.id : null;
+}
+
 // Initialize selectedFilters
 const selectedFilters = ref<Filters>({
   stores: [],
   gameModes: [],
+  tags: [],
   freeToPlay: initialQueryFreeToPlay === "true",
 });
 
@@ -137,6 +182,20 @@ watch(
       selectedFilters.value.gameModes = initialQueryGameModes
         .split(",")
         .map(slug => getGameModeIdFromSlug(slug))
+        .filter((id): id is number => id !== null);
+    }
+  },
+  { immediate: true }
+);
+
+// Update selected tags when session data loads
+watch(
+  tags,
+  newValue => {
+    if (newValue.length > 0 && initialQueryTags) {
+      selectedFilters.value.tags = initialQueryTags
+        .split(",")
+        .map(slug => getTagIdFromSlug(slug))
         .filter((id): id is number => id !== null);
     }
   },
@@ -180,6 +239,12 @@ const urlQuery = computed(() => {
     queryToSet.stores = selectedFilters.value.stores.join(",");
   }
 
+  if (selectedFilters.value.tags.length) {
+    queryToSet.tags = selectedFilters.value.tags
+      .map(id => supportedTagsMap.value.idToSlug[id])
+      .join(",");
+  }
+
   if (debouncedSearch.value) {
     queryToSet.search = debouncedSearch.value;
   }
@@ -195,7 +260,7 @@ const urlQuery = computed(() => {
   return Object.keys(queryToSet).length ? queryToSet : undefined;
 });
 
-// Update apiQueryParams to include sort
+// Update apiQueryParams to include sort and tags
 const apiQueryParams = computed(() => {
   const platforms = [
     selectedPlatforms.value.p1,
@@ -217,6 +282,10 @@ const apiQueryParams = computed(() => {
 
   if (selectedFilters.value.stores.length) {
     query.stores = selectedFilters.value.stores.join(",");
+  }
+
+  if (selectedFilters.value.tags.length) {
+    query.tags = selectedFilters.value.tags.join(",");
   }
 
   if (debouncedSearch.value) {
@@ -336,6 +405,20 @@ const stopGameModesWatch = watch(
   }
 );
 
+// Track tag changes with Clarity
+const stopTagsWatch = watch(
+  () => selectedFilters.value.tags,
+  (newTags, oldTags) => {
+    if (oldTags && newTags.length !== oldTags.length) {
+      const tagNames = newTags
+        .map(id => tags.value.find(t => t.id === id)?.name)
+        .filter(Boolean);
+
+      clarity("set", "tagsChanged", tagNames);
+    }
+  }
+);
+
 const stopFreeToPlayWatch = watch(
   () => selectedFilters.value.freeToPlay,
   (newValue, oldValue) => {
@@ -350,6 +433,7 @@ onUnmounted(() => {
   stopUrlQueryWatch();
   stopPlatformsWatch();
   stopGameModesWatch();
+  stopTagsWatch();
   stopFreeToPlayWatch();
 });
 
@@ -399,6 +483,11 @@ function removeFilter(chip: { type: string; id: number | string }) {
         id => id !== chip.id
       );
       break;
+    case "tag":
+      selectedFilters.value.tags = selectedFilters.value.tags.filter(
+        id => id !== chip.id
+      );
+      break;
     case "freeToPlay":
       selectedFilters.value.freeToPlay = false;
       break;
@@ -413,6 +502,13 @@ const activeFilterChips = computed(() => {
     const mode = gameModes.value.find(m => m.id === id);
     if (mode) {
       chips.push({ type: "gameMode", id, name: mode.name });
+    }
+  });
+
+  selectedFilters.value.tags.forEach(id => {
+    const tag = tags.value.find(t => t.id === id);
+    if (tag) {
+      chips.push({ type: "tag", id, name: tag.name });
     }
   });
 
@@ -510,8 +606,8 @@ function handleSortChange(value: string | string[] | undefined) {
         />
         <GameCategorySelector
           v-model:game-modes="selectedFilters.gameModes"
+          v-model:tags="selectedFilters.tags"
           v-model:free-to-play="selectedFilters.freeToPlay"
-          :include="['gameModes']"
         />
       </div>
       <div></div>

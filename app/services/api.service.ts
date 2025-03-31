@@ -19,7 +19,7 @@ export async function getStores() {
 
 export async function getTags() {
   try {
-    const tags = await $fetch<ReadTag[]>("/api/tags");
+    const tags = await $fetch<ReadTag[]>("/api/public/tags");
     return tags;
   } catch (error) {
     console.error("Failed to fetch tags", error);

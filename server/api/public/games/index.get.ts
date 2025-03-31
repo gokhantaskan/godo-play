@@ -5,6 +5,7 @@ import {
   games as gamesTable,
   gameSubmissionGameModes,
   platformGroupPlatforms,
+  gamesTags,
 } from "~~/server/db/schema";
 import { isH3ErrorLike } from "~~/server/utils/errorHandler";
 import type { FilterParams, SubmissionStatus } from "~~/shared/types/globals";
@@ -33,6 +34,7 @@ export default defineCachedEventHandler(
       const {
         platforms,
         gameModes,
+        tags,
         limit = "60",
         offset = "0",
         search,
@@ -44,6 +46,7 @@ export default defineCachedEventHandler(
       // Parse query parameters
       const parsedPlatforms = parseArrayParam(platforms);
       const parsedGameModes = parseArrayParam(gameModes);
+      const parsedTags = parseArrayParam(tags);
       const parsedLimit = parseInt(limit);
       const parsedOffset = parseInt(offset);
       const parsedFreeToPlay = freeToPlay === "true";
@@ -120,6 +123,16 @@ export default defineCachedEventHandler(
           .where(inArray(gameSubmissionGameModes.gameModeId, parsedGameModes));
 
         conditions = and(conditions, sql`id IN (${gameModeQuery})`);
+      }
+
+      // Add tag filtering condition
+      if (parsedTags?.length) {
+        const tagsQuery = db
+          .select({ submissionId: gamesTags.gameId })
+          .from(gamesTags)
+          .where(inArray(gamesTags.tagId, parsedTags));
+
+        conditions = and(conditions, sql`id IN (${tagsQuery})`);
       }
 
       // Get filtered count of games

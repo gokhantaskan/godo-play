@@ -31,6 +31,7 @@ export interface FilterParams {
   offset?: number;
   platforms?: string;
   gameModes?: string;
+  tags?: string;
   freeToPlay?: string;
 }
 
