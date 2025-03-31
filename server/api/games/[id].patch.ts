@@ -70,7 +70,6 @@ export default defineEventHandler(async event => {
   try {
     // Validate request body
     const body = await readBody<RequestBody>(event);
-    console.log("game patch", body);
     updateSubmissionSchema.parse(body);
 
     const result = await db.transaction(async tx => {
@@ -213,7 +212,6 @@ export default defineEventHandler(async event => {
 
         if (body.freeToPlay !== undefined) {
           updateData.freeToPlay = body.freeToPlay;
-          console.log("Setting freeToPlay to:", body.freeToPlay);
         }
 
         const [updatedGame] = await tx
@@ -221,8 +219,6 @@ export default defineEventHandler(async event => {
           .set(updateData)
           .where(eq(games.id, submissionId))
           .returning();
-
-        console.log("Updated game:", updatedGame);
 
         if (!updatedGame) {
           throw createError({
