@@ -14,13 +14,8 @@ onMounted(async () => {
   if (import.meta.client) {
     const { gameModes, stores } = useSessionState();
 
-    if (!gameModes.value.length) {
-      gameModes.value = await getGameModes();
-    }
-
-    if (!stores.value.length) {
-      stores.value = await getStores();
-    }
+    gameModes.value = await getGameModes();
+    stores.value = await getStores();
   }
 });
 

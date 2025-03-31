@@ -1,12 +1,21 @@
 <script setup lang="ts">
 import { Disclosure, DisclosureButton, DisclosurePanel } from "@headlessui/vue";
+import { isEqual } from "lodash";
 
 const isDrawerOpen = ref(false);
 const gameModes = ref<ReadGameMode[]>([]);
+const { gameModes: sessionGameModes } = useSessionState();
 
-if (import.meta.client) {
-  gameModes.value = useSessionState().gameModes.value;
-}
+// Watch for changes in session game modes
+watch(
+  sessionGameModes,
+  (newValue, oldValue) => {
+    if (!isEqual(newValue, oldValue)) {
+      gameModes.value = newValue;
+    }
+  },
+  { immediate: true }
+);
 
 const selectedGameModes = defineModel<number[]>("gameModes", {
   default: [],

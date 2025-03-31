@@ -24,13 +24,15 @@ export function useCookieConsent() {
     maxAge: COOKIE_EXPIRY.REJECTED,
     ...BASE_COOKIE_OPTIONS,
   });
-
   const isLoading = useState("cookieConsentLoading", () => false);
   const cookieConsent = useState<boolean | null>(
     "cookieConsent",
     () => cookie.value
   );
   const { updateGtagConsent } = useScripts();
+  const {
+    proxy: { clarity },
+  } = useClarityScript();
 
   function setCookieConsent(value: boolean) {
     isLoading.value = true;
@@ -52,6 +54,7 @@ export function useCookieConsent() {
       if (value) {
         agreedToCookiesScriptConsent.accept();
         updateGtagConsent(true);
+        clarity("consent");
       } else {
         updateGtagConsent(false);
       }

@@ -29,9 +29,9 @@ export default defineNuxtConfig({
     registry: {
       clarity: {
         id: "",
-        scriptOptions: {
-          trigger: "manual",
-        },
+        // scriptOptions: {
+        //   trigger: "manual",
+        // },
       },
     },
   },
@@ -100,7 +100,7 @@ export default defineNuxtConfig({
       link: [
         {
           rel: "stylesheet",
-          href: "https://fonts.googleapis.com/css2?family=Figtree:ital,wght@0,300..900;1,300..900&family=Lexend:wght@100..900&display=swap",
+          href: "https://fonts.googleapis.com/css2?family=Figtree:ital,wght@0,300..700;1,300..700&family=Lexend:wght@300..700&display=swap",
         },
       ],
     },
