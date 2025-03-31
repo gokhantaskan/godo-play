@@ -5,6 +5,7 @@ import { db } from "~~/server/db";
 import {
   crossplayInformation,
   games,
+  gamesTags,
   gameSubmissionGameModes,
   platformGroupPlatforms,
   platformGroups,
@@ -171,11 +172,21 @@ export default defineEventHandler(async event => {
       }
 
       // Process game modes
-      if (body.gameModeIds.length > 0) {
+      if (body.gameModeIds && body.gameModeIds.length > 0) {
         await tx.insert(gameSubmissionGameModes).values(
           body.gameModeIds.map(gameModeId => ({
             submissionId: submission.id,
             gameModeId,
+          }))
+        );
+      }
+
+      // Insert tags if provided
+      if (body.tagIds && body.tagIds.length > 0) {
+        await tx.insert(gamesTags).values(
+          body.tagIds.map(tagId => ({
+            gameId: submission.id,
+            tagId,
           }))
         );
       }

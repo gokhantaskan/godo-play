@@ -4,7 +4,7 @@ import { Analytics } from "@vercel/analytics/nuxt";
 import { useScripts } from "@/composables/useScripts";
 import { useSessionState } from "~/composables/useSessionState";
 
-import { getGameModes, getStores } from "./services/api.service";
+import { getGameModes, getStores, getTags } from "./services/api.service";
 
 const { initScripts } = useScripts();
 
@@ -12,10 +12,11 @@ onMounted(async () => {
   initScripts();
 
   if (import.meta.client) {
-    const { gameModes, stores } = useSessionState();
+    const { gameModes, stores, tags } = useSessionState();
 
     gameModes.value = await getGameModes();
     stores.value = await getStores();
+    tags.value = await getTags();
   }
 });
 

@@ -146,6 +146,21 @@ function formatDate(date: number) {
                 </a>
               </template>
             </div>
+
+            <!-- Tags -->
+            <div
+              v-if="dbGame?.tags?.length"
+              class="tw:flex tw:flex-wrap tw:gap-2 tw:mt-1"
+            >
+              <TheChip
+                v-for="tagItem in dbGame.tags"
+                :key="tagItem.tagId"
+                variant="primary"
+                size="sm"
+              >
+                {{ tagItem.tag.name }}
+              </TheChip>
+            </div>
           </div>
         </div>
       </div>

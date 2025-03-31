@@ -7,3 +7,4 @@ export * from "./tables/platformGroups";
 export * from "./tables/platforms";
 export * from "./tables/storePlatforms";
 export * from "./tables/stores";
+export * from "./tables/tags";

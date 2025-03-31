@@ -5,6 +5,7 @@ import { db } from "~~/server/db";
 import {
   crossplayInformation,
   games,
+  gamesTags,
   gameSubmissionGameModes,
   platformGroupPlatforms,
   platformGroups,
@@ -42,6 +43,7 @@ const updateSubmissionSchema = z.object({
     .array(z.number())
     .min(1, "At least one game mode is required")
     .optional(),
+  tagIds: z.array(z.number()).optional(),
   status: z.enum(["approved", "rejected"]).optional(),
   crossplayInformation: z
     .object({
@@ -173,6 +175,20 @@ export default defineEventHandler(async event => {
             body.gameModeIds.map(gameModeId => ({
               submissionId,
               gameModeId,
+            }))
+          );
+        }
+      }
+
+      // Process tags if provided
+      if (body.tagIds !== undefined) {
+        await tx.delete(gamesTags).where(eq(gamesTags.gameId, submissionId));
+
+        if (body.tagIds.length > 0) {
+          await tx.insert(gamesTags).values(
+            body.tagIds.map(tagId => ({
+              gameId: submissionId,
+              tagId,
             }))
           );
         }

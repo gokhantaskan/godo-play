@@ -55,6 +55,7 @@ const platformGroupsModel = ref<PlatformGroups>(platformGroups);
 const storesModel = ref<Store["slug"][]>(stores);
 const storePlatformsModel = ref<StoreData>(storePlatforms);
 const gameModesModel = ref<number[]>(gameModeIds);
+const tagsModel = ref<number[]>(props.game.tags?.map(tag => tag.tagId) || []);
 const crossplayInformationModel =
   ref<CrossplayInformation>(crossplayInformation);
 const freeToPlayModel = ref(props.game.freeToPlay);
@@ -97,6 +98,7 @@ async function handleSave() {
         stores: storesModel.value,
         storesPlatforms: storePlatformsModel.value,
         gameModeIds: gameModesModel.value,
+        tagIds: tagsModel.value,
         crossplayInformation: crossplayInformationModel.value,
       },
     });
@@ -258,6 +260,7 @@ onMounted(() => {
       v-model:stores="storesModel"
       v-model:store-platforms="storePlatformsModel"
       v-model:game-modes="gameModesModel"
+      v-model:tags="tagsModel"
       :disabled="disabled"
     />
 

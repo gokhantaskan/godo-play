@@ -254,6 +254,17 @@ export default defineCachedEventHandler(
               },
             },
           },
+          tags: {
+            with: {
+              tag: {
+                columns: {
+                  id: true,
+                  name: true,
+                  slug: true,
+                },
+              },
+            },
+          },
         },
         where: conditions,
         orderBy: [

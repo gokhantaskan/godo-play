@@ -12,6 +12,10 @@ const links = [
     label: "Game Modes",
     to: { name: "AdminGameModesPage" },
   },
+  {
+    label: "Tags",
+    to: { name: "AdminTagsPage" },
+  },
 ];
 </script>
 

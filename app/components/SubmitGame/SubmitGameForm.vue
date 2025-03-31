@@ -36,6 +36,7 @@ interface SubmitGamePayload {
   platformGroups: PlatformGroups;
   storesPlatforms: StoreData;
   gameModeIds: number[];
+  tagIds: number[];
   token: string;
 }
 
@@ -53,6 +54,7 @@ const selectedPlatformGroups = ref<PlatformGroups>([[]]);
 const selectedStores = ref<Store["slug"][]>([]);
 const selectedStoresPlatforms = ref<StoreData>({});
 const selectedGameModes = ref<number[]>([]);
+const selectedTags = ref<number[]>([]);
 const selectedFreeToPlay = ref(false);
 const isSubmitting = ref(false);
 const formError = ref<string | null>(null);
@@ -77,6 +79,7 @@ function resetForm() {
   selectedStores.value = [];
   selectedStoresPlatforms.value = {};
   selectedGameModes.value = [];
+  selectedTags.value = [];
   selectedFreeToPlay.value = false;
   formError.value = null;
 }
@@ -117,6 +120,7 @@ async function handleSubmit(event: Event) {
       platformGroups: selectedPlatformGroups.value,
       storesPlatforms: selectedStoresPlatforms.value,
       gameModeIds: selectedGameModes.value,
+      tagIds: selectedTags.value,
       token,
     };
 
@@ -191,6 +195,7 @@ async function handleSubmit(event: Event) {
       v-model:stores="selectedStores"
       v-model:store-platforms="selectedStoresPlatforms"
       v-model:game-modes="selectedGameModes"
+      v-model:tags="selectedTags"
       v-model:crossplay-information="selectedCrossplayInformation"
     />
 

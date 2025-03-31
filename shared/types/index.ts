@@ -128,6 +128,14 @@ export interface GameSubmissionWithRelations extends ReadGame {
       slug: string;
     };
   }>;
+  tags?: Array<{
+    tagId: number;
+    tag: {
+      id: number;
+      name: string;
+      slug: string;
+    };
+  }>;
 }
 
 /**
@@ -137,4 +145,10 @@ export function hasRelations(
   submission: ReadGame | GameSubmissionWithRelations
 ): submission is GameSubmissionWithRelations {
   return "platformGroups" in submission;
+}
+
+export interface ReadTag {
+  id: number;
+  name: string;
+  slug: string;
 }

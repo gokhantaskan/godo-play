@@ -1,10 +1,13 @@
-import type { ReadGameMode, ReadStore } from "~~/shared/types";
+import type { ReadGameMode, ReadStore, ReadTag } from "~~/shared/types";
 
 export async function getGameModes() {
-  return withErrorHandler(async () => {
-    const response = await fetch("/api/game-modes");
-    return (await response.json()) as ReadGameMode[];
-  }, "Failed to fetch game modes");
+  try {
+    const modes = await $fetch<ReadGameMode[]>("/api/game-modes");
+    return modes;
+  } catch (error) {
+    console.error("Failed to fetch game modes", error);
+    return [];
+  }
 }
 
 export async function getStores() {
@@ -12,6 +15,16 @@ export async function getStores() {
     const response = await fetch("/api/stores");
     return (await response.json()) as ReadStore[];
   }, "Failed to fetch stores");
+}
+
+export async function getTags() {
+  try {
+    const tags = await $fetch<ReadTag[]>("/api/tags");
+    return tags;
+  } catch (error) {
+    console.error("Failed to fetch tags", error);
+    return [];
+  }
 }
 
 async function withErrorHandler<T>(

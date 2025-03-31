@@ -105,6 +105,20 @@ onUnmounted(() => {
           }}
         </div>
 
+        <!-- Tags -->
+        <div
+          v-if="props.game.tags?.length"
+          class="tw:mt-2 tw:flex tw:flex-wrap tw:gap-1"
+        >
+          <TheChip
+            v-for="tagItem in props.game.tags"
+            :key="tagItem.tagId"
+            :label="tagItem.tag.name"
+            variant="primary"
+            size="sm"
+          />
+        </div>
+
         <!-- Platform Groups -->
         <div
           v-if="props.game.platformGroups?.length"

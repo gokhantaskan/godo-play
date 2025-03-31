@@ -1,12 +1,9 @@
 <script setup lang="ts">
 import { z } from "zod";
 
+import { useSessionState } from "~/composables/useSessionState";
 import GameCrossplayInformationForm from "~~/app/components/GameDetails/GameCrossplayInformationForm.vue";
-import {
-  SUPPORTED_GAME_MODES,
-  SUPPORTED_PLATFORMS,
-  SUPPORTED_STORES,
-} from "~~/shared/constants";
+import { SUPPORTED_PLATFORMS, SUPPORTED_STORES } from "~~/shared/constants";
 import { CATEGORIES } from "~~/shared/constants/categories";
 import { InsertPlatformGroupSchema } from "~~/shared/schemas/platformGroup";
 import { InsertStorePlatformSchema } from "~~/shared/schemas/storePlatform";
@@ -58,6 +55,13 @@ const gameModes = defineModel<number[]>("gameModes", {
   required: true,
   default: [],
 });
+
+const tags = defineModel<number[]>("tags", {
+  required: true,
+  default: [],
+});
+
+const { tags: sessionTags, gameModes: sessionGameModes } = useSessionState();
 
 const crossplayInformation = defineModel<CrossplayInformation>(
   "crossplayInformation",
@@ -272,22 +276,35 @@ watch(
       <p class="tw:text-sm tw:text-text-muted tw:mb-4">
         Select at least one game mode that the game supports.
       </p>
-      <div class="tw:space-y-2">
-        <div
-          v-for="mode in SUPPORTED_GAME_MODES"
-          :key="mode.id"
-          class="tw:flex tw:items-center tw:gap-2"
-        >
-          <input
-            :id="mode.slug"
-            v-model="gameModes"
-            type="checkbox"
-            class="checkbox"
-            :value="mode.id"
-          />
-          <label :for="mode.slug">{{ mode.name }}</label>
-        </div>
-      </div>
+      <TheSelect
+        v-model="gameModes"
+        :options="
+          sessionGameModes.map(mode => ({
+            label: mode.name,
+            value: mode.id,
+          }))
+        "
+        placeholder="Select game modes..."
+        multiple
+      />
+    </fieldset>
+
+    <fieldset>
+      <legend>Tags</legend>
+      <p class="tw:text-sm tw:text-text-muted tw:mb-4">
+        Select tags that best describe the game.
+      </p>
+      <TheSelect
+        v-model="tags"
+        :options="
+          sessionTags.map(tag => ({
+            label: tag.name,
+            value: tag.id,
+          }))
+        "
+        placeholder="Select tags..."
+        multiple
+      />
     </fieldset>
 
     <fieldset>
@@ -406,7 +423,10 @@ watch(
               @update:model-value="
                 updateStorePlatforms(store.slug, {
                   ...storePlatforms[store.slug],
-                  crossplayPlatforms: Array.isArray($event) ? $event : [$event],
+                  crossplayPlatforms: (Array.isArray($event)
+                    ? $event
+                    : [$event]
+                  ).filter((n): n is number => typeof n === 'number'),
                 })
               "
             />

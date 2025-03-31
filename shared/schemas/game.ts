@@ -61,6 +61,7 @@ export const SubmitGameSchema = z.object({
     })
   ),
   gameModeIds: z.array(z.number()).min(1, "At least one game mode is required"),
+  tagIds: z.array(z.number()).optional(),
   token: z.string().min(1, "reCAPTCHA token is required"),
 });
 

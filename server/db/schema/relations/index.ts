@@ -14,6 +14,7 @@ import {
   storePlatforms,
 } from "../tables/storePlatforms";
 import { stores, storeSupportedPlatforms } from "../tables/stores";
+import { gamesTags, tags } from "../tables/tags";
 
 export const gameSubmissionsRelations = relations(games, ({ many, one }) => ({
   // A submission can have many platform groups and many pc store entries
@@ -28,6 +29,7 @@ export const gameSubmissionsRelations = relations(games, ({ many, one }) => ({
     fields: [games.category],
     references: [gameCategories.pointer],
   }),
+  tags: many(gamesTags),
 }));
 
 export const gameModesRelations = relations(gameModes, ({ many }) => ({
@@ -148,3 +150,18 @@ export const gameCategoriesRelations = relations(
     games: many(games),
   })
 );
+
+export const tagsRelations = relations(tags, ({ many }) => ({
+  games: many(gamesTags),
+}));
+
+export const gamesTagsRelations = relations(gamesTags, ({ one }) => ({
+  tag: one(tags, {
+    fields: [gamesTags.tagId],
+    references: [tags.id],
+  }),
+  game: one(games, {
+    fields: [gamesTags.gameId],
+    references: [games.id],
+  }),
+}));

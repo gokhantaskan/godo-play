@@ -47,6 +47,7 @@
     "@tiptap/pm": "^2.11.5",
     "@tiptap/starter-kit": "^2.11.5",
     "@tiptap/vue-3": "^2.11.5",
+    "@vee-validate/zod": "^4.15.0",
     "@vercel/analytics": "^1.5.0",
     "@vueuse/core": "^12.7.0",
     "dompurify": "^3.2.4",
@@ -64,6 +65,7 @@
     "slugify": "^1.6.6",
     "tailwindcss": "4.0.0-beta.8",
     "unstorage": "^1.15.0",
+    "vee-validate": "^4.15.0",
     "vue": "latest",
     "vue-router": "latest",
     "zod": "^3.24.2"
