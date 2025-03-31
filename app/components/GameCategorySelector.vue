@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Disclosure, DisclosureButton, DisclosurePanel } from "@headlessui/vue";
-import { isEqual } from "lodash";
+import isEqual from "lodash/isEqual";
 
 const isDrawerOpen = ref(false);
 const gameModes = ref<ReadGameMode[]>([]);
