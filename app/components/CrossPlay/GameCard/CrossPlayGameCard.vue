@@ -3,6 +3,8 @@ import type { GameSubmissionWithRelations } from "~~/shared/types";
 
 const props = defineProps<{
   game: GameSubmissionWithRelations;
+  directLink?: boolean;
+  blank?: boolean;
 }>();
 
 const {
@@ -11,13 +13,21 @@ const {
 
 const isDialogOpen = ref(false);
 const originalURL = ref("");
+const route = useRoute();
 
 function openDialog(event: Event) {
-  event.preventDefault();
-  event.stopPropagation();
-
   // Track game click with Clarity
   clarity("set", "gameCardClicked", props.game.name);
+
+  console.log(route.name);
+
+  if (props.directLink) {
+    // Let the default link behavior happen when directLink is true
+    return;
+  }
+
+  event.preventDefault();
+  event.stopPropagation();
 
   originalURL.value = window.location.href;
   history.pushState({ dialogOpen: true }, "", `/games/${props.game.slug}`);
@@ -44,6 +54,11 @@ onUnmounted(() => {
     <a
       :href="`/games/${game.slug}`"
       class="game-card__cover"
+      :target="
+        (directLink && blank) || route.name === 'CrossPlayGamesPage'
+          ? '_blank'
+          : undefined
+      "
       @click="openDialog"
     >
       <img
@@ -66,6 +81,7 @@ onUnmounted(() => {
     </a>
 
     <CrossPlayGameCardDialog
+      v-if="!directLink"
       v-model:open="isDialogOpen"
       :slug="game.slug"
     />

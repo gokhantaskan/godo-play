@@ -2,6 +2,7 @@
 import { TabsContent, TabsList, TabsRoot, TabsTrigger } from "reka-ui";
 import type { LocationQuery } from "vue-router";
 
+import { CrossPlayGameDetailsGameRecommendations } from "#components";
 import { ageRatingHumanizedRatings } from "~~/shared/constants";
 import type { GameSubmissionWithRelations } from "~~/shared/types";
 import type {
@@ -357,5 +358,8 @@ function formatDate(date: number) {
         </div>
       </TabsList>
     </TabsRoot>
+
+    <!-- Game Recommendations -->
+    <CrossPlayGameDetailsGameRecommendations :slug="dbGame?.slug || ''" />
   </div>
 </template>
