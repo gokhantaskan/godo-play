@@ -443,9 +443,9 @@ useHead({
 
 useSeoMeta({
   ogUrl: `https://godo-play.com/games`,
-  title: computed(() => `${getMetaTitle()} - GodoPlay`),
-  ogTitle: computed(() => `${getMetaTitle()} - GodoPlay`),
-  twitterTitle: computed(() => `${getMetaTitle()} - GodoPlay`),
+  title: computed(() => `${getMetaTitle()}`),
+  ogTitle: computed(() => `${getMetaTitle()}`),
+  twitterTitle: computed(() => `${getMetaTitle()}`),
   description:
     "Find the best cross-gen and cross-play games between PC, Mac, PlayStation, Xbox, and Nintendo Switch.",
   ogDescription:

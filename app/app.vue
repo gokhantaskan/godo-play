@@ -26,8 +26,8 @@ useHead({
   },
   titleTemplate: titleChunk => {
     return titleChunk
-      ? `${titleChunk} - GodoPlay`
-      : "GodoPlay - The Ultimate Fusion for Co-Op and Multiplayer Gaming";
+      ? `${titleChunk} | GodoPlay`
+      : "The Ultimate Fusion for Co-Op and Multiplayer Gaming | GodoPlay";
   },
   script: [
     {
