@@ -58,6 +58,7 @@ const selectedTags = ref<number[]>([]);
 const selectedFreeToPlay = ref(false);
 const isSubmitting = ref(false);
 const formError = ref<string | null>(null);
+const formKey = ref(0);
 
 // Computed
 const isValidForm = computed(() => {
@@ -75,6 +76,12 @@ const isValidForm = computed(() => {
 // Methods
 function resetForm() {
   selectedGame.value = null;
+  selectedCategory.value = 0;
+  selectedCrossplayInformation.value = {
+    evidenceUrl: "",
+    information: "",
+    isOfficial: false,
+  };
   selectedPlatformGroups.value = [[]];
   selectedStores.value = [];
   selectedStoresPlatforms.value = {};
@@ -131,6 +138,7 @@ async function handleSubmit(event: Event) {
 
     // Reset form
     resetForm();
+    formKey.value++;
   } catch (error) {
     console.error("Failed to submit game:", error);
     formError.value = "Failed to submit game. Please try again.";
@@ -189,6 +197,7 @@ async function handleSubmit(event: Event) {
     </div>
 
     <SubmitGameFormInner
+      :key="formKey"
       v-model:free-to-play="selectedFreeToPlay"
       v-model:category="selectedCategory"
       v-model:platform-groups="selectedPlatformGroups"

@@ -1,7 +1,7 @@
 import { eq } from "drizzle-orm";
 
 import { db } from "~~/server/db";
-import { games } from "~~/server/db/schema";
+import { crossplayInformation, games } from "~~/server/db/schema";
 import { isH3ErrorLike } from "~~/server/utils/errorHandler";
 
 export default defineEventHandler(async event => {
@@ -35,7 +35,12 @@ export default defineEventHandler(async event => {
         });
       }
 
-      // Delete the submission (cascading will handle related records)
+      // First delete the crossplay information to resolve the foreign key constraint
+      await tx
+        .delete(crossplayInformation)
+        .where(eq(crossplayInformation.gameId, submissionId));
+
+      // Then delete the game submission
       await tx.delete(games).where(eq(games.id, submissionId));
 
       return submission;
