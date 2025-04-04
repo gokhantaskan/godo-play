@@ -167,35 +167,37 @@ export default defineCachedEventHandler(
               },
             },
           },
-          // Only include platform data if we need to filter by platforms
-          ...(platformIds.length > 0 ? {
-            platformGroups: {
-              with: {
-                platformGroupPlatforms: {
-                  with: {
-                    platform: {
-                      columns: {
-                        id: true,
-                      },
+          // Always include platform data for display
+          platformGroups: {
+            with: {
+              platformGroupPlatforms: {
+                with: {
+                  platform: {
+                    columns: {
+                      id: true,
+                      name: true,
+                      slug: true,
                     },
                   },
                 },
               },
             },
-            storePlatforms: {
-              with: {
-                crossplayEntries: {
-                  with: {
-                    platform: {
-                      columns: {
-                        id: true,
-                      },
+          },
+          storePlatforms: {
+            with: {
+              crossplayEntries: {
+                with: {
+                  platform: {
+                    columns: {
+                      id: true,
+                      name: true,
+                      slug: true,
                     },
                   },
                 },
               },
-            }
-          } : {})
+            },
+          }
         },
       };
 
