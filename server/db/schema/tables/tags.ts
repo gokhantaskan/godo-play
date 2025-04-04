@@ -2,6 +2,7 @@ import {
   integer,
   pgTable,
   primaryKey,
+  real,
   serial,
   text,
 } from "drizzle-orm/pg-core";
@@ -14,6 +15,7 @@ export const tags = pgTable("tags", {
   id: serial("id").primaryKey(),
   name: text("name").notNull(),
   slug: text("slug").notNull().unique(),
+  weight: real("weight").default(1.0).notNull(),
   ...defaultInsertTimestamps,
 });
 

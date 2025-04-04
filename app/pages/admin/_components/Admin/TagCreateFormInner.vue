@@ -1,10 +1,14 @@
 <script setup lang="ts">
 import slugify from "slugify";
 
-import type { InsertTag } from "~~/server/db/schema";
+type TagFormData = {
+  name: string;
+  slug: string;
+  weight: number;
+};
 
 type Props = {
-  modelValue: Pick<InsertTag, "name" | "slug">;
+  modelValue: TagFormData;
   autoSlugify?: boolean;
 };
 
@@ -54,6 +58,25 @@ function handleNameChange(event: Event) {
         class="tw:rounded-lg"
         @focus="isSlugTouched = true"
       />
+    </div>
+
+    <div class="tw:flex tw:flex-col tw:gap-1">
+      <label for="weight"
+        >Weight (1.0 = default, higher values = higher priority)</label
+      >
+      <input
+        id="weight"
+        v-model.number="modelValue.weight"
+        type="number"
+        min="0.1"
+        max="10"
+        step="0.1"
+        class="tw:rounded-lg"
+        placeholder="1.0"
+      />
+      <small class="tw:text-gray-500"
+        >Higher weight means higher priority in recommendations</small
+      >
     </div>
   </div>
 </template>

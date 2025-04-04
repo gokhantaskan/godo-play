@@ -4,6 +4,7 @@ import {
   pgSequence,
   pgTable,
   primaryKey,
+  real,
   text,
 } from "drizzle-orm/pg-core";
 import { createInsertSchema, createSelectSchema } from "drizzle-zod";
@@ -24,6 +25,7 @@ export const gameModes = pgTable("game_modes", {
     .default(sql`nextval('game_mode_id_seq')`),
   name: text("name").notNull(),
   slug: text("slug").notNull().unique(),
+  weight: real("weight").default(1.0).notNull(),
   ...defaultInsertTimestamps,
 });
 

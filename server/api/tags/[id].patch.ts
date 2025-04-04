@@ -2,11 +2,11 @@ import { eq } from "drizzle-orm";
 import { z } from "zod";
 
 import { db } from "~~/server/db";
-import { gameModes } from "~~/server/db/schema";
+import { tags } from "~~/server/db/schema";
 
 export default defineEventHandler(async event => {
   try {
-    // Get the game mode ID from the route parameter
+    // Get the tag ID from the route parameter
     const id = parseInt(getRouterParam(event, "id") as string);
 
     // Parse and validate the request body
@@ -25,21 +25,21 @@ export default defineEventHandler(async event => {
       });
     }
 
-    // Update the game mode with the provided fields
-    const [updatedGameMode] = await db
-      .update(gameModes)
+    // Update the tag with the provided fields
+    const [updatedTag] = await db
+      .update(tags)
       .set(body)
-      .where(eq(gameModes.id, id))
+      .where(eq(tags.id, id))
       .returning();
 
-    if (!updatedGameMode) {
+    if (!updatedTag) {
       throw createError({
         statusCode: 404,
-        message: "Game mode not found",
+        message: "Tag not found",
       });
     }
 
-    return updatedGameMode;
+    return updatedTag;
   } catch (error) {
     if (error instanceof z.ZodError) {
       throw createError({

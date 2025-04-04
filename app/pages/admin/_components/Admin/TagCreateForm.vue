@@ -1,8 +1,14 @@
 <script setup lang="ts">
-import type { InsertTag, Tag } from "~~/server/db/schema";
+import type { Tag } from "~~/server/db/schema";
 
 import { useTags } from "../../_composables/useTags";
 import AdminTagCreateFormInner from "./TagCreateFormInner.vue";
+
+type TagFormData = {
+  name: string;
+  slug: string;
+  weight: number;
+};
 
 const emit = defineEmits<{
   close: [];
@@ -10,9 +16,10 @@ const emit = defineEmits<{
 
 const { refresh } = useTags();
 
-const form = reactive<Pick<InsertTag, "name" | "slug">>({
+const form = reactive<TagFormData>({
   name: "",
   slug: "",
+  weight: 1.0,
 });
 
 const pending = ref(false);

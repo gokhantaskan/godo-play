@@ -120,6 +120,13 @@
       "when": 1743412315081,
       "tag": "0016_supreme_butterfly",
       "breakpoints": true
+    },
+    {
+      "idx": 17,
+      "version": "7",
+      "when": 1743779136738,
+      "tag": "0017_left_gabe_jones",
+      "breakpoints": true
     }
   ]
 }

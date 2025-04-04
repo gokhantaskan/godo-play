@@ -1,6 +1,14 @@
 <script setup lang="ts">
+import type { GameMode } from "~~/server/db/schema";
+
 import { useGameModes } from "../../_composables/useGameModes";
 import AdminGameModeCreateFormInner from "./GameModeCreateFormInner.vue";
+
+type GameModeFormData = {
+  name: string;
+  slug: string;
+  weight: number;
+};
 
 const emit = defineEmits<{
   close: [];
@@ -8,9 +16,10 @@ const emit = defineEmits<{
 
 const { refresh } = useGameModes();
 
-const form = reactive<Pick<InsertGameMode, "name" | "slug">>({
+const form = reactive<GameModeFormData>({
   name: "",
   slug: "",
+  weight: 1.0,
 });
 
 const pending = ref(false);
@@ -19,7 +28,7 @@ async function onSubmit() {
   pending.value = true;
 
   try {
-    await $fetch<ReadGameMode>("/api/game-modes", {
+    await $fetch<GameMode>("/api/game-modes", {
       method: "POST",
       body: form,
     });

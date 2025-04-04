@@ -40,7 +40,9 @@ async function handleDelete() {
   >
     <div>
       <h3 class="tw:font-medium">{{ tag.name }}</h3>
-      <p class="tw:text-sm tw:text-gray-500">{{ tag.slug }}</p>
+      <p class="tw:text-sm tw:text-gray-500">
+        {{ tag.slug }} · {{ tag.weight }}
+      </p>
     </div>
 
     <div class="tw:flex tw:items-center tw:gap-2">
