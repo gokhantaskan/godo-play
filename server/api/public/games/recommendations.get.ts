@@ -1,9 +1,8 @@
-import { eq, inArray, not, sql } from "drizzle-orm";
+import { eq, inArray, not } from "drizzle-orm";
 
 import { db } from "~~/server/db";
-import { gameSubmissionGameModes, games, gamesTags, tags, gameModes } from "~~/server/db/schema";
+import { games, tags, gameModes } from "~~/server/db/schema";
 import { isH3ErrorLike } from "~~/server/utils/errorHandler";
-import type { GameSubmissionWithRelations } from "~~/shared/types";
 
 // Default weight for tags and game modes not explicitly defined
 const DEFAULT_TAG_WEIGHT = 1;
