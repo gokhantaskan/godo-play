@@ -7,6 +7,10 @@ import { isH3ErrorLike } from "~~/server/utils/errorHandler";
 // Default weight for tags and game modes not explicitly defined
 const DEFAULT_TAG_WEIGHT = 1;
 const DEFAULT_GAME_MODE_WEIGHT = 1;
+// High weight threshold to prioritize important tags
+const HIGH_WEIGHT_THRESHOLD = 3;
+// Multiplier for high-weighted tags to ensure their priority
+const HIGH_WEIGHT_MULTIPLIER = 5;
 
 // Type definitions for filtering games by platforms
 interface PlatformData {
@@ -239,22 +243,36 @@ export default defineCachedEventHandler(
 
           // Calculate weighted score for matching tags
           let tagScore = 0;
+          // Track high-weighted tags for priority sorting
+          let hasHighWeightTags = false;
+          let highestTagWeight = 0;
           game.tags?.forEach((tag: TagRelation) => {
             if (tagIds.includes(tag.tagId)) {
               // Apply weight based on tag ID
               const weight = tagWeightMap.get(tag.tagId) || DEFAULT_TAG_WEIGHT;
-              tagScore += weight;
+              // Apply multiplier for high-weight tags
+              if (weight >= HIGH_WEIGHT_THRESHOLD) {
+                tagScore += weight * HIGH_WEIGHT_MULTIPLIER;
+                hasHighWeightTags = true;
+                highestTagWeight = Math.max(highestTagWeight, weight);
+              } else {
+                tagScore += weight;
+              }
             }
           });
 
-          // Total weighted score
-          const score = gameModeScore + tagScore;
+          // Total weighted score with priority for high-weight tags
+          const score = hasHighWeightTags ? 
+            (highestTagWeight * 1000) + gameModeScore + tagScore : 
+            gameModeScore + tagScore;
 
           return { 
             game, 
             score, 
             tagScore, 
             gameModeScore,
+            hasHighWeightTags,
+            highestTagWeight,
             matchedTags: game.tags?.filter((t: TagRelation) => tagIds.includes(t.tagId)).map((t: any) => ({ 
               id: t.tag.id, 
               name: t.tag.name,
@@ -347,13 +365,22 @@ export default defineCachedEventHandler(
         // Calculate weighted scores based on matching game modes
         const scoredGames = filteredGames.map(game => {
           let score = 0;
+          let hasHighWeightModes = false;
+          let highestModeWeight = 0;
           const matchedModes: any[] = [];
 
           game.gameSubmissionGameModes.forEach((mode: GameModeRelation) => {
             if (gameModeIds.includes(mode.gameModeId)) {
               // Apply weight based on game mode ID
               const weight = gameModeWeightMap.get(mode.gameModeId) || DEFAULT_GAME_MODE_WEIGHT;
-              score += weight;
+              // Apply multiplier for high-weight game modes
+              if (weight >= HIGH_WEIGHT_THRESHOLD) {
+                score += weight * HIGH_WEIGHT_MULTIPLIER;
+                hasHighWeightModes = true;
+                highestModeWeight = Math.max(highestModeWeight, weight);
+              } else {
+                score += weight;
+              }
               matchedModes.push({
                 id: mode.gameModeId,
                 weight
@@ -361,7 +388,12 @@ export default defineCachedEventHandler(
             }
           });
 
-          return { game, score, matchedModes };
+          // Apply priority for high-weight game modes
+          if (hasHighWeightModes) {
+            score = (highestModeWeight * 1000) + score;
+          }
+
+          return { game, score, matchedModes, hasHighWeightModes, highestModeWeight };
         });
 
         // Filter, sort and limit
@@ -441,13 +473,22 @@ export default defineCachedEventHandler(
         // Calculate weighted scores based on matching tags
         const scoredGames = filteredGames.map(game => {
           let score = 0;
+          let hasHighWeightTags = false;
+          let highestTagWeight = 0;
           const matchedTags: any[] = [];
 
           game.tags?.forEach((tag: TagRelation) => {
             if (tagIds.includes(tag.tagId)) {
               // Apply weight based on tag ID
               const weight = tagWeightMap.get(tag.tagId) || DEFAULT_TAG_WEIGHT;
-              score += weight;
+              // Apply multiplier for high-weight tags
+              if (weight >= HIGH_WEIGHT_THRESHOLD) {
+                score += weight * HIGH_WEIGHT_MULTIPLIER;
+                hasHighWeightTags = true;
+                highestTagWeight = Math.max(highestTagWeight, weight);
+              } else {
+                score += weight;
+              }
               matchedTags.push({
                 id: tag.tagId,
                 weight
@@ -455,7 +496,12 @@ export default defineCachedEventHandler(
             }
           });
 
-          return { game, score, matchedTags };
+          // Apply priority for high-weight tags
+          if (hasHighWeightTags) {
+            score = (highestTagWeight * 1000) + score;
+          }
+
+          return { game, score, matchedTags, hasHighWeightTags, highestTagWeight };
         });
 
         // Filter, sort and limit
