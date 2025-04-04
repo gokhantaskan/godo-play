@@ -58,9 +58,13 @@ export default defineCachedEventHandler(
             .filter(id => !isNaN(id))
         : [];
 
-      // First, find the source game
+      // First, find the source game - only select data we actually need
       const sourceGame = await db.query.games.findFirst({
         where: eq(games.slug, query as string),
+        columns: {
+          id: true,
+          slug: true,
+        },
         with: {
           gameSubmissionGameModes: {
             columns: {
@@ -94,24 +98,26 @@ export default defineCachedEventHandler(
         return [];
       }
       
-      // Fetch tags with their weights
-      const tagWeights = tagIds.length > 0 ? await db.select({
-        id: tags.id,
-        name: tags.name,
-        slug: tags.slug,
-        weight: tags.weight
-      }).from(tags)
-        .where(inArray(tags.id, tagIds)) : [];
-
-      // Fetch game modes with their weights
-      const gameModeWeights = gameModeIds.length > 0 ? await db.select({
-        id: gameModes.id,
-        name: gameModes.name,
-        slug: gameModes.slug,
-        weight: gameModes.weight
-      }).from(gameModes)
-        .where(inArray(gameModes.id, gameModeIds)) : [];
-
+      // Combine tag and game mode queries to reduce database operations
+      const [tagWeights, gameModeWeights] = await Promise.all([
+        tagIds.length > 0 
+          ? db.select({
+              id: tags.id,
+              weight: tags.weight
+            })
+            .from(tags)
+            .where(inArray(tags.id, tagIds)) 
+          : Promise.resolve([]),
+          
+        gameModeIds.length > 0 
+          ? db.select({
+              id: gameModes.id,
+              weight: gameModes.weight
+            })
+            .from(gameModes)
+            .where(inArray(gameModes.id, gameModeIds)) 
+          : Promise.resolve([])
+      ]);
 
       // Create maps for faster lookup
       const tagWeightMap = new Map(
@@ -122,9 +128,76 @@ export default defineCachedEventHandler(
         gameModeWeights.map(mode => [mode.id, mode.weight || DEFAULT_GAME_MODE_WEIGHT])
       );
 
-
-      // Find similar games based on game modes and tags, excluding the source game
-      let similarGames = [];
+      // Optimization: Select only fields we need to actually use
+      const findGamesOptions = {
+        where: not(eq(games.id, sourceGame.id)),
+        columns: {
+          id: true,
+          name: true,
+          slug: true,
+          external: true, // This contains igdbImageId
+          status: true,
+          category: true,
+          firstReleaseDate: true,
+          freeToPlay: true,
+        },
+        with: {
+          gameSubmissionGameModes: {
+            columns: {
+              gameModeId: true,
+            },
+            with: {
+              gameMode: {
+                columns: {
+                  id: true,
+                  name: true,
+                  slug: true,
+                },
+              },
+            },
+          },
+          tags: {
+            with: {
+              tag: {
+                columns: {
+                  id: true,
+                  name: true,
+                  slug: true,
+                },
+              },
+            },
+          },
+          // Only include platform data if we need to filter by platforms
+          ...(platformIds.length > 0 ? {
+            platformGroups: {
+              with: {
+                platformGroupPlatforms: {
+                  with: {
+                    platform: {
+                      columns: {
+                        id: true,
+                      },
+                    },
+                  },
+                },
+              },
+            },
+            storePlatforms: {
+              with: {
+                crossplayEntries: {
+                  with: {
+                    platform: {
+                      columns: {
+                        id: true,
+                      },
+                    },
+                  },
+                },
+              },
+            }
+          } : {})
+        },
+      };
 
       // Helper function to filter games by platforms
       const filterGamesByPlatform = (games: any[]) => {
@@ -161,357 +234,93 @@ export default defineCachedEventHandler(
         });
       };
 
-      // If we have both game modes and tags
-      if (gameModeIds.length > 0 && tagIds.length > 0) {
-        // Get games with matching game modes
-        const gamesWithGameModes = await db.query.games.findMany({
-          where: not(eq(games.id, sourceGame.id)),
-          with: {
-            crossplayInformation: true,
-            gameSubmissionGameModes: {
-              columns: {
-                gameModeId: true,
-              },
-              with: {
-                gameMode: {
-                  columns: {
-                    id: true,
-                    name: true,
-                    slug: true,
-                  },
-                },
-              },
-            },
-            tags: {
-              with: {
-                tag: {
-                  columns: {
-                    id: true,
-                    name: true,
-                    slug: true,
-                  },
-                },
-              },
-            },
-            platformGroups: {
-              with: {
-                platformGroupPlatforms: {
-                  with: {
-                    platform: {
-                      columns: {
-                        id: true,
-                        name: true,
-                        slug: true,
-                      },
-                    },
-                  },
-                },
-              },
-            },
-            storePlatforms: {
-              with: {
-                crossplayEntries: {
-                  with: {
-                    platform: {
-                      columns: {
-                        id: true,
-                        name: true,
-                        slug: true,
-                      },
-                    },
-                  },
-                },
-              },
-            },
-          },
-        });
-
-        // Apply platform filtering if needed
-        const filteredGames = filterGamesByPlatform(gamesWithGameModes);
-
-        // Calculate weighted scores for each game
+      // Calculate scores and get recommendations - unified function to reduce code duplication
+      const calculateRecommendations = async () => {
+        const potentialGames = await db.query.games.findMany(findGamesOptions);
+        const filteredGames = filterGamesByPlatform(potentialGames);
+        
         const scoredGames = filteredGames.map(game => {
-          // Calculate weighted score for matching game modes
+          // Get game modes score
           let gameModeScore = 0;
-          game.gameSubmissionGameModes.forEach((mode: GameModeRelation) => {
-            if (gameModeIds.includes(mode.gameModeId)) {
-              // Apply weight based on game mode ID
-              const weight = gameModeWeightMap.get(mode.gameModeId) || DEFAULT_GAME_MODE_WEIGHT;
-              gameModeScore += weight;
-            }
-          });
-
-          // Calculate weighted score for matching tags
-          let tagScore = 0;
-          // Track high-weighted tags for priority sorting
-          let hasHighWeightTags = false;
-          let highestTagWeight = 0;
-          game.tags?.forEach((tag: TagRelation) => {
-            if (tagIds.includes(tag.tagId)) {
-              // Apply weight based on tag ID
-              const weight = tagWeightMap.get(tag.tagId) || DEFAULT_TAG_WEIGHT;
-              // Apply multiplier for high-weight tags
-              if (weight >= HIGH_WEIGHT_THRESHOLD) {
-                tagScore += weight * HIGH_WEIGHT_MULTIPLIER;
-                hasHighWeightTags = true;
-                highestTagWeight = Math.max(highestTagWeight, weight);
-              } else {
-                tagScore += weight;
-              }
-            }
-          });
-
-          // Total weighted score with priority for high-weight tags
-          const score = hasHighWeightTags ? 
-            (highestTagWeight * 1000) + gameModeScore + tagScore : 
-            gameModeScore + tagScore;
-
-          return { 
-            game, 
-            score, 
-            tagScore, 
-            gameModeScore,
-            hasHighWeightTags,
-            highestTagWeight,
-            matchedTags: game.tags?.filter((t: TagRelation) => tagIds.includes(t.tagId)).map((t: any) => ({ 
-              id: t.tag.id, 
-              name: t.tag.name,
-              weight: tagWeightMap.get(t.tagId) || DEFAULT_TAG_WEIGHT
-            })),
-            matchedGameModes: game.gameSubmissionGameModes.filter((m: GameModeRelation) => 
-              gameModeIds.includes(m.gameModeId)
-            ).map((m: any) => ({
-              id: m.gameMode.id,
-              name: m.gameMode.name,
-              weight: gameModeWeightMap.get(m.gameModeId) || DEFAULT_GAME_MODE_WEIGHT
-            }))
-          };
-        });
-
-        // Sort by score and get top matches
-        similarGames = scoredGames
-          .filter(item => item.score > 0)
-          .sort((a, b) => b.score - a.score)
-          .slice(0, limit)
-          .map(item => item.game);
-      }
-      // If we only have game modes
-      else if (gameModeIds.length > 0) {
-        const gamesWithGameModes = await db.query.games.findMany({
-          where: not(eq(games.id, sourceGame.id)),
-          with: {
-            crossplayInformation: true,
-            gameSubmissionGameModes: {
-              columns: {
-                gameModeId: true,
-              },
-              with: {
-                gameMode: {
-                  columns: {
-                    id: true,
-                    name: true,
-                    slug: true,
-                  },
-                },
-              },
-            },
-            tags: {
-              with: {
-                tag: {
-                  columns: {
-                    id: true,
-                    name: true,
-                    slug: true,
-                  },
-                },
-              },
-            },
-            platformGroups: {
-              with: {
-                platformGroupPlatforms: {
-                  with: {
-                    platform: {
-                      columns: {
-                        id: true,
-                        name: true,
-                        slug: true,
-                      },
-                    },
-                  },
-                },
-              },
-            },
-            storePlatforms: {
-              with: {
-                crossplayEntries: {
-                  with: {
-                    platform: {
-                      columns: {
-                        id: true,
-                        name: true,
-                        slug: true,
-                      },
-                    },
-                  },
-                },
-              },
-            },
-          },
-        });
-
-        // Apply platform filtering if needed
-        const filteredGames = filterGamesByPlatform(gamesWithGameModes);
-
-        // Calculate weighted scores based on matching game modes
-        const scoredGames = filteredGames.map(game => {
-          let score = 0;
           let hasHighWeightModes = false;
           let highestModeWeight = 0;
-          const matchedModes: any[] = [];
-
-          game.gameSubmissionGameModes.forEach((mode: GameModeRelation) => {
-            if (gameModeIds.includes(mode.gameModeId)) {
-              // Apply weight based on game mode ID
-              const weight = gameModeWeightMap.get(mode.gameModeId) || DEFAULT_GAME_MODE_WEIGHT;
-              // Apply multiplier for high-weight game modes
-              if (weight >= HIGH_WEIGHT_THRESHOLD) {
-                score += weight * HIGH_WEIGHT_MULTIPLIER;
-                hasHighWeightModes = true;
-                highestModeWeight = Math.max(highestModeWeight, weight);
-              } else {
-                score += weight;
+          
+          if (gameModeIds.length > 0) {
+            game.gameSubmissionGameModes.forEach((mode: GameModeRelation) => {
+              if (gameModeIds.includes(mode.gameModeId)) {
+                const weight = gameModeWeightMap.get(mode.gameModeId) || DEFAULT_GAME_MODE_WEIGHT;
+                if (weight >= HIGH_WEIGHT_THRESHOLD) {
+                  gameModeScore += weight * HIGH_WEIGHT_MULTIPLIER;
+                  hasHighWeightModes = true;
+                  highestModeWeight = Math.max(highestModeWeight, weight);
+                } else {
+                  gameModeScore += weight;
+                }
               }
-              matchedModes.push({
-                id: mode.gameModeId,
-                weight
-              });
-            }
-          });
-
-          // Apply priority for high-weight game modes
-          if (hasHighWeightModes) {
-            score = (highestModeWeight * 1000) + score;
+            });
           }
-
-          return { game, score, matchedModes, hasHighWeightModes, highestModeWeight };
-        });
-
-        // Filter, sort and limit
-        similarGames = scoredGames
-          .filter(item => item.score > 0)
-          .sort((a, b) => b.score - a.score)
-          .slice(0, limit)
-          .map(item => item.game);
-      }
-      // If we only have tags
-      else {
-        const gamesWithTags = await db.query.games.findMany({
-          where: not(eq(games.id, sourceGame.id)),
-          with: {
-            crossplayInformation: true,
-            gameSubmissionGameModes: {
-              columns: {
-                gameModeId: true,
-              },
-              with: {
-                gameMode: {
-                  columns: {
-                    id: true,
-                    name: true,
-                    slug: true,
-                  },
-                },
-              },
-            },
-            tags: {
-              with: {
-                tag: {
-                  columns: {
-                    id: true,
-                    name: true,
-                    slug: true,
-                  },
-                },
-              },
-            },
-            platformGroups: {
-              with: {
-                platformGroupPlatforms: {
-                  with: {
-                    platform: {
-                      columns: {
-                        id: true,
-                        name: true,
-                        slug: true,
-                      },
-                    },
-                  },
-                },
-              },
-            },
-            storePlatforms: {
-              with: {
-                crossplayEntries: {
-                  with: {
-                    platform: {
-                      columns: {
-                        id: true,
-                        name: true,
-                        slug: true,
-                      },
-                    },
-                  },
-                },
-              },
-            },
-          },
-        });
-
-        // Apply platform filtering if needed
-        const filteredGames = filterGamesByPlatform(gamesWithTags);
-
-        // Calculate weighted scores based on matching tags
-        const scoredGames = filteredGames.map(game => {
-          let score = 0;
+          
+          // Get tags score
+          let tagScore = 0;
           let hasHighWeightTags = false;
           let highestTagWeight = 0;
-          const matchedTags: any[] = [];
-
-          game.tags?.forEach((tag: TagRelation) => {
-            if (tagIds.includes(tag.tagId)) {
-              // Apply weight based on tag ID
-              const weight = tagWeightMap.get(tag.tagId) || DEFAULT_TAG_WEIGHT;
-              // Apply multiplier for high-weight tags
-              if (weight >= HIGH_WEIGHT_THRESHOLD) {
-                score += weight * HIGH_WEIGHT_MULTIPLIER;
-                hasHighWeightTags = true;
-                highestTagWeight = Math.max(highestTagWeight, weight);
-              } else {
-                score += weight;
+          
+          if (tagIds.length > 0 && game.tags) {
+            game.tags.forEach((tag: TagRelation) => {
+              if (tagIds.includes(tag.tagId)) {
+                const weight = tagWeightMap.get(tag.tagId) || DEFAULT_TAG_WEIGHT;
+                if (weight >= HIGH_WEIGHT_THRESHOLD) {
+                  tagScore += weight * HIGH_WEIGHT_MULTIPLIER;
+                  hasHighWeightTags = true;
+                  highestTagWeight = Math.max(highestTagWeight, weight);
+                } else {
+                  tagScore += weight;
+                }
               }
-              matchedTags.push({
-                id: tag.tagId,
-                weight
-              });
-            }
-          });
-
-          // Apply priority for high-weight tags
-          if (hasHighWeightTags) {
-            score = (highestTagWeight * 1000) + score;
+            });
           }
-
-          return { game, score, matchedTags, hasHighWeightTags, highestTagWeight };
+          
+          // Prioritize high weight tags, then high weight modes
+          let score = 0;
+          if (hasHighWeightTags) {
+            score = (highestTagWeight * 1000) + tagScore + gameModeScore;
+          } else if (hasHighWeightModes) {
+            score = (highestModeWeight * 1000) + tagScore + gameModeScore;
+          } else {
+            score = tagScore + gameModeScore;
+          }
+          
+          // Reference to original game to preserve structure
+          return { 
+            game, 
+            score,
+            // Only add these if needed in the response
+            _match: { 
+              hasHighWeightTags, 
+              highestTagWeight,
+              hasHighWeightModes,
+              highestModeWeight,
+              tagScore,
+              gameModeScore
+            }
+          };
         });
-
-        // Filter, sort and limit
-        similarGames = scoredGames
+        
+        // Filter out games with no matches and sort by score
+        return scoredGames
           .filter(item => item.score > 0)
           .sort((a, b) => b.score - a.score)
           .slice(0, limit)
-          .map(item => item.game);
-      }
+          .map(item => {
+            // Clean up internal fields before returning
+            const { _match, ...rest } = item;
+            return item.game;
+          });
+      };
 
+      // Get recommendations with unified approach
+      const similarGames = await calculateRecommendations();
+      
       return similarGames;
     } catch (error: unknown) {
       if (isH3ErrorLike(error)) {
