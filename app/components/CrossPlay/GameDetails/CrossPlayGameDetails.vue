@@ -104,11 +104,9 @@ function formatDate(date: number) {
       <div class="tw:container">
         <div class="game__hero-wrapper">
           <img
-            v-if="igdbGame?.cover?.image_id"
-            :src="`https://images.igdb.com/igdb/image/upload/t_720p/${igdbGame.cover.image_id}.jpg`"
-            :alt="igdbGame.name || ''"
-            :width="igdbGame.cover.width"
-            :height="igdbGame.cover.height"
+            v-if="dbGame?.external?.igdbImageId"
+            :src="`https://images.igdb.com/igdb/image/upload/t_720p/${dbGame.external.igdbImageId}.jpg`"
+            :alt="dbGame.name || ''"
             class="game__hero-media"
             loading="eager"
           />
