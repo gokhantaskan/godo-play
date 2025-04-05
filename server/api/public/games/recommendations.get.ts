@@ -3,14 +3,11 @@ import { eq, inArray, not } from "drizzle-orm";
 import { db } from "~~/server/db";
 import { games, tags, gameModes } from "~~/server/db/schema";
 import { isH3ErrorLike } from "~~/server/utils/errorHandler";
+import { calculateScoreForCandidate } from "~~/server/utils/recommendationUtils";
 
 // Default weight for tags and game modes not explicitly defined
 const DEFAULT_TAG_WEIGHT = 1;
 const DEFAULT_GAME_MODE_WEIGHT = 1;
-// High weight threshold to prioritize important tags
-const HIGH_WEIGHT_THRESHOLD = 3;
-// Multiplier for high-weighted tags to ensure their priority
-const HIGH_WEIGHT_MULTIPLIER = 5;
 
 // Type definitions for filtering games by platforms
 interface PlatformData {
@@ -27,14 +24,6 @@ interface CrossplayEntry {
 
 interface StorePlatform {
   crossplayEntries: CrossplayEntry[];
-}
-
-interface GameModeRelation {
-  gameModeId: number;
-}
-
-interface TagRelation {
-  tagId: number;
 }
 
 export default defineCachedEventHandler(
@@ -247,72 +236,16 @@ export default defineCachedEventHandler(
         const potentialGames = await db.query.games.findMany(findGamesOptions);
         const filteredGames = filterGamesByPlatform(potentialGames);
         
-        const scoredGames = filteredGames.map(game => {
-          // Get game modes score
-          let gameModeScore = 0;
-          let hasHighWeightModes = false;
-          let highestModeWeight = 0;
-          
-          if (gameModeIds.length > 0) {
-            game.gameSubmissionGameModes.forEach((mode: GameModeRelation) => {
-              if (gameModeIds.includes(mode.gameModeId)) {
-                const weight = gameModeWeightMap.get(mode.gameModeId) || DEFAULT_GAME_MODE_WEIGHT;
-                if (weight >= HIGH_WEIGHT_THRESHOLD) {
-                  gameModeScore += weight * HIGH_WEIGHT_MULTIPLIER;
-                  hasHighWeightModes = true;
-                  highestModeWeight = Math.max(highestModeWeight, weight);
-                } else {
-                  gameModeScore += weight;
-                }
-              }
-            });
-          }
-          
-          // Get tags score
-          let tagScore = 0;
-          let hasHighWeightTags = false;
-          let highestTagWeight = 0;
-          
-          if (tagIds.length > 0 && game.tags) {
-            game.tags.forEach((tag: TagRelation) => {
-              if (tagIds.includes(tag.tagId)) {
-                const weight = tagWeightMap.get(tag.tagId) || DEFAULT_TAG_WEIGHT;
-                if (weight >= HIGH_WEIGHT_THRESHOLD) {
-                  tagScore += weight * HIGH_WEIGHT_MULTIPLIER;
-                  hasHighWeightTags = true;
-                  highestTagWeight = Math.max(highestTagWeight, weight);
-                } else {
-                  tagScore += weight;
-                }
-              }
-            });
-          }
-          
-          // Prioritize high weight tags, then high weight modes
-          let score = 0;
-          if (hasHighWeightTags) {
-            score = (highestTagWeight * 1000) + tagScore + gameModeScore;
-          } else if (hasHighWeightModes) {
-            score = (highestModeWeight * 1000) + tagScore + gameModeScore;
-          } else {
-            score = tagScore + gameModeScore;
-          }
-          
-          // Reference to original game to preserve structure
-          return { 
-            game, 
-            score,
-            // Only add these if needed in the response
-            _match: { 
-              hasHighWeightTags, 
-              highestTagWeight,
-              hasHighWeightModes,
-              highestModeWeight,
-              tagScore,
-              gameModeScore
-            }
-          };
-        });
+        const scoredGames = filteredGames.map(game => ({
+          game,
+          score: calculateScoreForCandidate(
+            { game, tags: game.tags, gameSubmissionGameModes: game.gameSubmissionGameModes },
+            tagIds,
+            gameModeIds,
+            tagWeightMap,
+            gameModeWeightMap
+          )
+        }));
         
         // Filter out games with no matches and sort by score
         return scoredGames
@@ -320,9 +253,6 @@ export default defineCachedEventHandler(
           .sort((a, b) => b.score - a.score)
           .slice(0, limit)
           .map(item => {
-            // Clean up internal fields before returning
-            const { _match, ...rest } = item;
-            
             // Add official flag using crossplayInformation.isOfficial
             return {
               ...item.game,
