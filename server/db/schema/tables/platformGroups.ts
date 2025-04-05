@@ -49,7 +49,10 @@ export const platformGroupPlatforms = pgTable(
       })
       .notNull(),
   },
-  table => [primaryKey({ columns: [table.platformGroupId, table.platformId] })]
+  table => ({
+    pk: primaryKey({ columns: [table.platformGroupId, table.platformId] }),
+    platformIdIdx: index("pgp_platform_id_idx").on(table.platformId),
+  })
 );
 
 // Base Zod schemas generated from Drizzle schema

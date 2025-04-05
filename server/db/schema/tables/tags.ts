@@ -1,4 +1,5 @@
 import {
+  index,
   integer,
   pgTable,
   primaryKey,
@@ -11,13 +12,21 @@ import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 import { defaultInsertTimestamps } from "../helpers/defaults";
 import { games } from "./games";
 
-export const tags = pgTable("tags", {
-  id: serial("id").primaryKey(),
-  name: text("name").notNull(),
-  slug: text("slug").notNull().unique(),
-  weight: real("weight").default(1.0).notNull(),
-  ...defaultInsertTimestamps,
-});
+export const tags = pgTable(
+  "tags",
+  {
+    id: serial("id").primaryKey(),
+    name: text("name").notNull(),
+    slug: text("slug").notNull().unique(),
+    weight: real("weight").default(1.0).notNull(),
+    ...defaultInsertTimestamps,
+  },
+  table => {
+    return {
+      nameIdx: index("tags_name_idx").on(table.name),
+    };
+  }
+);
 
 export const gamesTags = pgTable(
   "games_tags",
@@ -29,7 +38,10 @@ export const gamesTags = pgTable(
       .references(() => tags.id, { onDelete: "cascade", onUpdate: "cascade" })
       .notNull(),
   },
-  table => [primaryKey({ columns: [table.gameId, table.tagId] })]
+  table => ({
+    pk: primaryKey({ columns: [table.gameId, table.tagId] }),
+    tagIdIdx: index("games_tags_tag_id_idx").on(table.tagId),
+  })
 );
 
 export const BaseTagSchema = createSelectSchema(tags);
