@@ -1,4 +1,3 @@
-import type { SQL } from "drizzle-orm";
 import { sql } from "drizzle-orm";
 
 import { CATEGORIES } from "~~/shared/constants/categories";
@@ -23,6 +22,13 @@ interface IGDBGame {
   category?: number;
   aggregated_rating?: number;
   first_release_date?: number;
+  cover?: number;
+}
+
+interface IGDBCover {
+  id: number;
+  game: number;
+  image_id: string;
 }
 
 interface UpdateResult {
@@ -38,16 +44,37 @@ async function fetchIGDBGames(
   igdbClient: any,
   batchIds: number[],
   retryCount = 0
-): Promise<IGDBGame[]> {
+): Promise<{ games: IGDBGame[]; covers: IGDBCover[] }> {
   try {
-    const requestBody = `fields id,category,aggregated_rating,first_release_date; where id = (${batchIds.join(",")});`;
-    const response = await igdbClient("games", requestBody);
+    const gamesRequestBody = `fields id,category,aggregated_rating,first_release_date,cover; where id = (${batchIds.join(",")});`;
+    const gamesResponse = await igdbClient("games", gamesRequestBody);
 
-    if (!response.ok) {
-      throw new Error(`IGDB API error: ${response.statusText}`);
+    if (!gamesResponse.ok) {
+      throw new Error(`IGDB API error (games): ${gamesResponse.statusText}`);
     }
 
-    return await response.json();
+    const games = await gamesResponse.json();
+
+    // Extract cover IDs from games
+    const coverIds = games
+      .map((game: IGDBGame) => game.cover)
+      .filter((id: number | undefined) => id !== undefined);
+
+    if (coverIds.length === 0) {
+      return { games, covers: [] };
+    }
+
+    // Fetch covers data
+    const coversRequestBody = `fields id,game,image_id; where id = (${coverIds.join(",")});`;
+    const coversResponse = await igdbClient("covers", coversRequestBody);
+
+    if (!coversResponse.ok) {
+      throw new Error(`IGDB API error (covers): ${coversResponse.statusText}`);
+    }
+
+    const covers = await coversResponse.json();
+
+    return { games, covers };
   } catch (error) {
     if (retryCount < MAX_RETRIES) {
       console.warn(
@@ -122,7 +149,10 @@ async function updateIGDBGameData(): Promise<UpdateResult> {
     const igdbClient = await getIGDBClient();
 
     try {
-      const igdbGames = await fetchIGDBGames(igdbClient, batchIds);
+      const { games: igdbGames, covers } = await fetchIGDBGames(
+        igdbClient,
+        batchIds
+      );
       console.log(
         `Processing batch ${i / BATCH_SIZE + 1}/${Math.ceil(
           igdbIds.length / BATCH_SIZE
@@ -149,6 +179,10 @@ async function updateIGDBGameData(): Promise<UpdateResult> {
             matchingSubmission.name
           );
 
+          // Find matching cover for this game
+          const gameCover = covers.find(cover => cover.game === igdbGame.id);
+          const imageId = gameCover ? gameCover.image_id : null;
+
           try {
             const [game] = await tx
               .update(games)
@@ -157,11 +191,15 @@ async function updateIGDBGameData(): Promise<UpdateResult> {
                 firstReleaseDate,
                 external: sql`
                   jsonb_set(
-                    external,
-                    '{igdbAggregatedRating}',
-                    ${JSON.stringify(igdbGame.aggregated_rating || 0)}::jsonb
+                    jsonb_set(
+                      external,
+                      '{igdbAggregatedRating}',
+                      ${JSON.stringify(igdbGame.aggregated_rating || 0)}::jsonb
+                    ),
+                    '{igdbImageId}',
+                    ${JSON.stringify(imageId || null)}::jsonb
                   )
-                ` as SQL<unknown>,
+                `,
                 updatedAt: sql`CURRENT_TIMESTAMP`,
               })
               .where(sql`id = ${matchingSubmission.id}`)
@@ -173,7 +211,10 @@ async function updateIGDBGameData(): Promise<UpdateResult> {
                 `Updated game "${matchingSubmission.name}" (ID: ${matchingSubmission.id}):`,
                 `\n  - Category: ${categoryPointer}`,
                 `\n  - Release Date: ${firstReleaseDate}`,
-                `\n  - Rating: ${igdbGame.aggregated_rating || 0}`
+                `\n  - Rating: ${igdbGame.aggregated_rating || 0}`,
+                imageId
+                  ? `\n  - Cover Image ID: ${imageId}`
+                  : "\n  - No cover image found"
               );
             }
           } catch (error) {
