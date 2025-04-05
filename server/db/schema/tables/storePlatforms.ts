@@ -1,4 +1,5 @@
 import {
+  index,
   integer,
   pgTable,
   primaryKey,
@@ -17,15 +18,24 @@ import { platforms } from "./platforms";
  * Previously, crossplayPlatforms was an integer array;
  * now we'll use a pivot table for crossplay references.
  */
-export const storePlatforms = pgTable("store_platforms", {
-  id: serial("id").primaryKey(),
-  submissionId: integer("submission_id")
-    .references(() => games.id, { onDelete: "cascade" })
-    .notNull(),
-  storeSlug: text("store_slug").notNull(),
-  storeUrl: text("store_url"),
-  ...defaultInsertTimestamps,
-});
+export const storePlatforms = pgTable(
+  "store_platforms",
+  {
+    id: serial("id").primaryKey(),
+    submissionId: integer("submission_id")
+      .references(() => games.id, { onDelete: "cascade" })
+      .notNull(),
+    storeSlug: text("store_slug").notNull(),
+    storeUrl: text("store_url"),
+    ...defaultInsertTimestamps,
+  },
+  table => {
+    return {
+      submissionIdIdx: index("sp_submission_id_idx").on(table.submissionId),
+      storeSlugIdx: index("sp_store_slug_idx").on(table.storeSlug),
+    };
+  }
+);
 
 /**
  * Junction table linking pc_store_platforms to platforms for crossplay.
@@ -42,11 +52,12 @@ export const storeCrossplayPlatforms = pgTable(
       .references(() => platforms.id)
       .notNull(),
   },
-  table => [
-    primaryKey({
+  table => ({
+    pk: primaryKey({
       columns: [table.storePlatformId, table.platformId],
     }),
-  ]
+    platformIdIdx: index("scp_platform_id_idx").on(table.platformId),
+  })
 );
 
 /**

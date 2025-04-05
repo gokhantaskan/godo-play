@@ -10,7 +10,7 @@ export default defineEventHandler(async event => {
 
   if (event.method === "POST") {
     const body = await readBody(event);
-    const { name, slug } = body;
+    const { name, slug, weight } = body;
 
     try {
       const [tag] = await db
@@ -18,6 +18,7 @@ export default defineEventHandler(async event => {
         .values({
           name,
           slug,
+          weight,
         })
         .returning();
 

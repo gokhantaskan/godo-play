@@ -1,4 +1,5 @@
 import {
+  index,
   integer,
   pgTable,
   primaryKey,
@@ -11,12 +12,20 @@ import { defaultInsertTimestamps } from "../helpers/defaults";
 import { platforms } from "./platforms";
 
 // Main stores table
-export const stores = pgTable("stores", {
-  id: serial("id").primaryKey(),
-  name: text("name").notNull(),
-  slug: text("slug").notNull().unique(),
-  ...defaultInsertTimestamps,
-});
+export const stores = pgTable(
+  "stores",
+  {
+    id: serial("id").primaryKey(),
+    name: text("name").notNull(),
+    slug: text("slug").notNull().unique(),
+    ...defaultInsertTimestamps,
+  },
+  table => {
+    return {
+      nameIdx: index("stores_name_idx").on(table.name),
+    };
+  }
+);
 
 // Junction table for store-platform relationships
 export const storeSupportedPlatforms = pgTable(
@@ -32,7 +41,10 @@ export const storeSupportedPlatforms = pgTable(
       })
       .notNull(),
   },
-  table => [primaryKey({ columns: [table.storeId, table.platformId] })]
+  table => ({
+    pk: primaryKey({ columns: [table.storeId, table.platformId] }),
+    platformIdIdx: index("ssp_platform_id_idx").on(table.platformId),
+  })
 );
 
 // Base Zod schemas for the main table

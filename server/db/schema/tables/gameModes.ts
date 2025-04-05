@@ -1,5 +1,6 @@
 import { sql } from "drizzle-orm";
 import {
+  index,
   integer,
   pgSequence,
   pgTable,
@@ -19,15 +20,23 @@ export const gameModeIdSeq = pgSequence("game_mode_id_seq", {
   minValue: 100,
 });
 
-export const gameModes = pgTable("game_modes", {
-  id: integer("id")
-    .primaryKey()
-    .default(sql`nextval('game_mode_id_seq')`),
-  name: text("name").notNull(),
-  slug: text("slug").notNull().unique(),
-  weight: real("weight").default(1.0).notNull(),
-  ...defaultInsertTimestamps,
-});
+export const gameModes = pgTable(
+  "game_modes",
+  {
+    id: integer("id")
+      .primaryKey()
+      .default(sql`nextval('game_mode_id_seq')`),
+    name: text("name").notNull(),
+    slug: text("slug").notNull().unique(),
+    weight: real("weight").default(1.0).notNull(),
+    ...defaultInsertTimestamps,
+  },
+  table => {
+    return {
+      nameIdx: index("game_modes_name_idx").on(table.name),
+    };
+  }
+);
 
 /**
  * Junction table between game_submissions and game_modes.
@@ -43,7 +52,10 @@ export const gameSubmissionGameModes = pgTable(
       .references(() => gameModes.id, { onDelete: "cascade" })
       .notNull(),
   },
-  table => [primaryKey({ columns: [table.submissionId, table.gameModeId] })]
+  table => ({
+    pk: primaryKey({ columns: [table.submissionId, table.gameModeId] }),
+    gameModeIdIdx: index("gm_gm_game_mode_id_idx").on(table.gameModeId),
+  })
 );
 
 // Base Zod schemas generated from Drizzle schema

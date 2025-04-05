@@ -167,6 +167,12 @@ export default defineCachedEventHandler(
               },
             },
           },
+          // Include crossplay information to get isOfficial flag
+          crossplayInformation: {
+            columns: {
+              isOfficial: true,
+            },
+          },
           // Always include platform data for display
           platformGroups: {
             with: {
@@ -316,7 +322,12 @@ export default defineCachedEventHandler(
           .map(item => {
             // Clean up internal fields before returning
             const { _match, ...rest } = item;
-            return item.game;
+            
+            // Add official flag using crossplayInformation.isOfficial
+            return {
+              ...item.game,
+              official: item.game.crossplayInformation?.isOfficial || false
+            };
           });
       };
 

@@ -1,15 +1,26 @@
-import { pgTable, serial, text } from "drizzle-orm/pg-core";
+import { index, pgTable, serial, text } from "drizzle-orm/pg-core";
 import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 
 import { defaultInsertTimestamps } from "../helpers/defaults";
 
-export const platforms = pgTable("platforms", {
-  id: serial("id").primaryKey(),
-  name: text("name").notNull(),
-  abbreviation: text("abbreviation").notNull(),
-  slug: text("slug").notNull().unique(),
-  ...defaultInsertTimestamps,
-});
+export const platforms = pgTable(
+  "platforms",
+  {
+    id: serial("id").primaryKey(),
+    name: text("name").notNull(),
+    abbreviation: text("abbreviation").notNull(),
+    slug: text("slug").notNull().unique(),
+    ...defaultInsertTimestamps,
+  },
+  table => {
+    return {
+      nameIdx: index("platforms_name_idx").on(table.name),
+      abbreviationIdx: index("platforms_abbreviation_idx").on(
+        table.abbreviation
+      ),
+    };
+  }
+);
 
 // Base Zod schemas generated from Drizzle schema
 export const BasePlatformSchema = createSelectSchema(platforms);
