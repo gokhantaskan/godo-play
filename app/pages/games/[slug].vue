@@ -41,21 +41,25 @@ const { data: igdbGame, refresh: refreshIgdbGame } =
 const seoMeta = computed(() => {
   return {
     seoTitle: `${dbGame.value?.name} Crossplay Information`,
-    seoDescription: `Learn about ${dbGame.value?.name}'s cross platform and cross save features.`,
+    seoDescription:
+      igdbGame.value?.summary ??
+      `Learn about ${dbGame.value?.name}'s cross platform and cross save features.`,
     seoImage: `https://images.igdb.com/igdb/image/upload/t_screenshot_med/${dbGame.value?.external?.igdbImageId}.jpg`,
   };
 });
 
 useSeoMeta({
   title: seoMeta.value.seoTitle,
+  description: seoMeta.value.seoDescription.slice(0, 155),
+  twitterDescription: seoMeta.value.seoDescription.slice(0, 155),
+  ogType: "article",
   ogTitle: `${seoMeta.value.seoTitle} - GodoPlay`,
-  twitterTitle: `${seoMeta.value.seoTitle} - GodoPlay`,
-  description: seoMeta.value.seoDescription,
-  ogDescription: seoMeta.value.seoDescription,
-  twitterDescription: seoMeta.value.seoDescription,
-  ogImage: seoMeta.value.seoImage,
-  twitterImage: seoMeta.value.seoImage,
+  ogDescription: seoMeta.value.seoDescription.slice(0, 155),
   ogUrl: `https://godo-play.com/games/${slug}`,
+  ogLocale: "en_US",
+  ogImage: seoMeta.value.seoImage,
+  twitterTitle: `${seoMeta.value.seoTitle} - GodoPlay`,
+  twitterImage: seoMeta.value.seoImage,
 });
 
 async function refreshGameData() {
