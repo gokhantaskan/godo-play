@@ -202,10 +202,76 @@ export type ProsePageDocument<Lang extends string = string> =
     Lang
   >;
 
+type SingleDocumentDataSlicesSlice = never;
+
+/**
+ * Content for single documents
+ */
+interface SingleDocumentData {
+  /**
+   * Slice Zone field in *single*
+   *
+   * - **Field Type**: Slice Zone
+   * - **Placeholder**: *None*
+   * - **API ID Path**: single.slices[]
+   * - **Tab**: Main
+   * - **Documentation**: https://prismic.io/docs/field#slices
+   */
+  slices: prismic.SliceZone<SingleDocumentDataSlicesSlice> /**
+   * Meta Title field in *single*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: A title of the page used for social media and search engines
+   * - **API ID Path**: single.meta_title
+   * - **Tab**: SEO & Metadata
+   * - **Documentation**: https://prismic.io/docs/field#key-text
+   */;
+  meta_title: prismic.KeyTextField;
+
+  /**
+   * Meta Description field in *single*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: A brief summary of the page
+   * - **API ID Path**: single.meta_description
+   * - **Tab**: SEO & Metadata
+   * - **Documentation**: https://prismic.io/docs/field#key-text
+   */
+  meta_description: prismic.KeyTextField;
+
+  /**
+   * Meta Image field in *single*
+   *
+   * - **Field Type**: Image
+   * - **Placeholder**: *None*
+   * - **API ID Path**: single.meta_image
+   * - **Tab**: SEO & Metadata
+   * - **Documentation**: https://prismic.io/docs/field#image
+   */
+  meta_image: prismic.ImageField<never>;
+}
+
+/**
+ * single document from Prismic
+ *
+ * - **API ID**: `single`
+ * - **Repeatable**: `false`
+ * - **Documentation**: https://prismic.io/docs/custom-types
+ *
+ * @typeParam Lang - Language API ID of the document.
+ */
+export type SingleDocument<Lang extends string = string> =
+  prismic.PrismicDocumentWithoutUID<
+    Simplify<SingleDocumentData>,
+    "single",
+    Lang
+  >;
+
 export type AllDocumentTypes =
   | CookieConsentDocument
   | HomePageDocument
-  | ProsePageDocument;
+  | ProsePageDocument
+  | SingleDocument;
 
 /**
  * Primary content in *ExplanatorySection → Left Image → Primary*
@@ -260,7 +326,15 @@ export interface ExplanatorySectionSliceDefaultPrimary {
    * - **API ID Path**: explanatory_section.default.primary.cta_text
    * - **Documentation**: https://prismic.io/docs/field#link-content-relationship
    */
-  cta_text: prismic.Repeatable<prismic.LinkField>;
+  cta_text: prismic.Repeatable<
+    prismic.LinkField<
+      string,
+      string,
+      unknown,
+      prismic.FieldState,
+      "Primary" | "Secondary"
+    >
+  >;
 }
 
 /**
@@ -329,7 +403,15 @@ export interface ExplanatorySectionSliceRightImagePrimary {
    * - **API ID Path**: explanatory_section.rightImage.primary.cta_text
    * - **Documentation**: https://prismic.io/docs/field#link-content-relationship
    */
-  cta_text: prismic.Repeatable<prismic.LinkField>;
+  cta_text: prismic.Repeatable<
+    prismic.LinkField<
+      string,
+      string,
+      unknown,
+      prismic.FieldState,
+      "Primary" | "Secondary"
+    >
+  >;
 }
 
 /**
@@ -398,7 +480,15 @@ export interface ExplanatorySectionSliceCenteredPrimary {
    * - **API ID Path**: explanatory_section.centered.primary.cta_text
    * - **Documentation**: https://prismic.io/docs/field#link-content-relationship
    */
-  cta_text: prismic.Repeatable<prismic.LinkField>;
+  cta_text: prismic.Repeatable<
+    prismic.LinkField<
+      string,
+      string,
+      unknown,
+      prismic.FieldState,
+      "Primary" | "Secondary"
+    >
+  >;
 }
 
 /**
@@ -803,6 +893,9 @@ declare module "@prismicio/client" {
       ProsePageDocument,
       ProsePageDocumentData,
       ProsePageDocumentDataSlicesSlice,
+      SingleDocument,
+      SingleDocumentData,
+      SingleDocumentDataSlicesSlice,
       AllDocumentTypes,
       ExplanatorySectionSlice,
       ExplanatorySectionSliceDefaultPrimary,
