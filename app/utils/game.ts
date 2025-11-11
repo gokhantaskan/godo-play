@@ -134,17 +134,55 @@ function getAgeRatingCategoryName(category: AgeRatingCategories): string {
 
 /**
  * Gets the human-readable name for an age rating
+ * IGDB's rating_category field uses organization-specific values for ESRB and PEGI,
+ * but uses the global enum for other organizations.
+ * See: https://api-docs.igdb.com/#age-rating
  */
-function getAgeRatingName(rating: AgeRatingRatings): string {
-  return AgeRatingRatings[rating]
+function getAgeRatingName(
+  category: AgeRatingCategories,
+  rating: number
+): string {
+  // ESRB and PEGI use organization-specific rating_category values
+  if (category === AgeRatingCategories.ESRB) {
+    // ESRB rating_category values observed from IGDB data
+    const esrbMap: Record<number, string> = {
+      1: "RP", // Rating Pending
+      2: "EC", // Early Childhood
+      3: "E", // Everyone
+      4: "E10", // Everyone 10+
+      5: "T", // Teen
+      6: "M", // Mature
+      7: "AO", // Adults Only
+    };
+
+    return esrbMap[rating] || String(rating);
+  }
+
+  if (category === AgeRatingCategories.PEGI) {
+    // PEGI rating_category values observed from IGDB data
+    const pegiMap: Record<number, string> = {
+      8: "Three", // PEGI 3
+      9: "Seven", // PEGI 7
+      10: "Twelve", // PEGI 12
+      11: "Sixteen", // PEGI 16
+      12: "Eighteen", // PEGI 18
+    };
+
+    return pegiMap[rating] || String(rating);
+  }
+
+  // Other organizations use the global enum
+  const ratingEnum = AgeRatingRatings[rating];
+
+  if (!ratingEnum) {
+    return String(rating);
+  }
+
+  // Format the rating name (remove underscores, capitalize)
+  return ratingEnum
     .split("_")
     .map(part => part.charAt(0).toUpperCase() + part.slice(1).toLowerCase())
     .join(" ");
-}
-
-interface ContentDescription {
-  category: number;
-  description: string;
 }
 
 interface AgeRatingInfo {
@@ -175,28 +213,24 @@ export function getConsolidatedAgeRatings(
 
   return Object.entries(grouped)
     .map(([category, ratings]) => {
-      const categoryName = getAgeRatingCategoryName(Number(category));
+      const categoryNum = Number(category);
+      const categoryName = getAgeRatingCategoryName(categoryNum);
       // Get the highest rating for the category
       const highestRating = (ratings as AgeRating[]).reduce((max, current) =>
         current.rating > max.rating ? current : max
       );
-      const ratingName = getAgeRatingName(highestRating.rating);
+      const ratingName = getAgeRatingName(categoryNum, highestRating.rating);
 
-      // Get content descriptions from the highest rating
-      const contentDescriptions = (
-        (highestRating.content_descriptions as unknown as ContentDescription[]) ??
-        []
-      ).map(desc => {
-        return {
-          category: desc.category,
-          description: desc.description,
-        };
-      });
+      if (import.meta.dev) {
+        console.log(
+          `Age Rating - Category: ${categoryName} (${category}), Rating: ${ratingName} (${highestRating.rating})`
+        );
+      }
 
       return {
         category: categoryName,
         name: ratingName,
-        contentDescriptions,
+        contentDescriptions: [],
       };
     })
     .sort((a, b) => a.category.localeCompare(b.category));

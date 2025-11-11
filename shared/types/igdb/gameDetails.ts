@@ -35,9 +35,9 @@ export interface Video {
 
 export interface AgeRating {
   id: number;
-  category: number;
+  category: number; // Maps to IGDB's 'organization' field
   content_descriptions?: number[];
-  rating: number;
+  rating: number; // Maps to IGDB's 'rating_category' field
   synopsis?: string;
   checksum: string;
 }

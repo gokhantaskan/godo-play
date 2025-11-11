@@ -82,9 +82,18 @@ function getAgeRatingImageUrl(
     return "";
   }
 
-  const extension = category === "ESRB" ? "svg" : "png";
+  // Determine extension based on category
+  const extensionMap: Record<string, string> = {
+    ESRB: "svg",
+    PEGI: "png",
+  };
 
-  return `/age-ratings/${category}/${rating}.${extension}`;
+  const extension = extensionMap[category] || "png";
+
+  // Map the rating name to the actual filename (remove any spaces)
+  const ratingFileName = rating.replace(/\s+/g, "");
+
+  return `/age-ratings/${category}/${ratingFileName}.${extension}`;
 }
 
 function formatDate(date: number) {
@@ -186,43 +195,29 @@ function formatDate(date: number) {
           <div class="tw:container">
             <h2 class="tw:sr-only">Age Ratings</h2>
             <dl
-              v-for="(rating, index) in consolidatedRatings"
+              v-for="rating in consolidatedRatings"
               :key="rating.category"
               class="tw:grid tw:grid-cols-[max-content_1fr] tw:gap-2 tw:last-of-type:mt-2"
             >
-              <template v-if="index === consolidatedRatings.length - 1">
-                <dt>
-                  <img
-                    v-if="rating.name"
-                    :src="getAgeRatingImageUrl(rating.category, rating.name)"
-                    :alt="`${rating.category} ${rating.name}`"
-                    class="tw:h-12"
-                    loading="lazy"
-                  />
-                </dt>
-                <dd class="game__section-descriptions">
-                  <div
-                    v-if="rating.contentDescriptions?.length"
-                    class="game__section-content tw:text-sm"
-                  >
-                    {{
-                      rating.contentDescriptions
-                        ?.map((desc: any) => desc.description)
-                        .join(", ")
-                    }}
-                  </div>
-                  <div>
-                    <span class="tw:text-xs tw:leading-0 tw:text-text-muted"
-                      >{{ rating.category }}
-                      {{
-                        ageRatingHumanizedRatings[
-                          rating.name as keyof typeof ageRatingHumanizedRatings
-                        ]
-                      }}</span
-                    >
-                  </div>
-                </dd>
-              </template>
+              <dt>
+                <img
+                  v-if="rating.name"
+                  :src="getAgeRatingImageUrl(rating.category, rating.name)"
+                  :alt="`${rating.category} ${rating.name}`"
+                  class="tw:h-12"
+                  loading="lazy"
+                />
+              </dt>
+              <dd class="game__section-descriptions">
+                <span class="tw:text-sm"
+                  >{{ rating.category }}
+                  {{
+                    ageRatingHumanizedRatings[
+                      rating.name as keyof typeof ageRatingHumanizedRatings
+                    ]
+                  }}</span
+                >
+              </dd>
             </dl>
           </div>
         </template>
