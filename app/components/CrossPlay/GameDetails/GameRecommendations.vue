@@ -73,7 +73,7 @@ const hasRecommendations = computed(() => {
         v-else
         class="tw:flex tw:justify-center tw:py-8"
       >
-        <TheLoader />
+        <LoadingSpinner />
       </div>
     </div>
   </div>

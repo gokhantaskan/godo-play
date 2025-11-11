@@ -10,10 +10,10 @@ export type IGDBFields = {
 export default {
   async allGames(options: IGDBFields) {
     const {
-      fields = "name,slug,category,platforms.*,genres.*,player_perspectives.*,themes.*,cover.*,game_modes.*,multiplayer_modes.*,first_release_date",
+      fields = "name,slug,game_type,platforms.*,genres.*,player_perspectives.*,themes.*,cover.*,game_modes.*,multiplayer_modes.*,first_release_date",
       limit = 100,
       sort = "aggregated_rating desc",
-      where = "category=(0,3,8,9) & version_parent=null & platforms=() & age_ratings.category=(2) & release_dates.date>=1672531200",
+      where = "game_type=(0,3,8,9) & version_parent=null & platforms=() & age_ratings.category=(2) & release_dates.date>=1672531200",
       ...rest
     } = options;
 
@@ -30,9 +30,9 @@ export default {
     const strictWhere = "game_modes != 1";
 
     const {
-      fields = "name,slug,category,platforms.*,genres.*,player_perspectives.*,themes.*,cover.*,game_modes.*,multiplayer_modes.*,aggregated_rating",
+      fields = "name,slug,game_type,platforms.*,genres.*,player_perspectives.*,themes.*,cover.*,game_modes.*,multiplayer_modes.*,aggregated_rating",
       limit = 100,
-      // category=(0,3,8,9) & version_parent=null
+      // game_type=(0,3,8,9) & version_parent=null
       where,
       sort = "popularity desc",
       ...rest

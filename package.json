@@ -7,6 +7,7 @@
     "build:dev": "env-cmd --expand-envs --verbose -f .env nuxt build",
     "build:prod": "env-cmd --expand-envs --verbose -f .env.production nuxt build",
     "dev": "pnpm dev:db && pnpm dev:client",
+    "dev:prod": "env-cmd --expand-envs -f .env.production sh -c 'pnpm db:push && pnpm dev:client'",
     "dev:client": "nuxt dev",
     "dev:db": "./scripts/dev-setup.sh",
     "dev:clean": "nuxt cleanup && pnpm dev",

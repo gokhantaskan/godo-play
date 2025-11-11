@@ -222,7 +222,7 @@ onMounted(() => {
       <ul class="tw:text-sm tw:p-0 tw:mb-2">
         <li>
           <strong>Category:</strong>
-          {{ CATEGORIES[igdbGame.category]?.name }}
+          {{ CATEGORIES[igdbGame.game_type]?.name }}
         </li>
         <li>
           <strong>Platforms:</strong>

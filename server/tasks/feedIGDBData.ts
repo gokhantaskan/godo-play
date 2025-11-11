@@ -19,7 +19,7 @@ const IGDB_CATEGORY_MAP = Array.from(
 
 interface IGDBGame {
   id: number;
-  category?: number;
+  game_type?: number;
   aggregated_rating?: number;
   first_release_date?: number;
   cover?: number;
@@ -46,7 +46,7 @@ async function fetchIGDBGames(
   retryCount = 0
 ): Promise<{ games: IGDBGame[]; covers: IGDBCover[] }> {
   try {
-    const gamesRequestBody = `fields id,category,aggregated_rating,first_release_date,cover; where id = (${batchIds.join(",")});`;
+    const gamesRequestBody = `fields id,game_type,aggregated_rating,first_release_date,cover; where id = (${batchIds.join(",")});`;
     const gamesResponse = await igdbClient("games", gamesRequestBody);
 
     if (!gamesResponse.ok) {
@@ -173,7 +173,7 @@ async function updateIGDBGameData(): Promise<UpdateResult> {
           }
 
           const categoryPointer =
-            IGDB_CATEGORY_MAP[igdbGame.category ?? 0] ?? 0;
+            IGDB_CATEGORY_MAP[igdbGame.game_type ?? 0] ?? 0;
           const firstReleaseDate = validateAndFormatDate(
             igdbGame.first_release_date,
             matchingSubmission.name

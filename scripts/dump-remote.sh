@@ -18,7 +18,7 @@ echo "👉 Using user: $POSTGRES_USER"
 
 # Dump the database using Docker
 docker run --rm \
-  postgres:16-alpine \
+  postgres:17-alpine \
   pg_dump "$POSTGRES_URL" \
   --clean \
   --if-exists \

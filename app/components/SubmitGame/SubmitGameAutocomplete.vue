@@ -56,7 +56,7 @@ async function searchGames(query: string) {
       gameModes: game.game_modes,
       imageId: game.cover?.image_id ?? "",
       aggregatedRating: game.aggregated_rating,
-      category: game.category,
+      category: game.game_type,
       firstReleaseDate: game.first_release_date,
     }));
   } catch (err: unknown) {

@@ -29,7 +29,7 @@ const categories = computed(() => {
 });
 
 const gameType = computed(() => {
-  return SUPPORTED_GAME_TYPES[props.game.category];
+  return SUPPORTED_GAME_TYPES[props.game.game_type];
 });
 
 const cacheKey = computed(() => `game-${props.game.id}`);
@@ -85,7 +85,7 @@ async function openModal() {
       <!-- Game Type CircleBadge -->
       <template v-if="gameType">
         <div
-          v-if="game.category !== 0"
+          v-if="game.game_type !== 0"
           class="game-card__badge"
           :class="`game-card__badge--${gameType.slug}`"
           :title="gameType.label"

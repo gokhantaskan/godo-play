@@ -7,7 +7,7 @@ export interface GameDetails {
   id: number;
   age_ratings: AgeRating[];
   aggregated_rating?: number;
-  category: number;
+  game_type: number;
   cover: Image;
   first_release_date: number;
   game_modes: SmallEntity[];
@@ -35,9 +35,9 @@ export interface Video {
 
 export interface AgeRating {
   id: number;
-  category: number;
+  category: number; // Maps to IGDB's 'organization' field
   content_descriptions?: number[];
-  rating: number;
+  rating: number; // Maps to IGDB's 'rating_category' field
   synopsis?: string;
   checksum: string;
 }
