@@ -39,7 +39,7 @@ export default defineCachedEventHandler(
 
     // Combine fixed conditions with dynamic where clause
     const fixedConditions = [
-      "category=(0,3,8,9)", // 0: main game, 3: bundle, 8: remake, 9: remaster
+      "game_type=(0,3,8,9)", // 0: main game, 3: bundle, 8: remake, 9: remaster
       "version_parent=null",
       "aggregated_rating > 50",
       "aggregated_rating_count > 2",
@@ -96,7 +96,7 @@ export default defineCachedEventHandler(
     const fields = [
       "name",
       "slug",
-      "category",
+      "game_type",
       "platforms.*",
       "genres.*",
       "player_perspectives.*",

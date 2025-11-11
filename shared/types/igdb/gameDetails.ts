@@ -7,7 +7,7 @@ export interface GameDetails {
   id: number;
   age_ratings: AgeRating[];
   aggregated_rating?: number;
-  category: number;
+  game_type: number;
   cover: Image;
   first_release_date: number;
   game_modes: SmallEntity[];

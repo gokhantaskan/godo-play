@@ -13,7 +13,7 @@ export default defineCachedEventHandler(
         "age_ratings.rating_content_descriptions",
         "age_ratings.synopsis",
         "age_ratings.checksum",
-        "category",
+        "game_type",
         "cover.*",
         "multiplayer_modes.*",
         "screenshots.*",
