@@ -38,7 +38,7 @@ const {
   data: gameDetails,
   status: gameDetailsStatus,
   execute: fetchGameDetails,
-} = useFetch(`/api/public/igdb/${props.game.slug}`, {
+} = useFetch(`/api/public/igdb/${props.game.id}`, {
   immediate: false,
   key: cacheKey.value,
   lazy: !!cachedGameDetails.value,

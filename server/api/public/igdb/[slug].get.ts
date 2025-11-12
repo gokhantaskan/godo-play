@@ -3,7 +3,7 @@ import type { GameDetails } from "~~/shared/types/igdb/gameDetails";
 export default defineCachedEventHandler(
   async event => {
     try {
-      const slug = getRouterParam(event, "slug");
+      const identifier = getRouterParam(event, "slug");
 
       const fields = [
         "name",
@@ -34,7 +34,13 @@ export default defineCachedEventHandler(
         "themes.name",
       ].join(",");
 
-      const parsedBody = `fields ${fields}; where slug="${slug}";`;
+      // Check if identifier is a number (IGDB ID) or a string (slug)
+      const isNumericId = !isNaN(Number(identifier));
+      const whereClause = isNumericId 
+        ? `id = ${identifier}` 
+        : `slug = "${identifier}"`;
+      
+      const parsedBody = `fields ${fields}; where ${whereClause};`;
 
       if (process.env.NODE_ENV === "development") {
         console.log("IGDB Query:", parsedBody);

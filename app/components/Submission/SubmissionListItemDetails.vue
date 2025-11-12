@@ -89,6 +89,17 @@ async function fetchIgdbGame() {
 
 async function handleSave() {
   try {
+    // Sanitize crossplayInformation: convert empty strings to null for URL validation
+    const sanitizedCrossplayInfo = crossplayInformationModel.value
+      ? {
+          ...crossplayInformationModel.value,
+          evidenceUrl:
+            crossplayInformationModel.value.evidenceUrl?.trim() || null,
+          information:
+            crossplayInformationModel.value.information?.trim() || null,
+        }
+      : null;
+
     await $fetch(`/api/games/${props.game.id}`, {
       method: "PATCH",
       body: {
@@ -99,7 +110,7 @@ async function handleSave() {
         storesPlatforms: storePlatformsModel.value,
         gameModeIds: gameModesModel.value,
         tagIds: tagsModel.value,
-        crossplayInformation: crossplayInformationModel.value,
+        crossplayInformation: sanitizedCrossplayInfo,
       },
     });
 

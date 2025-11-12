@@ -13,16 +13,6 @@ const props = defineProps<CrossPlayGameCardDialogProps>();
 const isOpen = defineModel<boolean>("open");
 
 const {
-  data: fetchedIGDBGame,
-  status: igdbStatus,
-  refresh: refreshIgdbGame,
-} = useFetch<GameDetails>(() => `/api/public/igdb/${props.slug}`, {
-  key: QUERY_KEYS.IGDBGame(props.slug),
-  server: false,
-  immediate: false,
-});
-
-const {
   data: fetchedDbGame,
   status: dbStatus,
   refresh: refreshDbGame,
@@ -30,6 +20,18 @@ const {
   key: QUERY_KEYS.DbGame(props.slug),
   server: false,
   immediate: false,
+});
+
+// Fetch IGDB game using the IGDB ID from the database
+const igdbId = computed(() => fetchedDbGame.value?.external?.igdbId);
+const {
+  data: fetchedIGDBGame,
+  status: igdbStatus,
+  refresh: refreshIgdbGame,
+} = useFetch<GameDetails | null>(() => `/api/public/igdb/${igdbId.value}`, {
+  server: false,
+  immediate: false,
+  watch: false,
 });
 
 const isLoading = computed(
@@ -44,7 +46,11 @@ watch(isOpen, async newValue => {
 });
 
 async function refresh() {
-  await Promise.all([refreshIgdbGame(), refreshDbGame()]);
+  // First fetch DB game to get IGDB ID, then fetch IGDB game
+  await refreshDbGame();
+  if (igdbId.value) {
+    await refreshIgdbGame();
+  }
 }
 
 function closeDialog() {
@@ -63,7 +69,7 @@ function closeDialog() {
         <header class="game-dialog__header">
           <button
             class="clean-button game-dialog__close"
-            size="sm"
+            type="button"
             @click="closeDialog"
           >
             <Icon name="lucide:x" />
@@ -123,6 +129,7 @@ function closeDialog() {
     background-color: transparent;
     width: 100%;
     height: 4rem;
+    z-index: 10;
   }
 
   &__close {

@@ -120,7 +120,7 @@ function formatDate(date: number) {
             loading="eager"
           />
           <div class="game__hero-content">
-            <h1 class="game__hero-heading">{{ igdbGame?.name }}</h1>
+            <h1 class="game__hero-heading">{{ gameName }}</h1>
             <div class="tw:text-white/80 tw:flex tw:items-center tw:gap-1">
               <span v-if="igdbGame?.first_release_date">
                 {{ formatDate(igdbGame?.first_release_date) }}
