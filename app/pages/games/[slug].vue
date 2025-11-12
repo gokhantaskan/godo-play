@@ -34,9 +34,10 @@ if (!dbGame.value) {
   });
 }
 
-// Composable for game data fetching
+// Fetch IGDB data using the IGDB ID from the database
+const igdbId = dbGame.value.external?.igdbId;
 const { data: igdbGame, refresh: refreshIgdbGame } =
-  await useCachedFetch<GameDetails>(`/api/public/igdb/${slug}`);
+  await useCachedFetch<GameDetails>(`/api/public/igdb/${igdbId}`);
 
 const seoMeta = computed(() => {
   return {
