@@ -285,17 +285,17 @@ export default defineNuxtConfig({
       referrerPolicy: "strict-origin-when-cross-origin",
       permissionsPolicy: {
         fullscreen: [
-          "self",
+          "'self'",
           "https://www.youtube.com",
           "https://www.youtube-nocookie.com",
         ],
         autoplay: [
-          "self",
+          "'self'",
           "https://www.youtube.com",
           "https://www.youtube-nocookie.com",
         ],
         "encrypted-media": [
-          "self",
+          "'self'",
           "https://www.youtube.com",
           "https://www.youtube-nocookie.com",
         ],
