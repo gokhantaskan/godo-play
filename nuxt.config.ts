@@ -261,7 +261,7 @@ export default defineNuxtConfig({
         ],
         "frame-src": [
           "'self'",
-          "https://godoplay.prismic.io/",
+          "https://godoplay.prismic.io",
           "https://www.youtube.com",
           "https://www.youtube-nocookie.com",
           "https://docs.google.com",
