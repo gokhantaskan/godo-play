@@ -327,7 +327,7 @@ function formatDate(date: number) {
                   :src="`https://www.youtube.com/embed/${video.video_id}`"
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen"
                   referrerpolicy="strict-origin-when-cross-origin"
-                  style="border: 0;"
+                  style="border: 0"
                   allowfullscreen
                 ></iframe>
               </div>

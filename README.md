@@ -1,79 +1,92 @@
-# GōdōPlay - The Ultimate Fusion for Co-Op and Multiplayer Gaming
+# GodoPlay
 
-Find the best cross-platform games for PC, PlayStation, Xbox, and Nintendo Switch. Discover multiplayer, cooperative, and competitive games to play together or against friends, no matter your platform.
+A platform for discovering cross-platform and cross-play games across PC, PlayStation, Xbox, and Nintendo Switch.
 
-## Requirements
+> [!NOTE]
+> This is a hobby project. I occasionally update it when I have time.
 
-- Node.js >=22
-- Package Manager: pnpm 9.15.3
+## How It Works
 
-## SSL Setup with mkcert
+GodoPlay helps gamers find multiplayer and cooperative games they can play with friends across different platforms. The app fetches game metadata from the IGDB API (Twitch) and stores curated cross-play information in a PostgreSQL database. An admin panel allows managing game entries, tags, and platform support details.
 
-#### 1. Install mkcert
+## Tech Stack
 
-For macOS (using Homebrew):
+| Layer              | Technology                                                                  |
+| ------------------ | --------------------------------------------------------------------------- |
+| **Framework**      | [Nuxt 3](https://nuxt.com/) (Vue.js) with TypeScript                        |
+| **Database**       | PostgreSQL with [Drizzle ORM](https://orm.drizzle.team/)                    |
+| **Authentication** | [Supabase Auth](https://supabase.com/auth)                                  |
+| **CMS**            | [Prismic](https://prismic.io/) for blog/content pages                       |
+| **Caching**        | Redis via [ioredis](https://github.com/redis/ioredis)                       |
+| **Game Data**      | [IGDB API](https://api-docs.igdb.com/) (Twitch)                             |
+| **Styling**        | [Tailwind CSS](https://tailwindcss.com/) v4 + SCSS                          |
+| **UI Components**  | [Headless UI](https://headlessui.com/), [Reka UI](https://reka-ui.com/)     |
+| **Forms**          | [VeeValidate](https://vee-validate.logaretm.com/) + [Zod](https://zod.dev/) |
+| **SEO**            | Sitemap, Robots.txt, Schema.org structured data                             |
+| **Analytics**      | Google Analytics, Microsoft Clarity                                         |
 
-```bash
-brew install mkcert
-brew install nss # if you use Firefox
+## Project Structure
+
+```
+├── app/                  # Frontend (pages, components, composables)
+├── server/               # Backend API routes and database
+│   ├── api/              # REST API endpoints
+│   ├── db/               # Drizzle schema, migrations, seeds
+│   └── utils/            # Server utilities (IGDB client, auth)
+├── shared/               # Shared types and utilities
+└── public/               # Static assets
 ```
 
-For Windows (using Chocolatey):
+## Development Setup
+
+### Requirements
+
+- Node.js >= 22
+- pnpm 9
+- Docker (for local PostgreSQL)
+
+### Local SSL (Required)
+
+The dev server requires HTTPS. Install [mkcert](https://github.com/FiloSottile/mkcert) and generate certificates:
 
 ```bash
-choco install mkcert
-```
+# Install mkcert (macOS)
+brew install mkcert && mkcert -install
 
-For Linux:
-
-```bash
-sudo apt install libnss3-tools
-sudo apt install mkcert
-```
-
-#### 2. Install local CA
-
-```bash
-mkcert -install
-```
-
-#### 3. Generate certificates
-
-```bash
+# Generate certificates
 mkcert localhost 127.0.0.1 ::1
 ```
 
-This will create `localhost+2.pem` and `localhost+2-key.pem` files in your project root.
-
-### Development
-
-If you don't have `pnpm` installed, you can install it with the following command:
+### Getting Started
 
 ```bash
+# Install pnpm if needed
 corepack enable
-# or
-npm install -g pnpm
-```
 
-```bash
+# Copy environment variables
+cp .env.example .env
+
 # Install dependencies
 pnpm install
 
-# Start development server
+# Start dev server (includes Docker PostgreSQL)
 pnpm dev
+```
 
-# Clean and start dev server
-pnpm dev:clean
+### Database Scripts
 
-# Lint code
-pnpm lint
+Shell scripts in `scripts/` for managing PostgreSQL backups:
 
-# Format code
-pnpm format
+| Script              | Description                                                  |
+| ------------------- | ------------------------------------------------------------ |
+| `dev-setup.sh`      | Start Docker, run migrations, optionally restore from backup |
+| `dump-local.sh`     | Dump local database to `backups/local/`                      |
+| `dump-remote.sh`    | Dump production database to `backups/remote/`                |
+| `restore-local.sh`  | Restore a backup file to local Docker database               |
+| `restore-remote.sh` | Restore a backup file to production database                 |
 
-# Build for production
-pnpm build
-
-# Preview production build
-pnpm preview
+```bash
+# Example: dump and restore
+./scripts/dump-local.sh
+./scripts/restore-local.sh  # prompts for backup file path
 ```
