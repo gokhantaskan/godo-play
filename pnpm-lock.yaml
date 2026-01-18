@@ -62,9 +62,6 @@ importers:
       '@vee-validate/zod':
         specifier: ^4.15.0
         version: 4.15.0(vue@3.5.26(typescript@5.7.3))(zod@3.24.2)
-      '@vercel/analytics':
-        specifier: ^1.5.0
-        version: 1.5.0(vue-router@4.6.4(vue@3.5.26(typescript@5.7.3)))(vue@3.5.26(typescript@5.7.3))
       '@vueuse/core':
         specifier: ^12.7.0
         version: 12.7.0(typescript@5.7.3)
@@ -2472,32 +2469,6 @@ packages:
     resolution: {integrity: sha512-MpvIKiyg9X5yD8bJW0no2AU7wtR2T5mrvD9tuPRiie951sU2n6QKgMV38qKKOiqFBCxsMSjIuLLLV3V5kVE4nQ==}
     peerDependencies:
       zod: ^3.24.0
-
-  '@vercel/analytics@1.5.0':
-    resolution: {integrity: sha512-MYsBzfPki4gthY5HnYN7jgInhAZ7Ac1cYDoRWFomwGHWEX7odTEzbtg9kf/QSo7XEsEAqlQugA6gJ2WS2DEa3g==}
-    peerDependencies:
-      '@remix-run/react': ^2
-      '@sveltejs/kit': ^1 || ^2
-      next: '>= 13'
-      react: ^18 || ^19 || ^19.0.0-rc
-      svelte: '>= 4'
-      vue: ^3
-      vue-router: ^4
-    peerDependenciesMeta:
-      '@remix-run/react':
-        optional: true
-      '@sveltejs/kit':
-        optional: true
-      next:
-        optional: true
-      react:
-        optional: true
-      svelte:
-        optional: true
-      vue:
-        optional: true
-      vue-router:
-        optional: true
 
   '@vercel/nft@0.27.10':
     resolution: {integrity: sha512-zbaF9Wp/NsZtKLE4uVmL3FyfFwlpDyuymQM1kPbeT0mVOHKDQQNjnnfslB3REg3oZprmNFJuh3pkHBk2qAaizg==}
@@ -10281,11 +10252,6 @@ snapshots:
       zod: 3.24.2
     transitivePeerDependencies:
       - vue
-
-  '@vercel/analytics@1.5.0(vue-router@4.6.4(vue@3.5.26(typescript@5.7.3)))(vue@3.5.26(typescript@5.7.3))':
-    optionalDependencies:
-      vue: 3.5.26(typescript@5.7.3)
-      vue-router: 4.6.4(vue@3.5.26(typescript@5.7.3))
 
   '@vercel/nft@0.27.10(rollup@4.34.9)':
     dependencies:

@@ -258,6 +258,7 @@ export default defineNuxtConfig({
           "data:",
           "https://images.igdb.com",
           "https://images.prismic.io",
+          "https://c.clarity.ms",
         ],
         "frame-src": [
           "'self'",
@@ -268,9 +269,11 @@ export default defineNuxtConfig({
         ],
         "script-src": [
           "'self'",
-          "https:",
+          "'unsafe-inline'",
           "'strict-dynamic'",
           "'nonce-{{nonce}}'",
+          "https://*.netlify.app",
+          "https://*.netlify.com",
         ],
         "connect-src": [
           "'self'",
@@ -279,6 +282,7 @@ export default defineNuxtConfig({
           "https://*.googleapis.com",
           "https://*.gstatic.com",
           "https://www.google-analytics.com",
+          "https://b.clarity.ms",
         ],
       },
       crossOriginEmbedderPolicy: "unsafe-none",
