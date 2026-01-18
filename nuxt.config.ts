@@ -5,7 +5,6 @@ import { repositoryName } from "./slicemachine.config.json";
 
 const disallowedPaths = [
   "/_ipx/",
-  "/api/",
   "/auth/",
   "/admin/",
   "/preview",
@@ -39,13 +38,6 @@ export default defineNuxtConfig({
     scripts: {
       registry: {
         clarity: "mock",
-      },
-    },
-    security: {
-      corsHandler: {
-        origin: "*",
-        methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-        credentials: true,
       },
     },
   },
@@ -296,6 +288,7 @@ export default defineNuxtConfig({
           "https://*.gstatic.com",
           "https://www.google-analytics.com",
           "https://b.clarity.ms",
+          "https://api.iconify.design",
         ],
       },
       crossOriginEmbedderPolicy: "unsafe-none",
