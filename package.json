@@ -12,7 +12,7 @@
     "dev:db": "./scripts/dev-setup.sh",
     "dev:clean": "nuxt cleanup && pnpm dev",
     "generate": "nuxt generate",
-    "preview": "NITRO_SSL_CERT=$(cat localhost+2.pem) NITRO_SSL_KEY=$(cat localhost+2-key.pem) nuxt preview",
+    "preview": "cross-env NITRO_SSL_CERT=$(cat localhost+2.pem) NITRO_SSL_KEY=$(cat localhost+2-key.pem) nuxt preview",
     "typecheck": "nuxt typecheck",
     "clean": "pnpm clean:nuxt && rimraf --glob **/dist **/inspect",
     "clean:nuxt": "nuxt cleanup",
@@ -26,9 +26,9 @@
     "slicemachine": "start-slicemachine",
     "prepare": "husky"
   },
-  "packageManager": "pnpm@9.15.4",
+  "packageManager": "pnpm@9.15.9",
   "engines": {
-    "node": "22"
+    "node": ">=22"
   },
   "dependencies": {
     "@floating-ui/vue": "^1.1.6",

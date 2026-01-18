@@ -7,9 +7,8 @@ export function useScripts() {
   function initScripts() {
     const { onLoaded: onClarityLoaded } = useClarityScript();
 
-    onClarityLoaded(({ clarity }) => {
-      console.info("💎");
-      clarity("consent");
+    onClarityLoaded(() => {
+      console.info("💎 Clarity loaded");
     });
 
     if (IS_DEV) {

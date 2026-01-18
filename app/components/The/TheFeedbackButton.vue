@@ -1,10 +1,13 @@
 <script setup lang="ts">
 import { nextTick, ref } from "vue";
 
+import { useCookieConsent } from "@/composables/useCookieConsent";
+
 const route = useRoute();
 const {
   proxy: { clarity },
 } = useClarityScript();
+const { cookieConsent } = useCookieConsent();
 
 const dialogRef = useTemplateRef("dialogRef");
 const isDialogOpen = ref(false);
@@ -15,7 +18,9 @@ if (route.path.startsWith("/admin")) {
 }
 
 function openFeedback() {
-  clarity("event", "feedbackClicked");
+  if (cookieConsent.value === true) {
+    clarity("event", "feedbackClicked");
+  }
 
   isDialogOpen.value = true;
   // Need to wait for next tick to ensure dialog is mounted
