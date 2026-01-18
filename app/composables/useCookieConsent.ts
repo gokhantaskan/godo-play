@@ -54,9 +54,13 @@ export function useCookieConsent() {
       if (value) {
         agreedToCookiesScriptConsent.accept();
         updateGtagConsent(true);
-        clarity("consent");
+        clarity("consentv2", {
+          ad_Storage: "granted",
+          analytics_Storage: "granted",
+        });
       } else {
         updateGtagConsent(false);
+        clarity("consent", false);
       }
     } finally {
       isLoading.value = false;
@@ -72,8 +76,19 @@ export function useCookieConsent() {
   }
 
   function initializeCookieConsent() {
-    if (import.meta.client && cookie.value === true) {
-      setCookieConsent(true);
+    if (import.meta.client && cookie.value !== null) {
+      // Sync state with cookie value (handles SSR -> client hydration)
+      cookieConsent.value = cookie.value;
+
+      // If consent was previously granted, re-initialize scripts
+      if (cookie.value === true) {
+        agreedToCookiesScriptConsent.accept();
+        updateGtagConsent(true);
+        clarity("consentv2", {
+          ad_Storage: "granted",
+          analytics_Storage: "granted",
+        });
+      }
     }
   }
 

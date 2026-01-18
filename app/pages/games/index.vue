@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { refDebounced } from "@vueuse/core";
 
+import { useCookieConsent } from "@/composables/useCookieConsent";
 import type { PlatformId } from "~/types/crossPlay";
 import { SUPPORTED_PLATFORMS } from "~~/shared/constants";
 import type { GameSubmissionWithRelations } from "~~/shared/types";
@@ -56,6 +57,7 @@ const ITEMS_PER_PAGE = 48;
 const {
   proxy: { clarity },
 } = useClarityScript();
+const { cookieConsent } = useCookieConsent();
 const route = useRoute();
 const {
   platforms: initialQueryPlatforms,
@@ -385,7 +387,9 @@ const stopPlatformsWatch = watch(
         .map(id => SUPPORTED_PLATFORMS.find(p => p.id === id)?.name)
         .filter(Boolean);
 
-      clarity("set", "platformSelectionChanged", platformNames);
+      if (cookieConsent.value === true) {
+        clarity("set", "platformSelectionChanged", platformNames);
+      }
     }
   },
   { deep: true }
@@ -400,7 +404,9 @@ const stopGameModesWatch = watch(
         .map(id => gameModes.value.find(m => m.id === id)?.name)
         .filter(Boolean);
 
-      clarity("set", "gameModesChanged", modeNames);
+      if (cookieConsent.value === true) {
+        clarity("set", "gameModesChanged", modeNames);
+      }
     }
   }
 );
@@ -414,7 +420,9 @@ const stopTagsWatch = watch(
         .map(id => tags.value.find(t => t.id === id)?.name)
         .filter(Boolean);
 
-      clarity("set", "tagsChanged", tagNames);
+      if (cookieConsent.value === true) {
+        clarity("set", "tagsChanged", tagNames);
+      }
     }
   }
 );
@@ -423,7 +431,9 @@ const stopFreeToPlayWatch = watch(
   () => selectedFilters.value.freeToPlay,
   (newValue, oldValue) => {
     if (oldValue !== undefined && newValue !== oldValue) {
-      clarity("set", "freeToPlayFilterChanged", newValue);
+      if (cookieConsent.value === true) {
+        clarity("set", "freeToPlayFilterChanged", newValue);
+      }
     }
   }
 );
@@ -465,7 +475,9 @@ function getMetaTitle() {
 
 // Add function to clear filters and refresh page
 function clearQueryAndRefreshPage() {
-  clarity("event", "refreshGamesPage");
+  if (cookieConsent.value === true) {
+    clarity("event", "refreshGamesPage");
+  }
 
   if (import.meta.client) {
     const url = new URL(window.location.href);

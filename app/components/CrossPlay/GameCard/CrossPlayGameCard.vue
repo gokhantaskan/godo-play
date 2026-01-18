@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { useCookieConsent } from "@/composables/useCookieConsent";
 import type { GameSubmissionWithRelations } from "~~/shared/types";
 
 const props = defineProps<{
@@ -10,14 +11,17 @@ const props = defineProps<{
 const {
   proxy: { clarity },
 } = useClarityScript();
+const { cookieConsent } = useCookieConsent();
 
 const isDialogOpen = ref(false);
 const originalURL = ref("");
 const route = useRoute();
 
 function openDialog(event: Event) {
-  // Track game click with Clarity
-  clarity("set", "gameCardClicked", props.game.name);
+  // Track game click with Clarity (only if consent granted)
+  if (cookieConsent.value === true) {
+    clarity("set", "gameCardClicked", props.game.name);
+  }
 
   console.log(route.name);
 
