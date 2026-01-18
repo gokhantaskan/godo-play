@@ -41,6 +41,13 @@ export default defineNuxtConfig({
         clarity: "mock",
       },
     },
+    security: {
+      corsHandler: {
+        origin: "*",
+        methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+        credentials: true,
+      },
+    },
   },
   runtimeConfig: {
     igdb: {
@@ -251,6 +258,11 @@ export default defineNuxtConfig({
     },
   },
   security: {
+    corsHandler: {
+      origin: "https://godo-play.com",
+      methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+      credentials: true,
+    },
     headers: {
       contentSecurityPolicy: {
         "img-src": [
@@ -259,6 +271,7 @@ export default defineNuxtConfig({
           "https://images.igdb.com",
           "https://images.prismic.io",
           "https://c.clarity.ms",
+          "https://c.bing.com",
         ],
         "frame-src": [
           "'self'",
