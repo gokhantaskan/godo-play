@@ -133,8 +133,7 @@ export default defineNuxtConfig({
     },
   },
   modules: [
-    "@nuxt/eslint",
-    // "@nuxt/fonts",
+    "@nuxt/eslint", // "@nuxt/fonts",
     "@nuxt/image",
     "@nuxt/icon",
     "@nuxtjs/sitemap",
@@ -144,6 +143,7 @@ export default defineNuxtConfig({
     "@nuxt/scripts",
     "@nuxtjs/prismic",
     "nuxt-schema-org",
+    "nuxt-security",
   ],
   css: ["./app/assets/styles/tailwind.css", "./app/assets/styles/main.scss"],
   postcss: {
@@ -248,6 +248,62 @@ export default defineNuxtConfig({
       callback: "/auth/confirm",
       include: ["/admin(/*)?"],
       cookieRedirect: true,
+    },
+  },
+  security: {
+    headers: {
+      contentSecurityPolicy: {
+        "img-src": [
+          "'self'",
+          "data:",
+          "https://images.igdb.com",
+          "https://images.prismic.io",
+          "https://c.clarity.ms",
+        ],
+        "frame-src": [
+          "'self'",
+          "https://godoplay.prismic.io",
+          "https://www.youtube.com",
+          "https://www.youtube-nocookie.com",
+          "https://docs.google.com",
+        ],
+        "script-src": [
+          "'self'",
+          "'unsafe-inline'",
+          "'strict-dynamic'",
+          "'nonce-{{nonce}}'",
+          "https://*.netlify.app",
+          "https://*.netlify.com",
+        ],
+        "connect-src": [
+          "'self'",
+          "https://www.youtube.com",
+          "https://www.youtube-nocookie.com",
+          "https://*.googleapis.com",
+          "https://*.gstatic.com",
+          "https://www.google-analytics.com",
+          "https://b.clarity.ms",
+        ],
+      },
+      crossOriginEmbedderPolicy: "unsafe-none",
+      referrerPolicy: "strict-origin-when-cross-origin",
+      permissionsPolicy: {
+        fullscreen: [
+          "'self'",
+          "https://www.youtube.com",
+          "https://www.youtube-nocookie.com",
+        ],
+        autoplay: [
+          "'self'",
+          "https://www.youtube.com",
+          "https://www.youtube-nocookie.com",
+        ],
+        "encrypted-media": [
+          "'self'",
+          "https://www.youtube.com",
+          "https://www.youtube-nocookie.com",
+        ],
+      },
     },
   },
 });

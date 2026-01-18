@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import { Analytics } from "@vercel/analytics/nuxt";
-
 import { useScripts } from "@/composables/useScripts";
 import { useSessionState } from "~/composables/useSessionState";
 
@@ -61,9 +59,6 @@ useSeoMeta({
     <NuxtLayout>
       <NuxtPage />
     </NuxtLayout>
-    <template v-if="IS_PROD">
-      <Analytics />
-    </template>
     <TheCookieBanner />
     <TheFeedbackButton />
   </div>
