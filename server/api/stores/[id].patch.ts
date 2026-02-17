@@ -61,18 +61,6 @@ export default defineEventHandler(async event => {
       return storeWithPlatforms;
     });
   } catch (error) {
-    if (process.env.NODE_ENV === "development") {
-      console.log(error);
-    }
-
-    if (isH3ErrorLike(error)) {
-      throw error;
-    }
-
-    throw createError({
-      statusCode: 500,
-      message: "Failed to update store",
-      data: process.env.NODE_ENV === "development" ? error : undefined,
-    });
+    throwApiError(error);
   }
 });

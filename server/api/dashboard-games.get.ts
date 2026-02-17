@@ -6,7 +6,6 @@ import {
   games as gamesTable,
   platformGroupPlatforms,
 } from "~~/server/db/schema";
-import { isH3ErrorLike } from "~~/server/utils/errorHandler";
 import type { FilterParams, GameStatus } from "~~/shared/types/globals";
 
 // Define the sortable fields type
@@ -209,16 +208,8 @@ export default defineCachedEventHandler(
         offset: parsedOffset,
         data: gameResults,
       };
-    } catch (error: unknown) {
-      if (isH3ErrorLike(error)) {
-        throw error;
-      }
-
-      throw createError({
-        statusCode: 500,
-        message: "Failed to retrieve games",
-        data: process.env.NODE_ENV === "development" ? error : undefined,
-      });
+    } catch (error) {
+      throwApiError(error);
     }
   },
   {

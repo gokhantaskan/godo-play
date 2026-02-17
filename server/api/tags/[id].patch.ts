@@ -6,10 +6,8 @@ import { tags } from "~~/server/db/schema";
 
 export default defineEventHandler(async event => {
   try {
-    // Get the tag ID from the route parameter
     const id = parseInt(getRouterParam(event, "id") as string);
 
-    // Parse and validate the request body
     const schema = z.object({
       name: z.string().optional(),
       slug: z.string().optional(),
@@ -25,7 +23,6 @@ export default defineEventHandler(async event => {
       });
     }
 
-    // Update the tag with the provided fields
     const [updatedTag] = await db
       .update(tags)
       .set(body)
@@ -41,14 +38,6 @@ export default defineEventHandler(async event => {
 
     return updatedTag;
   } catch (error) {
-    if (error instanceof z.ZodError) {
-      throw createError({
-        statusCode: 400,
-        message: "Invalid request data",
-        data: z.treeifyError(error),
-      });
-    }
-
-    throw error;
+    throwApiError(error);
   }
 });

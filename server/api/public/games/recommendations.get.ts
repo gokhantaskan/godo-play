@@ -2,7 +2,6 @@ import { and, eq, inArray, not, or, sql } from "drizzle-orm";
 
 import { db } from "~~/server/db";
 import { games, tags, gameModes } from "~~/server/db/schema";
-import { isH3ErrorLike } from "~~/server/utils/errorHandler";
 import { calculateScoreForCandidate } from "~~/server/utils/recommendationUtils";
 
 const DEFAULT_TAG_WEIGHT = 1;
@@ -273,17 +272,8 @@ export default defineCachedEventHandler(
           ...item.game,
           official: item.game.crossplayInformation?.isOfficial || false,
         }));
-    } catch (error: unknown) {
-      if (isH3ErrorLike(error)) {
-        throw error;
-      }
-
-      console.error("Recommendation error:", error);
-      throw createError({
-        statusCode: 500,
-        message: "Failed to retrieve game recommendations",
-        data: process.env.NODE_ENV === "development" ? error : undefined,
-      });
+    } catch (error) {
+      throwApiError(error);
     }
   },
   {

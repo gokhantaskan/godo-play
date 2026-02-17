@@ -1,8 +1,3 @@
-interface H3ErrorLike {
-  statusCode: number;
-  message: string;
-}
-
 export default defineEventHandler(async event => {
   try {
     const path = event.path.replace("/api/igdb/", "");
@@ -69,24 +64,7 @@ export default defineEventHandler(async event => {
     }
 
     return data;
-  } catch (error: unknown) {
-    if (isH3ErrorLike(error)) {
-      throw error;
-    }
-
-    throw createError({
-      statusCode: 500,
-      message: "Failed to fetch data from IGDB",
-      data: process.env.NODE_ENV === "development" ? error : undefined,
-    });
+  } catch (error) {
+    throwApiError(error);
   }
 });
-
-function isH3ErrorLike(error: unknown): error is H3ErrorLike {
-  return (
-    typeof error === "object" &&
-    error !== null &&
-    "statusCode" in error &&
-    "message" in error
-  );
-}

@@ -15,148 +15,95 @@ export function isH3ErrorLike(error: unknown): error is H3ErrorLike {
   );
 }
 
-export function reduceZodIssues(error: ZodError) {
+export function isH3Error(error: unknown): error is H3Error {
+  return error !== null && typeof error === "object" && "statusCode" in error;
+}
+
+function reduceZodIssues(error: ZodError): Record<string, string> {
   return error.issues.reduce((acc: Record<string, string>, issue) => {
     acc[issue.path.join(".")] = issue.message;
     return acc;
   }, {});
 }
 
-export function customZodErrorWithData(error: ZodError) {
-  return {
+export function throwValidationError(error: ZodError): never {
+  throw createError({
     statusCode: 400,
     statusMessage: "Validation Error",
     message: "Validation Error",
     data: { errors: reduceZodIssues(error) },
-  };
+  });
 }
 
-export function handleDatabaseError(
+export function throwDatabaseError(
   error: unknown,
   message = "Database operation failed"
-) {
+): never {
   console.error("Database Error:", error);
 
-  if (error instanceof Error) {
-    return {
-      statusCode: 500,
-      statusMessage: message,
-      message,
-      data: {
-        error: error.message,
-        ...(process.env.NODE_ENV === "development" && { stack: error.stack }),
-      },
-    };
-  }
-
-  return {
+  throw createError({
     statusCode: 500,
     statusMessage: message,
     message,
-  };
+    data:
+      error instanceof Error
+        ? {
+            error: error.message,
+            ...(process.env.NODE_ENV === "development" && {
+              stack: error.stack,
+            }),
+          }
+        : undefined,
+  });
 }
 
-export function handleAuthError(error: unknown) {
-  console.error("Authentication Error:", error);
-
-  if (error instanceof Error) {
-    return {
-      statusCode: 401,
-      statusMessage: "Authentication failed",
-      message: "Authentication failed",
-      data: {
-        error: error.message,
-        ...(process.env.NODE_ENV === "development" && { stack: error.stack }),
-      },
-    };
-  }
-
-  return {
-    statusCode: 401,
-    statusMessage: "Authentication failed",
-    message: "Authentication failed",
-  };
-}
-
-export function handleExternalApiError(error: unknown, service: string) {
+export function throwExternalApiError(error: unknown, service: string): never {
   console.error(`${service} API Error:`, error);
 
-  if (error instanceof Error) {
-    return {
-      statusCode: 502,
-      statusMessage: `${service} service error`,
-      message: `${service} service error`,
-      data: {
-        error: error.message,
-        ...(process.env.NODE_ENV === "development" && { stack: error.stack }),
-      },
-    };
-  }
-
-  return {
+  throw createError({
     statusCode: 502,
     statusMessage: `${service} service error`,
     message: `${service} service error`,
-  };
+    data:
+      error instanceof Error
+        ? {
+            error: error.message,
+            ...(process.env.NODE_ENV === "development" && {
+              stack: error.stack,
+            }),
+          }
+        : undefined,
+  });
 }
 
-export function isH3Error(error: unknown): error is H3Error {
-  return error !== null && typeof error === "object" && "statusCode" in error;
-}
-
-export function handleUnknownError(
-  error: unknown,
-  message = "An unexpected error occurred"
-) {
-  console.error("Unknown Error:", error);
+export function throwApiError(error: unknown): never {
+  if (error instanceof ZodError) {
+    throwValidationError(error);
+  }
 
   if (isH3Error(error)) {
-    return {
-      statusCode: error.statusCode,
-      statusMessage: error.statusMessage || message,
-      message: error.message,
-      data: error.data,
-    };
+    throw error;
   }
 
-  if (error instanceof Error) {
-    return {
-      statusCode: 500,
-      statusMessage: message,
-      message,
-      data: {
-        error: error.message,
-        ...(process.env.NODE_ENV === "development" && { stack: error.stack }),
-      },
-    };
+  if (isH3ErrorLike(error)) {
+    throw error;
   }
 
-  return {
+  console.error("Unhandled Error:", error);
+
+  throw createError({
     statusCode: 500,
-    statusMessage: message,
-    message,
-  };
-}
-
-export function handleError(error: unknown) {
-  console.error("Error:", error);
-
-  if (error instanceof Error) {
-    if (error instanceof ZodError) {
-      return customZodErrorWithData(error);
-    }
-
-    return handleUnknownError(error);
-  }
-
-  if (isH3Error(error)) {
-    return {
-      statusCode: error.statusCode,
-      statusMessage: error.statusMessage || "An error occurred",
-      message: error.message,
-      data: error.data,
-    };
-  }
-
-  return handleUnknownError(error);
+    statusMessage: "An unexpected error occurred",
+    message:
+      error instanceof Error ? error.message : "An unexpected error occurred",
+    data:
+      error instanceof Error
+        ? {
+            error: error.message,
+            ...(process.env.NODE_ENV === "development" && {
+              stack: error.stack,
+            }),
+          }
+        : undefined,
+  });
 }

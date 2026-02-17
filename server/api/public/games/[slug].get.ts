@@ -1,5 +1,4 @@
 import { getGameBySlugPrepared } from "~~/server/db/prepared";
-import { isH3ErrorLike } from "~~/server/utils/errorHandler";
 import type { GameWithRelations } from "~~/shared/types";
 
 export default defineCachedEventHandler(
@@ -24,16 +23,8 @@ export default defineCachedEventHandler(
       }
 
       return game satisfies GameWithRelations;
-    } catch (error: unknown) {
-      if (isH3ErrorLike(error)) {
-        throw error;
-      }
-
-      throw createError({
-        statusCode: 500,
-        message: "Failed to retrieve game",
-        data: process.env.NODE_ENV === "development" ? error : undefined,
-      });
+    } catch (error) {
+      throwApiError(error);
     }
   },
   {

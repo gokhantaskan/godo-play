@@ -8,6 +8,7 @@ definePageMeta({
 const { data: stores, refresh } =
   await useFetch<StoreWithRelations[]>("/api/stores");
 
+const toast = useToast();
 const selectedStore = ref<StoreWithRelations | null>(null);
 const isUpdateModalOpen = ref(false);
 
@@ -22,11 +23,13 @@ async function handleStoreUpdate(updatedStore: {
       body: updatedStore,
     });
 
+    toast.show("Store updated", "success");
     isUpdateModalOpen.value = false;
     selectedStore.value = null;
     refresh();
   } catch (error) {
-    console.error(error);
+    const apiError = extractApiError(error);
+    toast.show(apiError?.message || "Failed to update store", "error");
   }
 }
 

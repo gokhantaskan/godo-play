@@ -13,7 +13,6 @@ import {
   storePlatforms,
   stores,
 } from "~~/server/db/schema";
-import { isH3ErrorLike } from "~~/server/utils/errorHandler";
 import {
   InsertPlatformGroupPlatformsSchema,
   InsertPlatformGroupSchema,
@@ -279,32 +278,6 @@ export default defineEventHandler(async event => {
 
     return result;
   } catch (error) {
-    console.error("game patch error", error);
-
-    if (error instanceof z.ZodError) {
-      throw createError({
-        statusCode: 400,
-        message: "Invalid request data",
-        data: {
-          errors: error.issues.reduce(
-            (acc: Record<string, string>, err) => {
-              acc[err.path.join(".")] = err.message;
-              return acc;
-            },
-            {} as Record<string, string>
-          ),
-        },
-      });
-    }
-
-    if (isH3ErrorLike(error)) {
-      throw error;
-    }
-
-    throw createError({
-      statusCode: 500,
-      message: "Failed to update game",
-      data: process.env.NODE_ENV === "development" ? error : undefined,
-    });
+    throwApiError(error);
   }
 });

@@ -1,5 +1,3 @@
-import { createError } from "h3";
-
 import { db } from "../../db";
 import { tags } from "../../db/schema";
 
@@ -33,7 +31,7 @@ export default defineEventHandler(async event => {
           message: "A tag with this slug already exists",
         });
       }
-      throw error;
+      throwApiError(error);
     }
   }
 

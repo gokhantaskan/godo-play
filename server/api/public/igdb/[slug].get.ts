@@ -80,16 +80,8 @@ export default defineCachedEventHandler(
       }
 
       return gameDetails as GameDetails;
-    } catch (error: unknown) {
-      if (isH3ErrorLike(error)) {
-        throw error;
-      }
-
-      throw createError({
-        statusCode: 500,
-        message: "Failed to fetch game details",
-        data: process.env.NODE_ENV === "development" ? error : undefined,
-      });
+    } catch (error) {
+      throwApiError(error);
     }
   },
   {

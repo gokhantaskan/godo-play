@@ -41,6 +41,8 @@ interface SubmitGamePayload {
 }
 
 const { getToken } = useRecaptcha();
+const toast = useToast();
+const apiError = useApiError();
 
 // Form state
 const selectedGame = ref<GameOption | null>(null);
@@ -89,6 +91,7 @@ function resetForm() {
   selectedTags.value = [];
   selectedFreeToPlay.value = false;
   formError.value = null;
+  apiError.clear();
 }
 
 async function handleSubmit(event: Event) {
@@ -101,6 +104,7 @@ async function handleSubmit(event: Event) {
   try {
     isSubmitting.value = true;
     formError.value = null;
+    apiError.clear();
 
     const token = await getToken("submit");
 
@@ -136,12 +140,14 @@ async function handleSubmit(event: Event) {
       body: payload,
     });
 
-    // Reset form
+    toast.show("Game submitted successfully!", "success");
     resetForm();
     formKey.value++;
   } catch (error) {
-    console.error("Failed to submit game:", error);
-    formError.value = "Failed to submit game. Please try again.";
+    apiError.set(error);
+    formError.value =
+      apiError.message.value || "Failed to submit game. Please try again.";
+    toast.show(apiError.message.value || "Failed to submit game", "error");
   } finally {
     isSubmitting.value = false;
   }

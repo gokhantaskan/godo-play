@@ -59,6 +59,7 @@ const tagsModel = ref<number[]>(props.game.tags?.map(tag => tag.tagId) || []);
 const crossplayInformationModel =
   ref<CrossplayInformation>(crossplayInformation);
 const freeToPlayModel = ref(props.game.freeToPlay);
+const toast = useToast();
 
 async function fetchIgdbGame() {
   if (!props.game.external?.igdbId) {
@@ -81,7 +82,8 @@ async function fetchIgdbGame() {
       igdbGame.value = data[0];
     }
   } catch (error) {
-    console.error("Failed to fetch IGDB game data:", error);
+    const apiError = extractApiError(error);
+    toast.show(apiError?.message || "Failed to fetch IGDB game data", "error");
   } finally {
     isLoadingIgdbGame.value = false;
   }
@@ -114,9 +116,11 @@ async function handleSave() {
       },
     });
 
+    toast.show("Changes saved", "success");
     emit("refresh");
   } catch (error) {
-    console.error("Failed to save changes:", error);
+    const apiError = extractApiError(error);
+    toast.show(apiError?.message || "Failed to save changes", "error");
   }
 }
 

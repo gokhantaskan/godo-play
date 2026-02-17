@@ -1,5 +1,4 @@
 import { inArray } from "drizzle-orm";
-import { z } from "zod";
 
 import { db } from "~~/server/db";
 import {
@@ -14,7 +13,6 @@ import {
   storePlatforms,
   stores,
 } from "~~/server/db/schema";
-import { isH3ErrorLike } from "~~/server/utils/errorHandler";
 import { verifyRecaptchaToken } from "~~/server/utils/recaptcha";
 import { type SubmitGame, SubmitGameSchema } from "~~/shared/schemas/game";
 import { PlatformSchema } from "~~/shared/schemas/platform";
@@ -210,30 +208,6 @@ export default defineEventHandler(async event => {
 
     return result;
   } catch (error) {
-    if (error instanceof z.ZodError) {
-      throw createError({
-        statusCode: 400,
-        message: "Invalid request data",
-        data: {
-          errors: error.issues.reduce(
-            (acc: Record<string, string>, err) => {
-              acc[err.path.join(".")] = err.message;
-              return acc;
-            },
-            {} as Record<string, string>
-          ),
-        },
-      });
-    }
-
-    if (isH3ErrorLike(error)) {
-      throw error;
-    }
-
-    throw createError({
-      statusCode: 500,
-      message: "Failed to process game",
-      data: process.env.NODE_ENV === "development" ? error : undefined,
-    });
+    throwApiError(error);
   }
 });

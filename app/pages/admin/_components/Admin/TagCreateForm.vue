@@ -15,6 +15,7 @@ const emit = defineEmits<{
 }>();
 
 const { refresh } = useTags();
+const toast = useToast();
 
 const form = reactive<TagFormData>({
   name: "",
@@ -33,10 +34,12 @@ async function onSubmit() {
       body: form,
     });
 
+    toast.show("Tag created", "success");
     await refresh();
     emit("close");
   } catch (err) {
-    alert(JSON.stringify(err));
+    const apiError = extractApiError(err);
+    toast.show(apiError?.message || "Failed to create tag", "error");
   } finally {
     pending.value = false;
   }

@@ -2,7 +2,6 @@ import { eq } from "drizzle-orm";
 
 import { db } from "~~/server/db";
 import { crossplayInformation, games } from "~~/server/db/schema";
-import { isH3ErrorLike } from "~~/server/utils/errorHandler";
 
 export default defineEventHandler(async event => {
   const gameId = parseInt(event.context.params?.id as string);
@@ -47,15 +46,7 @@ export default defineEventHandler(async event => {
     });
 
     return result;
-  } catch (error: unknown) {
-    if (isH3ErrorLike(error)) {
-      throw error;
-    }
-
-    throw createError({
-      statusCode: 500,
-      message: "Failed to delete game",
-      data: process.env.NODE_ENV === "development" ? error : undefined,
-    });
+  } catch (error) {
+    throwApiError(error);
   }
 });

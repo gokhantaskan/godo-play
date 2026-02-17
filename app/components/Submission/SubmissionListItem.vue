@@ -16,30 +16,31 @@ const emit = defineEmits<{
 }>();
 
 const detailsRef = ref<{ save: () => Promise<void> } | null>(null);
+const toast = useToast();
 
 async function handleUpdate(status: "approved" | "rejected") {
   try {
-    // Update only the status
     await $fetch(`/api/games/${props.game.id}`, {
       method: "PATCH",
-      body: {
-        status,
-      },
+      body: { status },
     });
 
+    toast.show(`Submission ${status}`, "success");
     emit("refresh");
   } catch (error) {
-    console.error("Failed to update submission:", error);
+    const apiError = extractApiError(error);
+    toast.show(apiError?.message || "Failed to update submission", "error");
   }
 }
 
 async function handleSave() {
   try {
-    // Save form data without changing status
     await detailsRef.value?.save();
+    toast.show("Changes saved", "success");
     emit("refresh");
   } catch (error) {
-    console.error("Failed to save submission:", error);
+    const apiError = extractApiError(error);
+    toast.show(apiError?.message || "Failed to save submission", "error");
   }
 }
 
@@ -53,9 +54,11 @@ async function handleDelete() {
       method: "DELETE",
     });
 
+    toast.show("Submission deleted", "success");
     emit("refresh");
   } catch (error) {
-    console.error("Failed to delete submission:", error);
+    const apiError = extractApiError(error);
+    toast.show(apiError?.message || "Failed to delete submission", "error");
   }
 }
 </script>

@@ -1,20 +1,34 @@
 schema: spec-driven
 
-# Project context (optional)
-# This is shown to AI when creating artifacts.
-# Add your tech stack, conventions, style guides, domain knowledge, etc.
-# Example:
-#   context: |
-#     Tech stack: TypeScript, React, Node.js
-#     We use conventional commits
-#     Domain: e-commerce platform
+context: |
+  Domain: Cross-platform multiplayer game discovery platform (GodoPlay)
+  Tech stack: Nuxt 4 (Vue 3 Composition API + TypeScript), PostgreSQL 17, Drizzle ORM, Supabase Auth, Prismic CMS, Redis, Tailwind CSS v4 beta
+  State: useState/useSessionState (no Pinia)
+  API: REST under server/api/, Supabase cookie-based auth, Redis caching via unstorage
+  External: IGDB API (Twitch OAuth) for game metadata
+  Structure: app/ (frontend), server/ (backend + db), shared/ (types, Zod schemas, constants)
+  Conventions: Conventional commits, <script setup lang="ts">, interface over type, no enums, BEM + ITCSS for SCSS, tw: prefix for Tailwind utilities
+  Database: Singular snake_case tables, camelCase in Drizzle schema, explicit foreignKey() with named constraints
+  No automated test suite
 
-# Per-artifact rules (optional)
-# Add custom rules for specific artifacts.
-# Example:
-#   rules:
-#     proposal:
-#       - Keep proposals under 500 words
-#       - Always include a "Non-goals" section
-#     tasks:
-#       - Break tasks into chunks of max 2 hours
+rules:
+  proposal:
+    - Keep proposals concise — under 500 words
+    - Always include a "Non-goals" section to clarify scope boundaries
+    - List affected areas (app/, server/, shared/, database schema)
+    - Note if the change touches auth, IGDB integration, or caching
+  spec:
+    - Write requirements as BDD-style scenarios
+    - Reference existing Drizzle schema table/column names when relevant
+    - Specify API response shape using project conventions (paginated, error, validation patterns)
+    - Call out if new Zod schemas or shared types are needed
+  design:
+    - Justify technology choices against the existing stack (no introducing new ORMs, state libs, etc.)
+    - Address caching strategy (Redis server-side, useCachedFetch client-side) when applicable
+    - Note database migration needs (Drizzle generate + migrate) for schema changes
+    - Include a "Non-goals" section
+  tasks:
+    - Break tasks into small, independently committable chunks
+    - Order tasks by dependency (schema → server → shared → app)
+    - Separate database migration tasks from application code tasks
+    - Each task should map to a single conventional commit

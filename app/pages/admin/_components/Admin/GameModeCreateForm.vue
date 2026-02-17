@@ -15,6 +15,7 @@ const emit = defineEmits<{
 }>();
 
 const { refresh } = useGameModes();
+const toast = useToast();
 
 const form = reactive<GameModeFormData>({
   name: "",
@@ -33,10 +34,12 @@ async function onSubmit() {
       body: form,
     });
 
+    toast.show("Game mode created", "success");
     await refresh();
     emit("close");
   } catch (err) {
-    alert(JSON.stringify(err));
+    const apiError = extractApiError(err);
+    toast.show(apiError?.message || "Failed to create game mode", "error");
   } finally {
     pending.value = false;
   }

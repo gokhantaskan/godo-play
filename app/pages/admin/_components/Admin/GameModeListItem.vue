@@ -9,6 +9,7 @@ const props = defineProps<{
 }>();
 
 const { refresh } = useGameModes();
+const toast = useToast();
 
 const isUpdateModalOpen = ref(false);
 const isDeleting = ref(false);
@@ -24,9 +25,11 @@ async function handleDelete() {
     await $fetch(`/api/game-modes/${props.gameMode.id}`, {
       method: "DELETE",
     });
+    toast.show(`Game mode "${props.gameMode.name}" deleted`, "success");
     await refresh();
   } catch (error) {
-    console.error("Failed to delete game mode:", error);
+    const apiError = extractApiError(error);
+    toast.show(apiError?.message || "Failed to delete game mode", "error");
   } finally {
     isDeleting.value = false;
   }

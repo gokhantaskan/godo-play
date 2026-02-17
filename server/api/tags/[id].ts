@@ -1,5 +1,4 @@
 import { eq } from "drizzle-orm";
-import { createError } from "h3";
 
 import { db } from "~~/server/db";
 import { tags } from "~~/server/db/schema";
@@ -39,7 +38,7 @@ export default defineEventHandler(async event => {
           message: "A tag with this slug already exists",
         });
       }
-      throw error;
+      throwApiError(error);
     }
   }
 

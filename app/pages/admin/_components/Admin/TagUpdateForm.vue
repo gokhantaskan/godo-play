@@ -19,6 +19,8 @@ const emit = defineEmits<{
 }>();
 
 const { refresh } = useTags();
+const toast = useToast();
+const apiError = useApiError();
 
 const form = reactive<TagFormData>({
   name: props.tag.name,
@@ -27,32 +29,10 @@ const form = reactive<TagFormData>({
 });
 
 const pending = ref(false);
-const error = ref<any>(null);
-
-const errors = computed(() => {
-  if (!error.value) {
-    return {};
-  }
-
-  const data = error.value?.data;
-  if (!data) {
-    return {};
-  }
-
-  return Array.isArray(data)
-    ? data.reduce(
-        (acc, curr) => ({
-          ...acc,
-          [curr.path[0]]: curr.message,
-        }),
-        {}
-      )
-    : {};
-});
 
 async function onSubmit() {
   pending.value = true;
-  error.value = null;
+  apiError.clear();
 
   try {
     await $fetch<Tag>(`/api/tags/${props.tag.id}`, {
@@ -60,10 +40,12 @@ async function onSubmit() {
       body: form,
     });
 
+    toast.show("Tag updated", "success");
     await refresh();
     emit("close");
   } catch (err) {
-    error.value = err;
+    apiError.set(err);
+    toast.show(apiError.message.value || "Failed to update tag", "error");
   } finally {
     pending.value = false;
   }
@@ -74,7 +56,7 @@ async function onSubmit() {
   <form @submit.prevent="onSubmit">
     <AdminTagCreateFormInner
       v-model="form"
-      :errors="errors"
+      :errors="apiError.fieldErrors.value"
     />
 
     <div class="tw:mt-4 tw:flex tw:justify-end tw:gap-2">

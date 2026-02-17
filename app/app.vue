@@ -6,6 +6,8 @@ import { getGameModes, getStores, getTags } from "./services/api.service";
 
 const { initScripts } = useScripts();
 
+provideToast();
+
 onMounted(async () => {
   initScripts();
 
@@ -61,5 +63,6 @@ useSeoMeta({
     </NuxtLayout>
     <TheCookieBanner />
     <TheFeedbackButton />
+    <TheToastContainer />
   </div>
 </template>

@@ -130,6 +130,7 @@ function getCellValue(item: Tag, column: Column<Tag>) {
   return item[column.key as keyof Tag];
 }
 
+const toast = useToast();
 const isCreateModalOpen = ref(false);
 const isUpdateModalOpen = ref(false);
 const selectedTag = ref<Tag | null>(null);
@@ -143,9 +144,11 @@ async function handleDelete(tagId: number | string, tagName: string) {
     await $fetch(`/api/tags/${tagId}`, {
       method: "DELETE",
     });
+    toast.show(`Tag "${tagName}" deleted`, "success");
     await refresh();
   } catch (error) {
-    console.error("Failed to delete tag:", error);
+    const apiError = extractApiError(error);
+    toast.show(apiError?.message || "Failed to delete tag", "error");
   }
 }
 

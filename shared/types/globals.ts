@@ -42,3 +42,12 @@ export interface PaginatedResponse<T> {
   limit: number;
   offset: number;
 }
+
+export interface ApiErrorResponse {
+  statusCode: number;
+  message: string;
+  data?: {
+    errors?: Record<string, string>;
+    error?: string;
+  };
+}

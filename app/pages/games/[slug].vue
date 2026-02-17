@@ -32,10 +32,17 @@ if (!dbGame.value) {
   });
 }
 
-// Fetch IGDB data using the IGDB ID from the database
-const igdbId = dbGame.value.external?.igdbId;
+// Fetch IGDB data using the IGDB ID from the database.
+// Uses a slug-based key so the client can always find the SSR payload data,
+// even if dbGame hasn't hydrated yet when this line runs.
 const { data: igdbGame, refresh: refreshIgdbGame } =
-  await useCachedFetch<GameDetails>(`/api/public/igdb/${igdbId}`);
+  await useAsyncData<GameDetails | null>(`game-igdb-${slug}`, async () => {
+    const id = dbGame.value?.external?.igdbId;
+    if (!id) {
+      return null;
+    }
+    return $fetch<GameDetails>(`/api/public/igdb/${id}`);
+  });
 
 const seoMeta = computed(() => {
   return {

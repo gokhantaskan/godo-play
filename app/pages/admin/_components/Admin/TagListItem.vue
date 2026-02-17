@@ -9,6 +9,7 @@ const props = defineProps<{
 }>();
 
 const { refresh } = useTags();
+const toast = useToast();
 
 const isUpdateModalOpen = ref(false);
 const isDeleting = ref(false);
@@ -24,9 +25,11 @@ async function handleDelete() {
     await $fetch(`/api/tags/${props.tag.id}`, {
       method: "DELETE",
     });
+    toast.show(`Tag "${props.tag.name}" deleted`, "success");
     await refresh();
   } catch (error) {
-    console.error("Failed to delete tag:", error);
+    const apiError = extractApiError(error);
+    toast.show(apiError?.message || "Failed to delete tag", "error");
   } finally {
     isDeleting.value = false;
   }

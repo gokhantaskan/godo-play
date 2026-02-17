@@ -17,13 +17,6 @@ export default defineEventHandler(async event => {
 
     return;
   } catch (error) {
-    if (error instanceof Error) {
-      throw createError(error);
-    }
-
-    throw createError({
-      statusCode: 500,
-      statusMessage: "Failed to authenticate with Twitch",
-    });
+    throwApiError(error);
   }
 });

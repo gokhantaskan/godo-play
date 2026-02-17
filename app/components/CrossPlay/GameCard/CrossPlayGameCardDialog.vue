@@ -23,19 +23,11 @@ const {
 });
 
 // Fetch IGDB game using the IGDB ID from the database
-const igdbId = computed(() => fetchedDbGame.value?.external?.igdbId);
-const {
-  data: fetchedIGDBGame,
-  status: igdbStatus,
-  refresh: refreshIgdbGame,
-} = useFetch<GameDetails | null>(() => `/api/public/igdb/${igdbId.value}`, {
-  server: false,
-  immediate: false,
-  watch: false,
-});
+const fetchedIGDBGame = ref<GameDetails | null>(null);
+const isLoadingIgdb = ref(false);
 
 const isLoading = computed(
-  () => igdbStatus.value === "pending" || dbStatus.value === "pending"
+  () => isLoadingIgdb.value || dbStatus.value === "pending"
 );
 
 // Watch modal state to fetch data when opened
@@ -48,8 +40,16 @@ watch(isOpen, async newValue => {
 async function refresh() {
   // First fetch DB game to get IGDB ID, then fetch IGDB game
   await refreshDbGame();
-  if (igdbId.value) {
-    await refreshIgdbGame();
+  const igdbId = fetchedDbGame.value?.external?.igdbId;
+  if (igdbId) {
+    isLoadingIgdb.value = true;
+    try {
+      fetchedIGDBGame.value = await $fetch<GameDetails>(
+        `/api/public/igdb/${igdbId}`
+      );
+    } finally {
+      isLoadingIgdb.value = false;
+    }
   }
 }
 

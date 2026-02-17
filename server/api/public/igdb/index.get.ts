@@ -1,7 +1,3 @@
-import {
-  handleAuthError,
-  handleExternalApiError,
-} from "~~/server/utils/errorHandler";
 import { GAME_MODE_IDS } from "~~/shared/constants/gameModes";
 import { SUPPORTED_PLATFORM_IDS } from "~~/shared/constants/platforms";
 import type { DashboardGamesRequestBody } from "~~/shared/types/queries";
@@ -126,7 +122,10 @@ export default defineCachedEventHandler(
       const session = await tokenStorage.getSession();
 
       if (!session) {
-        throw handleAuthError(new Error("No valid authentication session"));
+        throw createError({
+          statusCode: 401,
+          message: "No valid authentication session",
+        });
       }
 
       const response = await tokenStorage.makeAuthenticatedRequest(
@@ -138,7 +137,7 @@ export default defineCachedEventHandler(
       );
 
       if (!response.ok) {
-        throw handleExternalApiError(
+        throwExternalApiError(
           new Error(`HTTP ${response.status}: ${response.statusText}`),
           "IGDB"
         );
@@ -146,11 +145,7 @@ export default defineCachedEventHandler(
 
       return await response.json();
     } catch (error) {
-      if (error && typeof error === "object" && "statusCode" in error) {
-        throw error;
-      }
-
-      throw handleExternalApiError(error, "IGDB");
+      throwApiError(error);
     }
   },
   {
