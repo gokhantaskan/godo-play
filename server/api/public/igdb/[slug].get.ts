@@ -63,30 +63,9 @@ export default defineCachedEventHandler(
 
       const [gameDetails] = await response.json();
 
-      if (process.env.NODE_ENV === "development" && gameDetails.age_ratings) {
-        console.log("BEFORE transformation:", JSON.stringify(gameDetails.age_ratings, null, 2));
-      }
-
       // Transform IGDB age_ratings to match our TypeScript types
       if (gameDetails.age_ratings) {
-        if (process.env.NODE_ENV === "development") {
-          console.log("=== RAW IGDB DATA ===");
-          console.log("First rating raw data:", JSON.stringify(gameDetails.age_ratings[0], null, 2));
-        }
-
         gameDetails.age_ratings = gameDetails.age_ratings.map((rating: any) => {
-          // IGDB deprecated 'category' and 'rating' fields
-          // Use 'organization' and 'rating_category' instead (the correct fields)
-          // If new fields don't exist, IGDB might not be returning them
-
-          if (process.env.NODE_ENV === "development") {
-            console.log(`\nRating ${rating.id}:`);
-            console.log(`  organization: ${rating.organization}`);
-            console.log(`  rating_category: ${rating.rating_category}`);
-            console.log(`  OLD category: ${rating.category}`);
-            console.log(`  OLD rating: ${rating.rating}`);
-          }
-
           const transformed = {
             id: rating.id,
             category: rating.organization,
@@ -98,11 +77,6 @@ export default defineCachedEventHandler(
 
           return transformed;
         });
-
-        if (process.env.NODE_ENV === "development") {
-          console.log("\n=== AFTER TRANSFORMATION ===");
-          console.log(JSON.stringify(gameDetails.age_ratings.slice(0, 2), null, 2));
-        }
       }
 
       return gameDetails as GameDetails;

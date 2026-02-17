@@ -117,7 +117,7 @@ export default defineNuxtConfig({
           // Keep viewbox to allow responsive svgs
           plugins: ["preset-default", "removeDimensions"],
         },
-      }),
+      }) as any,
     ],
   },
   build: {
