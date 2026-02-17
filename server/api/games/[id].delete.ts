@@ -5,45 +5,45 @@ import { crossplayInformation, games } from "~~/server/db/schema";
 import { isH3ErrorLike } from "~~/server/utils/errorHandler";
 
 export default defineEventHandler(async event => {
-  const submissionId = parseInt(event.context.params?.id as string);
+  const gameId = parseInt(event.context.params?.id as string);
 
-  if (isNaN(submissionId)) {
+  if (isNaN(gameId)) {
     throw createError({
       statusCode: 400,
-      message: "Invalid submission ID",
+      message: "Invalid game ID",
     });
   }
 
   try {
     const result = await db.transaction(async tx => {
-      // Check if submission exists and is approved
-      const submission = await tx.query.games.findFirst({
-        where: eq(games.id, submissionId),
+      // Check if game exists and is approved
+      const game = await tx.query.games.findFirst({
+        where: eq(games.id, gameId),
       });
 
-      if (!submission) {
+      if (!game) {
         throw createError({
           statusCode: 404,
-          message: "Submission not found",
+          message: "Game not found",
         });
       }
 
-      if (submission.status !== "approved") {
+      if (game.status !== "approved") {
         throw createError({
           statusCode: 400,
-          message: "Only approved submissions can be deleted",
+          message: "Only approved games can be deleted",
         });
       }
 
       // First delete the crossplay information to resolve the foreign key constraint
       await tx
         .delete(crossplayInformation)
-        .where(eq(crossplayInformation.gameId, submissionId));
+        .where(eq(crossplayInformation.gameId, gameId));
 
-      // Then delete the game submission
-      await tx.delete(games).where(eq(games.id, submissionId));
+      // Then delete the game
+      await tx.delete(games).where(eq(games.id, gameId));
 
-      return submission;
+      return game;
     });
 
     return result;
@@ -54,7 +54,7 @@ export default defineEventHandler(async event => {
 
     throw createError({
       statusCode: 500,
-      message: "Failed to delete game submission",
+      message: "Failed to delete game",
       data: process.env.NODE_ENV === "development" ? error : undefined,
     });
   }

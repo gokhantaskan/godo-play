@@ -4,16 +4,16 @@ import { JSDOM } from "jsdom";
 
 import { db } from "~~/server/db";
 import {
+  gameGameModes,
   games,
-  gameSubmissionGameModes,
   platformGroupPlatforms,
 } from "~~/server/db/schema";
 import { isH3ErrorLike } from "~~/server/utils/errorHandler";
-import type { GameSubmissionWithRelations } from "~~/shared/types";
+import type { GameWithRelations } from "~~/shared/types";
 import type {
   FilterParams,
+  GameStatus,
   PaginatedResponse,
-  SubmissionStatus,
 } from "~~/shared/types/globals";
 
 // Define the sortable fields type
@@ -99,7 +99,7 @@ export default defineCachedEventHandler(
       const validStatuses = status
         ? decodeURIComponent(status)
             .split(",")
-            .filter((s): s is SubmissionStatus =>
+            .filter((s): s is GameStatus =>
               ["pending", "approved", "rejected"].includes(s)
             )
         : undefined;
@@ -133,7 +133,7 @@ export default defineCachedEventHandler(
         conditions = and(
           conditions,
           sql`id IN (
-            SELECT submission_id
+            SELECT game_id
             FROM platform_group
             WHERE id IN (${platformGroupsQuery})
           )`
@@ -143,14 +143,14 @@ export default defineCachedEventHandler(
       // Update game mode filtering to include at least one selected mode
       if (parsedGameModes?.length) {
         const gameModeQuery = db
-          .select({ submissionId: gameSubmissionGameModes.submissionId })
-          .from(gameSubmissionGameModes)
-          // .where(inArray(gameSubmissionGameModes.gameModeId, parsedGameModes))
-          // .groupBy(gameSubmissionGameModes.submissionId)
+          .select({ gameId: gameGameModes.gameId })
+          .from(gameGameModes)
+          // .where(inArray(gameGameModes.gameModeId, parsedGameModes))
+          // .groupBy(gameGameModes.gameId)
           // .having(
           //   sql`COUNT(DISTINCT game_mode_id) = ${parsedGameModes.length}`
           // )
-          .where(inArray(gameSubmissionGameModes.gameModeId, parsedGameModes));
+          .where(inArray(gameGameModes.gameModeId, parsedGameModes));
 
         conditions = and(conditions, sql`id IN (${gameModeQuery})`);
       }
@@ -191,10 +191,16 @@ export default defineCachedEventHandler(
           storePlatforms: {
             columns: {
               id: true,
-              storeSlug: true,
               storeUrl: true,
             },
             with: {
+              store: {
+                columns: {
+                  id: true,
+                  name: true,
+                  slug: true,
+                },
+              },
               crossplayEntries: {
                 columns: {
                   platformId: true,
@@ -211,7 +217,7 @@ export default defineCachedEventHandler(
               },
             },
           },
-          gameSubmissionGameModes: {
+          gameGameModes: {
             columns: {
               gameModeId: true,
             },
@@ -279,7 +285,7 @@ export default defineCachedEventHandler(
           ...game,
           crossplayInformation: sanitizedCrossplayInfo,
         };
-      }) as GameSubmissionWithRelations[];
+      }) as GameWithRelations[];
 
       // Return the response with total, count, and sanitized data
       return {
@@ -288,7 +294,7 @@ export default defineCachedEventHandler(
         data: sanitizedData,
         limit: parsedLimit,
         offset: parsedOffset,
-      } satisfies PaginatedResponse<GameSubmissionWithRelations>;
+      } satisfies PaginatedResponse<GameWithRelations>;
     } catch (error: unknown) {
       // Handle errors and throw appropriate error messages
       if (isH3ErrorLike(error)) {

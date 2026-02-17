@@ -33,10 +33,16 @@ export const getGameBySlugPrepared = db.query.games
       storePlatforms: {
         columns: {
           id: true,
-          storeSlug: true,
           storeUrl: true,
         },
         with: {
+          store: {
+            columns: {
+              id: true,
+              name: true,
+              slug: true,
+            },
+          },
           crossplayEntries: {
             columns: {
               platformId: true,
@@ -53,7 +59,7 @@ export const getGameBySlugPrepared = db.query.games
           },
         },
       },
-      gameSubmissionGameModes: {
+      gameGameModes: {
         columns: {
           gameModeId: true,
         },

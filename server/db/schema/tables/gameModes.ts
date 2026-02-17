@@ -36,31 +36,31 @@ export const gameModes = pgTable(
 );
 
 /**
- * Junction table between game_submissions and game_modes.
- * Each record ties one game_submission to one game_mode.
+ * Junction table between games and game_modes.
+ * Each record ties one game to one game_mode.
  */
-export const gameSubmissionGameModes = pgTable(
-  "game_submission_game_mode",
+export const gameGameModes = pgTable(
+  "game_game_mode",
   {
-    submissionId: integer("submission_id").notNull(),
+    gameId: integer("game_id").notNull(),
     gameModeId: integer("game_mode_id").notNull(),
   },
   table => [
     primaryKey({
-      name: "game_submission_game_mode_pkey",
-      columns: [table.submissionId, table.gameModeId],
+      name: "game_game_mode_pkey",
+      columns: [table.gameId, table.gameModeId],
     }),
     foreignKey({
-      name: "game_submission_game_mode_submission_id_fkey",
-      columns: [table.submissionId],
+      name: "game_game_mode_game_id_fkey",
+      columns: [table.gameId],
       foreignColumns: [games.id],
     }).onDelete("cascade"),
     foreignKey({
-      name: "game_submission_game_mode_game_mode_id_fkey",
+      name: "game_game_mode_game_mode_id_fkey",
       columns: [table.gameModeId],
       foreignColumns: [gameModes.id],
     }).onDelete("cascade"),
-    index("game_submission_game_mode_game_mode_id_idx").on(table.gameModeId),
+    index("game_game_mode_game_mode_id_idx").on(table.gameModeId),
   ]
 );
 
@@ -68,18 +68,12 @@ export const gameSubmissionGameModes = pgTable(
 export const BaseGameModeSchema = createSelectSchema(gameModes);
 export const BaseInsertGameModeSchema = createInsertSchema(gameModes);
 
-export const BaseGameSubmissionGameModeSchema = createSelectSchema(
-  gameSubmissionGameModes
-);
-export const BaseInsertGameSubmissionGameModeSchema = createInsertSchema(
-  gameSubmissionGameModes
-);
+export const BaseGameGameModeSchema = createSelectSchema(gameGameModes);
+export const BaseInsertGameGameModeSchema = createInsertSchema(gameGameModes);
 
 // Types for internal database usage
 export type GameMode = typeof gameModes.$inferSelect;
 export type InsertGameMode = typeof gameModes.$inferInsert;
 
-export type GameSubmissionGameMode =
-  typeof gameSubmissionGameModes.$inferSelect;
-export type InsertGameSubmissionGameMode =
-  typeof gameSubmissionGameModes.$inferInsert;
+export type GameGameMode = typeof gameGameModes.$inferSelect;
+export type InsertGameGameMode = typeof gameGameModes.$inferInsert;

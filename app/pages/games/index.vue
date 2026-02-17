@@ -4,7 +4,7 @@ import { refDebounced } from "@vueuse/core";
 import { useCookieConsent } from "@/composables/useCookieConsent";
 import type { PlatformId } from "~/types/crossPlay";
 import { SUPPORTED_PLATFORMS } from "~~/shared/constants";
-import type { GameSubmissionWithRelations } from "~~/shared/types";
+import type { GameWithRelations } from "~~/shared/types";
 
 interface InitialRouteQuery {
   platforms: string;
@@ -34,7 +34,7 @@ interface Filters {
 
 interface GamesResponse {
   total: number;
-  data: GameSubmissionWithRelations[];
+  data: GameWithRelations[];
   limit: number;
   offset: number;
 }

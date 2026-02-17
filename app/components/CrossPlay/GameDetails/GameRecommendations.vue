@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { GameSubmissionWithRelations } from "~~/shared/types";
+import type { GameWithRelations } from "~~/shared/types";
 
 interface Props {
   slug: string;
@@ -25,7 +25,7 @@ const platformsFromQuery = computed(() => {
 });
 
 const { data: recommendedGames, status } = await useCachedFetch<
-  GameSubmissionWithRelations[]
+  GameWithRelations[]
 >(`/api/public/games/recommendations`, {
   params: {
     query: props.slug,

@@ -138,10 +138,10 @@ function updateStorePlatforms(
   }
 ): void {
   try {
-    // Validate the store slug
+    // Validate the store data
     InsertStorePlatformSchema.parse({
-      storeSlug: store,
-      submissionId: 0, // This will be set by the server
+      storeId: 0, // This will be resolved by the server from the slug
+      gameId: 0, // This will be set by the server
       storeUrl: data.storeUrl,
     });
 
@@ -193,7 +193,7 @@ watch(
     groups.forEach((group: PlatformId[], index: number) => {
       try {
         InsertPlatformGroupSchema.parse({
-          submissionId: 0, // This will be set by the server
+          gameId: 0, // This will be set by the server
         });
         errors.value = {
           ...errors.value,

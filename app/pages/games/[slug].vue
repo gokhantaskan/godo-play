@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { GameSubmissionWithRelations } from "~~/shared/types";
+import type { GameWithRelations } from "~~/shared/types";
 import type { GameDetails } from "~~/shared/types/igdb/gameDetails";
 
 definePageMeta({
@@ -22,9 +22,7 @@ useHead({
 });
 
 const { data: dbGame, refresh: refreshDbGame } =
-  await useCachedFetch<GameSubmissionWithRelations>(
-    `/api/public/games/${slug}`
-  );
+  await useCachedFetch<GameWithRelations>(`/api/public/games/${slug}`);
 
 // Throw 404 if game is not found
 if (!dbGame.value) {

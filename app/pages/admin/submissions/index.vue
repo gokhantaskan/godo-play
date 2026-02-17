@@ -1,30 +1,26 @@
 <script setup lang="ts">
 import { refDebounced } from "@vueuse/core";
 
-import type { GameSubmissionWithRelations } from "~~/shared/types";
+import type { GameWithRelations } from "~~/shared/types";
 import type {
   FilterParams,
+  GameStatus,
   PaginatedResponse,
   SortField,
-  SubmissionStatus,
 } from "~~/shared/types/globals";
 
 definePageMeta({
   name: "AdminGameSubmissionsPage",
 });
 
-const selectedStatuses = ref<SubmissionStatus[]>([
-  "pending",
-  "approved",
-  "rejected",
-]);
+const selectedStatuses = ref<GameStatus[]>(["pending", "approved", "rejected"]);
 
 const selectedSort = ref<SortField>("-created_at");
 const searchQuery = ref("");
 const searchQueryDebounced = refDebounced(searchQuery, 500);
 
 const { data: response, refresh } = await useFetch<
-  PaginatedResponse<GameSubmissionWithRelations>
+  PaginatedResponse<GameWithRelations>
 >("/api/games", {
   query: computed<FilterParams>(() => ({
     limit: 400,
@@ -34,7 +30,7 @@ const { data: response, refresh } = await useFetch<
   })),
 });
 
-const submissions = computed(() => response.value?.data ?? []);
+const games = computed(() => response.value?.data ?? []);
 
 const sortOptions = [
   { label: "Popularity", value: "-popularity" },
@@ -54,7 +50,7 @@ const sortOptions = [
       <NuxtLink
         v-slot="{ navigate }"
         class="tw:inline-flex tw:items-center tw:gap-1"
-        :to="{ name: 'AdminNewGameSubmissionPage' }"
+        :to="{ name: 'AdminNewGamePage' }"
         custom
       >
         <TheButton @click="navigate">
@@ -105,10 +101,10 @@ const sortOptions = [
 
       <div>
         <SubmissionListItem
-          v-for="submission in submissions"
-          :key="submission.id"
-          :game="submission"
-          :is-pending="submission.status === 'pending'"
+          v-for="game in games"
+          :key="game.id"
+          :game="game"
+          :is-pending="game.status === 'pending'"
           @refresh="refresh"
         />
       </div>

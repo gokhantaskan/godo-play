@@ -52,7 +52,7 @@ export default defineCachedEventHandler(
           slug: true,
         },
         with: {
-          gameSubmissionGameModes: {
+          gameGameModes: {
             columns: {
               gameModeId: true,
             },
@@ -72,7 +72,7 @@ export default defineCachedEventHandler(
         });
       }
 
-      const gameModeIds = sourceGame.gameSubmissionGameModes.map(
+      const gameModeIds = sourceGame.gameGameModes.map(
         mode => mode.gameModeId
       );
       const tagIds = sourceGame.tags?.map(tag => tag.tagId) || [];
@@ -125,7 +125,7 @@ export default defineCachedEventHandler(
       if (gameModeIds.length > 0) {
         preFilterConditions.push(
           sql`${games.id} IN (
-            SELECT submission_id FROM game_submission_game_mode
+            SELECT game_id FROM game_game_mode
             WHERE game_mode_id IN (${sql.join(
               gameModeIds.map(id => sql`${id}`),
               sql`, `
@@ -153,7 +153,7 @@ export default defineCachedEventHandler(
           freeToPlay: true,
         },
         with: {
-          gameSubmissionGameModes: {
+          gameGameModes: {
             columns: {
               gameModeId: true,
             },
@@ -256,7 +256,7 @@ export default defineCachedEventHandler(
           {
             game,
             tags: game.tags,
-            gameSubmissionGameModes: game.gameSubmissionGameModes,
+            gameGameModes: game.gameGameModes,
           },
           tagIds,
           gameModeIds,

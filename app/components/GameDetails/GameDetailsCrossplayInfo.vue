@@ -2,10 +2,10 @@
 import type { ConsolidatedPlatformGroupsProps } from "@/components/ConsolidatedPlatformGroups.vue";
 
 export interface GameDetailsCrossplayInfoProps {
-  gameName?: GameSubmissionWithRelations["name"];
+  gameName?: GameWithRelations["name"];
   platformGroups: ConsolidatedPlatformGroupsProps["platformGroups"];
-  storePlatforms: GameSubmissionWithRelations["storePlatforms"];
-  crossplayInformation: GameSubmissionWithRelations["crossplayInformation"];
+  storePlatforms: GameWithRelations["storePlatforms"];
+  crossplayInformation: GameWithRelations["crossplayInformation"];
 }
 
 defineProps<GameDetailsCrossplayInfoProps>();

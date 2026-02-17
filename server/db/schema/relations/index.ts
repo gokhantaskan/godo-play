@@ -2,7 +2,7 @@ import { relations } from "drizzle-orm";
 
 import { crossplayInformation } from "../tables/crossplayInformation";
 import { gameCategories } from "../tables/gameCategories";
-import { gameModes, gameSubmissionGameModes } from "../tables/gameModes";
+import { gameGameModes, gameModes } from "../tables/gameModes";
 import { games } from "../tables/games";
 import {
   platformGroupPlatforms,
@@ -16,11 +16,10 @@ import {
 import { stores, storeSupportedPlatforms } from "../tables/stores";
 import { gamesTags, tags } from "../tables/tags";
 
-export const gameSubmissionsRelations = relations(games, ({ many, one }) => ({
-  // A submission can have many platform groups and many pc store entries
+export const gamesRelations = relations(games, ({ many, one }) => ({
   platformGroups: many(platformGroups),
   storePlatforms: many(storePlatforms),
-  gameSubmissionGameModes: many(gameSubmissionGameModes),
+  gameGameModes: many(gameGameModes),
   crossplayInformation: one(crossplayInformation, {
     fields: [games.id],
     references: [crossplayInformation.gameId],
@@ -33,7 +32,7 @@ export const gameSubmissionsRelations = relations(games, ({ many, one }) => ({
 }));
 
 export const gameModesRelations = relations(gameModes, ({ many }) => ({
-  gameSubmissionGameModes: many(gameSubmissionGameModes),
+  gameGameModes: many(gameGameModes),
 }));
 
 export const crossplayInformationRelations = relations(
@@ -46,25 +45,22 @@ export const crossplayInformationRelations = relations(
   })
 );
 
-export const gameSubmissionGameModesRelations = relations(
-  gameSubmissionGameModes,
-  ({ one }) => ({
-    submission: one(games, {
-      fields: [gameSubmissionGameModes.submissionId],
-      references: [games.id],
-    }),
-    gameMode: one(gameModes, {
-      fields: [gameSubmissionGameModes.gameModeId],
-      references: [gameModes.id],
-    }),
-  })
-);
+export const gameGameModesRelations = relations(gameGameModes, ({ one }) => ({
+  game: one(games, {
+    fields: [gameGameModes.gameId],
+    references: [games.id],
+  }),
+  gameMode: one(gameModes, {
+    fields: [gameGameModes.gameModeId],
+    references: [gameModes.id],
+  }),
+}));
 
 export const platformGroupsRelations = relations(
   platformGroups,
   ({ one, many }) => ({
-    submission: one(games, {
-      fields: [platformGroups.submissionId],
+    game: one(games, {
+      fields: [platformGroups.gameId],
       references: [games.id],
     }),
     // a platform group can be linked to many platforms via platformGroupPlatforms
@@ -89,9 +85,13 @@ export const platformGroupPlatformsRelations = relations(
 export const storePlatformsRelations = relations(
   storePlatforms,
   ({ one, many }) => ({
-    submission: one(games, {
-      fields: [storePlatforms.submissionId],
+    game: one(games, {
+      fields: [storePlatforms.gameId],
       references: [games.id],
+    }),
+    store: one(stores, {
+      fields: [storePlatforms.storeId],
+      references: [stores.id],
     }),
     // link to crossplay tables
     crossplayEntries: many(storeCrossplayPlatforms),
@@ -114,6 +114,7 @@ export const storeCrossplayPlatformsRelations = relations(
 
 export const storesRelations = relations(stores, ({ many }) => ({
   supportedPlatforms: many(storeSupportedPlatforms),
+  storePlatforms: many(storePlatforms),
 }));
 
 export const storeSupportedPlatformsRelations = relations(

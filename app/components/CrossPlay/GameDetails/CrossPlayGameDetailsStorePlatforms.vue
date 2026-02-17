@@ -3,16 +3,16 @@ import {
   PLATFORM_ICONS,
   SUPPORTED_PC_STORES_BY_SLUG,
 } from "~~/shared/constants";
-import type { GameSubmissionWithRelations } from "~~/shared/types";
+import type { GameWithRelations } from "~~/shared/types";
 
 const props = defineProps<{
-  storePlatforms: GameSubmissionWithRelations["storePlatforms"];
+  storePlatforms: GameWithRelations["storePlatforms"];
 }>();
 
 const sortedStores = computed(
   () =>
     props.storePlatforms?.toSorted((a, b) =>
-      a.storeSlug.localeCompare(b.storeSlug)
+      a.store.slug.localeCompare(b.store.slug)
     ) ?? []
 );
 
@@ -105,14 +105,14 @@ function getConsolidatedPlatforms(
           v-for="store in sortedStores"
           :key="store.id"
         >
-          <TheTooltip :content="getStoreName(store.storeSlug)">
+          <TheTooltip :content="getStoreName(store.store.slug)">
             <dt class="group__dt">
               <Icon
-                :name="getStoreIcon(store.storeSlug)"
+                :name="getStoreIcon(store.store.slug)"
                 class="group__icon"
               />
               <span class="tw:sr-only">{{
-                getStoreName(store.storeSlug)
+                getStoreName(store.store.slug)
               }}</span>
             </dt>
           </TheTooltip>

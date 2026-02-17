@@ -4,10 +4,10 @@
  */
 
 import type {
+  GameGameMode as DbGameGameMode,
   GameMode as DbGameMode,
-  GameSubmissionGameMode as DbGameSubmissionGameMode,
+  InsertGameGameMode,
   InsertGameMode,
-  InsertGameSubmissionGameMode,
 } from "~~/server/db/schema/tables/gameModes";
 import type { DbGame, DbInsertGame } from "~~/server/db/schema/tables/games";
 import type {
@@ -44,10 +44,10 @@ export type ReadGameMode = DbGameMode;
 export type ReadPlatformGroup = DbPlatformGroup;
 export type ReadPlatformGroupPlatform = DbPlatformGroupPlatform;
 export type ReadStorePlatform = DbStorePlatform;
-export type ReadGameSubmissionGameMode = DbGameSubmissionGameMode;
+export type ReadGameGameMode = DbGameGameMode;
 
 // UI Types
-export interface GameSubmissionUIState {
+export interface GameUIState {
   isEditing: boolean;
   isDeleting: boolean;
   hasError: boolean;
@@ -64,14 +64,14 @@ export type { InsertGameMode, InsertPlatform, InsertStore };
 
 // Relation Types
 export type {
-  InsertGameSubmissionGameMode,
+  InsertGameGameMode,
   InsertPlatformGroup,
   InsertPlatformGroupPlatform,
   InsertStorePlatform,
 };
 
-// Submission Types
-export interface NewGameSubmission {
+// Game Types
+export interface NewGame {
   name: string;
   slug: string;
   external: {
@@ -92,7 +92,7 @@ export interface NewGameSubmission {
 /**
  * Complete Types with Relations
  */
-export interface GameSubmissionWithRelations extends ReadGame {
+export interface GameWithRelations extends ReadGame {
   crossplayInformation: {
     evidenceUrl: string | null;
     information: string | null;
@@ -110,8 +110,12 @@ export interface GameSubmissionWithRelations extends ReadGame {
   }>;
   storePlatforms: Array<{
     id: number;
-    storeSlug: string;
     storeUrl: string | null;
+    store: {
+      id: number;
+      name: string;
+      slug: string;
+    };
     crossplayEntries: Array<{
       platform: {
         id: number;
@@ -120,7 +124,7 @@ export interface GameSubmissionWithRelations extends ReadGame {
       };
     }>;
   }>;
-  gameSubmissionGameModes: Array<{
+  gameGameModes: Array<{
     gameModeId: number;
     gameMode: {
       id: number;
@@ -142,9 +146,9 @@ export interface GameSubmissionWithRelations extends ReadGame {
  * Type Guards
  */
 export function hasRelations(
-  submission: ReadGame | GameSubmissionWithRelations
-): submission is GameSubmissionWithRelations {
-  return "platformGroups" in submission;
+  game: ReadGame | GameWithRelations
+): game is GameWithRelations {
+  return "platformGroups" in game;
 }
 
 export interface ReadTag {

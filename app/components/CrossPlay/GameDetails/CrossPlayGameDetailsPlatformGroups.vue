@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import type { GameSubmissionWithRelations } from "~~/shared/types";
+import type { GameWithRelations } from "~~/shared/types";
 
 const props = defineProps<{
-  platformGroups: GameSubmissionWithRelations["platformGroups"];
+  platformGroups: GameWithRelations["platformGroups"];
 }>();
 
 const consolidatedPlatformGroups = computed(() => {

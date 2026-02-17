@@ -4,7 +4,7 @@ import type { LocationQuery } from "vue-router";
 
 import { CrossPlayGameDetailsGameRecommendations } from "#components";
 import { ageRatingHumanizedRatings } from "~~/shared/constants";
-import type { GameSubmissionWithRelations } from "~~/shared/types";
+import type { GameWithRelations } from "~~/shared/types";
 import type {
   GameDetails,
   InvolvedCompany,
@@ -12,7 +12,7 @@ import type {
 
 interface Props {
   igdbGame: GameDetails | null;
-  dbGame: GameSubmissionWithRelations | null;
+  dbGame: GameWithRelations | null;
   gameName: string;
 }
 
@@ -139,11 +139,11 @@ function formatDate(date: number) {
             </div>
             <!-- Game Modes -->
             <div
-              v-if="dbGame?.gameSubmissionGameModes?.length"
+              v-if="dbGame?.gameGameModes?.length"
               class="tw:flex tw:flex-wrap tw:gap-2 tw:mt-1"
             >
               <template
-                v-for="{ gameMode } in dbGame.gameSubmissionGameModes"
+                v-for="{ gameMode } in dbGame.gameGameModes"
                 :key="gameMode.id"
               >
                 <a

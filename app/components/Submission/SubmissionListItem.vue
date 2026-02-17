@@ -2,10 +2,10 @@
 import { Disclosure, DisclosureButton, DisclosurePanel } from "@headlessui/vue";
 import { ref } from "vue";
 
-import type { GameSubmissionWithRelations } from "~~/shared/types";
+import type { GameWithRelations } from "~~/shared/types";
 
 interface Props {
-  game: GameSubmissionWithRelations;
+  game: GameWithRelations;
   isPending?: boolean;
 }
 

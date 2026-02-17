@@ -9,7 +9,7 @@ export default defineEventHandler(async event => {
   if (!id) {
     throw createError({
       statusCode: 400,
-      message: "Missing submission ID",
+      message: "Missing game ID",
     });
   }
 
@@ -28,6 +28,7 @@ export default defineEventHandler(async event => {
       },
       storePlatforms: {
         with: {
+          store: true,
           crossplayEntries: {
             with: {
               platform: true,
@@ -35,7 +36,7 @@ export default defineEventHandler(async event => {
           },
         },
       },
-      gameSubmissionGameModes: {
+      gameGameModes: {
         with: {
           gameMode: true,
         },
@@ -51,7 +52,7 @@ export default defineEventHandler(async event => {
   if (!game) {
     throw createError({
       statusCode: 404,
-      message: "Submission not found",
+      message: "Game not found",
     });
   }
 

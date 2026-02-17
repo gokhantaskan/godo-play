@@ -11,7 +11,7 @@ export interface StoreHardcoded extends OmitTimestamps<Store> {
   icon: string;
 }
 
-export type SubmissionStatus = "pending" | "approved" | "rejected";
+export type GameStatus = "pending" | "approved" | "rejected";
 
 export type SortDirection = "+" | "-";
 
@@ -24,7 +24,7 @@ export type SortableField =
 export type SortField = `${SortDirection}${SortableField}`;
 
 export interface FilterParams {
-  status?: SubmissionStatus[];
+  status?: GameStatus[];
   search?: string;
   sort?: SortField;
   limit?: number;

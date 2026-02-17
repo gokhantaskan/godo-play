@@ -14,23 +14,23 @@ import { platforms } from "./platforms";
 
 /**
  * platform_group
- * Represents a grouping concept for platforms associated with a single submission.
+ * Represents a grouping concept for platforms associated with a single game.
  * Instead of using an array, we'll create a junction table that links each platform individually.
  */
 export const platformGroups = pgTable(
   "platform_group",
   {
     id: serial("id").primaryKey(),
-    submissionId: integer("submission_id").notNull(),
+    gameId: integer("game_id").notNull(),
     ...defaultInsertTimestamps,
   },
   table => [
     foreignKey({
-      name: "platform_group_submission_id_fkey",
-      columns: [table.submissionId],
+      name: "platform_group_game_id_fkey",
+      columns: [table.gameId],
       foreignColumns: [games.id],
     }).onDelete("cascade"),
-    index("platform_group_submission_id_idx").on(table.submissionId),
+    index("platform_group_game_id_idx").on(table.gameId),
   ]
 );
 

@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { useCookieConsent } from "@/composables/useCookieConsent";
-import type { GameSubmissionWithRelations } from "~~/shared/types";
+import type { GameWithRelations } from "~~/shared/types";
 
 const props = defineProps<{
-  game: GameSubmissionWithRelations;
+  game: GameWithRelations;
   directLink?: boolean;
   blank?: boolean;
 }>();
@@ -115,13 +115,11 @@ onUnmounted(() => {
       <div>
         <!-- Game Modes -->
         <div
-          v-if="props.game.gameSubmissionGameModes?.length"
+          v-if="props.game.gameGameModes?.length"
           class="game-card__game-modes"
         >
           {{
-            props.game.gameSubmissionGameModes
-              .map(mode => mode.gameMode.name)
-              .join(", ")
+            props.game.gameGameModes.map(mode => mode.gameMode.name).join(", ")
           }}
         </div>
 

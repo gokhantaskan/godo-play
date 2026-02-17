@@ -2,7 +2,7 @@
 import { Dialog, DialogPanel } from "@headlessui/vue";
 
 import { QUERY_KEYS } from "~~/shared/constants/queryKeys";
-import type { GameSubmissionWithRelations } from "~~/shared/types";
+import type { GameWithRelations } from "~~/shared/types";
 import type { GameDetails } from "~~/shared/types/igdb/gameDetails";
 
 export interface CrossPlayGameCardDialogProps {
@@ -16,7 +16,7 @@ const {
   data: fetchedDbGame,
   status: dbStatus,
   refresh: refreshDbGame,
-} = useFetch<GameSubmissionWithRelations>(QUERY_KEYS.DbGame(props.slug), {
+} = useFetch<GameWithRelations>(QUERY_KEYS.DbGame(props.slug), {
   key: QUERY_KEYS.DbGame(props.slug),
   server: false,
   immediate: false,

@@ -4,13 +4,14 @@ import { z } from "zod";
 import { db } from "~~/server/db";
 import {
   crossplayInformation,
+  gameGameModes,
   games,
   gamesTags,
-  gameSubmissionGameModes,
   platformGroupPlatforms,
   platformGroups,
   storeCrossplayPlatforms,
   storePlatforms,
+  stores,
 } from "~~/server/db/schema";
 import { isH3ErrorLike } from "~~/server/utils/errorHandler";
 import {
@@ -23,7 +24,7 @@ import {
 } from "~~/shared/schemas/storePlatform";
 
 // Validate the request body
-const updateSubmissionSchema = z.object({
+const updateGameSchema = z.object({
   category: z.number().optional(),
   freeToPlay: z.boolean().optional(),
   platformGroups: z
@@ -55,33 +56,33 @@ const updateSubmissionSchema = z.object({
     .optional(),
 });
 
-type RequestBody = z.infer<typeof updateSubmissionSchema>;
+type RequestBody = z.infer<typeof updateGameSchema>;
 
 export default defineEventHandler(async event => {
-  const submissionId = parseInt(event.context.params?.id as string);
+  const gameId = parseInt(event.context.params?.id as string);
 
-  if (isNaN(submissionId)) {
+  if (isNaN(gameId)) {
     throw createError({
       statusCode: 400,
-      message: "Invalid submission ID",
+      message: "Invalid game ID",
     });
   }
 
   try {
     // Validate request body
     const body = await readBody<RequestBody>(event);
-    updateSubmissionSchema.parse(body);
+    updateGameSchema.parse(body);
 
     const result = await db.transaction(async tx => {
-      // Check if submission exists
-      const submission = await tx.query.games.findFirst({
-        where: eq(games.id, submissionId),
+      // Check if game exists
+      const game = await tx.query.games.findFirst({
+        where: eq(games.id, gameId),
       });
 
-      if (!submission) {
+      if (!game) {
         throw createError({
           statusCode: 404,
-          message: "Submission not found",
+          message: "Game not found",
         });
       }
 
@@ -89,7 +90,7 @@ export default defineEventHandler(async event => {
       if (body.platformGroups) {
         await tx
           .delete(platformGroups)
-          .where(eq(platformGroups.submissionId, submissionId));
+          .where(eq(platformGroups.gameId, gameId));
 
         // Process all insertions sequentially to maintain atomicity
         for (const groupPlatforms of body.platformGroups) {
@@ -97,7 +98,7 @@ export default defineEventHandler(async event => {
             .insert(platformGroups)
             .values(
               InsertPlatformGroupSchema.parse({
-                submissionId,
+                gameId,
               })
             )
             .returning();
@@ -126,24 +127,37 @@ export default defineEventHandler(async event => {
       if (body.storesPlatforms) {
         await tx
           .delete(storePlatforms)
-          .where(eq(storePlatforms.submissionId, submissionId));
+          .where(eq(storePlatforms.gameId, gameId));
 
-        for (const [
-          storeSlug,
-          { crossplayPlatforms, storeUrl },
-        ] of Object.entries(body.storesPlatforms)) {
-          const [store] = await tx
+        // Preload store slug→id map
+        const allStores = await tx
+          .select({ id: stores.id, slug: stores.slug })
+          .from(stores);
+        const storeSlugToId = new Map(allStores.map(s => [s.slug, s.id]));
+
+        for (const [slug, { crossplayPlatforms, storeUrl }] of Object.entries(
+          body.storesPlatforms
+        )) {
+          const storeId = storeSlugToId.get(slug);
+          if (!storeId) {
+            throw createError({
+              statusCode: 400,
+              message: `Unknown store: ${slug}`,
+            });
+          }
+
+          const [storePlatform] = await tx
             .insert(storePlatforms)
             .values(
               InsertStorePlatformSchema.parse({
-                submissionId,
-                storeSlug,
+                gameId,
+                storeId,
                 storeUrl,
               })
             )
             .returning();
 
-          if (!store) {
+          if (!storePlatform) {
             throw createError({
               statusCode: 500,
               message: "Failed to create PC store platform",
@@ -154,7 +168,7 @@ export default defineEventHandler(async event => {
             await tx.insert(storeCrossplayPlatforms).values(
               crossplayPlatforms.map(platformId =>
                 InsertStoreCrossplayPlatformSchema.parse({
-                  storePlatformId: store.id,
+                  storePlatformId: storePlatform.id,
                   platformId,
                 })
               )
@@ -165,14 +179,12 @@ export default defineEventHandler(async event => {
 
       // Process game modes only if provided
       if (body.gameModeIds) {
-        await tx
-          .delete(gameSubmissionGameModes)
-          .where(eq(gameSubmissionGameModes.submissionId, submissionId));
+        await tx.delete(gameGameModes).where(eq(gameGameModes.gameId, gameId));
 
         if (body.gameModeIds.length > 0) {
-          await tx.insert(gameSubmissionGameModes).values(
+          await tx.insert(gameGameModes).values(
             body.gameModeIds.map(gameModeId => ({
-              submissionId,
+              gameId,
               gameModeId,
             }))
           );
@@ -181,12 +193,12 @@ export default defineEventHandler(async event => {
 
       // Process tags if provided
       if (body.tagIds !== undefined) {
-        await tx.delete(gamesTags).where(eq(gamesTags.gameId, submissionId));
+        await tx.delete(gamesTags).where(eq(gamesTags.gameId, gameId));
 
         if (body.tagIds.length > 0) {
           await tx.insert(gamesTags).values(
             body.tagIds.map(tagId => ({
-              gameId: submissionId,
+              gameId: gameId,
               tagId,
             }))
           );
@@ -217,7 +229,7 @@ export default defineEventHandler(async event => {
         const [updatedGame] = await tx
           .update(games)
           .set(updateData)
-          .where(eq(games.id, submissionId))
+          .where(eq(games.id, gameId))
           .returning();
 
         if (!updatedGame) {
@@ -231,14 +243,14 @@ export default defineEventHandler(async event => {
         if (body.crossplayInformation !== undefined) {
           const existingCrossplay =
             await tx.query.crossplayInformation.findFirst({
-              where: eq(crossplayInformation.gameId, submissionId),
+              where: eq(crossplayInformation.gameId, gameId),
             });
 
           if (body.crossplayInformation === null) {
             if (existingCrossplay) {
               await tx
                 .delete(crossplayInformation)
-                .where(eq(crossplayInformation.gameId, submissionId));
+                .where(eq(crossplayInformation.gameId, gameId));
             }
           } else {
             if (existingCrossplay) {
@@ -249,10 +261,10 @@ export default defineEventHandler(async event => {
                   information: body.crossplayInformation.information,
                   isOfficial: body.crossplayInformation.isOfficial ?? false,
                 })
-                .where(eq(crossplayInformation.gameId, submissionId));
+                .where(eq(crossplayInformation.gameId, gameId));
             } else {
               await tx.insert(crossplayInformation).values({
-                gameId: submissionId,
+                gameId: gameId,
                 evidenceUrl: body.crossplayInformation.evidenceUrl,
                 information: body.crossplayInformation.information,
                 isOfficial: body.crossplayInformation.isOfficial ?? false,
@@ -262,7 +274,7 @@ export default defineEventHandler(async event => {
         }
       }
 
-      return submission;
+      return game;
     });
 
     return result;
@@ -291,7 +303,7 @@ export default defineEventHandler(async event => {
 
     throw createError({
       statusCode: 500,
-      message: "Failed to update game submission",
+      message: "Failed to update game",
       data: process.env.NODE_ENV === "development" ? error : undefined,
     });
   }

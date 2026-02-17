@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { getConsolidatedPlatformGroups } from "@/utils/game";
-import type { GameSubmissionWithRelations } from "~~/shared/types";
+import type { GameWithRelations } from "~~/shared/types";
 
 const props = withDefaults(
   defineProps<{
-    platformGroups: GameSubmissionWithRelations["platformGroups"];
+    platformGroups: GameWithRelations["platformGroups"];
     showLabels?: boolean;
   }>(),
   {

@@ -4,14 +4,15 @@ import { z } from "zod";
 import { db } from "~~/server/db";
 import {
   crossplayInformation,
+  gameGameModes,
   games,
   gamesTags,
-  gameSubmissionGameModes,
   platformGroupPlatforms,
   platformGroups,
   platforms,
   storeCrossplayPlatforms,
   storePlatforms,
+  stores,
 } from "~~/server/db/schema";
 import { isH3ErrorLike } from "~~/server/utils/errorHandler";
 import { verifyRecaptchaToken } from "~~/server/utils/recaptcha";
@@ -42,8 +43,8 @@ export default defineEventHandler(async event => {
     }
 
     const result = await db.transaction(async tx => {
-      // Insert game submission
-      const [submission] = await tx
+      // Insert game
+      const [game] = await tx
         .insert(games)
         .values({
           external: body.game.external,
@@ -55,17 +56,17 @@ export default defineEventHandler(async event => {
         })
         .returning();
 
-      if (!submission) {
+      if (!game) {
         throw createError({
           statusCode: 500,
-          message: "Failed to create game submission",
+          message: "Failed to create game",
         });
       }
 
       // Insert crossplay information if provided
       if (body.crossplayInformation) {
         await tx.insert(crossplayInformation).values({
-          gameId: submission.id,
+          gameId: game.id,
           evidenceUrl: body.crossplayInformation.evidenceUrl,
           information: body.crossplayInformation.information,
           isOfficial: body.crossplayInformation.isOfficial ?? false,
@@ -112,7 +113,7 @@ export default defineEventHandler(async event => {
           .insert(platformGroups)
           .values(
             InsertPlatformGroupSchema.parse({
-              submissionId: submission.id,
+              gameId: game.id,
             })
           )
           .returning();
@@ -136,23 +137,36 @@ export default defineEventHandler(async event => {
         }
       }
 
+      // Preload store slug→id map
+      const allStores = await tx
+        .select({ id: stores.id, slug: stores.slug })
+        .from(stores);
+      const storeSlugToId = new Map(allStores.map(s => [s.slug, s.id]));
+
       // Process PC store platforms sequentially
-      for (const [
-        storeSlug,
-        { crossplayPlatforms, storeUrl },
-      ] of Object.entries(body.storesPlatforms)) {
-        const [store] = await tx
+      for (const [slug, { crossplayPlatforms, storeUrl }] of Object.entries(
+        body.storesPlatforms
+      )) {
+        const storeId = storeSlugToId.get(slug);
+        if (!storeId) {
+          throw createError({
+            statusCode: 400,
+            message: `Unknown store: ${slug}`,
+          });
+        }
+
+        const [storePlatform] = await tx
           .insert(storePlatforms)
           .values(
             InsertStorePlatformSchema.parse({
-              submissionId: submission.id,
-              storeSlug,
+              gameId: game.id,
+              storeId,
               storeUrl,
             })
           )
           .returning();
 
-        if (!store) {
+        if (!storePlatform) {
           throw createError({
             statusCode: 500,
             message: "Failed to create PC store platform",
@@ -163,7 +177,7 @@ export default defineEventHandler(async event => {
           await tx.insert(storeCrossplayPlatforms).values(
             crossplayPlatforms.map(platformId =>
               InsertStoreCrossplayPlatformSchema.parse({
-                storePlatformId: store.id,
+                storePlatformId: storePlatform.id,
                 platformId,
               })
             )
@@ -173,9 +187,9 @@ export default defineEventHandler(async event => {
 
       // Process game modes
       if (body.gameModeIds && body.gameModeIds.length > 0) {
-        await tx.insert(gameSubmissionGameModes).values(
+        await tx.insert(gameGameModes).values(
           body.gameModeIds.map(gameModeId => ({
-            submissionId: submission.id,
+            gameId: game.id,
             gameModeId,
           }))
         );
@@ -185,13 +199,13 @@ export default defineEventHandler(async event => {
       if (body.tagIds && body.tagIds.length > 0) {
         await tx.insert(gamesTags).values(
           body.tagIds.map(tagId => ({
-            gameId: submission.id,
+            gameId: game.id,
             tagId,
           }))
         );
       }
 
-      return submission;
+      return game;
     });
 
     return result;
@@ -218,7 +232,7 @@ export default defineEventHandler(async event => {
 
     throw createError({
       statusCode: 500,
-      message: "Failed to process game submission",
+      message: "Failed to process game",
       data: process.env.NODE_ENV === "development" ? error : undefined,
     });
   }

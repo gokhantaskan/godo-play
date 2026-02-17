@@ -162,12 +162,12 @@ async function updateIGDBGameData(): Promise<UpdateResult> {
       await db.transaction(async tx => {
         for (const igdbGame of igdbGames) {
           const idStr = igdbGame.id.toString();
-          const matchingSubmission = submissions.find(s => {
+          const matchingGame = submissions.find(s => {
             const subId = s.external?.igdbId;
             return subId?.toString() === idStr;
           });
 
-          if (!matchingSubmission) {
+          if (!matchingGame) {
             console.warn(`No matching game found for IGDB ID: ${idStr}`);
             continue;
           }
@@ -176,7 +176,7 @@ async function updateIGDBGameData(): Promise<UpdateResult> {
             IGDB_CATEGORY_MAP[igdbGame.game_type ?? 0] ?? 0;
           const firstReleaseDate = validateAndFormatDate(
             igdbGame.first_release_date,
-            matchingSubmission.name
+            matchingGame.name
           );
 
           // Find matching cover for this game
@@ -202,13 +202,13 @@ async function updateIGDBGameData(): Promise<UpdateResult> {
                 `,
                 updatedAt: sql`CURRENT_TIMESTAMP`,
               })
-              .where(sql`id = ${matchingSubmission.id}`)
+              .where(sql`id = ${matchingGame.id}`)
               .returning();
 
             if (game) {
               updatedCount++;
               console.log(
-                `Updated game "${matchingSubmission.name}" (ID: ${matchingSubmission.id}):`,
+                `Updated game "${matchingGame.name}" (ID: ${matchingGame.id}):`,
                 `\n  - Category: ${categoryPointer}`,
                 `\n  - Release Date: ${firstReleaseDate}`,
                 `\n  - Rating: ${igdbGame.aggregated_rating || 0}`,
@@ -220,7 +220,7 @@ async function updateIGDBGameData(): Promise<UpdateResult> {
           } catch (error) {
             errorCount++;
             console.error(
-              `Failed to update game "${matchingSubmission.name}" (ID: ${matchingSubmission.id}):`,
+              `Failed to update game "${matchingGame.name}" (ID: ${matchingGame.id}):`,
               error
             );
           }

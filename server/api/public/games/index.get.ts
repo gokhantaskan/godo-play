@@ -3,12 +3,12 @@ import { and, asc, count, desc, inArray, type SQL, sql } from "drizzle-orm";
 import { db } from "~~/server/db";
 import {
   games as gamesTable,
-  gameSubmissionGameModes,
+  gameGameModes,
   platformGroupPlatforms,
   gamesTags,
 } from "~~/server/db/schema";
 import { isH3ErrorLike } from "~~/server/utils/errorHandler";
-import type { FilterParams, SubmissionStatus } from "~~/shared/types/globals";
+import type { FilterParams, GameStatus } from "~~/shared/types/globals";
 
 // Define the sortable fields type
 type SortableField =
@@ -69,7 +69,7 @@ export default defineCachedEventHandler(
       const validStatuses = status
         ? decodeURIComponent(status)
             .split(",")
-            .filter((s): s is SubmissionStatus =>
+            .filter((s): s is GameStatus =>
               ["pending", "approved", "rejected"].includes(s)
             )
         : undefined;
@@ -108,7 +108,7 @@ export default defineCachedEventHandler(
         conditions = and(
           conditions,
           sql`id IN (
-            SELECT submission_id
+            SELECT game_id
             FROM platform_group
             WHERE id IN (${platformGroupsQuery})
           )`
@@ -118,9 +118,9 @@ export default defineCachedEventHandler(
       // Add game mode filtering condition
       if (parsedGameModes?.length) {
         const gameModeQuery = db
-          .select({ submissionId: gameSubmissionGameModes.submissionId })
-          .from(gameSubmissionGameModes)
-          .where(inArray(gameSubmissionGameModes.gameModeId, parsedGameModes));
+          .select({ gameId: gameGameModes.gameId })
+          .from(gameGameModes)
+          .where(inArray(gameGameModes.gameModeId, parsedGameModes));
 
         conditions = and(conditions, sql`id IN (${gameModeQuery})`);
       }
@@ -128,7 +128,7 @@ export default defineCachedEventHandler(
       // Add tag filtering condition
       if (parsedTags?.length) {
         const tagsQuery = db
-          .select({ submissionId: gamesTags.gameId })
+          .select({ gameId: gamesTags.gameId })
           .from(gamesTags)
           .where(inArray(gamesTags.tagId, parsedTags));
 
@@ -172,7 +172,7 @@ export default defineCachedEventHandler(
               },
             },
           },
-          gameSubmissionGameModes: {
+          gameGameModes: {
             columns: {
               gameModeId: true,
             },
@@ -240,7 +240,7 @@ export default defineCachedEventHandler(
 
       throw createError({
         statusCode: 500,
-        message: "Failed to retrieve game submissions",
+        message: "Failed to retrieve games",
         data: process.env.NODE_ENV === "development" ? error : undefined,
       });
     }

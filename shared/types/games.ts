@@ -1,4 +1,4 @@
-import type { GameSubmissionWithRelations } from ".";
+import type { GameWithRelations } from ".";
 
 /**
  * Response type for paginated games list
@@ -6,7 +6,7 @@ import type { GameSubmissionWithRelations } from ".";
 export interface GamesResponse {
   total: number; // Total number of filtered games
   count: number; // Number of games in current page
-  data: GameSubmissionWithRelations[]; // Array of game data
+  data: GameWithRelations[]; // Array of game data
   limit: number; // Limit used for pagination
   offset: number; // Current offset for pagination
 }
@@ -14,7 +14,7 @@ export interface GamesResponse {
 /**
  * Platform with essential fields for UI
  */
-export interface GameSubmissionPlatform {
+export interface GamePlatform {
   id: number;
   name: string;
   slug: string;
@@ -23,34 +23,38 @@ export interface GameSubmissionPlatform {
 /**
  * Platform group with its associated platforms
  */
-export interface GameSubmissionPlatformGroup {
+export interface GamePlatformGroup {
   id: number;
   platformGroupPlatforms: Array<{
-    platform: GameSubmissionPlatform;
+    platform: GamePlatform;
   }>;
 }
 
 /**
  * Crossplay entry with platform information
  */
-export interface GameSubmissionCrossplayEntry {
-  platform: GameSubmissionPlatform;
+export interface GameCrossplayEntry {
+  platform: GamePlatform;
 }
 
 /**
  * PC Store platform with crossplay information
  */
-export interface GameSubmissionStorePlatform {
+export interface GameStorePlatform {
   id: number;
-  storeSlug: string;
   storeUrl?: string | null;
-  crossplayEntries: GameSubmissionCrossplayEntry[];
+  store: {
+    id: number;
+    name: string;
+    slug: string;
+  };
+  crossplayEntries: GameCrossplayEntry[];
 }
 
 /**
  * Game mode with essential fields
  */
-export interface GameSubmissionGameMode {
+export interface GameGameModeEntry {
   gameModeId: number;
   gameMode: {
     id: number;
@@ -59,4 +63,4 @@ export interface GameSubmissionGameMode {
   };
 }
 
-export type GameSubmissionResponse = GameSubmissionWithRelations[];
+export type GameListResponse = GameWithRelations[];

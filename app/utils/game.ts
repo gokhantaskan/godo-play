@@ -3,7 +3,7 @@ import {
   AgeRatingCategories,
   AgeRatingRatings,
 } from "~~/shared/constants/ageRatings";
-import type { GameSubmissionWithRelations } from "~~/shared/types";
+import type { GameWithRelations } from "~~/shared/types";
 import type { AgeRating } from "~~/shared/types/igdb/gameDetails";
 
 interface PlatformInfo {
@@ -26,7 +26,7 @@ interface PlatformInfo {
  * @returns Array of sorted platform groups, each containing a record of platform info
  */
 export function getConsolidatedPlatformGroups(
-  platformGroups: GameSubmissionWithRelations["platformGroups"]
+  platformGroups: GameWithRelations["platformGroups"]
 ) {
   const isSingleGroup = platformGroups.length === 1;
 

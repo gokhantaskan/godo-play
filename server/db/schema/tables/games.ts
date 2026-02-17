@@ -17,8 +17,8 @@ import { defaultInsertTimestamps } from "../helpers/defaults";
 import { gameCategories } from "./gameCategories";
 
 /**
- * The central table that stores information about a game submission.
- * This is the source of truth for submission types.
+ * The central table that stores information about a game.
+ * This is the source of truth for game types.
  */
 export const games = pgTable(
   "game",
@@ -108,8 +108,12 @@ export const DbGameWithRelationsSchema = DbGameSchema.extend({
   storePlatforms: z.array(
     z.object({
       id: z.number(),
-      storeSlug: z.string(),
       storeUrl: z.string().url().optional(),
+      store: z.object({
+        id: z.number(),
+        name: z.string(),
+        slug: z.string(),
+      }),
       crossplayEntries: z.array(
         z.object({
           platform: z.object({

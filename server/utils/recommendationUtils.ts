@@ -16,7 +16,7 @@ export interface GameModeRelation {
 export interface RecommendationCandidate<T = any> {
   game: T;
   tags?: Array<TagRelation>;
-  gameSubmissionGameModes?: Array<GameModeRelation>;
+  gameGameModes?: Array<GameModeRelation>;
 }
 
 /**
@@ -39,8 +39,8 @@ export function calculateScoreForCandidate(
   let hasHighWeightModes = false;
   let highestModeWeight = 0;
 
-  if (sourceGameModeIds.length > 0 && candidate.gameSubmissionGameModes) {
-    candidate.gameSubmissionGameModes.forEach(mode => {
+  if (sourceGameModeIds.length > 0 && candidate.gameGameModes) {
+    candidate.gameGameModes.forEach(mode => {
       if (sourceGameModeIds.includes(mode.gameModeId)) {
         const weight =
           gameModeWeightMap.get(mode.gameModeId) || DEFAULT_GAME_MODE_WEIGHT;

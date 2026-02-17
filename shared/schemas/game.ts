@@ -32,7 +32,7 @@ export const UpdateGameSchema = z.object({
   reason: z.string().optional(),
 });
 
-// Game submission schema
+// Game submit schema
 export const SubmitGameSchema = z.object({
   crossplayInformation: z.object({
     isOfficial: z.boolean().optional(),
@@ -79,6 +79,6 @@ export type UpdateGame = z.infer<typeof UpdateGameSchema>;
 export type GameResponse = z.infer<typeof GameResponseSchema>;
 export type SubmitGame = z.infer<typeof SubmitGameSchema>;
 
-// Re-export base types with submission naming
+// Re-export base types
 export type { DbGame as GameBase, DbGameWithRelations as GameWithRelations };
 export { DbGameWithRelationsSchema as GameWithRelationsSchema };

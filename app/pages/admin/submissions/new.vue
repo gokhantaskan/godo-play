@@ -1,6 +1,6 @@
 <script setup lang="ts">
 definePageMeta({
-  name: "AdminNewGameSubmissionPage",
+  name: "AdminNewGamePage",
 });
 </script>
 

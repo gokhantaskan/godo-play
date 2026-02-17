@@ -12,30 +12,35 @@ import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 import { defaultInsertTimestamps } from "../helpers/defaults";
 import { games } from "./games";
 import { platforms } from "./platforms";
+import { stores } from "./stores";
 
 /**
  * store_platform
- * Associates a submission with a PC store (e.g., "steam", "epic").
- * Previously, crossplayPlatforms was an integer array;
- * now we'll use a pivot table for crossplay references.
+ * Associates a game with a PC store.
+ * Uses a proper FK to the store table instead of a text slug.
  */
 export const storePlatforms = pgTable(
   "store_platform",
   {
     id: serial("id").primaryKey(),
-    submissionId: integer("submission_id").notNull(),
-    storeSlug: text("store_slug").notNull(),
+    gameId: integer("game_id").notNull(),
+    storeId: integer("store_id").notNull(),
     storeUrl: text("store_url"),
     ...defaultInsertTimestamps,
   },
   table => [
     foreignKey({
-      name: "store_platform_submission_id_fkey",
-      columns: [table.submissionId],
+      name: "store_platform_game_id_fkey",
+      columns: [table.gameId],
       foreignColumns: [games.id],
     }).onDelete("cascade"),
-    index("store_platform_submission_id_idx").on(table.submissionId),
-    index("store_platform_store_slug_idx").on(table.storeSlug),
+    foreignKey({
+      name: "store_platform_store_id_fkey",
+      columns: [table.storeId],
+      foreignColumns: [stores.id],
+    }),
+    index("store_platform_game_id_idx").on(table.gameId),
+    index("store_platform_store_id_idx").on(table.storeId),
   ]
 );
 

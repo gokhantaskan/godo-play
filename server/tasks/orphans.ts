@@ -19,7 +19,7 @@ interface Game {
   category?: number;
   firstReleaseDate?: string | null;
   freeToPlay?: boolean;
-  gameSubmissionGameModes?: Array<{
+  gameGameModes?: Array<{
     gameModeId: number;
   }>;
   tags?: Array<{
@@ -57,7 +57,7 @@ async function analyzeOrphanGames(): Promise<OrphanAnalysisResult> {
       external: true,
     },
     with: {
-      gameSubmissionGameModes: {
+      gameGameModes: {
         columns: {
           gameModeId: true,
         },
@@ -120,7 +120,7 @@ async function analyzeOrphanGames(): Promise<OrphanAnalysisResult> {
   for (const sourceGame of allGames) {
     // Get source game's tags and game modes
     const sourceGameModeIds =
-      sourceGame.gameSubmissionGameModes?.map(mode => mode.gameModeId) || [];
+      sourceGame.gameGameModes?.map(mode => mode.gameModeId) || [];
 
     const sourceTagIds = sourceGame.tags?.map(tag => tag.tagId) || [];
 
@@ -138,7 +138,7 @@ async function analyzeOrphanGames(): Promise<OrphanAnalysisResult> {
           {
             game,
             tags: game.tags,
-            gameSubmissionGameModes: game.gameSubmissionGameModes,
+            gameGameModes: game.gameGameModes,
           },
           sourceTagIds,
           sourceGameModeIds,

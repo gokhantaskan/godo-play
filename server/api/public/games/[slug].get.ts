@@ -1,6 +1,6 @@
 import { getGameBySlugPrepared } from "~~/server/db/prepared";
 import { isH3ErrorLike } from "~~/server/utils/errorHandler";
-import type { GameSubmissionWithRelations } from "~~/shared/types";
+import type { GameWithRelations } from "~~/shared/types";
 
 export default defineCachedEventHandler(
   async event => {
@@ -23,7 +23,7 @@ export default defineCachedEventHandler(
         });
       }
 
-      return game satisfies GameSubmissionWithRelations;
+      return game satisfies GameWithRelations;
     } catch (error: unknown) {
       if (isH3ErrorLike(error)) {
         throw error;

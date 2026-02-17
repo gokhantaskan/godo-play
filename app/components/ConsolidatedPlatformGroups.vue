@@ -2,7 +2,7 @@
 import { getConsolidatedPlatformGroups } from "#imports";
 
 export type ConsolidatedPlatformGroupsProps = {
-  platformGroups: GameSubmissionWithRelations["platformGroups"];
+  platformGroups: GameWithRelations["platformGroups"];
 };
 
 defineProps<ConsolidatedPlatformGroupsProps>();

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { CATEGORIES } from "~~/shared/constants/categories";
-import type { GameSubmissionWithRelations } from "~~/shared/types";
+import type { GameWithRelations } from "~~/shared/types";
 import type {
   CrossplayInformation,
   PlatformId,
@@ -29,7 +29,7 @@ interface SubmitGameFormData {
 }
 
 interface Props {
-  game: GameSubmissionWithRelations;
+  game: GameWithRelations;
   disabled?: boolean;
 }
 
@@ -48,7 +48,7 @@ const {
   storePlatforms,
   gameModeIds,
   crossplayInformation,
-} = transformSubmissionToFormData(props.game);
+} = transformGameToFormData(props.game);
 
 const categoryModel = ref<number>(props.game.category);
 const platformGroupsModel = ref<PlatformGroups>(platformGroups);
@@ -125,30 +125,26 @@ defineExpose({
   save: handleSave,
 });
 
-function transformSubmissionToFormData(
-  game: Props["game"]
-): SubmitGameFormData {
+function transformGameToFormData(game: Props["game"]): SubmitGameFormData {
   // Transform platform groups
   const platformGroups: PlatformGroups = game.platformGroups.map(group =>
     group.platformGroupPlatforms.map(p => p.platform.id)
   );
 
   // Transform PC store platforms
-  const stores = game.storePlatforms.map(store => store.storeSlug);
+  const stores = game.storePlatforms.map(sp => sp.store.slug);
   const storePlatforms: StoreData = game.storePlatforms.reduce(
     (
       acc: StoreData,
-      store: {
-        storeSlug: string;
+      sp: {
+        store: { slug: string };
         storeUrl?: string | null;
         crossplayEntries: any[];
       }
     ) => {
-      acc[store.storeSlug] = {
-        crossplayPlatforms: store.crossplayEntries.map(
-          entry => entry.platform.id
-        ),
-        ...(store.storeUrl ? { storeUrl: store.storeUrl } : {}),
+      acc[sp.store.slug] = {
+        crossplayPlatforms: sp.crossplayEntries.map(entry => entry.platform.id),
+        ...(sp.storeUrl ? { storeUrl: sp.storeUrl } : {}),
       };
       return acc;
     },
@@ -156,7 +152,7 @@ function transformSubmissionToFormData(
   );
 
   // Transform game modes
-  const gameModeIds = game.gameSubmissionGameModes.map(mode => mode.gameModeId);
+  const gameModeIds = game.gameGameModes.map(mode => mode.gameModeId);
 
   const crossplayInformation = game.crossplayInformation;
 
