@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { asImageSrc } from "@prismicio/client";
+
 import { components } from "~/slices";
 import type { HomePageDocument } from "~~/prismicio-types";
 
@@ -22,7 +24,7 @@ useSeoMeta({
   ogTitle: page.value?.data.meta_title,
   description: page.value?.data.meta_description,
   ogDescription: page.value?.data.meta_description,
-  ogImage: computed(() => prismic.asImageSrc(page.value?.data.meta_image)),
+  ogImage: computed(() => asImageSrc(page.value?.data.meta_image)),
 });
 </script>
 

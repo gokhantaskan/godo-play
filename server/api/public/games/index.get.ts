@@ -108,8 +108,8 @@ export default defineCachedEventHandler(
         conditions = and(
           conditions,
           sql`id IN (
-            SELECT submission_id 
-            FROM platform_groups 
+            SELECT submission_id
+            FROM platform_group
             WHERE id IN (${platformGroupsQuery})
           )`
         );

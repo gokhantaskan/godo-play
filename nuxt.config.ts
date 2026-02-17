@@ -295,19 +295,19 @@ export default defineNuxtConfig({
       referrerPolicy: "strict-origin-when-cross-origin",
       permissionsPolicy: {
         fullscreen: [
-          "'self'",
-          "https://www.youtube.com",
-          "https://www.youtube-nocookie.com",
+          "self",
+          '"https://www.youtube.com"',
+          '"https://www.youtube-nocookie.com"',
         ],
         autoplay: [
-          "'self'",
-          "https://www.youtube.com",
-          "https://www.youtube-nocookie.com",
+          "self",
+          '"https://www.youtube.com"',
+          '"https://www.youtube-nocookie.com"',
         ],
         "encrypted-media": [
-          "'self'",
-          "https://www.youtube.com",
-          "https://www.youtube-nocookie.com",
+          "self",
+          '"https://www.youtube.com"',
+          '"https://www.youtube-nocookie.com"',
         ],
       },
     },

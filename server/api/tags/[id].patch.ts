@@ -45,7 +45,7 @@ export default defineEventHandler(async event => {
       throw createError({
         statusCode: 400,
         message: "Invalid request data",
-        data: error.format(),
+        data: z.treeifyError(error),
       });
     }
 

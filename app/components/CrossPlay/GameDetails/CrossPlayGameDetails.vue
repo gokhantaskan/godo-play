@@ -325,7 +325,15 @@ function formatDate(date: number) {
                   v-for="video in igdbGame.videos"
                   :key="video.id"
                   :src="`https://www.youtube.com/embed/${video.video_id}`"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen"
+                  allow="
+                    accelerometer;
+                    autoplay;
+                    clipboard-write;
+                    encrypted-media;
+                    gyroscope;
+                    picture-in-picture;
+                    fullscreen;
+                  "
                   referrerpolicy="strict-origin-when-cross-origin"
                   style="border: 0"
                   allowfullscreen

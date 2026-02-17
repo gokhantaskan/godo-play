@@ -1,10 +1,10 @@
-import "vue-router";
-
-declare module "vue-router" {
-  interface RouteMeta {
+declare module "nuxt/app" {
+  interface PageMeta {
     auth?: {
       required: boolean;
       role?: "admin" | "user";
     };
   }
 }
+
+export {};

@@ -201,8 +201,8 @@ export default defineEventHandler(async event => {
         statusCode: 400,
         message: "Invalid request data",
         data: {
-          errors: error.errors.reduce(
-            (acc, err) => {
+          errors: error.issues.reduce(
+            (acc: Record<string, string>, err) => {
               acc[err.path.join(".")] = err.message;
               return acc;
             },

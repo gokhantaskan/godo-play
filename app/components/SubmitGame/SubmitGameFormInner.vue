@@ -158,7 +158,7 @@ function updateStorePlatforms(
     };
   } catch (error) {
     if (error instanceof z.ZodError) {
-      const fieldError = error.errors[0];
+      const fieldError = error.issues[0];
       const errorPath = fieldError?.path[0];
 
       if (errorPath === "storeUrl") {
@@ -204,7 +204,7 @@ watch(
           errors.value = {
             ...errors.value,
             [`platformGroups.${index}`]:
-              error.errors[0]?.message || "Invalid platform group",
+              error.issues[0]?.message || "Invalid platform group",
           };
         }
       }
