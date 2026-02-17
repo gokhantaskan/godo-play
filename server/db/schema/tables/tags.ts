@@ -1,4 +1,5 @@
 import {
+  foreignKey,
   index,
   integer,
   pgTable,
@@ -13,30 +14,43 @@ import { defaultInsertTimestamps } from "../helpers/defaults";
 import { games } from "./games";
 
 export const tags = pgTable(
-  "tags",
+  "tag",
   {
     id: serial("id").primaryKey(),
     name: text("name").notNull(),
-    slug: text("slug").notNull().unique(),
+    slug: text("slug").notNull().unique("tag_slug_key"),
     weight: real("weight").default(1.0).notNull(),
     ...defaultInsertTimestamps,
   },
-  table => [index("tags_name_idx").on(table.name)]
+  table => [index("tag_name_idx").on(table.name)]
 );
 
 export const gamesTags = pgTable(
-  "games_tags",
+  "game_tag",
   {
-    gameId: integer("game_id")
-      .references(() => games.id, { onDelete: "cascade", onUpdate: "cascade" })
-      .notNull(),
-    tagId: integer("tag_id")
-      .references(() => tags.id, { onDelete: "cascade", onUpdate: "cascade" })
-      .notNull(),
+    gameId: integer("game_id").notNull(),
+    tagId: integer("tag_id").notNull(),
   },
   table => [
-    primaryKey({ columns: [table.gameId, table.tagId] }),
-    index("games_tags_tag_id_idx").on(table.tagId),
+    primaryKey({
+      name: "game_tag_pkey",
+      columns: [table.gameId, table.tagId],
+    }),
+    foreignKey({
+      name: "game_tag_game_id_fkey",
+      columns: [table.gameId],
+      foreignColumns: [games.id],
+    })
+      .onDelete("cascade")
+      .onUpdate("cascade"),
+    foreignKey({
+      name: "game_tag_tag_id_fkey",
+      columns: [table.tagId],
+      foreignColumns: [tags.id],
+    })
+      .onDelete("cascade")
+      .onUpdate("cascade"),
+    index("game_tag_tag_id_idx").on(table.tagId),
   ]
 );
 

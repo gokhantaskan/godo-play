@@ -84,7 +84,11 @@ No automated test suite exists. Dev server requires local SSL certificates via m
 
 ### Database
 
+- Singular snake_case table names: `game`, `platform`, `game_tag`
 - camelCase for fields and relations in Drizzle schema definitions
+- Constraint naming: `{table}_pkey`, `{table}_{column}_fkey`, `{table}_{column}_key`, `{table}_{column}_idx`
+- Use explicit `foreignKey()` in extraConfig instead of inline `.references()` — pass `name` to every constraint
+- Pass `name` to `primaryKey()`, `.unique()`, and `index()` calls
 - Read vs. Insert type separation: `ReadGame` / `InsertGame`
 
 ### Git

@@ -1,4 +1,5 @@
 import {
+  foreignKey,
   index,
   integer,
   pgTable,
@@ -13,33 +14,43 @@ import { platforms } from "./platforms";
 
 // Main stores table
 export const stores = pgTable(
-  "stores",
+  "store",
   {
     id: serial("id").primaryKey(),
     name: text("name").notNull(),
-    slug: text("slug").notNull().unique(),
+    slug: text("slug").notNull().unique("store_slug_key"),
     ...defaultInsertTimestamps,
   },
-  table => [index("stores_name_idx").on(table.name)]
+  table => [index("store_name_idx").on(table.name)]
 );
 
 // Junction table for store-platform relationships
 export const storeSupportedPlatforms = pgTable(
-  "store_supported_platforms",
+  "store_supported_platform",
   {
-    storeId: integer("store_id")
-      .references(() => stores.id, { onDelete: "cascade", onUpdate: "cascade" })
-      .notNull(),
-    platformId: integer("platform_id")
-      .references(() => platforms.id, {
-        onDelete: "cascade",
-        onUpdate: "cascade",
-      })
-      .notNull(),
+    storeId: integer("store_id").notNull(),
+    platformId: integer("platform_id").notNull(),
   },
   table => [
-    primaryKey({ columns: [table.storeId, table.platformId] }),
-    index("ssp_platform_id_idx").on(table.platformId),
+    primaryKey({
+      name: "store_supported_platform_pkey",
+      columns: [table.storeId, table.platformId],
+    }),
+    foreignKey({
+      name: "store_supported_platform_store_id_fkey",
+      columns: [table.storeId],
+      foreignColumns: [stores.id],
+    })
+      .onDelete("cascade")
+      .onUpdate("cascade"),
+    foreignKey({
+      name: "store_supported_platform_platform_id_fkey",
+      columns: [table.platformId],
+      foreignColumns: [platforms.id],
+    })
+      .onDelete("cascade")
+      .onUpdate("cascade"),
+    index("store_supported_platform_platform_id_idx").on(table.platformId),
   ]
 );
 

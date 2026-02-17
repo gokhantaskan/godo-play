@@ -1,5 +1,6 @@
 import { sql } from "drizzle-orm";
 import {
+  foreignKey,
   index,
   integer,
   pgSequence,
@@ -21,17 +22,17 @@ export const gameModeIdSeq = pgSequence("game_mode_id_seq", {
 });
 
 export const gameModes = pgTable(
-  "game_modes",
+  "game_mode",
   {
     id: integer("id")
       .primaryKey()
       .default(sql`nextval('game_mode_id_seq')`),
     name: text("name").notNull(),
-    slug: text("slug").notNull().unique(),
+    slug: text("slug").notNull().unique("game_mode_slug_key"),
     weight: real("weight").default(1.0).notNull(),
     ...defaultInsertTimestamps,
   },
-  table => [index("game_modes_name_idx").on(table.name)]
+  table => [index("game_mode_name_idx").on(table.name)]
 );
 
 /**
@@ -39,18 +40,27 @@ export const gameModes = pgTable(
  * Each record ties one game_submission to one game_mode.
  */
 export const gameSubmissionGameModes = pgTable(
-  "game_submission_game_modes",
+  "game_submission_game_mode",
   {
-    submissionId: integer("submission_id")
-      .references(() => games.id, { onDelete: "cascade" })
-      .notNull(),
-    gameModeId: integer("game_mode_id")
-      .references(() => gameModes.id, { onDelete: "cascade" })
-      .notNull(),
+    submissionId: integer("submission_id").notNull(),
+    gameModeId: integer("game_mode_id").notNull(),
   },
   table => [
-    primaryKey({ columns: [table.submissionId, table.gameModeId] }),
-    index("gm_gm_game_mode_id_idx").on(table.gameModeId),
+    primaryKey({
+      name: "game_submission_game_mode_pkey",
+      columns: [table.submissionId, table.gameModeId],
+    }),
+    foreignKey({
+      name: "game_submission_game_mode_submission_id_fkey",
+      columns: [table.submissionId],
+      foreignColumns: [games.id],
+    }).onDelete("cascade"),
+    foreignKey({
+      name: "game_submission_game_mode_game_mode_id_fkey",
+      columns: [table.gameModeId],
+      foreignColumns: [gameModes.id],
+    }).onDelete("cascade"),
+    index("game_submission_game_mode_game_mode_id_idx").on(table.gameModeId),
   ]
 );
 

@@ -4,17 +4,17 @@ import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 import { defaultInsertTimestamps } from "../helpers/defaults";
 
 export const platforms = pgTable(
-  "platforms",
+  "platform",
   {
     id: serial("id").primaryKey(),
     name: text("name").notNull(),
     abbreviation: text("abbreviation").notNull(),
-    slug: text("slug").notNull().unique(),
+    slug: text("slug").notNull().unique("platform_slug_key"),
     ...defaultInsertTimestamps,
   },
   table => [
-    index("platforms_name_idx").on(table.name),
-    index("platforms_abbreviation_idx").on(table.abbreviation),
+    index("platform_name_idx").on(table.name),
+    index("platform_abbreviation_idx").on(table.abbreviation),
   ]
 );
 

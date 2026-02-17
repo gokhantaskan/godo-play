@@ -1,4 +1,5 @@
 import {
+  foreignKey,
   index,
   integer,
   pgTable,
@@ -12,20 +13,25 @@ import { games } from "./games";
 import { platforms } from "./platforms";
 
 /**
- * platform_groups
+ * platform_group
  * Represents a grouping concept for platforms associated with a single submission.
  * Instead of using an array, we'll create a junction table that links each platform individually.
  */
 export const platformGroups = pgTable(
-  "platform_groups",
+  "platform_group",
   {
     id: serial("id").primaryKey(),
-    submissionId: integer("submission_id")
-      .references(() => games.id, { onDelete: "cascade" })
-      .notNull(),
+    submissionId: integer("submission_id").notNull(),
     ...defaultInsertTimestamps,
   },
-  table => [index("submission_id_idx").on(table.submissionId)]
+  table => [
+    foreignKey({
+      name: "platform_group_submission_id_fkey",
+      columns: [table.submissionId],
+      foreignColumns: [games.id],
+    }).onDelete("cascade"),
+    index("platform_group_submission_id_idx").on(table.submissionId),
+  ]
 );
 
 /**
@@ -33,21 +39,29 @@ export const platformGroups = pgTable(
  * Each record ties one platform_group to one platform.
  */
 export const platformGroupPlatforms = pgTable(
-  "platform_group_platforms",
+  "platform_group_platform",
   {
-    platformGroupId: integer("platform_group_id")
-      .references(() => platformGroups.id, { onDelete: "cascade" })
-      .notNull(),
-    platformId: integer("platform_id")
-      .references(() => platforms.id, {
-        onDelete: "cascade",
-        onUpdate: "cascade",
-      })
-      .notNull(),
+    platformGroupId: integer("platform_group_id").notNull(),
+    platformId: integer("platform_id").notNull(),
   },
   table => [
-    primaryKey({ columns: [table.platformGroupId, table.platformId] }),
-    index("pgp_platform_id_idx").on(table.platformId),
+    primaryKey({
+      name: "platform_group_platform_pkey",
+      columns: [table.platformGroupId, table.platformId],
+    }),
+    foreignKey({
+      name: "platform_group_platform_platform_group_id_fkey",
+      columns: [table.platformGroupId],
+      foreignColumns: [platformGroups.id],
+    }).onDelete("cascade"),
+    foreignKey({
+      name: "platform_group_platform_platform_id_fkey",
+      columns: [table.platformId],
+      foreignColumns: [platforms.id],
+    })
+      .onDelete("cascade")
+      .onUpdate("cascade"),
+    index("platform_group_platform_platform_id_idx").on(table.platformId),
   ]
 );
 

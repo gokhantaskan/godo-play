@@ -2,6 +2,7 @@ import { sql } from "drizzle-orm";
 import {
   boolean,
   date,
+  foreignKey,
   index,
   integer,
   jsonb,
@@ -20,31 +21,34 @@ import { gameCategories } from "./gameCategories";
  * This is the source of truth for submission types.
  */
 export const games = pgTable(
-  "games",
+  "game",
   {
     id: serial("id").primaryKey(),
     external: jsonb("external")
       .$type<ExternalData>()
       .default(sql`'{}'::jsonb`),
-    category: integer("category")
-      .notNull()
-      .references(() => gameCategories.pointer),
+    category: integer("category").notNull(),
     firstReleaseDate: date("first_release_date", { mode: "string" }),
     freeToPlay: boolean("free_to_play").notNull().default(false),
     name: text("name").notNull(),
-    slug: text("slug").unique().notNull(),
+    slug: text("slug").unique("game_slug_key").notNull(),
     status: text("status", { enum: ["pending", "approved", "rejected"] })
       .default("pending")
       .notNull(),
     ...defaultInsertTimestamps,
   },
   table => [
-    index("games_category_idx").on(table.category),
-    index("games_name_idx").on(table.name),
-    index("games_status_idx").on(table.status),
-    index("games_release_date_idx").on(table.firstReleaseDate),
-    index("games_created_at_idx").on(table.createdAt),
-    index("games_updated_at_idx").on(table.updatedAt),
+    foreignKey({
+      name: "game_category_fkey",
+      columns: [table.category],
+      foreignColumns: [gameCategories.pointer],
+    }),
+    index("game_category_idx").on(table.category),
+    index("game_name_idx").on(table.name),
+    index("game_status_idx").on(table.status),
+    index("game_first_release_date_idx").on(table.firstReleaseDate),
+    index("game_created_at_idx").on(table.createdAt),
+    index("game_updated_at_idx").on(table.updatedAt),
   ]
 );
 
