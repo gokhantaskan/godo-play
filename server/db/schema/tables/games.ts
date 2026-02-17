@@ -49,6 +49,17 @@ export const games = pgTable(
     index("game_first_release_date_idx").on(table.firstReleaseDate),
     index("game_created_at_idx").on(table.createdAt),
     index("game_updated_at_idx").on(table.updatedAt),
+    index("game_external_igdb_rating_idx").using(
+      "btree",
+      sql`CAST(external->>'igdbAggregatedRating' AS float) DESC NULLS LAST`
+    ),
+    index("game_status_created_at_idx").on(
+      table.status,
+      table.createdAt.desc()
+    ),
+    index("game_approved_created_at_idx")
+      .on(table.createdAt.desc())
+      .where(sql`status = 'approved'`),
   ]
 );
 

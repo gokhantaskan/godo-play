@@ -121,52 +121,23 @@ export default defineCachedEventHandler(
 
       // Add platform filtering condition
       if (parsedPlatforms?.length) {
-        // Get all platform groups that contain any of the requested platforms
-        const platformGroups = await db.query.platformGroupPlatforms.findMany({
-          where: inArray(platformGroupPlatforms.platformId, parsedPlatforms),
-          with: {
-            platformGroup: {
-              columns: {
-                id: true,
-                submissionId: true,
-              },
-            },
-          },
-        });
-
-        // Group platform groups by submission ID
-        const submissionToPlatformGroups = new Map<number, Set<number>>();
-
-        platformGroups.forEach(pg => {
-          const submissionId = pg.platformGroup.submissionId;
-          const platformId = pg.platformId;
-
-          if (!submissionToPlatformGroups.has(submissionId)) {
-            submissionToPlatformGroups.set(submissionId, new Set());
-          }
-
-          submissionToPlatformGroups.get(submissionId)?.add(platformId);
-        });
-
-        // Filter submissions that have all requested platforms
-        const matchingSubmissionIds = Array.from(
-          submissionToPlatformGroups.entries()
-        )
-          .filter(([_, platformIds]) =>
-            parsedPlatforms.every(platformId => platformIds.has(platformId))
-          )
-          .map(([submissionId, _]) => submissionId);
-
-        // Only apply the filter if we found matching submissions
-        if (matchingSubmissionIds.length > 0) {
-          conditions = and(
-            conditions,
-            inArray(games.id, matchingSubmissionIds)
+        const platformGroupsQuery = db
+          .select({ id: platformGroupPlatforms.platformGroupId })
+          .from(platformGroupPlatforms)
+          .where(inArray(platformGroupPlatforms.platformId, parsedPlatforms))
+          .groupBy(platformGroupPlatforms.platformGroupId)
+          .having(
+            sql`COUNT(DISTINCT platform_id) >= ${parsedPlatforms.length}`
           );
-        } else {
-          // If no matching submissions, return no results
-          conditions = and(conditions, sql`false`);
-        }
+
+        conditions = and(
+          conditions,
+          sql`id IN (
+            SELECT submission_id
+            FROM platform_group
+            WHERE id IN (${platformGroupsQuery})
+          )`
+        );
       }
 
       // Update game mode filtering to include at least one selected mode

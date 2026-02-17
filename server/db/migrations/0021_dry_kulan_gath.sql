@@ -1,0 +1,3 @@
+CREATE INDEX "game_external_igdb_rating_idx" ON "game" USING btree (CAST(external->>'igdbAggregatedRating' AS float) DESC NULLS LAST);--> statement-breakpoint
+CREATE INDEX "game_status_created_at_idx" ON "game" USING btree ("status","created_at" DESC NULLS LAST);--> statement-breakpoint
+CREATE INDEX "game_approved_created_at_idx" ON "game" USING btree ("created_at" DESC NULLS LAST) WHERE status = 'approved';

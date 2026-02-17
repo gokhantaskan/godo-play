@@ -1,7 +1,4 @@
-import { eq } from "drizzle-orm";
-
-import { db } from "~~/server/db";
-import { games } from "~~/server/db/schema";
+import { getGameBySlugPrepared } from "~~/server/db/prepared";
 import { isH3ErrorLike } from "~~/server/utils/errorHandler";
 import type { GameSubmissionWithRelations } from "~~/shared/types";
 
@@ -17,82 +14,7 @@ export default defineCachedEventHandler(
         });
       }
 
-      const game = await db.query.games.findFirst({
-        where: eq(games.slug, slug),
-        with: {
-          crossplayInformation: true,
-          platformGroups: {
-            columns: {
-              id: true,
-            },
-            with: {
-              platformGroupPlatforms: {
-                columns: {
-                  platformId: true,
-                  platformGroupId: true,
-                },
-                with: {
-                  platform: {
-                    columns: {
-                      id: true,
-                      name: true,
-                      slug: true,
-                    },
-                  },
-                },
-              },
-            },
-          },
-          storePlatforms: {
-            columns: {
-              id: true,
-              storeSlug: true,
-              storeUrl: true,
-            },
-            with: {
-              crossplayEntries: {
-                columns: {
-                  platformId: true,
-                },
-                with: {
-                  platform: {
-                    columns: {
-                      id: true,
-                      name: true,
-                      slug: true,
-                    },
-                  },
-                },
-              },
-            },
-          },
-          gameSubmissionGameModes: {
-            columns: {
-              gameModeId: true,
-            },
-            with: {
-              gameMode: {
-                columns: {
-                  id: true,
-                  name: true,
-                  slug: true,
-                },
-              },
-            },
-          },
-          tags: {
-            with: {
-              tag: {
-                columns: {
-                  id: true,
-                  name: true,
-                  slug: true,
-                },
-              },
-            },
-          },
-        },
-      });
+      const game = await getGameBySlugPrepared.execute({ slug });
 
       if (!game) {
         throw createError({

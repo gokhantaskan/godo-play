@@ -14,7 +14,7 @@
     "generate": "nuxt generate",
     "preview": "cross-env NITRO_SSL_CERT=$(cat localhost+2.pem) NITRO_SSL_KEY=$(cat localhost+2-key.pem) nuxt preview",
     "typecheck": "nuxt typecheck",
-    "clean": "pnpm clean:nuxt && rimraf --glob **/dist **/inspect",
+    "clean": "pnpm clean:nuxt && rimraf --glob **/dist **/node_modules **/.nuxt **/inspect",
     "clean:nuxt": "nuxt cleanup",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
