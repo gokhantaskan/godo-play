@@ -25,11 +25,7 @@ export const platformGroups = pgTable(
       .notNull(),
     ...defaultInsertTimestamps,
   },
-  table => {
-    return {
-      submissionIdIdx: index("submission_id_idx").on(table.submissionId),
-    };
-  }
+  table => [index("submission_id_idx").on(table.submissionId)]
 );
 
 /**
@@ -49,10 +45,10 @@ export const platformGroupPlatforms = pgTable(
       })
       .notNull(),
   },
-  table => ({
-    pk: primaryKey({ columns: [table.platformGroupId, table.platformId] }),
-    platformIdIdx: index("pgp_platform_id_idx").on(table.platformId),
-  })
+  table => [
+    primaryKey({ columns: [table.platformGroupId, table.platformId] }),
+    index("pgp_platform_id_idx").on(table.platformId),
+  ]
 );
 
 // Base Zod schemas generated from Drizzle schema

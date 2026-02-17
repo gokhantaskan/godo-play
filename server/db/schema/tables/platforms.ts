@@ -12,14 +12,10 @@ export const platforms = pgTable(
     slug: text("slug").notNull().unique(),
     ...defaultInsertTimestamps,
   },
-  table => {
-    return {
-      nameIdx: index("platforms_name_idx").on(table.name),
-      abbreviationIdx: index("platforms_abbreviation_idx").on(
-        table.abbreviation
-      ),
-    };
-  }
+  table => [
+    index("platforms_name_idx").on(table.name),
+    index("platforms_abbreviation_idx").on(table.abbreviation),
+  ]
 );
 
 // Base Zod schemas generated from Drizzle schema

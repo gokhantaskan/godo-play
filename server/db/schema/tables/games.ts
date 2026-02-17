@@ -38,18 +38,14 @@ export const games = pgTable(
       .notNull(),
     ...defaultInsertTimestamps,
   },
-  table => {
-    return {
-      categoryIdx: index("games_category_idx").on(table.category),
-      nameIdx: index("games_name_idx").on(table.name),
-      statusIdx: index("games_status_idx").on(table.status),
-      releaseDateIdx: index("games_release_date_idx").on(
-        table.firstReleaseDate
-      ),
-      createdAtIdx: index("games_created_at_idx").on(table.createdAt),
-      updatedAtIdx: index("games_updated_at_idx").on(table.updatedAt),
-    };
-  }
+  table => [
+    index("games_category_idx").on(table.category),
+    index("games_name_idx").on(table.name),
+    index("games_status_idx").on(table.status),
+    index("games_release_date_idx").on(table.firstReleaseDate),
+    index("games_created_at_idx").on(table.createdAt),
+    index("games_updated_at_idx").on(table.updatedAt),
+  ]
 );
 
 interface ExternalData {

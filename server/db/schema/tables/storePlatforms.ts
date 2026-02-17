@@ -29,12 +29,10 @@ export const storePlatforms = pgTable(
     storeUrl: text("store_url"),
     ...defaultInsertTimestamps,
   },
-  table => {
-    return {
-      submissionIdIdx: index("sp_submission_id_idx").on(table.submissionId),
-      storeSlugIdx: index("sp_store_slug_idx").on(table.storeSlug),
-    };
-  }
+  table => [
+    index("sp_submission_id_idx").on(table.submissionId),
+    index("sp_store_slug_idx").on(table.storeSlug),
+  ]
 );
 
 /**
@@ -52,12 +50,12 @@ export const storeCrossplayPlatforms = pgTable(
       .references(() => platforms.id)
       .notNull(),
   },
-  table => ({
-    pk: primaryKey({
+  table => [
+    primaryKey({
       columns: [table.storePlatformId, table.platformId],
     }),
-    platformIdIdx: index("scp_platform_id_idx").on(table.platformId),
-  })
+    index("scp_platform_id_idx").on(table.platformId),
+  ]
 );
 
 /**

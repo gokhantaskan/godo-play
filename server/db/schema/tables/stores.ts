@@ -20,11 +20,7 @@ export const stores = pgTable(
     slug: text("slug").notNull().unique(),
     ...defaultInsertTimestamps,
   },
-  table => {
-    return {
-      nameIdx: index("stores_name_idx").on(table.name),
-    };
-  }
+  table => [index("stores_name_idx").on(table.name)]
 );
 
 // Junction table for store-platform relationships
@@ -41,10 +37,10 @@ export const storeSupportedPlatforms = pgTable(
       })
       .notNull(),
   },
-  table => ({
-    pk: primaryKey({ columns: [table.storeId, table.platformId] }),
-    platformIdIdx: index("ssp_platform_id_idx").on(table.platformId),
-  })
+  table => [
+    primaryKey({ columns: [table.storeId, table.platformId] }),
+    index("ssp_platform_id_idx").on(table.platformId),
+  ]
 );
 
 // Base Zod schemas for the main table

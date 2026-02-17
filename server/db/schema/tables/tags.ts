@@ -21,11 +21,7 @@ export const tags = pgTable(
     weight: real("weight").default(1.0).notNull(),
     ...defaultInsertTimestamps,
   },
-  table => {
-    return {
-      nameIdx: index("tags_name_idx").on(table.name),
-    };
-  }
+  table => [index("tags_name_idx").on(table.name)]
 );
 
 export const gamesTags = pgTable(
@@ -38,10 +34,10 @@ export const gamesTags = pgTable(
       .references(() => tags.id, { onDelete: "cascade", onUpdate: "cascade" })
       .notNull(),
   },
-  table => ({
-    pk: primaryKey({ columns: [table.gameId, table.tagId] }),
-    tagIdIdx: index("games_tags_tag_id_idx").on(table.tagId),
-  })
+  table => [
+    primaryKey({ columns: [table.gameId, table.tagId] }),
+    index("games_tags_tag_id_idx").on(table.tagId),
+  ]
 );
 
 export const BaseTagSchema = createSelectSchema(tags);
