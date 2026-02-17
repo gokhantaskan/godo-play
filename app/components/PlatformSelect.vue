@@ -12,11 +12,13 @@ interface PlatformSelectProps {
   allowEmpty?: boolean;
   excludePlatforms?: SupportedPlatform["id"][];
   includePlatforms?: SupportedPlatform["id"][];
+  label?: string;
   multiple?: boolean;
 }
 
 const props = withDefaults(defineProps<PlatformSelectProps>(), {
   allowEmpty: false,
+  label: "Platform",
   multiple: false,
   excludePlatforms: () => [],
   includePlatforms: () => [...SUPPORTED_PLATFORM_IDS],
@@ -87,7 +89,7 @@ const availableOptions = computed(() =>
 <template>
   <TheSelect
     v-model="modelValue"
-    label="Platform"
+    :label="label"
     :options="availableOptions"
     :multiple="multiple"
     :icon="getPlatformIcon(modelValue)"

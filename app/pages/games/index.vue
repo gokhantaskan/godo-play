@@ -561,7 +561,7 @@ function handleSortChange(value: string | string[] | undefined) {
       platforms, including PC, Mac, PlayStation, Xbox, and Nintendo Switch.
     </p>
 
-    <section class="tw:flex tw:max-sm:flex-col tw:gap-4 tw:max-w-2xl">
+    <section class="tw:grid tw:grid-cols-1 tw:sm:grid-cols-3 tw:gap-3">
       <PlatformSelect
         v-model="selectedPlatforms.p1 as SupportedPlatform['id']"
         :exclude-platforms="
@@ -596,36 +596,37 @@ function handleSortChange(value: string | string[] | undefined) {
       />
     </section>
 
-    <section class="tw:space-y-2 tw:max-sm:mt-4">
-      <div class="tw:flex tw:gap-4">
+    <section class="tw:space-y-3">
+      <div class="tw:flex tw:flex-col tw:sm:flex-row tw:gap-3">
         <TheSearchInput
           v-model="search"
-          class="tw:max-md:w-full"
+          class="tw:flex-1"
           placeholder="Search by name"
         />
-        <TheSelect
-          v-model="sort"
-          class="tw:max-w-24 tw:grow-0"
-          :options="[
-            { value: '-popularity', label: 'Most Popular' },
-            { value: '-created_at', label: 'Newest' },
-            { value: '-updated_at', label: 'Recently Updated' },
-            { value: '-first_release_date', label: 'Latest Release' },
-          ]"
-          full-width
-          placeholder="Sort by"
-          @update:model-value="handleSortChange"
-        />
-        <GameCategorySelector
-          v-model:game-modes="selectedFilters.gameModes"
-          v-model:tags="selectedFilters.tags"
-          v-model:free-to-play="selectedFilters.freeToPlay"
-        />
+        <div class="tw:flex tw:gap-3 tw:shrink-0">
+          <TheSelect
+            v-model="sort"
+            class="tw:min-w-44"
+            :options="[
+              { value: '-popularity', label: 'Most Popular' },
+              { value: '-created_at', label: 'Newest' },
+              { value: '-updated_at', label: 'Recently Updated' },
+              { value: '-first_release_date', label: 'Latest Release' },
+            ]"
+            full-width
+            placeholder="Sort by"
+            @update:model-value="handleSortChange"
+          />
+          <GameCategorySelector
+            v-model:game-modes="selectedFilters.gameModes"
+            v-model:tags="selectedFilters.tags"
+            v-model:free-to-play="selectedFilters.freeToPlay"
+          />
+        </div>
       </div>
-      <div></div>
       <div
         v-if="activeFilterChips.length"
-        class="tw:w-full tw:flex tw:flex-wrap tw:gap-2"
+        class="tw:flex tw:flex-wrap tw:gap-2"
       >
         <TheChip
           v-for="chip in activeFilterChips"
