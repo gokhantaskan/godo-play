@@ -23,7 +23,7 @@ const isOpen = defineModel<boolean>("open");
 const {
   side = "right",
   size = "320px",
-  beforeClose,
+  beforeClose = undefined,
   title = "",
   description = "",
   showClose = true,

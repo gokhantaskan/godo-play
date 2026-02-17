@@ -3,16 +3,10 @@ import type { PlatformId } from "~/types/crossPlay";
 import { SUPPORTED_PLATFORM_IDS } from "~~/shared/constants/platforms";
 import type { GameDetails } from "~~/shared/types/igdb/gameDetails";
 
-const props = withDefaults(
-  defineProps<{
-    details?: GameDetails;
-    isLoading: boolean;
-  }>(),
-  {
-    details: undefined,
-    isLoading: false,
-  }
-);
+const props = defineProps<{
+  details?: GameDetails;
+  isLoading?: boolean;
+}>();
 
 const trustedWebsites = computed(() => {
   return props.details?.websites?.filter(website => website.trusted);
