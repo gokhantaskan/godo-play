@@ -290,7 +290,7 @@ export default defineNuxtConfig({
           "https://*.gstatic.com",
           "https://www.google-analytics.com",
           "https://www.google.com",
-          "https://b.clarity.ms",
+          "https://*.clarity.ms",
           "https://api.iconify.design",
           "https://*.supabase.co",
           "https://*.prismic.io",

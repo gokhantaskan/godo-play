@@ -29,13 +29,6 @@ useHead({
       ? `${titleChunk} | GodoPlay`
       : "The Ultimate Fusion for Co-Op and Multiplayer Gaming | GodoPlay";
   },
-  script: [
-    {
-      src: "https://static.cdn.prismic.io/prismic.js?new=true&repo=godoplay",
-      async: true,
-      defer: true,
-    },
-  ],
 });
 
 useSeoMeta({
