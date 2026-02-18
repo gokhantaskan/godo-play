@@ -2,10 +2,9 @@ import { config } from "dotenv";
 import { expand } from "dotenv-expand";
 import { defineConfig } from "drizzle-kit";
 
-// Only load .env if POSTGRES_URL is not already set (e.g., by env-cmd)
-if (!process.env.POSTGRES_URL) {
-  expand(config());
-}
+// Always expand so ${VAR} references in POSTGRES_URL get resolved,
+// even if drizzle-kit pre-loads .env without expansion.
+expand(config({ override: true }));
 
 export default defineConfig({
   out: "./server/db/migrations",
@@ -13,8 +12,9 @@ export default defineConfig({
   dialect: "postgresql",
   dbCredentials: {
     url: process.env.POSTGRES_URL!,
-    ssl: {
-      rejectUnauthorized: false,
-    },
+    ssl:
+      process.env.POSTGRES_HOST === "localhost"
+        ? false
+        : { rejectUnauthorized: false },
   },
 });
