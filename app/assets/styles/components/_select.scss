@@ -90,9 +90,9 @@
       overflow: auto;
       max-height: 15rem;
       border-radius: var(--radius);
-      background-color: var(--form-bg);
+      background-color: var(--tw-color-surface-container-high);
       border: 1px solid var(--form-border-color);
-      box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+      box-shadow: var(--form-overlay-shadow);
 
       &--full-width {
         width: max-content;

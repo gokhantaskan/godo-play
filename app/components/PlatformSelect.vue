@@ -16,14 +16,13 @@ interface PlatformSelectProps {
   multiple?: boolean;
 }
 
-const { allowEmpty, excludePlatforms, includePlatforms, label, multiple } =
-  withDefaults(defineProps<PlatformSelectProps>(), {
-    allowEmpty: false,
-    excludePlatforms: () => [],
-    includePlatforms: () => [...SUPPORTED_PLATFORM_IDS],
-    label: "Platform",
-    multiple: false,
-  });
+const {
+  allowEmpty = false,
+  excludePlatforms = [],
+  includePlatforms = [...SUPPORTED_PLATFORM_IDS],
+  label = "Platform",
+  multiple = false,
+} = defineProps<PlatformSelectProps>();
 
 const modelValue = defineModel<
   SupportedPlatform["id"][] | SupportedPlatform["id"]
