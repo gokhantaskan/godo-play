@@ -19,8 +19,7 @@ const editor = useEditor({
   extensions: [StarterKit],
   editorProps: {
     attributes: {
-      class:
-        "tw:prose tw:max-w-none tw:p-4 tw:min-h-[200px] tw:outline-none tw:ring-2 tw:ring-transparent focus:tw:ring-primary/50 tw:rounded-b-lg tw:transition-shadow",
+      class: "tw:prose rte-editor",
     },
   },
   onUpdate: ({ editor }) => {
@@ -152,5 +151,21 @@ button {
 
 .ProseMirror > *:first-child {
   margin-top: 0;
+}
+
+:deep(.rte-editor) {
+  max-width: none;
+  padding: 1rem;
+  min-height: 200px;
+  outline: none;
+  border-end-start-radius: var(--tw-radius-lg);
+  border-end-end-radius: var(--tw-radius-lg);
+  transition: box-shadow 0.15s ease;
+  box-shadow: 0 0 0 2px transparent;
+
+  &:focus {
+    box-shadow: 0 0 0 2px
+      color-mix(in srgb, var(--tw-color-primary) 50%, transparent);
+  }
 }
 </style>
