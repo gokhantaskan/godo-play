@@ -1,5 +1,10 @@
 <script setup lang="ts">
-import { Dialog, DialogPanel } from "@headlessui/vue";
+import {
+  Dialog,
+  DialogPanel,
+  TransitionChild,
+  TransitionRoot,
+} from "@headlessui/vue";
 
 import { QUERY_KEYS } from "~~/shared/constants/queryKeys";
 import type { GameWithRelations } from "~~/shared/types";
@@ -59,45 +64,69 @@ function closeDialog() {
 </script>
 
 <template>
-  <Dialog
-    :open="isOpen"
-    class="game-dialog"
-    @close="closeDialog"
+  <TransitionRoot
+    appear
+    :show="isOpen"
+    as="template"
   >
-    <div class="game-dialog__backdrop">
-      <DialogPanel class="game-dialog__wrapper">
-        <header class="game-dialog__header">
-          <button
-            class="clean-button game-dialog__close"
-            type="button"
-            @click="closeDialog"
-          >
-            <Icon name="lucide:x" />
-          </button>
-        </header>
+    <Dialog
+      class="game-dialog"
+      @close="closeDialog"
+    >
+      <TransitionChild
+        as="template"
+        enter-active-class="game-dialog__backdrop--enter-active"
+        enter-from-class="game-dialog__backdrop--enter-from"
+        leave-active-class="game-dialog__backdrop--leave-active"
+        leave-to-class="game-dialog__backdrop--leave-to"
+      >
+        <div
+          class="game-dialog__backdrop"
+          aria-hidden="true"
+        />
+      </TransitionChild>
 
-        <div class="game-dialog__content">
-          <template v-if="isOpen">
-            <div
-              v-if="isLoading"
-              class="game-dialog__loader"
+      <TransitionChild
+        as="template"
+        enter-active-class="game-dialog__panel--enter-active"
+        enter-from-class="game-dialog__panel--enter-from"
+        leave-active-class="game-dialog__panel--leave-active"
+        leave-to-class="game-dialog__panel--leave-to"
+      >
+        <DialogPanel class="game-dialog__wrapper">
+          <header class="game-dialog__header">
+            <button
+              class="clean-button game-dialog__close"
+              type="button"
+              @click="closeDialog"
             >
-              <Icon
-                name="lucide:loader-2"
-                class="game-dialog__loader-icon"
+              <Icon name="lucide:x" />
+            </button>
+          </header>
+
+          <div class="game-dialog__content">
+            <template v-if="isOpen">
+              <div
+                v-if="isLoading"
+                class="game-dialog__loader"
+              >
+                <Icon
+                  name="lucide:loader-2"
+                  class="game-dialog__loader-icon"
+                />
+              </div>
+              <CrossPlayGameDetails
+                v-else-if="fetchedDbGame && fetchedIGDBGame"
+                :igdb-game="fetchedIGDBGame"
+                :db-game="fetchedDbGame"
+                :game-name="fetchedDbGame.name"
               />
-            </div>
-            <CrossPlayGameDetails
-              v-else-if="fetchedDbGame && fetchedIGDBGame"
-              :igdb-game="fetchedIGDBGame"
-              :db-game="fetchedDbGame"
-              :game-name="fetchedDbGame.name"
-            />
-          </template>
-        </div>
-      </DialogPanel>
-    </div>
-  </Dialog>
+            </template>
+          </div>
+        </DialogPanel>
+      </TransitionChild>
+    </Dialog>
+  </TransitionRoot>
 </template>
 
 <style lang="scss" scoped>
@@ -110,12 +139,11 @@ function closeDialog() {
     position: fixed;
     inset: 0;
     background-color: var(--color-overlay);
-    display: flex;
-    align-items: center;
-    justify-content: center;
   }
 
   &__wrapper {
+    position: fixed;
+    inset: 0;
     display: flex;
     flex-direction: column;
     width: 100%;
@@ -179,6 +207,64 @@ function closeDialog() {
   }
   to {
     transform: rotate(360deg);
+  }
+}
+</style>
+
+<!-- Unscoped: HeadlessUI TransitionChild applies classes dynamically,
+     which don't receive Vue's scoped data attribute -->
+<style lang="scss">
+.game-dialog {
+  // Backdrop transition
+  &__backdrop {
+    &--enter-active,
+    &--leave-active {
+      transition: opacity 0.25s ease;
+    }
+
+    &--enter-from,
+    &--leave-to {
+      opacity: 0;
+    }
+  }
+
+  // Panel transition
+  &__panel {
+    &--enter-active {
+      transition:
+        opacity 0.3s ease,
+        transform 0.3s ease;
+    }
+
+    &--leave-active {
+      transition:
+        opacity 0.2s ease,
+        transform 0.2s ease;
+    }
+
+    &--enter-from {
+      opacity: 0;
+      transform: translateY(2rem);
+    }
+
+    &--leave-to {
+      opacity: 0;
+      transform: translateY(1rem);
+    }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .game-dialog {
+    &__panel--enter-active,
+    &__panel--leave-active {
+      transition: opacity 0.15s ease;
+    }
+
+    &__panel--enter-from,
+    &__panel--leave-to {
+      transform: none;
+    }
   }
 }
 </style>

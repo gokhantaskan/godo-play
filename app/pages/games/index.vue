@@ -638,22 +638,53 @@ function handleSortChange(value: string | string[] | undefined) {
       </div>
     </section>
 
+    <!-- Loading: skeleton cards -->
     <section
       v-if="pending"
-      class="tw:flex tw:justify-center tw:items-center tw:min-h-[200px]"
+      class="tw:grid tw:grid-cols-2 tw:sm:grid-cols-[repeat(auto-fill,minmax(14rem,1fr))] tw:gap-4"
+      aria-label="Loading games"
     >
-      <LoadingSpinner />
+      <CrossPlayGameCardSkeleton
+        v-for="i in 12"
+        :key="i"
+      />
     </section>
 
+    <!-- Error state -->
     <section
       v-else-if="status === 'error'"
-      class="tw:text-red"
+      class="empty-state"
     >
-      An error occurred while fetching games. Please try again later. If the
-      issue persists, please contact me via
-      <a href="mailto:contact@godo-play.com">contact@godo-play.com</a>.
+      <Icon
+        name="lucide:wifi-off"
+        class="empty-state__icon tw:text-red"
+      />
+      <h2 class="empty-state__heading">Something went wrong</h2>
+      <p class="empty-state__text">
+        We couldn't load the games right now. This is usually a temporary issue.
+      </p>
+      <div class="tw:flex tw:gap-3">
+        <TheButton
+          variant="primary"
+          @click="clearQueryAndRefreshPage"
+        >
+          <Icon
+            name="lucide:refresh-cw"
+            class="tw:size-4"
+          />
+          Try Again
+        </TheButton>
+        <TheButton
+          variant="secondary"
+          as="a"
+          href="mailto:contact@godo-play.com"
+        >
+          Contact Support
+        </TheButton>
+      </div>
     </section>
 
+    <!-- Results -->
     <section
       v-else-if="games?.length"
       class="tw:grid tw:grid-cols-2 tw:sm:grid-cols-[repeat(auto-fill,minmax(14rem,1fr))] tw:gap-4"
@@ -665,7 +696,54 @@ function handleSortChange(value: string | string[] | undefined) {
       />
     </section>
 
-    <p v-else>No submissions found.</p>
+    <!-- Empty state -->
+    <section
+      v-else
+      class="empty-state"
+    >
+      <Icon
+        name="lucide:search-x"
+        class="empty-state__icon tw:text-text-muted"
+      />
+      <h2 class="empty-state__heading">No games found</h2>
+      <p
+        v-if="debouncedSearch"
+        class="empty-state__text"
+      >
+        No results for "<strong>{{ debouncedSearch }}</strong
+        >". Try a different search term or adjust your filters.
+      </p>
+      <p
+        v-else-if="
+          activeFilterChips.length ||
+          Object.values(selectedPlatforms).some(Boolean)
+        "
+        class="empty-state__text"
+      >
+        No games match your current filters. Try broadening your selection.
+      </p>
+      <p
+        v-else
+        class="empty-state__text"
+      >
+        There are no games to display right now. Check back soon!
+      </p>
+      <TheButton
+        v-if="
+          debouncedSearch ||
+          activeFilterChips.length ||
+          Object.values(selectedPlatforms).some(Boolean)
+        "
+        variant="secondary"
+        @click="clearQueryAndRefreshPage"
+      >
+        <Icon
+          name="lucide:x"
+          class="tw:size-4"
+        />
+        Clear All Filters
+      </TheButton>
+    </section>
 
     <div
       v-if="hasMoreGames"
@@ -709,6 +787,31 @@ header {
     @media (min-width: map.get($breakpoints, "sm")) {
       font-size: 2.5rem;
     }
+  }
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 0.75rem;
+  padding-block: 3rem;
+
+  &__icon {
+    width: 2.5rem;
+    height: 2.5rem;
+    margin-block-end: 0.25rem;
+  }
+
+  &__heading {
+    font-size: 1.25rem;
+    font-weight: 600;
+  }
+
+  &__text {
+    max-width: 40ch;
+    color: var(--tw-color-text-muted);
   }
 }
 </style>

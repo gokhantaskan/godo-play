@@ -101,14 +101,6 @@ onUnmounted(() => {
         <h2
           class="game-card__title"
           :class="[props.game.status === 'pending' && 'tw:text-red']"
-          :style="{
-            textOverflow: 'unset',
-            whiteSpace: 'unset',
-            // line clamp for 2 lines
-            display: '-webkit-box',
-            '-webkit-line-clamp': '2',
-            '-webkit-box-orient': 'vertical',
-          }"
         >
           {{ props.game.name }}
         </h2>
