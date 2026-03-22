@@ -7,21 +7,24 @@ interface Props {
   size?: "sm" | "lg";
 }
 
-const props = withDefaults(defineProps<Props>(), {
-  variant: "gray",
-  title: "",
-  message: "",
-  icon: "",
-  size: undefined,
-});
+const {
+  variant = "gray",
+  title = "",
+  message = "",
+  icon = "",
+  size,
+} = defineProps<Props>();
 
 const rootClasses = computed(() => {
-  return ["alert", `alert--${props.variant}`, `alert--${props.size}`];
+  return ["alert", `alert--${variant}`, `alert--${size}`];
 });
 </script>
 
 <template>
-  <div :class="rootClasses">
+  <div
+    role="alert"
+    :class="rootClasses"
+  >
     <div
       v-if="icon || $slots.icon"
       class="alert__icon"

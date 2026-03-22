@@ -103,6 +103,19 @@ export default defineNuxtConfig({
           href: "/favicon.svg",
         },
         {
+          rel: "preconnect",
+          href: "https://fonts.googleapis.com",
+        },
+        {
+          rel: "preconnect",
+          href: "https://fonts.gstatic.com",
+          crossorigin: "",
+        },
+        {
+          rel: "preconnect",
+          href: "https://images.igdb.com",
+        },
+        {
           rel: "stylesheet",
           href: "https://fonts.googleapis.com/css2?family=Figtree:ital,wght@0,300..700;1,300..700&family=Lexend:wght@300..700&display=swap",
         },

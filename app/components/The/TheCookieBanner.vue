@@ -92,10 +92,7 @@ function preventDefaultCancel(e: Event) {
     @click="e => e.target === dialogRef"
     @keydown.esc.prevent
   >
-    <div
-      tabindex="0"
-      class="cookie-banner__content tw:shadow-md"
-    >
+    <div class="cookie-banner__content tw:shadow-md">
       <div class="cookie-banner__text">
         <h2
           v-if="cookieContent?.data.title"
@@ -165,7 +162,7 @@ function preventDefaultCancel(e: Event) {
     display: flex;
     flex-direction: column;
     gap: var(--edge-offset);
-    background: white;
+    background: var(--tw-color-bg);
 
     @media (min-width: map.get($breakpoints, "md")) {
       flex-direction: row;

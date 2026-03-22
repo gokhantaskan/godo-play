@@ -38,9 +38,16 @@ const editorContent = computed({
     </p>
     <div class="tw:space-y-2">
       <div>
+        <label
+          for="evidence-url"
+          class="tw:text-sm tw:font-medium tw:mb-1 tw:block"
+        >
+          Evidence URL
+        </label>
         <input
+          id="evidence-url"
           class="tw:w-full"
-          placeholder="Evidence URL"
+          placeholder="https://..."
           :value="localValue.evidenceUrl ?? ''"
           @input="
             e => {

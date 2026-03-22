@@ -19,13 +19,13 @@ interface Props {
   showTitle?: boolean;
 }
 
-withDefaults(defineProps<Props>(), {
-  title: "",
-  description: "",
-  showClose: true,
-  maxWidth: "100%",
-  showTitle: true,
-});
+const {
+  title = "",
+  description = "",
+  showClose = true,
+  maxWidth = "100%",
+  showTitle = true,
+} = defineProps<Props>();
 
 const modelValue = defineModel<boolean>("open", {
   required: true,

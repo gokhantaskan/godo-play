@@ -19,7 +19,8 @@ const editor = useEditor({
   extensions: [StarterKit],
   editorProps: {
     attributes: {
-      class: "tw:prose tw:max-w-none tw:p-4 tw:min-h-[200px] tw:outline-none",
+      class:
+        "tw:prose tw:max-w-none tw:p-4 tw:min-h-[200px] tw:outline-none tw:ring-2 tw:ring-transparent focus:tw:ring-primary/50 tw:rounded-b-lg tw:transition-shadow",
     },
   },
   onUpdate: ({ editor }) => {

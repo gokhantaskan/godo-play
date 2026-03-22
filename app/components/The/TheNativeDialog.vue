@@ -66,7 +66,7 @@ onUnmounted(() => {
   overflow: visible;
 
   &::backdrop {
-    background: rgb(0 0 0 / 50%);
+    background: var(--color-overlay);
   }
 
   // &[open] {

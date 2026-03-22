@@ -17,13 +17,16 @@ const isDialogOpen = ref(false);
 const originalURL = ref("");
 const route = useRoute();
 
+const gameModesLabel = computed(
+  () =>
+    props.game.gameGameModes?.map(mode => mode.gameMode.name).join(", ") ?? ""
+);
+
 function openDialog(event: Event) {
   // Track game click with Clarity (only if consent granted)
   if (cookieConsent.value === true) {
     clarity("set", "gameCardClicked", props.game.name);
   }
-
-  console.log(route.name);
 
   if (props.directLink) {
     // Let the default link behavior happen when directLink is true
@@ -68,7 +71,6 @@ onUnmounted(() => {
       <img
         :src="`https://images.igdb.com/igdb/image/upload/t_720p/${game.external?.igdbImageId}.jpg`"
         :alt="game.name"
-        preload
         loading="lazy"
       />
 
@@ -118,9 +120,7 @@ onUnmounted(() => {
           v-if="props.game.gameGameModes?.length"
           class="game-card__game-modes"
         >
-          {{
-            props.game.gameGameModes.map(mode => mode.gameMode.name).join(", ")
-          }}
+          {{ gameModesLabel }}
         </div>
 
         <!-- Tags -->

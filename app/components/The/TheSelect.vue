@@ -27,29 +27,26 @@ export interface SelectProps {
   fullWidth?: boolean;
 }
 
-const props = withDefaults(defineProps<SelectProps>(), {
-  label: "",
-  required: false,
-  placeholder: "Select an option",
-  disabled: false,
-  icon: "",
-  multiple: false,
-  valueKey: "value",
-  labelKey: "label",
-  fullWidth: false,
-});
+const {
+  options,
+  label = "",
+  placeholder = "Select an option",
+  multiple = false,
+  icon = "",
+  valueKey = "value",
+} = defineProps<SelectProps>();
 
 const modelValue = defineModel<T | T[]>();
 
 const selectedOptions = computed(() => {
-  if (!props.multiple) {
-    const option = props.options.find(
-      option => option[props.valueKey] === modelValue.value
+  if (!multiple) {
+    const option = options.find(
+      option => option[valueKey] === modelValue.value
     );
     return option ? [option] : [];
   }
-  return props.options.filter(option =>
-    (modelValue.value as T[])?.includes(option[props.valueKey])
+  return options.filter(option =>
+    (modelValue.value as T[])?.includes(option[valueKey])
   );
 });
 </script>

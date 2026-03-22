@@ -2,18 +2,13 @@
 import { getConsolidatedPlatformGroups } from "@/utils/game";
 import type { GameWithRelations } from "~~/shared/types";
 
-const props = withDefaults(
-  defineProps<{
-    platformGroups: GameWithRelations["platformGroups"];
-    showLabels?: boolean;
-  }>(),
-  {
-    showLabels: false,
-  }
-);
+const { platformGroups: rawPlatformGroups } = defineProps<{
+  platformGroups: GameWithRelations["platformGroups"];
+  showLabels?: boolean;
+}>();
 
 const platformGroups = computed(() =>
-  getConsolidatedPlatformGroups(props.platformGroups)
+  getConsolidatedPlatformGroups(rawPlatformGroups)
 );
 </script>
 
@@ -71,7 +66,7 @@ const platformGroups = computed(() =>
   display: flex;
   flex-wrap: wrap;
   gap: var(--gap);
-  background: white;
+  background: var(--tw-color-bg);
   border: 1px solid var(--tw-color-border);
   border-radius: var(--tw-radius-sm);
   padding: var(--gap);

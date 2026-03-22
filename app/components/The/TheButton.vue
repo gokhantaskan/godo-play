@@ -10,22 +10,21 @@ export interface TheButtonProps {
   [key: string]: any;
 }
 
-const props = withDefaults(defineProps<TheButtonProps>(), {
-  as: "button",
-  variant: "primary",
-  size: "md",
-  disabled: undefined,
-  type: "button",
-  leftIcon: "",
-  rightIcon: "",
-});
+const {
+  as = "button",
+  variant = "primary",
+  size = "md",
+  disabled,
+  leftIcon = "",
+  rightIcon = "",
+} = defineProps<TheButtonProps>();
 
 const buttonClasses = computed(() => [
   "button",
-  `button--${props.variant}`,
-  `button--${props.size}`,
+  `button--${variant}`,
+  `button--${size}`,
   {
-    "button--disabled": props.disabled,
+    "button--disabled": disabled,
   },
 ]);
 </script>

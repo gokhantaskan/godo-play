@@ -261,13 +261,13 @@ watch(
     <fieldset>
       <legend>Is the game free to play?</legend>
       <div class="tw:space-y-2">
-        <div>
+        <label class="tw:flex tw:items-center tw:gap-2 tw:cursor-pointer">
           <input
             v-model="freeToPlay"
             type="checkbox"
           />
-          <label>Yes</label>
-        </div>
+          Yes
+        </label>
       </div>
     </fieldset>
 
@@ -332,6 +332,7 @@ watch(
           <p
             v-if="errors[`platformGroups.${groupIndex}`]"
             class="tw:text-sm tw:text-error tw:mt-1"
+            aria-live="polite"
           >
             {{ errors[`platformGroups.${groupIndex}`] }}
           </p>
@@ -405,6 +406,7 @@ watch(
               <p
                 v-if="errors[`storePlatforms.${store.slug}.url`]"
                 class="tw:text-sm tw:text-error tw:mt-1"
+                aria-live="polite"
               >
                 {{ errors[`storePlatforms.${store.slug}.url`] }}
               </p>
@@ -433,6 +435,7 @@ watch(
             <p
               v-if="errors[`storePlatforms.${store.slug}`]"
               class="tw:text-sm tw:text-error tw:mt-1"
+              aria-live="polite"
             >
               {{ errors[`storePlatforms.${store.slug}`] }}
             </p>

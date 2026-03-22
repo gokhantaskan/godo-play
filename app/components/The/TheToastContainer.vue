@@ -23,7 +23,9 @@ const iconMap: Record<ToastType, string> = {
           :key="toast.id"
           :class="['toast', `toast--${toast.type}`]"
           role="alert"
+          tabindex="0"
           @click="dismiss(toast.id)"
+          @keydown.escape="dismiss(toast.id)"
         >
           <Icon
             :name="iconMap[toast.type]"
@@ -71,15 +73,15 @@ const iconMap: Record<ToastType, string> = {
 }
 
 .toast--success {
-  background-color: var(--tw-color-green-600, #16a34a);
+  background-color: var(--tw-color-green);
 }
 
 .toast--error {
-  background-color: var(--tw-color-red-600, #dc2626);
+  background-color: var(--tw-color-red);
 }
 
 .toast--warning {
-  background-color: var(--tw-color-amber-600, #d97706);
+  background-color: var(--tw-color-yellow);
 }
 
 .toast__icon {
@@ -94,7 +96,9 @@ const iconMap: Record<ToastType, string> = {
 
 .toast-enter-active,
 .toast-leave-active {
-  transition: all 0.3s ease;
+  transition:
+    opacity 0.3s ease,
+    transform 0.3s ease;
 }
 
 .toast-enter-from {

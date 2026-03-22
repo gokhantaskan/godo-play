@@ -9,17 +9,15 @@ interface LogoutWrapperProps {
   redirectTo?: RouteLocationRaw;
 }
 
-const props = withDefaults(defineProps<LogoutWrapperProps>(), {
-  redirect: true,
-  redirectTo: () => ({ name: "LoginPage" }),
-});
+const { redirect = true, redirectTo = { name: "LoginPage" } } =
+  defineProps<LogoutWrapperProps>();
 
-const shouldRedirect = computed(() => props.redirect ?? !!props.redirectTo);
+const shouldRedirect = computed(() => redirect ?? !!redirectTo);
 
 async function handleLogout() {
   await supabase.auth.signOut();
   if (shouldRedirect.value) {
-    navigateTo(props.redirectTo);
+    navigateTo(redirectTo);
   }
 }
 

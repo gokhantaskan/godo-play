@@ -16,13 +16,14 @@ interface PlatformSelectProps {
   multiple?: boolean;
 }
 
-const props = withDefaults(defineProps<PlatformSelectProps>(), {
-  allowEmpty: false,
-  label: "Platform",
-  multiple: false,
-  excludePlatforms: () => [],
-  includePlatforms: () => [...SUPPORTED_PLATFORM_IDS],
-});
+const { allowEmpty, excludePlatforms, includePlatforms, label, multiple } =
+  withDefaults(defineProps<PlatformSelectProps>(), {
+    allowEmpty: false,
+    excludePlatforms: () => [],
+    includePlatforms: () => [...SUPPORTED_PLATFORM_IDS],
+    label: "Platform",
+    multiple: false,
+  });
 
 const modelValue = defineModel<
   SupportedPlatform["id"][] | SupportedPlatform["id"]
@@ -58,7 +59,7 @@ const allOptions = computed<SelectOption[]>(() => {
       value: platform.id,
       icon: platform.icon,
     })),
-    ...(props.allowEmpty
+    ...(allowEmpty
       ? [{ value: null, label: "Any Platform", icon: "lucide:gamepad-2" }]
       : []),
   ];
@@ -69,17 +70,13 @@ const availableOptions = computed(() =>
     .filter(option => {
       // Always allow "Any Platform" option if allowEmpty is true
       if (option.value === null) {
-        return props.allowEmpty;
+        return allowEmpty;
       }
 
       // For platform options, check include/exclude lists
       return (
-        props.includePlatforms.includes(
-          option.value as SupportedPlatform["id"]
-        ) &&
-        !props.excludePlatforms.includes(
-          option.value as SupportedPlatform["id"]
-        )
+        includePlatforms.includes(option.value as SupportedPlatform["id"]) &&
+        !excludePlatforms.includes(option.value as SupportedPlatform["id"])
       );
     })
     .sort((a, b) => a.label.localeCompare(b.label))

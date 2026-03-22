@@ -12,10 +12,7 @@ defineOptions({
   inheritAttrs: false,
 });
 
-withDefaults(defineProps<Props>(), {
-  ariaLabelFalse: "No",
-  ariaLabelTrue: "Yes",
-});
+const { ariaLabelFalse = "No", ariaLabelTrue = "Yes" } = defineProps<Props>();
 </script>
 
 <template>

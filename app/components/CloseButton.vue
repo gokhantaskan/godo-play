@@ -17,6 +17,7 @@ const sizeClass = computed(() => {
     class="close-button"
     :class="sizeClass"
     type="button"
+    aria-label="Close"
   >
     <Icon
       class="close-button__icon"

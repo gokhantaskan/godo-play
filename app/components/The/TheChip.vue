@@ -6,12 +6,7 @@ interface Props {
   removable?: boolean;
 }
 
-const props = withDefaults(defineProps<Props>(), {
-  label: "",
-  variant: "primary",
-  size: "sm",
-  removable: false,
-});
+const { label = "", variant = "primary", size = "sm" } = defineProps<Props>();
 
 defineEmits<{
   remove: [];
@@ -19,8 +14,8 @@ defineEmits<{
 
 const chipClasses = computed(() => [
   "chip",
-  `chip--${props.variant}`,
-  `chip--${props.size}`,
+  `chip--${variant}`,
+  `chip--${size}`,
 ]);
 </script>
 

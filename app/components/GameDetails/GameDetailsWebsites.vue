@@ -2,19 +2,14 @@
 import { getSafeUrl, getWebsiteInfo } from "@/utils/url";
 import type { GameDetails } from "~~/shared/types/igdb/gameDetails";
 
-const props = withDefaults(
-  defineProps<{
-    websites: GameDetails["websites"];
-    showLabel?: boolean;
-  }>(),
-  {
-    showLabel: true,
-  }
-);
+const { websites } = defineProps<{
+  websites: GameDetails["websites"];
+  showLabel?: boolean;
+}>();
 
 const websiteLinks = computed(() =>
   (
-    props.websites
+    websites
       ?.map(website => {
         const url = getSafeUrl(website.url);
         const info = getWebsiteInfo(website.url);

@@ -108,3 +108,21 @@ No automated test suite exists. Dev server requires local SSL certificates via m
 
 - Write as standard function declarations (not arrow functions)
 - Place at end of `<script>` section or parent closure
+
+## Design Context
+
+Full design context lives in `.impeccable.md`. Key principles:
+
+- **Brand**: Bold, playful, vibrant — inspired by Letterboxd/TMDB content discovery aesthetic
+- **Users**: Casual gamers browsing for multiplayer games — prioritize scannability and delight
+- **Palette**: Warm cream background (#fcf6f3), primary blue (#0792f7), semantic green/yellow/red
+- **Typography**: Figtree (body), Lexend (headings)
+- **Theme**: Light mode primary; dark mode planned — keep decisions theme-aware
+
+### Design Principles
+
+1. **Content is the hero** — Game artwork and metadata dominate; UI chrome stays minimal
+2. **Warm over cold** — Friendly, approachable palette; never clinical or sterile
+3. **Playful with purpose** — Animations and accents serve discoverability, not decoration
+4. **Clarity at a glance** — Strong hierarchy for scanning; title, cover, platforms, multiplayer mode
+5. **Progressive detail** — Essentials upfront, depth on interaction (cards → modals → pages)

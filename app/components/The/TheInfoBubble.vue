@@ -8,9 +8,7 @@ interface Props {
   position?: "top" | "right" | "bottom" | "left";
 }
 
-const props = withDefaults(defineProps<Props>(), {
-  position: "bottom",
-});
+const { content, position = "bottom" } = defineProps<Props>();
 
 const isOpen = ref(false);
 const reference = ref<HTMLElement | null>(null);
@@ -19,7 +17,7 @@ const anchorId = useId();
 const popoverId = useId();
 
 const { floatingStyles } = useFloating(reference, floating, {
-  placement: props.position,
+  placement: position,
   middleware: [offset(8), flip(), shift()],
   whileElementsMounted: autoUpdate,
 });
@@ -68,7 +66,7 @@ onClickOutside(
     aria-live="polite"
   >
     <div class="tw:p-3 tw:text-sm">
-      {{ props.content }}
+      {{ content }}
     </div>
   </div>
 </template>

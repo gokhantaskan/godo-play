@@ -357,9 +357,10 @@ function openUpdateModal(tag: Tag) {
 
 .table-box {
   overflow: hidden;
-  border: 1px solid #e5e7eb;
+  border: 1px solid var(--tw-color-border);
   border-radius: 0.5rem;
-  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+  box-shadow: 0 1px 3px 0
+    color-mix(in srgb, var(--tw-color-text-dark) 10%, transparent);
 }
 
 .data-table {
@@ -373,7 +374,7 @@ function openUpdateModal(tag: Tag) {
   font-weight: 500;
   letter-spacing: 0.05em;
   text-transform: uppercase;
-  color: #6b7280;
+  color: var(--tw-color-text-muted);
 }
 
 .text-left {
@@ -393,7 +394,7 @@ function openUpdateModal(tag: Tag) {
 }
 
 .sortable-header:hover {
-  background-color: #f3f4f6;
+  background-color: color-mix(in srgb, var(--tw-color-border) 30%, transparent);
 }
 
 .header-content {
@@ -413,21 +414,21 @@ function openUpdateModal(tag: Tag) {
 }
 
 .data-row {
-  border-top: 1px solid #e5e7eb;
+  border-top: 1px solid var(--tw-color-border);
 }
 
 .data-row:hover {
-  background-color: #f9fafb;
+  background-color: color-mix(in srgb, var(--tw-color-border) 15%, transparent);
 }
 
 .name-cell {
   font-weight: 500;
-  color: #111827;
+  color: var(--tw-color-text-dark);
 }
 
 .cell-text {
   font-size: 0.75rem;
-  color: #6b7280;
+  color: var(--tw-color-text-muted);
 }
 
 .action-buttons {
@@ -445,6 +446,6 @@ function openUpdateModal(tag: Tag) {
 .empty-message {
   padding: 1rem;
   text-align: center;
-  color: #6b7280;
+  color: var(--tw-color-text-muted);
 }
 </style>
