@@ -3,12 +3,12 @@
 $button-variants: (
   primary: (
     bg: var(--tw-color-primary),
-    fg: white,
+    fg: #1a1a1a,
     border: transparent,
   ),
   secondary: (
-    bg: white,
-    fg: var(--tw-color-text-dark),
+    bg: var(--tw-color-surface-container),
+    fg: var(--tw-color-on-surface),
     border: var(--tw-color-border),
   ),
 );
@@ -20,6 +20,7 @@ $button-variants: (
     margin: 0;
     background: none;
     cursor: pointer;
+    color: inherit;
   }
 
   .button {

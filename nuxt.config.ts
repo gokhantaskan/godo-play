@@ -117,7 +117,7 @@ export default defineNuxtConfig({
         },
         {
           rel: "stylesheet",
-          href: "https://fonts.googleapis.com/css2?family=Figtree:ital,wght@0,300..700;1,300..700&family=Lexend:wght@300..700&display=swap",
+          href: "https://fonts.googleapis.com/css2?family=Manrope:wght@300..700&family=Space+Grotesk:wght@300..700&display=swap",
         },
       ],
     },
@@ -286,6 +286,7 @@ export default defineNuxtConfig({
           "https://docs.google.com",
           "https://www.google.com",
           "https://www.recaptcha.net",
+          "https://accounts.google.com",
         ],
         "script-src": [
           "'self'",

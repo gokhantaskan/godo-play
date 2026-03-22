@@ -44,6 +44,7 @@ Cards now scale on hover (from the polish pass), but there's room for more perso
 
 - Add a subtle shadow lift on card hover (not just scale)
 - Consider a cover image slight zoom effect within the card's `overflow: hidden` container
+  **Command:** `/animate`
 - Platform group icons could have a subtle stagger or highlight on card hover
 
 **Files:** `app/assets/styles/components/_game-card.scss`, `app/components/CrossPlay/GameCard/CrossPlayGameCard.vue`
@@ -58,6 +59,7 @@ The navbar has only 2 links (Games, About), no hover/focus transitions, and the 
 
 - Add hover/focus states with transitions on nav links (underline, color shift, or subtle background)
 - Give the brand mark more visual weight — consider font-weight, letter-spacing, or a slightly larger logo
+  **Command:** `/polish`
 - The Home link is commented out — decide: restore it or ensure logo-click-to-home is obvious
 - Plan for mobile navigation (hamburger/slide-out) if not already handled
 
@@ -70,6 +72,7 @@ The navbar has only 2 links (Games, About), no hover/focus transitions, and the 
 The dialog header is a 4rem transparent bar with just an X button. This wastes space and provides no orientation — users lose context of which game they're viewing, especially while loading.
 
 **What to do:**
+**Command:** `/polish`
 
 - Show the game name in the dialog header alongside the close button
 - The title could fade in once data loads, or be passed from the card that opened the dialog

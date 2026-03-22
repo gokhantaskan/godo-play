@@ -106,7 +106,15 @@ onUnmounted(() => {
         </h2>
       </header>
 
-      <div>
+      <!-- Platform Groups -->
+      <div v-if="props.game.platformGroups?.length">
+        <CrossPlayGameCardPlatformGroups
+          role="listitem"
+          :platform-groups="props.game.platformGroups"
+        />
+      </div>
+
+      <div class="tw:mt-2">
         <!-- Game Modes -->
         <div
           v-if="props.game.gameGameModes?.length"
@@ -118,7 +126,7 @@ onUnmounted(() => {
         <!-- Tags -->
         <div
           v-if="props.game.tags?.length"
-          class="tw:mt-2 tw:flex tw:flex-wrap tw:gap-1"
+          class="tw:mt-2 tw:flex tw:flex-wrap tw:gap-1.5"
         >
           <TheChip
             v-for="tagItem in props.game.tags"
@@ -126,17 +134,6 @@ onUnmounted(() => {
             :label="tagItem.tag.name"
             variant="primary"
             size="sm"
-          />
-        </div>
-
-        <!-- Platform Groups -->
-        <div
-          v-if="props.game.platformGroups?.length"
-          class="tw:mt-2"
-        >
-          <CrossPlayGameCardPlatformGroups
-            role="listitem"
-            :platform-groups="props.game.platformGroups"
           />
         </div>
       </div>

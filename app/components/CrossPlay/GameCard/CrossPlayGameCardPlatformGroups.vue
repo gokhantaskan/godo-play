@@ -55,7 +55,7 @@ const platformGroups = computed(() =>
 
 <style scoped lang="scss">
 .platform-groups {
-  --gap: 0.25rem;
+  --gap: 0.375rem;
 
   display: flex;
   flex-wrap: wrap;
@@ -66,8 +66,8 @@ const platformGroups = computed(() =>
   display: flex;
   flex-wrap: wrap;
   gap: var(--gap);
-  background: var(--tw-color-bg);
-  border: 1px solid var(--tw-color-border);
+  background: var(--tw-color-surface-container-high);
+  border: 1px solid var(--tw-color-outline-variant);
   border-radius: var(--tw-radius-sm);
   padding: var(--gap);
   font-size: 0.875rem;
@@ -81,8 +81,8 @@ const platformGroups = computed(() =>
   }
 
   &__icon {
-    width: calc(var(--gap) * 4);
-    height: calc(var(--gap) * 4);
+    width: 1rem;
+    height: 1rem;
     flex-shrink: 0;
   }
 

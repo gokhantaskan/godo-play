@@ -88,8 +88,8 @@
         z-index: 1;
         background: linear-gradient(
           to bottom,
-          color-mix(in oklch, var(--tw-color-fg) 90%, transparent),
-          color-mix(in oklch, var(--tw-color-fg) 80%, transparent)
+          color-mix(in oklch, var(--tw-color-bg) 90%, transparent),
+          color-mix(in oklch, var(--tw-color-bg) 80%, transparent)
         );
       }
     }

@@ -5,8 +5,8 @@
     accent-color: var(--tw-color-primary);
 
     // Fonts
-    --font-body: "Figtree", system-ui;
-    --font-heading: "Lexend", system-ui;
+    --font-body: "Manrope", system-ui;
+    --font-heading: "Space Grotesk", system-ui;
     --font-mono: "Roboto Mono", monospace;
 
     --text-xs: 0.75rem;
@@ -14,11 +14,7 @@
     --text-base: 1rem;
 
     // Colors
-    --color-overlay: color-mix(
-      in oklch,
-      var(--tw-color-text-dark) 50%,
-      transparent
-    );
+    --color-overlay: rgba(0, 0, 0, 0.5);
 
     // Layout
     --navbar-height: 64px;
@@ -43,6 +39,7 @@
   body {
     background-color: var(--tw-color-bg);
     color: var(--tw-color-fg);
+    color-scheme: dark;
   }
 
   :--heading {
@@ -62,10 +59,12 @@
     font-weight: 500;
     font-size: 0.9375rem;
     line-height: 1.125;
+    color: var(--tw-color-on-surface);
   }
 
   button {
     cursor: pointer;
+    color: inherit;
   }
 
   a {

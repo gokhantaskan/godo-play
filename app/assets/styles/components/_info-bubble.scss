@@ -19,7 +19,7 @@
   &__popover {
     width: max-content;
     max-width: 16rem;
-    background-color: white;
+    background-color: var(--tw-color-surface-container-highest);
     border-radius: var(--tw-radius-md);
     box-shadow: var(--tw-shadow-sm);
     border: 1px solid var(--tw-color-border);
