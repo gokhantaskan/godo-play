@@ -178,13 +178,13 @@ function preventDefaultCancel(e: Event) {
   }
 
   &__title {
-    font-size: 1.125rem;
+    font-size: var(--text-lg);
     font-weight: 500;
     margin-block-end: 0.25rem;
   }
 
   &__description {
-    font-size: 0.875rem;
+    font-size: var(--text-sm);
   }
 
   &__actions {

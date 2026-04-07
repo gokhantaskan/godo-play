@@ -307,7 +307,7 @@ onMounted(() => {
   &__loading {
     margin-block-end: 1rem;
     padding: 1rem;
-    font-size: 0.875rem;
+    font-size: var(--text-sm);
     color: var(--tw-color-text-muted);
     background-color: white;
     border-radius: var(--tw-radius-md);

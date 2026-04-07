@@ -2,7 +2,7 @@
   --footer-spacing-block: clamp(2rem, 5vw, 4rem);
   --footer-spacing-inline: clamp(1rem, 3vw, 2rem);
   --footer-nav-gap: clamp(1.5rem, 4vw, 3rem);
-  --footer-bg: color-mix(in oklch, var(--tw-color-bg) 98%, black);
+  --footer-bg: color-mix(in oklab, var(--tw-color-bg) 98%, black);
   --footer-fg: var(--tw-color-text-dark);
 
   padding-block: var(--footer-spacing-block);
@@ -44,7 +44,7 @@
   }
 
   &__nav-title {
-    font-size: 1.125rem;
+    font-size: var(--text-lg);
     font-weight: 600;
     letter-spacing: -0.01em;
   }

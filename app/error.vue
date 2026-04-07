@@ -73,7 +73,7 @@ function handleError(options?: ErrorOptions) {
   }
 
   &__title {
-    font-size: 3.75rem;
+    font-size: var(--text-4xl);
     line-height: 1;
     font-weight: 700;
     color: var(--tw-primary-600);
@@ -81,16 +81,16 @@ function handleError(options?: ErrorOptions) {
   }
 
   &__subtitle {
-    font-size: 1.5rem;
-    line-height: 2rem;
+    font-size: var(--text-2xl);
+    line-height: 1.2;
     font-weight: 600;
     color: var(--tw-gray-900);
     margin-block-end: 0.5rem;
   }
 
   &__message {
-    font-size: 1.125rem;
-    line-height: 1.75rem;
+    font-size: var(--text-lg);
+    line-height: 1.5;
     color: var(--tw-gray-600);
     margin-block-end: 0.5rem;
   }

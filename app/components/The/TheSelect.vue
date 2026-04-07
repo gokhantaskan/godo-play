@@ -23,7 +23,6 @@ export interface SelectProps {
   icon?: string;
   multiple?: boolean;
   valueKey?: string;
-  labelKey?: string;
   fullWidth?: boolean;
 }
 

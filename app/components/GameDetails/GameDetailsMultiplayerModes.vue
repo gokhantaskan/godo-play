@@ -116,7 +116,7 @@ const multiplayerModes = toRef(
   }
 
   &__platform-title {
-    font-size: 0.875rem;
+    font-size: var(--text-sm);
     font-weight: 500;
     color: color-mix(in hsl, var(--tw-color-text-muted) 75%, black);
   }
@@ -125,7 +125,7 @@ const multiplayerModes = toRef(
     display: grid;
     grid-template-columns: auto 1fr;
     column-gap: 1.5rem;
-    font-size: 0.875rem;
+    font-size: var(--text-sm);
     border-radius: 0.5rem;
     background-color: var(--tw-color-background-secondary);
   }
@@ -144,12 +144,12 @@ const multiplayerModes = toRef(
   }
 
   &__player-count {
-    font-size: 0.875rem;
+    font-size: var(--text-sm);
     color: var(--tw-color-text-muted);
   }
 
   &__empty {
-    font-size: 0.875rem;
+    font-size: var(--text-sm);
     color: var(--tw-color-text-muted);
   }
 }

@@ -96,13 +96,13 @@ onMounted(() => {
   }
 
   &__title {
-    font-size: 2rem;
-    font-weight: 600;
+    font-size: var(--text-3xl);
+    font-weight: 700;
     margin-block-end: 0.5rem;
   }
 
   &__description {
-    font-size: 1.125rem;
+    font-size: var(--text-lg);
     text-wrap: balance;
   }
 

@@ -208,14 +208,14 @@ async function handleDelete() {
   }
 
   &__title {
-    font-size: 1rem;
+    font-size: var(--text-base);
     font-weight: 500;
     color: var(--tw-color-text);
-    line-height: 1.25;
+    line-height: 1.2;
   }
 
   &__status {
-    font-size: 0.75rem;
+    font-size: var(--text-xs);
     font-weight: 500;
     padding-block: 0.125rem;
     padding-inline: 0.5rem;
@@ -224,9 +224,9 @@ async function handleDelete() {
   }
 
   &__meta {
-    font-size: 0.875rem;
+    font-size: var(--text-sm);
     color: var(--tw-color-text-muted);
-    line-height: 1.25;
+    line-height: 1.5;
   }
 
   &__actions {
@@ -240,7 +240,7 @@ async function handleDelete() {
     width: fit-content;
     padding-block: 0.25rem;
     padding-inline: 0.75rem;
-    font-size: 0.875rem;
+    font-size: var(--text-sm);
     color: var(--tw-color-text-muted);
     background-color: var(--tw-color-gray-100);
     border-radius: var(--tw-radius-sm);

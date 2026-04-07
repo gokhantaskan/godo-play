@@ -117,12 +117,12 @@ const sortOptions = [
 @use "@/assets/styles/abstracts/variables" as *;
 
 .page-title {
-  font-size: 1.5rem;
+  font-size: var(--text-2xl);
   font-weight: 700;
   margin-block-end: 1.5rem;
 
   @media (min-width: map.get($breakpoints, "sm")) {
-    font-size: 2.5rem;
+    font-size: var(--text-4xl);
   }
 }
 
@@ -188,7 +188,7 @@ const sortOptions = [
   &__empty {
     text-align: center;
     color: var(--tw-color-text-muted);
-    font-size: 0.875rem;
+    font-size: var(--text-sm);
   }
 }
 </style>

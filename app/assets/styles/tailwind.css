@@ -6,21 +6,21 @@
 @import "tailwindcss/utilities" layer(utilities) prefix(tw);
 
 @theme {
-  /* --font-*: initial;
-  --font-body: "Figtree";
-  --font-heading: "Lexend";
-  --font-mono: "Roboto Mono"; */
+  /* Fonts */
+  --font-body: "Manrope", system-ui;
+  --font-heading: "Space Grotesk", system-ui;
+  --font-mono: "Roboto Mono", monospace;
 
   /* --color-*: initial; */
 
-  /* Surfaces */
-  --color-surface: #161616;
-  --color-surface-container-low: #1c1c1c;
-  --color-surface-container: #232323;
-  --color-surface-container-high: #2a2a2a;
-  --color-surface-container-highest: #313131;
-  --color-surface-bright: #383838;
-  --color-surface-variant: #272727;
+  /* Surfaces — subtle blue-purple tint to reduce harshness */
+  --color-surface: #15151a;
+  --color-surface-container-low: #1b1b21;
+  --color-surface-container: #222229;
+  --color-surface-container-high: #292930;
+  --color-surface-container-highest: #303038;
+  --color-surface-bright: #373740;
+  --color-surface-variant: #262630;
 
   /* Accent */
   --color-primary: #b6a0ff;
@@ -32,25 +32,30 @@
   --color-yellow: #ffc833;
   --color-red: #e8573d;
 
-  /* Text */
-  --color-on-surface: #e0e0e0;
-  --color-on-surface-variant: #a0a0a0;
-  --color-on-surface-bright: #f0f0f0;
+  /* Text — softened for reduced eye strain */
+  --color-on-surface: #cdd0da;
+  --color-on-surface-variant: #9da1b0;
+  --color-on-surface-bright: #e8e9f0;
 
   /* Aliases (consumed by existing components) */
-  --color-bg: #161616;
-  --color-fg: #e0e0e0;
-  --color-border: rgba(255, 255, 255, 0.08);
-  --color-text-muted: #a0a0a0;
-  --color-text-dark: #f0f0f0;
+  --color-bg: #15151a;
+  --color-fg: #cdd0da;
+  --color-border: rgba(200, 205, 230, 0.1);
+  --color-text-muted: #9da1b0;
+  --color-text-dark: #e8e9f0;
 
   /* Outline */
-  --color-outline-variant: rgba(255, 255, 255, 0.15);
+  --color-outline-variant: rgba(200, 205, 230, 0.16);
 
   --text-*: initial;
   --text-xs: 0.75rem;
   --text-sm: 0.875rem;
   --text-base: 1rem;
+  --text-lg: 1.125rem;
+  --text-xl: 1.25rem;
+  --text-2xl: 1.5rem;
+  --text-3xl: 2rem;
+  --text-4xl: 2.5rem;
 
   --spacing: 0.25rem;
 }

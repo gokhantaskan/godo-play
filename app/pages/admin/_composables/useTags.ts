@@ -1,7 +1,7 @@
 import { createSharedComposable } from "@vueuse/core";
 
-import type { Tag } from "~~/server/db/schema";
+import type { DbTag } from "~~/server/db/schema";
 
 export const useTags = createSharedComposable(() => {
-  return useFetch<Tag[]>("/api/tags");
+  return useFetch<DbTag[]>("/api/tags");
 });

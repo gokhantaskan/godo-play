@@ -108,7 +108,7 @@ function openUpdateModal(store: StoreWithRelations) {
 .stores-page {
   &__title {
     margin-block-end: 2rem;
-    font-size: 2rem;
+    font-size: var(--text-3xl);
     font-weight: 700;
   }
 
@@ -156,7 +156,7 @@ function openUpdateModal(store: StoreWithRelations) {
   &__item-platform {
     padding-block: 0.25rem;
     padding-inline: 0.5rem;
-    font-size: 0.875rem;
+    font-size: var(--text-sm);
     color: rgb(var(--tw-gray-700));
     background-color: rgb(var(--tw-gray-100));
     border-radius: 0.25rem;

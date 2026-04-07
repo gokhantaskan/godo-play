@@ -132,7 +132,7 @@ watch(() => props.lineCount, checkOverflow);
     border: 1px solid currentColor;
     border-radius: 0.25rem;
     background: transparent;
-    font-size: 0.875rem;
+    font-size: var(--text-sm);
     cursor: pointer;
 
     &:hover {

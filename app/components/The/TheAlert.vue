@@ -12,7 +12,7 @@ const {
   title = "",
   message = "",
   icon = "",
-  size,
+  size = "sm",
 } = defineProps<Props>();
 
 const rootClasses = computed(() => {

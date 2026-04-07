@@ -781,11 +781,11 @@ header {
   gap: 1rem;
 
   h1 {
-    font-size: 1.5rem;
+    font-size: var(--text-2xl);
     font-weight: 700;
 
     @media (min-width: map.get($breakpoints, "sm")) {
-      font-size: 2.5rem;
+      font-size: var(--text-4xl);
     }
   }
 }
@@ -805,7 +805,7 @@ header {
   }
 
   &__heading {
-    font-size: 1.25rem;
+    font-size: var(--text-xl);
     font-weight: 600;
   }
 

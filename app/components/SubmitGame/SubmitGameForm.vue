@@ -256,7 +256,7 @@ async function handleSubmit(event: Event) {
   }
 
   &__error {
-    font-size: 0.875rem;
+    font-size: var(--text-sm);
     color: var(--tw-error);
   }
 }
@@ -281,7 +281,7 @@ async function handleSubmit(event: Event) {
   }
 
   &__title {
-    font-size: 1.125rem;
+    font-size: var(--text-lg);
     font-weight: 500;
   }
 
@@ -291,7 +291,7 @@ async function handleSubmit(event: Event) {
   }
 
   &__list-item {
-    font-size: 0.875rem;
+    font-size: var(--text-sm);
   }
 }
 </style>

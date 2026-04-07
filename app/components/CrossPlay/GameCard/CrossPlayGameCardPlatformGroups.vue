@@ -70,9 +70,9 @@ const platformGroups = computed(() =>
   border: 1px solid var(--tw-color-outline-variant);
   border-radius: var(--tw-radius-sm);
   padding: var(--gap);
-  font-size: 0.875rem;
+  font-size: var(--text-sm);
   font-weight: 500;
-  line-height: 1.125;
+  line-height: 1.2;
 
   &__item {
     display: flex;

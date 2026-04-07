@@ -70,23 +70,23 @@ $breakpoint-md: map.get($breakpoints, "md");
   }
 
   &__title {
-    font-size: 2rem;
-    line-height: 105%;
-    margin-block-end: 24px;
-    font-weight: 600;
+    font-size: var(--text-3xl);
+    line-height: 1.1;
+    margin-block-end: 1.5rem;
+    font-weight: 700;
 
     @media (min-width: $breakpoint-md) {
-      font-size: 3rem;
+      font-size: var(--text-4xl);
     }
   }
 
   &__description {
-    font-size: 1.125rem;
-    line-height: 1.25;
+    font-size: var(--text-lg);
+    line-height: 1.5;
     font-weight: 300;
 
     @media (min-width: $breakpoint-md) {
-      font-size: 1.375rem;
+      font-size: var(--text-xl);
     }
   }
 

@@ -71,16 +71,16 @@ $breakpoint: map.get($breakpoints, "sm");
 }
 
 .companies__title {
-  font-size: var(--subtitle-font-size, 1rem);
-  font-weight: var(--subtitle-font-weight, 500);
-  line-height: var(--subtitle-line-height, 1.125);
+  font-size: var(--subtitle-font-size);
+  font-weight: var(--subtitle-font-weight);
+  line-height: var(--subtitle-line-height);
   color: var(--subtitle-color, inherit);
 }
 
 .companies__content {
-  font-size: var(--content-font-size, 0.875rem);
-  font-weight: var(--content-font-weight, 400);
-  line-height: var(--content-line-height, 1);
+  font-size: var(--content-font-size);
+  font-weight: var(--content-font-weight);
+  line-height: var(--content-line-height);
   color: var(--content-color, inherit);
 }
 </style>

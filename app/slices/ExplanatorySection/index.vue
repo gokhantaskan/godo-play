@@ -122,7 +122,7 @@ function getUrl(
   }
 
   &__title {
-    font-size: 1.25rem;
+    font-size: var(--text-xl);
     font-weight: 600;
     margin-block-end: 0.5rem;
   }
@@ -158,7 +158,7 @@ function getUrl(
     }
 
     &__title {
-      font-size: 1.25rem;
+      font-size: var(--text-xl);
       font-weight: 600;
       margin-block-end: 0.5rem;
     }
@@ -175,14 +175,14 @@ function getUrl(
   @media (min-width: 768px) {
     &--large {
       #{$root}__title {
-        font-size: 1.25rem;
+        font-size: var(--text-xl);
         font-weight: 600;
         margin-block-end: 0.75rem;
       }
 
       #{$root}__text {
-        font-size: 1.125rem;
-        line-height: 1.375;
+        font-size: var(--text-lg);
+        line-height: 1.5;
       }
 
       #{$root}__cta {

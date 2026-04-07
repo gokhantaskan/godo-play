@@ -2,29 +2,29 @@
 
 $chip-colors: (
   primary: (
-    bg: color-mix(in oklab, var(--tw-color-primary) 20%, #1a1a1a),
+    bg: color-mix(in oklab, var(--tw-color-primary) 20%, #1a1a21),
     fg: color-mix(in oklab, var(--tw-color-primary) 80%, white),
-    border: color-mix(in oklab, var(--tw-color-primary) 35%, #1a1a1a),
+    border: color-mix(in oklab, var(--tw-color-primary) 35%, #1a1a21),
   ),
   "green": (
-    bg: color-mix(in oklab, var(--tw-color-green) 20%, #1a1a1a),
+    bg: color-mix(in oklab, var(--tw-color-green) 20%, #1a1a21),
     fg: color-mix(in oklab, var(--tw-color-green) 80%, white),
-    border: color-mix(in oklab, var(--tw-color-green) 35%, #1a1a1a),
+    border: color-mix(in oklab, var(--tw-color-green) 35%, #1a1a21),
   ),
   "yellow": (
-    bg: color-mix(in oklab, var(--tw-color-yellow) 20%, #1a1a1a),
+    bg: color-mix(in oklab, var(--tw-color-yellow) 20%, #1a1a21),
     fg: color-mix(in oklab, var(--tw-color-yellow) 80%, white),
-    border: color-mix(in oklab, var(--tw-color-yellow) 35%, #1a1a1a),
+    border: color-mix(in oklab, var(--tw-color-yellow) 35%, #1a1a21),
   ),
   "red": (
-    bg: color-mix(in oklab, var(--tw-color-red) 20%, #1a1a1a),
+    bg: color-mix(in oklab, var(--tw-color-red) 20%, #1a1a21),
     fg: color-mix(in oklab, var(--tw-color-red) 80%, white),
-    border: color-mix(in oklab, var(--tw-color-red) 35%, #1a1a1a),
+    border: color-mix(in oklab, var(--tw-color-red) 35%, #1a1a21),
   ),
   "gray": (
-    bg: color-mix(in oklab, var(--tw-color-on-surface-variant) 15%, #1a1a1a),
+    bg: color-mix(in oklab, var(--tw-color-on-surface-variant) 15%, #1a1a21),
     fg: var(--tw-color-on-surface-variant),
-    border: color-mix(in oklab, var(--tw-color-on-surface-variant) 30%, #1a1a1a),
+    border: color-mix(in oklab, var(--tw-color-on-surface-variant) 30%, #1a1a21),
   ),
 );
 
@@ -39,7 +39,7 @@ $chip-colors: (
   display: inline-flex;
   align-items: center;
   gap: 0.25rem;
-  font-size: 0.75rem;
+  font-size: var(--text-xs);
   line-height: 1;
 
   // Variants
@@ -78,8 +78,8 @@ $chip-colors: (
   &--md {
     padding: 0.25rem 0.5rem;
     padding-inline-start: calc(0.25rem + 0.5rem);
-    font-size: 0.875rem;
-    line-height: 1.125;
+    font-size: var(--text-sm);
+    line-height: 1.2;
 
     &:has(#{$root}__remove) {
       padding-inline-start: calc(0.25rem + 0.5rem + 0.25rem);

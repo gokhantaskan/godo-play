@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Tag } from "~~/server/db/schema";
+import type { DbTag } from "~~/server/db/schema";
 
 import AdminTagCreateForm from "../_components/Admin/TagCreateForm.vue";
 import TagUpdateForm from "../_components/Admin/TagUpdateForm.vue";
@@ -24,7 +24,7 @@ interface Column<T> {
 }
 
 // Define columns for the Tags table
-const columns = ref<Column<Tag>[]>([
+const columns = ref<Column<DbTag>[]>([
   {
     key: "name",
     label: "Name",
@@ -103,7 +103,7 @@ function toggleSort(field: SortField) {
 }
 
 // Cell value getter
-function getCellValue(item: Tag, column: Column<Tag>) {
+function getCellValue(item: DbTag, column: Column<DbTag>) {
   if (column.key === "actions") {
     return null;
   }
@@ -127,13 +127,13 @@ function getCellValue(item: Tag, column: Column<Tag>) {
     return value;
   }
 
-  return item[column.key as keyof Tag];
+  return item[column.key as keyof DbTag];
 }
 
 const toast = useToast();
 const isCreateModalOpen = ref(false);
 const isUpdateModalOpen = ref(false);
-const selectedTag = ref<Tag | null>(null);
+const selectedTag = ref<DbTag | null>(null);
 
 async function handleDelete(tagId: number | string, tagName: string) {
   if (!confirm(`Are you sure you want to delete ${tagName}?`)) {
@@ -152,7 +152,7 @@ async function handleDelete(tagId: number | string, tagName: string) {
   }
 }
 
-function openUpdateModal(tag: Tag) {
+function openUpdateModal(tag: DbTag) {
   selectedTag.value = tag;
   isUpdateModalOpen.value = true;
 }
@@ -370,7 +370,7 @@ function openUpdateModal(tag: Tag) {
 
 .data-table th {
   padding: 0.5rem 1rem;
-  font-size: 0.75rem;
+  font-size: var(--text-xs);
   font-weight: 500;
   letter-spacing: 0.05em;
   text-transform: uppercase;
@@ -427,7 +427,7 @@ function openUpdateModal(tag: Tag) {
 }
 
 .cell-text {
-  font-size: 0.75rem;
+  font-size: var(--text-xs);
   color: var(--tw-color-text-muted);
 }
 

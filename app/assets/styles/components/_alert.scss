@@ -5,22 +5,22 @@ $breakpoint-md: map.get($breakpoints, "md");
 
 $alert-colors: (
   "gray": (
-    bg: color-mix(in oklab, var(--tw-color-text-muted) 15%, #161616),
+    bg: color-mix(in oklab, var(--tw-color-text-muted) 15%, #15151a),
     fg: color-mix(in oklab, var(--tw-color-text-muted) 80%, white),
     border: color-mix(in oklab, var(--tw-color-text-muted) 25%, transparent),
   ),
   warning: (
-    bg: color-mix(in oklab, var(--tw-color-yellow) 15%, #161616),
+    bg: color-mix(in oklab, var(--tw-color-yellow) 15%, #15151a),
     fg: color-mix(in oklab, var(--tw-color-yellow) 80%, white),
     border: color-mix(in oklab, var(--tw-color-yellow) 25%, transparent),
   ),
   success: (
-    bg: color-mix(in oklab, var(--tw-color-green) 15%, #161616),
+    bg: color-mix(in oklab, var(--tw-color-green) 15%, #15151a),
     fg: color-mix(in oklab, var(--tw-color-green) 80%, white),
     border: color-mix(in oklab, var(--tw-color-green) 25%, transparent),
   ),
   error: (
-    bg: color-mix(in oklab, var(--tw-color-red) 15%, #161616),
+    bg: color-mix(in oklab, var(--tw-color-red) 15%, #15151a),
     fg: color-mix(in oklab, var(--tw-color-red) 80%, white),
     border: color-mix(in oklab, var(--tw-color-red) 25%, transparent),
   ),
@@ -30,11 +30,11 @@ $alert-colors: (
   $root: &;
 
   --padding: 1rem;
-  --title-font-size: 1.125rem;
-  --title-line-height: 1.125;
+  --title-font-size: var(--text-lg);
+  --title-line-height: 1.2;
   --title-margin-bottom: 0.5rem;
-  --message-font-size: 0.9375rem;
-  --message-line-height: 1.25;
+  --message-font-size: var(--text-base);
+  --message-line-height: 1.5;
 
   display: flex;
   align-items: flex-start;
@@ -97,17 +97,17 @@ $alert-colors: (
 
   &--sm {
     --padding: 0.75rem;
-    --title-font-size: 1rem;
-    --title-line-height: 1.25;
+    --title-font-size: var(--text-base);
+    --title-line-height: 1.2;
     --title-margin-bottom: 0.25rem;
-    --message-font-size: 0.875rem;
+    --message-font-size: var(--text-sm);
   }
 
   &--lg {
     --padding: 1.5rem;
-    --title-font-size: 1.25rem;
-    --title-line-height: 1.25;
+    --title-font-size: var(--text-xl);
+    --title-line-height: 1.2;
     --title-margin-bottom: 0.5rem;
-    --message-font-size: 1.125rem;
+    --message-font-size: var(--text-lg);
   }
 }

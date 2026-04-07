@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { GameMode } from "~~/server/db/schema";
+import type { DbGameMode } from "~~/server/db/schema";
 
 import { useGameModes } from "../../_composables/useGameModes";
 import AdminGameModeCreateFormInner from "./GameModeCreateFormInner.vue";
@@ -29,7 +29,7 @@ async function onSubmit() {
   pending.value = true;
 
   try {
-    await $fetch<GameMode>("/api/game-modes", {
+    await $fetch<DbGameMode>("/api/game-modes", {
       method: "POST",
       body: form,
     });

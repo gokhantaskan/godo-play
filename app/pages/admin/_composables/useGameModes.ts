@@ -1,7 +1,7 @@
 import { createSharedComposable } from "@vueuse/core";
 
-import type { GameMode } from "~~/server/db/schema";
+import type { DbGameMode } from "~~/server/db/schema";
 
 export const useGameModes = createSharedComposable(() => {
-  return useFetch<GameMode[]>("/api/game-modes");
+  return useFetch<DbGameMode[]>("/api/game-modes");
 });

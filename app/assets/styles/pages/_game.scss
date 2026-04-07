@@ -2,16 +2,14 @@
 @use "../abstracts/variables" as *;
 
 .game {
-  font-size: 0.875rem;
+  font-size: var(--text-sm);
 
   @media (min-width: map.get($breakpoints, md)) {
-    font-size: 1rem;
+    font-size: var(--text-base);
   }
 
   // Base typography styles
   :--heading {
-    font-weight: 500;
-
     &:not(header :--heading) {
       margin-block-end: 0.5rem;
     }
@@ -22,13 +20,11 @@
   }
 
   h2 {
-    font-size: 1.25rem;
-    line-height: 1.25;
+    font-size: var(--text-xl);
   }
 
   h3 {
-    font-size: 1.125rem;
-    line-height: 1.25;
+    font-size: var(--text-lg);
   }
 
   // Hero section styles
@@ -67,12 +63,12 @@
 
     &-heading {
       margin-block: 0 0.25rem;
-      font-size: 1.5rem;
+      font-size: var(--text-2xl);
       font-weight: 700;
       color: white;
 
       @media (min-width: map.get($breakpoints, md)) {
-        font-size: 2.5rem;
+        font-size: var(--text-4xl);
       }
     }
 

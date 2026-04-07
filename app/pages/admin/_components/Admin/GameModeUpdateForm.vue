@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { GameMode } from "~~/server/db/schema";
+import type { DbGameMode } from "~~/server/db/schema";
 
 import { useGameModes } from "../../_composables/useGameModes";
 import AdminGameModeCreateFormInner from "./GameModeCreateFormInner.vue";
@@ -11,7 +11,7 @@ type GameModeFormData = {
 };
 
 const props = defineProps<{
-  gameMode: GameMode;
+  gameMode: DbGameMode;
 }>();
 
 const emit = defineEmits<{
@@ -35,7 +35,7 @@ async function onSubmit() {
   apiError.clear();
 
   try {
-    await $fetch<GameMode>(`/api/game-modes/${props.gameMode.id}`, {
+    await $fetch<DbGameMode>(`/api/game-modes/${props.gameMode.id}`, {
       method: "PATCH",
       body: form,
     });

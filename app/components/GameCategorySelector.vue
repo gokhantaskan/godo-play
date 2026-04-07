@@ -120,7 +120,7 @@ function isArrayEqual(arr1: number[], arr2: number[]) {
     <TheButton
       variant="secondary"
       left-icon="lucide:filter"
-      class="tw:font-title tw:font-medium"
+      class="tw:font-heading tw:font-medium"
       @click="isDrawerOpen = true"
     >
       <span class="tw:sr-only">Filters</span>
@@ -241,9 +241,9 @@ $space: 0.5rem;
   width: 100%;
   padding-block: 0.5rem;
   padding-inline: 0;
-  font-family: var(--font-title);
+  font-family: var(--font-heading);
   font-weight: 500;
-  font-size: 1rem;
+  font-size: var(--text-base);
   margin-block-end: $space;
   display: flex;
   align-items: center;

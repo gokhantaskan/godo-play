@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import type { GameMode } from "~~/server/db/schema";
+import type { DbGameMode } from "~~/server/db/schema";
 
 import { useGameModes } from "../../_composables/useGameModes";
 import GameModeUpdateForm from "./GameModeUpdateForm.vue";
 
 const props = defineProps<{
-  gameMode: GameMode;
+  gameMode: DbGameMode;
 }>();
 
 const { refresh } = useGameModes();

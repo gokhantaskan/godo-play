@@ -17,6 +17,7 @@ const {
   disabled,
   leftIcon = "",
   rightIcon = "",
+  type = "button",
 } = defineProps<TheButtonProps>();
 
 const buttonClasses = computed(() => [
@@ -34,6 +35,7 @@ const buttonClasses = computed(() => [
     :is="as"
     :class="buttonClasses"
     :disabled="disabled"
+    :type="type"
   >
     <span
       v-if="$slots.prefix || leftIcon"

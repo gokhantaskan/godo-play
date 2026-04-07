@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Tag } from "~~/server/db/schema";
+import type { DbTag } from "~~/server/db/schema";
 
 import { useTags } from "../../_composables/useTags";
 import AdminTagCreateFormInner from "./TagCreateFormInner.vue";
@@ -11,7 +11,7 @@ type TagFormData = {
 };
 
 const props = defineProps<{
-  tag: Tag;
+  tag: DbTag;
 }>();
 
 const emit = defineEmits<{
@@ -35,7 +35,7 @@ async function onSubmit() {
   apiError.clear();
 
   try {
-    await $fetch<Tag>(`/api/tags/${props.tag.id}`, {
+    await $fetch<DbTag>(`/api/tags/${props.tag.id}`, {
       method: "PATCH",
       body: form,
     });

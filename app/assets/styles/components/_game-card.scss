@@ -105,7 +105,7 @@ $type-badges: (
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 0.875rem;
+    font-size: var(--text-sm);
     color: var(--tw-color-gray-600);
   }
 
@@ -114,8 +114,8 @@ $type-badges: (
   }
 
   &__title {
-    font-size: 1.125rem;
-    line-height: 1.25;
+    font-size: var(--text-lg);
+    line-height: 1.2;
     font-weight: 600;
     margin-block-end: 0.5rem;
     overflow: hidden;
@@ -126,7 +126,7 @@ $type-badges: (
   }
 
   &__game-modes {
-    font-size: 0.75rem;
+    font-size: var(--text-xs);
     color: var(--tw-color-text-muted);
   }
 

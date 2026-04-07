@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import type { Tag } from "~~/server/db/schema";
+import type { DbTag } from "~~/server/db/schema";
 
 import { useTags } from "../../_composables/useTags";
 import TagUpdateForm from "./TagUpdateForm.vue";
 
 const props = defineProps<{
-  tag: Tag;
+  tag: DbTag;
 }>();
 
 const { refresh } = useTags();
