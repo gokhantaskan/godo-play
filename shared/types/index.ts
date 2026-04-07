@@ -4,30 +4,27 @@
  */
 
 import type {
-  GameGameMode as DbGameGameMode,
-  GameMode as DbGameMode,
-  InsertGameGameMode,
-  InsertGameMode,
+  DbGameGameMode,
+  DbGameMode,
+  DbInsertGameGameMode,
+  DbInsertGameMode,
 } from "~~/server/db/schema/tables/gameModes";
 import type { DbGame, DbInsertGame } from "~~/server/db/schema/tables/games";
 import type {
-  InsertPlatformGroup,
-  InsertPlatformGroupPlatform,
-  PlatformGroup as DbPlatformGroup,
-  PlatformGroupPlatform as DbPlatformGroupPlatform,
+  DbInsertPlatformGroup,
+  DbInsertPlatformGroupPlatform,
+  DbPlatformGroup,
+  DbPlatformGroupPlatform,
 } from "~~/server/db/schema/tables/platformGroups";
 import type {
-  InsertPlatform,
-  Platform as DbPlatform,
+  DbInsertPlatform,
+  DbPlatform,
 } from "~~/server/db/schema/tables/platforms";
 import type {
-  InsertStorePlatform,
-  StorePlatform as DbStorePlatform,
+  DbInsertStorePlatform,
+  DbStorePlatform,
 } from "~~/server/db/schema/tables/storePlatforms";
-import type {
-  InsertStore,
-  Store as DbStore,
-} from "~~/server/db/schema/tables/stores";
+import type { DbInsertStore, DbStore } from "~~/server/db/schema/tables/stores";
 
 /**
  * READ TYPES
@@ -60,15 +57,15 @@ export interface GameUIState {
 
 // Core Types
 export type InsertGame = DbInsertGame;
-export type { InsertGameMode, InsertPlatform, InsertStore };
+export type InsertGameMode = DbInsertGameMode;
+export type InsertPlatform = DbInsertPlatform;
+export type InsertStore = DbInsertStore;
 
 // Relation Types
-export type {
-  InsertGameGameMode,
-  InsertPlatformGroup,
-  InsertPlatformGroupPlatform,
-  InsertStorePlatform,
-};
+export type InsertGameGameMode = DbInsertGameGameMode;
+export type InsertPlatformGroup = DbInsertPlatformGroup;
+export type InsertPlatformGroupPlatform = DbInsertPlatformGroupPlatform;
+export type InsertStorePlatform = DbInsertStorePlatform;
 
 // Game Types
 export interface NewGame {

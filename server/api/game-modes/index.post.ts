@@ -1,7 +1,7 @@
 import { db } from "~~/server/db";
-import { BaseInsertGameModeSchema, gameModes } from "~~/server/db/schema";
+import { DbInsertGameModeSchema, gameModes } from "~~/server/db/schema";
 
-const schema = BaseInsertGameModeSchema.omit({
+const schema = DbInsertGameModeSchema.omit({
   createdAt: true,
   updatedAt: true,
 });

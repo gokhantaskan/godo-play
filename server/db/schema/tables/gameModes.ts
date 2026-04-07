@@ -65,15 +65,15 @@ export const gameGameModes = pgTable(
 );
 
 // Base Zod schemas generated from Drizzle schema
-export const BaseGameModeSchema = createSelectSchema(gameModes);
-export const BaseInsertGameModeSchema = createInsertSchema(gameModes);
+export const DbGameModeSchema = createSelectSchema(gameModes);
+export const DbInsertGameModeSchema = createInsertSchema(gameModes);
 
-export const BaseGameGameModeSchema = createSelectSchema(gameGameModes);
-export const BaseInsertGameGameModeSchema = createInsertSchema(gameGameModes);
+export const DbGameGameModeSchema = createSelectSchema(gameGameModes);
+export const DbInsertGameGameModeSchema = createInsertSchema(gameGameModes);
 
 // Types for internal database usage
-export type GameMode = typeof gameModes.$inferSelect;
-export type InsertGameMode = typeof gameModes.$inferInsert;
+export type DbGameMode = typeof gameModes.$inferSelect;
+export type DbInsertGameMode = typeof gameModes.$inferInsert;
 
-export type GameGameMode = typeof gameGameModes.$inferSelect;
-export type InsertGameGameMode = typeof gameGameModes.$inferInsert;
+export type DbGameGameMode = typeof gameGameModes.$inferSelect;
+export type DbInsertGameGameMode = typeof gameGameModes.$inferInsert;

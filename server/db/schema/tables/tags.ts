@@ -54,8 +54,8 @@ export const gamesTags = pgTable(
   ]
 );
 
-export const BaseTagSchema = createSelectSchema(tags);
-export const BaseInsertTagSchema = createInsertSchema(tags);
+export const DbTagSchema = createSelectSchema(tags);
+export const DbInsertTagSchema = createInsertSchema(tags);
 
-export type Tag = typeof tags.$inferSelect;
-export type InsertTag = typeof tags.$inferInsert;
+export type DbTag = typeof tags.$inferSelect;
+export type DbInsertTag = typeof tags.$inferInsert;

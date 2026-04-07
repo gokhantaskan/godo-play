@@ -1,13 +1,13 @@
-import type { Platform } from "~~/server/db/schema/tables/platforms";
-import type { Store } from "~~/server/db/schema/tables/stores";
+import type { DbPlatform } from "~~/server/db/schema/tables/platforms";
+import type { DbStore } from "~~/server/db/schema/tables/stores";
 
 export type OmitTimestamps<T> = Omit<T, "createdAt" | "updatedAt">;
 
-export interface PlatformHardcoded extends OmitTimestamps<Platform> {
+export interface PlatformHardcoded extends OmitTimestamps<DbPlatform> {
   icon: string;
 }
 
-export interface StoreHardcoded extends OmitTimestamps<Store> {
+export interface StoreHardcoded extends OmitTimestamps<DbStore> {
   icon: string;
 }
 

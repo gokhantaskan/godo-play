@@ -1,24 +1,24 @@
 import type { z } from "zod";
 
 import {
-  BaseInsertPlatformGroupPlatformsSchema,
-  BaseInsertPlatformGroupSchema,
-  BasePlatformGroupPlatformsSchema,
-  BasePlatformGroupSchema,
+  DbInsertPlatformGroupPlatformSchema,
+  DbInsertPlatformGroupSchema,
+  DbPlatformGroupPlatformSchema,
+  DbPlatformGroupSchema,
 } from "~~/server/db/schema/tables/platformGroups";
 
 // Extend base schemas with additional validation/transformation
-export const PlatformGroupSchema = BasePlatformGroupSchema;
+export const PlatformGroupSchema = DbPlatformGroupSchema;
 
-export const InsertPlatformGroupSchema = BaseInsertPlatformGroupSchema;
+export const InsertPlatformGroupSchema = DbInsertPlatformGroupSchema;
 
 export const PlatformGroupPlatformsSchema =
-  BasePlatformGroupPlatformsSchema.extend({
+  DbPlatformGroupPlatformSchema.extend({
     // Add any additional validation or transformations here
   });
 
 export const InsertPlatformGroupPlatformsSchema =
-  BaseInsertPlatformGroupPlatformsSchema.extend({
+  DbInsertPlatformGroupPlatformSchema.extend({
     // Add any additional validation or transformations here
   });
 

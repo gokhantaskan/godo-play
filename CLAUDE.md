@@ -113,16 +113,17 @@ No automated test suite exists. Dev server requires local SSL certificates via m
 
 Full design context lives in `.impeccable.md`. Key principles:
 
-- **Brand**: Bold, playful, vibrant — inspired by Letterboxd/TMDB content discovery aesthetic
+- **Brand**: Bold, playful, vibrant — inspired by Letterboxd, Steam/GOG, RAWG.io content discovery aesthetic
 - **Users**: Casual gamers browsing for multiplayer games — prioritize scannability and delight
-- **Palette**: Warm cream background (#fcf6f3), primary blue (#0792f7), semantic green/yellow/red
-- **Typography**: Figtree (body), Lexend (headings)
-- **Theme**: Light mode primary; dark mode planned — keep decisions theme-aware
+- **Palette**: Dark surface (#161616), primary lavender (#b6a0ff), secondary cyan (#4af8e3), semantic green/yellow/red
+- **Typography**: Manrope (body), Space Grotesk (headings)
+- **Theme**: Dark mode (settled) — `color-scheme: dark`
+- **Accessibility**: WCAG AAA target (7:1 contrast, reduced motion support)
 
 ### Design Principles
 
 1. **Content is the hero** — Game artwork and metadata dominate; UI chrome stays minimal
-2. **Warm over cold** — Friendly, approachable palette; never clinical or sterile
-3. **Playful with purpose** — Animations and accents serve discoverability, not decoration
+2. **Bold with purpose** — Lavender and cyan accents punch through the dark theme at intentional moments
+3. **Playful, not noisy** — Animations and accents serve discoverability, not decoration
 4. **Clarity at a glance** — Strong hierarchy for scanning; title, cover, platforms, multiplayer mode
 5. **Progressive detail** — Essentials upfront, depth on interaction (cards → modals → pages)

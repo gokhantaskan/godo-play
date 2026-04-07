@@ -77,23 +77,23 @@ export const storeCrossplayPlatforms = pgTable(
 /**
  * Base Zod schemas generated from Drizzle schema
  */
-export const BaseStorePlatformSchema = createSelectSchema(storePlatforms);
-export const BaseInsertStorePlatformSchema = createInsertSchema(storePlatforms);
+export const DbStorePlatformSchema = createSelectSchema(storePlatforms);
+export const DbInsertStorePlatformSchema = createInsertSchema(storePlatforms);
 
-export const BaseStoreCrossplayPlatformSchema = createSelectSchema(
+export const DbStoreCrossplayPlatformSchema = createSelectSchema(
   storeCrossplayPlatforms
 );
-export const BaseInsertStoreCrossplayPlatformSchema = createInsertSchema(
+export const DbInsertStoreCrossplayPlatformSchema = createInsertSchema(
   storeCrossplayPlatforms
 );
 
 /**
  * Types for internal database usage
  */
-export type StorePlatform = typeof storePlatforms.$inferSelect;
-export type InsertStorePlatform = typeof storePlatforms.$inferInsert;
+export type DbStorePlatform = typeof storePlatforms.$inferSelect;
+export type DbInsertStorePlatform = typeof storePlatforms.$inferInsert;
 
-export type StoreCrossplayPlatform =
+export type DbStoreCrossplayPlatform =
   typeof storeCrossplayPlatforms.$inferSelect;
-export type InsertStoreCrossplayPlatform =
+export type DbInsertStoreCrossplayPlatform =
   typeof storeCrossplayPlatforms.$inferInsert;

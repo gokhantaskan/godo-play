@@ -55,22 +55,22 @@ export const storeSupportedPlatforms = pgTable(
 );
 
 // Base Zod schemas for the main table
-export const BaseStoreSchema = createSelectSchema(stores);
-export const BaseInsertStoreSchema = createInsertSchema(stores);
+export const DbStoreSchema = createSelectSchema(stores);
+export const DbInsertStoreSchema = createInsertSchema(stores);
 
 // Base Zod schemas for the junction table
-export const BaseStoreSupportedPlatformSchema = createSelectSchema(
+export const DbStoreSupportedPlatformSchema = createSelectSchema(
   storeSupportedPlatforms
 );
-export const BaseInsertStoreSupportedPlatformSchema = createInsertSchema(
+export const DbInsertStoreSupportedPlatformSchema = createInsertSchema(
   storeSupportedPlatforms
 );
 
 // Types for internal database usage
-export type Store = typeof stores.$inferSelect;
-export type InsertStore = typeof stores.$inferInsert;
+export type DbStore = typeof stores.$inferSelect;
+export type DbInsertStore = typeof stores.$inferInsert;
 
-export type StoreSupportedPlatform =
+export type DbStoreSupportedPlatform =
   typeof storeSupportedPlatforms.$inferSelect;
-export type InsertStoreSupportedPlatform =
+export type DbInsertStoreSupportedPlatform =
   typeof storeSupportedPlatforms.$inferInsert;

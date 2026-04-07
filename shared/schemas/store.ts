@@ -1,13 +1,13 @@
 import { z } from "zod";
 
 import {
-  BaseInsertStoreSchema,
-  BaseStoreSchema,
+  DbInsertStoreSchema,
+  DbStoreSchema,
 } from "~~/server/db/schema/tables/stores";
 
 // Extend base schemas with additional validation/transformation
-export const StoreSchema = BaseStoreSchema;
-export const InsertStoreSchema = BaseInsertStoreSchema;
+export const StoreSchema = DbStoreSchema;
+export const InsertStoreSchema = DbInsertStoreSchema;
 
 // Store with relations schema
 export const StoreWithRelationsSchema = StoreSchema.extend({

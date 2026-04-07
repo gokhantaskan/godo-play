@@ -1,22 +1,22 @@
 import type { z } from "zod";
 
 import {
-  BaseInsertStoreCrossplayPlatformSchema,
-  BaseInsertStorePlatformSchema,
-  BaseStoreCrossplayPlatformSchema,
-  BaseStorePlatformSchema,
+  DbInsertStoreCrossplayPlatformSchema,
+  DbInsertStorePlatformSchema,
+  DbStoreCrossplayPlatformSchema,
+  DbStorePlatformSchema,
 } from "~~/server/db/schema/tables/storePlatforms";
 
-export const StorePlatformSchema = BaseStorePlatformSchema;
-export const InsertStorePlatformSchema = BaseInsertStorePlatformSchema;
+export const StorePlatformSchema = DbStorePlatformSchema;
+export const InsertStorePlatformSchema = DbInsertStorePlatformSchema;
 
 export const StoreCrossplayPlatformSchema =
-  BaseStoreCrossplayPlatformSchema.extend({
+  DbStoreCrossplayPlatformSchema.extend({
     // Add any additional validation or transformations here
   });
 
 export const InsertStoreCrossplayPlatformSchema =
-  BaseInsertStoreCrossplayPlatformSchema.extend({
+  DbInsertStoreCrossplayPlatformSchema.extend({
     // Add any additional validation or transformations here
   });
 

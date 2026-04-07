@@ -1,7 +1,6 @@
+import { db } from "~~/server/db";
+import { gameCategories } from "~~/server/db/schema/tables/gameCategories";
 import { CATEGORIES } from "~~/shared/constants/categories";
-
-import { db } from "..";
-import { gameCategories } from "../schema/tables/gameCategories";
 
 export async function seedGameCategories() {
   try {

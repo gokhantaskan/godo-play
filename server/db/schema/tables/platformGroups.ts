@@ -66,20 +66,21 @@ export const platformGroupPlatforms = pgTable(
 );
 
 // Base Zod schemas generated from Drizzle schema
-export const BasePlatformGroupSchema = createSelectSchema(platformGroups);
-export const BaseInsertPlatformGroupSchema = createInsertSchema(platformGroups);
+export const DbPlatformGroupSchema = createSelectSchema(platformGroups);
+export const DbInsertPlatformGroupSchema = createInsertSchema(platformGroups);
 
-export const BasePlatformGroupPlatformsSchema = createSelectSchema(
+export const DbPlatformGroupPlatformSchema = createSelectSchema(
   platformGroupPlatforms
 );
-export const BaseInsertPlatformGroupPlatformsSchema = createInsertSchema(
+export const DbInsertPlatformGroupPlatformSchema = createInsertSchema(
   platformGroupPlatforms
 );
 
 // Types for internal database usage
-export type PlatformGroup = typeof platformGroups.$inferSelect;
-export type InsertPlatformGroup = typeof platformGroups.$inferInsert;
+export type DbPlatformGroup = typeof platformGroups.$inferSelect;
+export type DbInsertPlatformGroup = typeof platformGroups.$inferInsert;
 
-export type PlatformGroupPlatform = typeof platformGroupPlatforms.$inferSelect;
-export type InsertPlatformGroupPlatform =
+export type DbPlatformGroupPlatform =
+  typeof platformGroupPlatforms.$inferSelect;
+export type DbInsertPlatformGroupPlatform =
   typeof platformGroupPlatforms.$inferInsert;
