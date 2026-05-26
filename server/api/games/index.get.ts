@@ -1,6 +1,4 @@
-import createDOMPurify from "dompurify";
 import { and, asc, count, desc, inArray, sql } from "drizzle-orm";
-import { JSDOM } from "jsdom";
 
 import { db } from "~~/server/db";
 import {
@@ -8,126 +6,38 @@ import {
   games,
   platformGroupPlatforms,
 } from "~~/server/db/schema";
+import { parseGameListQuery } from "~~/server/utils/gameListQuery";
+import { sanitizeHtml } from "~~/server/utils/sanitizeHtml";
 import type { GameWithRelations } from "~~/shared/types";
-import type {
-  FilterParams,
-  GameStatus,
-  PaginatedResponse,
-} from "~~/shared/types/globals";
-
-// Define the sortable fields type
-type SortableField =
-  | "created_at"
-  | "updated_at"
-  | "popularity"
-  | "first_release_date";
+import type { PaginatedResponse } from "~~/shared/types/globals";
 
 interface CountResult {
   count: number; // Count result from database query
 }
 
-// Initialize DOMPurify with jsdom
-const window = new JSDOM("").window;
-const DOMPurify = createDOMPurify(window);
-
-// Helper function to parse array parameters from query
-function parseArrayParam(param?: string): number[] | undefined {
-  // Decode URI component and split by comma, then convert to numbers
-  return param ? decodeURIComponent(param).split(",").map(Number) : undefined;
-}
-
-// Helper function to sanitize HTML content
-function sanitizeHtml(html: string | null): string | null {
-  if (!html) {
-    return null;
-  }
-  return DOMPurify.sanitize(html, {
-    ALLOWED_TAGS: [
-      "p",
-      "br",
-      "strong",
-      "em",
-      "u",
-      "ul",
-      "ol",
-      "li",
-      "a",
-      "h3",
-      "h4",
-    ],
-    ALLOWED_ATTR: ["href", "target", "rel"],
-  });
-}
-
 export default defineCachedEventHandler(
   async event => {
     try {
-      // Extract query parameters from the event
-      const query = getQuery(event);
-      const {
-        platforms,
-        gameModes,
-        limit = "60", // Default limit
-        offset = "0", // Default offset
-        search,
-        status,
-        sort = "-popularity", // Default sort
-      } = query as Partial<Record<keyof FilterParams, string>>;
+      const { platforms, gameModes, limit, offset, search, statuses, sort } =
+        parseGameListQuery(getQuery(event));
 
-      // Parse query parameters
-      const parsedPlatforms = parseArrayParam(platforms);
-      const parsedGameModes = parseArrayParam(gameModes);
-      const parsedLimit = parseInt(limit);
-      const parsedOffset = parseInt(offset);
-
-      // Parse sort parameter
-      const sortField = sort.slice(1) as SortableField; // Remove +/- prefix
-      const isDescending = sort.startsWith("-");
-      const validSortFields = [
-        "created_at",
-        "updated_at",
-        "popularity",
-        "first_release_date",
-      ] as const satisfies readonly SortableField[];
-
-      const parsedSortField = validSortFields.includes(sortField as any)
-        ? sortField
-        : "popularity";
-
-      // Parse and validate status parameter
-      const validStatuses = status
-        ? decodeURIComponent(status)
-            .split(",")
-            .filter((s): s is GameStatus =>
-              ["pending", "approved", "rejected"].includes(s)
-            )
+      let conditions = statuses?.length
+        ? inArray(games.status, statuses)
         : undefined;
-
-      // Base conditions for filtered queries
-      const baseConditions = {
-        where: validStatuses?.length
-          ? inArray(games.status, validStatuses)
-          : undefined,
-      };
-
-      let conditions = baseConditions.where;
 
       // Add search filtering condition
       if (search) {
-        const decodedSearch = decodeURIComponent(search);
-        conditions = and(conditions, sql`name ILIKE ${`%${decodedSearch}%`}`);
+        conditions = and(conditions, sql`name ILIKE ${`%${search}%`}`);
       }
 
       // Add platform filtering condition
-      if (parsedPlatforms?.length) {
+      if (platforms?.length) {
         const platformGroupsQuery = db
           .select({ id: platformGroupPlatforms.platformGroupId })
           .from(platformGroupPlatforms)
-          .where(inArray(platformGroupPlatforms.platformId, parsedPlatforms))
+          .where(inArray(platformGroupPlatforms.platformId, platforms))
           .groupBy(platformGroupPlatforms.platformGroupId)
-          .having(
-            sql`COUNT(DISTINCT platform_id) >= ${parsedPlatforms.length}`
-          );
+          .having(sql`COUNT(DISTINCT platform_id) >= ${platforms.length}`);
 
         conditions = and(
           conditions,
@@ -140,16 +50,16 @@ export default defineCachedEventHandler(
       }
 
       // Update game mode filtering to include at least one selected mode
-      if (parsedGameModes?.length) {
+      if (gameModes?.length) {
         const gameModeQuery = db
           .select({ gameId: gameGameModes.gameId })
           .from(gameGameModes)
-          // .where(inArray(gameGameModes.gameModeId, parsedGameModes))
+          // .where(inArray(gameGameModes.gameModeId, gameModes))
           // .groupBy(gameGameModes.gameId)
           // .having(
-          //   sql`COUNT(DISTINCT game_mode_id) = ${parsedGameModes.length}`
+          //   sql`COUNT(DISTINCT game_mode_id) = ${gameModes.length}`
           // )
-          .where(inArray(gameGameModes.gameModeId, parsedGameModes));
+          .where(inArray(gameGameModes.gameModeId, gameModes));
 
         conditions = and(conditions, sql`id IN (${gameModeQuery})`);
       }
@@ -244,30 +154,26 @@ export default defineCachedEventHandler(
         },
         where: conditions,
         orderBy: [
-          parsedSortField === "popularity"
+          sort.field === "popularity"
             ? sql`(external->>'igdbAggregatedRating')::float DESC NULLS LAST`
-            : parsedSortField === "first_release_date"
-              ? isDescending
+            : sort.field === "first_release_date"
+              ? sort.isDescending
                 ? sql`first_release_date DESC NULLS LAST`
                 : sql`first_release_date ASC NULLS LAST`
-              : isDescending
+              : sort.isDescending
                 ? desc(
                     games[
-                      parsedSortField === "created_at"
-                        ? "createdAt"
-                        : "updatedAt"
+                      sort.field === "created_at" ? "createdAt" : "updatedAt"
                     ]
                   )
                 : asc(
                     games[
-                      parsedSortField === "created_at"
-                        ? "createdAt"
-                        : "updatedAt"
+                      sort.field === "created_at" ? "createdAt" : "updatedAt"
                     ]
                   ),
         ],
-        limit: parsedLimit,
-        offset: parsedOffset,
+        limit,
+        offset,
       });
 
       // Sanitize HTML content in crossplay information
@@ -291,8 +197,8 @@ export default defineCachedEventHandler(
         total: filteredCountResult.count,
         count: sanitizedData.length,
         data: sanitizedData,
-        limit: parsedLimit,
-        offset: parsedOffset,
+        limit,
+        offset,
       } satisfies PaginatedResponse<GameWithRelations>;
     } catch (error) {
       throwApiError(error);

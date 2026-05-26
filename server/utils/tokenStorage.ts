@@ -14,6 +14,15 @@ const storage = useStorage("redis");
 
 let session: AuthSession | null = null;
 
+function hasStatusCode(error: unknown): error is { statusCode: number } {
+  return (
+    typeof error === "object" &&
+    error !== null &&
+    "statusCode" in error &&
+    typeof (error as { statusCode: unknown }).statusCode === "number"
+  );
+}
+
 async function setSession(_session: AuthSession): Promise<void> {
   try {
     session = _session;
@@ -132,7 +141,8 @@ async function retrieveSession(config: {
 async function makeAuthenticatedRequest(
   event: H3Event,
   url: string,
-  options: RequestInit = {}
+  options: RequestInit = {},
+  hasRetried = false
 ): Promise<Response> {
   try {
     const {
@@ -154,10 +164,10 @@ async function makeAuthenticatedRequest(
       });
     }
 
-    options = merge({}, options, {
+    const requestOptions = merge({}, options, {
       method: "POST",
       headers: {
-        "Content-Type": "application/json",
+        "Content-Type": "text/plain",
         "Client-ID": clientId,
         Authorization: `Bearer ${session.access_token}`,
       },
@@ -167,14 +177,14 @@ async function makeAuthenticatedRequest(
       url = url.slice(1);
     }
 
-    const response = await fetch(`${endpoint}/${url}`, options);
+    const response = await fetch(`${endpoint}/${url}`, requestOptions);
 
     if (!response.ok) {
-      if (response.status === 401) {
+      if (response.status === 401 && !hasRetried) {
         // Clear invalid session and retry once
         await clearSession();
         // Retry with a fresh token
-        return makeAuthenticatedRequest(event, url, options);
+        return makeAuthenticatedRequest(event, url, options, true);
       }
 
       throw createError({
@@ -185,6 +195,10 @@ async function makeAuthenticatedRequest(
 
     return response;
   } catch (error) {
+    if (hasStatusCode(error)) {
+      throw error;
+    }
+
     if (error instanceof Error) {
       throw createError({
         statusCode: 500,

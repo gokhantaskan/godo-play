@@ -1,4 +1,5 @@
 import { getGameBySlugPrepared } from "~~/server/db/prepared";
+import { sanitizeHtml } from "~~/server/utils/sanitizeHtml";
 import type { GameWithRelations } from "~~/shared/types";
 
 export default defineCachedEventHandler(
@@ -22,7 +23,15 @@ export default defineCachedEventHandler(
         });
       }
 
-      return game satisfies GameWithRelations;
+      return {
+        ...game,
+        crossplayInformation: game.crossplayInformation
+          ? {
+              ...game.crossplayInformation,
+              information: sanitizeHtml(game.crossplayInformation.information),
+            }
+          : null,
+      } satisfies GameWithRelations;
     } catch (error) {
       throwApiError(error);
     }

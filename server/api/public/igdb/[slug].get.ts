@@ -1,9 +1,16 @@
 import type { GameDetails } from "~~/shared/types/igdb/gameDetails";
+import { escapeApicalypseString } from "~~/server/utils/igdbQuery";
 
 export default defineCachedEventHandler(
   async event => {
     try {
       const identifier = getRouterParam(event, "slug");
+      if (!identifier) {
+        throw createError({
+          statusCode: 400,
+          message: "Game slug or id is required",
+        });
+      }
 
       const fields = [
         "name",
@@ -35,11 +42,12 @@ export default defineCachedEventHandler(
       ].join(",");
 
       // Check if identifier is a number (IGDB ID) or a string (slug)
-      const isNumericId = !isNaN(Number(identifier));
-      const whereClause = isNumericId 
-        ? `id = ${identifier}` 
-        : `slug = "${identifier}"`;
-      
+      const numericId = Number(identifier);
+      const isNumericId = Number.isInteger(numericId) && numericId > 0;
+      const whereClause = isNumericId
+        ? `id = ${numericId}`
+        : `slug = "${escapeApicalypseString(identifier)}"`;
+
       const parsedBody = `fields ${fields}; where ${whereClause};`;
 
       if (process.env.NODE_ENV === "development") {
@@ -70,7 +78,8 @@ export default defineCachedEventHandler(
             id: rating.id,
             category: rating.organization,
             rating: rating.rating_category,
-            content_descriptions: rating.rating_content_descriptions ?? rating.content_descriptions,
+            content_descriptions:
+              rating.rating_content_descriptions ?? rating.content_descriptions,
             synopsis: rating.synopsis,
             checksum: rating.checksum,
           };

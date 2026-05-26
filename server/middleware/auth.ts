@@ -12,7 +12,7 @@ import { authHandler } from "../utils/authHandler";
  */
 export default defineEventHandler(async event => {
   // Skip auth check for non-API routes
-  const path = event.path || "";
+  const path = getRequestURL(event).pathname.replace(/\/$/, "");
 
   if (
     !path.startsWith("/api/") ||
@@ -25,12 +25,10 @@ export default defineEventHandler(async event => {
   }
 
   // Define resources that allow public GET requests
-  const publicGetResources = ["/api/games", "/api/game-modes", "/api/stores"];
+  const publicGetResources = new Set(["/api/game-modes", "/api/stores"]);
 
   // Check if the current path is for a public GET resource
-  const isPublicGetResource = publicGetResources.some(resource =>
-    path.startsWith(resource)
-  );
+  const isPublicGetResource = publicGetResources.has(path);
 
   // Allow public access to GET requests for public resources
   if (isPublicGetResource && event.method === "GET") {

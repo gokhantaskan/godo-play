@@ -45,7 +45,10 @@ export default defineCachedEventHandler(
 
       // Find the source game with its tags and game modes
       const sourceGame = await db.query.games.findFirst({
-        where: eq(games.slug, query as string),
+        where: and(
+          eq(games.slug, query as string),
+          eq(games.status, "approved")
+        ),
         columns: {
           id: true,
           slug: true,
@@ -71,9 +74,7 @@ export default defineCachedEventHandler(
         });
       }
 
-      const gameModeIds = sourceGame.gameGameModes.map(
-        mode => mode.gameModeId
-      );
+      const gameModeIds = sourceGame.gameGameModes.map(mode => mode.gameModeId);
       const tagIds = sourceGame.tags?.map(tag => tag.tagId) || [];
 
       if (gameModeIds.length === 0 && tagIds.length === 0) {
@@ -137,6 +138,7 @@ export default defineCachedEventHandler(
 
       const potentialGames = await db.query.games.findMany({
         where: and(
+          eq(games.status, "approved"),
           not(eq(games.id, sourceGame.id)),
           or(...preFilterConditions)
         ),

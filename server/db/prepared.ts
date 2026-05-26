@@ -1,11 +1,14 @@
-import { eq, sql } from "drizzle-orm";
+import { and, eq, sql } from "drizzle-orm";
 
 import { db } from "./index";
 import { games } from "./schema";
 
 export const getGameBySlugPrepared = db.query.games
   .findFirst({
-    where: eq(games.slug, sql.placeholder("slug")),
+    where: and(
+      eq(games.slug, sql.placeholder("slug")),
+      eq(games.status, "approved")
+    ),
     with: {
       crossplayInformation: true,
       platformGroups: {

@@ -1,3 +1,9 @@
+import {
+  clampInteger,
+  escapeApicalypseString,
+  parseIgdbSort,
+} from "~~/server/utils/igdbQuery";
+
 export default defineEventHandler(async event => {
   try {
     const path = event.path.replace("/api/igdb/", "");
@@ -8,29 +14,45 @@ export default defineEventHandler(async event => {
 
     // Search should be before fields for IGDB to properly include them
     if (body.search) {
-      queryParts.push(`search "${body.search}";`);
+      queryParts.push(
+        `search "${escapeApicalypseString(String(body.search))}";`
+      );
     }
 
     if (body.fields) {
-      // Ensure basic fields are always included
-      const fields = new Set(body.fields.split(","));
-      queryParts.push(`fields ${Array.from(fields).join(",")};`);
+      // Only allow well-formed field tokens (name, cover.*, platforms.name)
+      const fields = new Set(
+        String(body.fields)
+          .split(",")
+          .map(field => field.trim())
+          .filter(field => /^[\w.*]+$/.test(field))
+      );
+
+      if (fields.size) {
+        queryParts.push(`fields ${Array.from(fields).join(",")};`);
+      }
     }
 
     if (body.where) {
-      queryParts.push(`where ${body.where};`);
+      // Strip the statement terminator so a where clause can't inject extra
+      // Apicalypse statements
+      const where = String(body.where).replace(/;/g, "").trim();
+
+      if (where) {
+        queryParts.push(`where ${where};`);
+      }
     }
 
     if (body.limit) {
-      queryParts.push(`limit ${body.limit};`);
+      queryParts.push(`limit ${clampInteger(body.limit, 100, 1, 250)};`);
     }
 
     if (body.offset) {
-      queryParts.push(`offset ${body.offset};`);
+      queryParts.push(`offset ${clampInteger(body.offset, 0, 0, 5000)};`);
     }
 
     if (body.sort) {
-      queryParts.push(`sort ${body.sort};`);
+      queryParts.push(`sort ${parseIgdbSort(body.sort)};`);
     }
 
     const queryString = queryParts.join(" ");

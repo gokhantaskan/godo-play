@@ -43,11 +43,36 @@ echo "📤 Starting remote database restore..."
 echo "👉 Using host: $HOST"
 echo "👉 Using backup file: $BACKUP_FILE"
 
+# Drop existing tables only (CASCADE handles FK/view/sequence dependencies).
+# Dropping the whole public schema would also wipe its grants/ownership, which
+# the --no-acl dump does not restore, leaving the app unable to access objects.
+echo "🗑️  Dropping existing tables..."
+if ! docker run --rm \
+  postgres:17-alpine \
+  psql "$DB_URL" \
+  -v ON_ERROR_STOP=1 \
+  -c "DO \$\$
+DECLARE r RECORD;
+BEGIN
+  FOR r IN SELECT tablename FROM pg_tables WHERE schemaname = 'public'
+  LOOP
+    EXECUTE format('DROP TABLE IF EXISTS public.%I CASCADE', r.tablename);
+  END LOOP;
+END
+\$\$;"; then
+  echo "❌ Error: failed to drop existing tables; aborting before restore"
+  exit 1
+fi
+
 # Restore the database using Docker with absolute path mounting
+# ON_ERROR_STOP makes psql exit non-zero on the first failing statement,
+# so the success check below reflects the real outcome
+echo "📥 Restoring from backup..."
 docker run --rm \
   -v "$(pwd)/$BACKUP_FILE:/backup.sql:ro" \
   postgres:17-alpine \
   psql "$DB_URL" \
+  -v ON_ERROR_STOP=1 \
   -f /backup.sql
 
 if [ $? -eq 0 ]; then

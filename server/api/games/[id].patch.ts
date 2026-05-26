@@ -1,4 +1,4 @@
-import { eq } from "drizzle-orm";
+import { eq, sql } from "drizzle-orm";
 import { z } from "zod";
 
 import { db } from "~~/server/db";
@@ -204,30 +204,34 @@ export default defineEventHandler(async event => {
         }
       }
 
-      // Update category and crossplay information if provided
-      if (
-        body.category !== undefined ||
-        body.crossplayInformation ||
-        body.status ||
-        body.freeToPlay !== undefined
-      ) {
-        const updateData: Record<string, unknown> = {};
+      let currentGame = game;
+      const updateData: Record<string, unknown> = {};
 
-        if (body.category !== undefined) {
-          updateData.category = body.category;
-        }
+      if (body.category !== undefined) {
+        updateData.category = body.category;
+      }
 
-        if (body.status) {
-          updateData.status = body.status;
-        }
+      if (body.status) {
+        updateData.status = body.status;
+      }
 
-        if (body.freeToPlay !== undefined) {
-          updateData.freeToPlay = body.freeToPlay;
-        }
+      if (body.freeToPlay !== undefined) {
+        updateData.freeToPlay = body.freeToPlay;
+      }
 
+      // Bump updated_at whenever any part of the game changed, including
+      // relation-only edits that never touch a games scalar column
+      const hasRelationChanges =
+        body.platformGroups !== undefined ||
+        body.storesPlatforms !== undefined ||
+        body.gameModeIds !== undefined ||
+        body.tagIds !== undefined ||
+        body.crossplayInformation !== undefined;
+
+      if (Object.keys(updateData).length > 0 || hasRelationChanges) {
         const [updatedGame] = await tx
           .update(games)
-          .set(updateData)
+          .set({ ...updateData, updatedAt: sql`now()` })
           .where(eq(games.id, gameId))
           .returning();
 
@@ -237,43 +241,45 @@ export default defineEventHandler(async event => {
             message: "Failed to update game",
           });
         }
+        currentGame = updatedGame;
+      }
 
-        // Handle crossplay information
-        if (body.crossplayInformation !== undefined) {
-          const existingCrossplay =
-            await tx.query.crossplayInformation.findFirst({
-              where: eq(crossplayInformation.gameId, gameId),
-            });
+      // Handle crossplay information independently from scalar game updates
+      if (body.crossplayInformation !== undefined) {
+        const existingCrossplay = await tx.query.crossplayInformation.findFirst(
+          {
+            where: eq(crossplayInformation.gameId, gameId),
+          }
+        );
 
-          if (body.crossplayInformation === null) {
-            if (existingCrossplay) {
-              await tx
-                .delete(crossplayInformation)
-                .where(eq(crossplayInformation.gameId, gameId));
-            }
-          } else {
-            if (existingCrossplay) {
-              await tx
-                .update(crossplayInformation)
-                .set({
-                  evidenceUrl: body.crossplayInformation.evidenceUrl,
-                  information: body.crossplayInformation.information,
-                  isOfficial: body.crossplayInformation.isOfficial ?? false,
-                })
-                .where(eq(crossplayInformation.gameId, gameId));
-            } else {
-              await tx.insert(crossplayInformation).values({
-                gameId: gameId,
+        if (body.crossplayInformation === null) {
+          if (existingCrossplay) {
+            await tx
+              .delete(crossplayInformation)
+              .where(eq(crossplayInformation.gameId, gameId));
+          }
+        } else {
+          if (existingCrossplay) {
+            await tx
+              .update(crossplayInformation)
+              .set({
                 evidenceUrl: body.crossplayInformation.evidenceUrl,
                 information: body.crossplayInformation.information,
                 isOfficial: body.crossplayInformation.isOfficial ?? false,
-              });
-            }
+              })
+              .where(eq(crossplayInformation.gameId, gameId));
+          } else {
+            await tx.insert(crossplayInformation).values({
+              gameId: gameId,
+              evidenceUrl: body.crossplayInformation.evidenceUrl,
+              information: body.crossplayInformation.information,
+              isOfficial: body.crossplayInformation.isOfficial ?? false,
+            });
           }
         }
       }
 
-      return game;
+      return currentGame;
     });
 
     return result;

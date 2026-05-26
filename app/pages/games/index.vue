@@ -8,7 +8,6 @@ import type { GameWithRelations } from "~~/shared/types";
 
 interface InitialRouteQuery {
   platforms: string;
-  stores: string;
   gameModes: string;
   tags: string;
   search: string;
@@ -26,7 +25,6 @@ interface SelectedPlatforms {
 }
 
 interface Filters {
-  stores: number[];
   gameModes: number[];
   tags: number[];
   freeToPlay: boolean;
@@ -170,7 +168,6 @@ function getTagIdFromSlug(slug: string): number | null {
 
 // Initialize selectedFilters
 const selectedFilters = ref<Filters>({
-  stores: [],
   gameModes: [],
   tags: [],
   freeToPlay: initialQueryFreeToPlay === "true",
@@ -237,10 +234,6 @@ const urlQuery = computed(() => {
       .join(",");
   }
 
-  if (selectedFilters.value.stores.length) {
-    queryToSet.stores = selectedFilters.value.stores.join(",");
-  }
-
   if (selectedFilters.value.tags.length) {
     queryToSet.tags = selectedFilters.value.tags
       .map(id => supportedTagsMap.value.idToSlug[id])
@@ -280,10 +273,6 @@ const apiQueryParams = computed(() => {
 
   if (selectedFilters.value.gameModes.length) {
     query.gameModes = selectedFilters.value.gameModes.join(",");
-  }
-
-  if (selectedFilters.value.stores.length) {
-    query.stores = selectedFilters.value.stores.join(",");
   }
 
   if (selectedFilters.value.tags.length) {

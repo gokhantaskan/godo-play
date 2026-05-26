@@ -1,34 +1,27 @@
+import {
+  clampInteger,
+  escapeApicalypseString,
+  parseIgdbNumberList,
+  parseIgdbSort,
+} from "~~/server/utils/igdbQuery";
 import { GAME_MODE_IDS } from "~~/shared/constants/gameModes";
 import { SUPPORTED_PLATFORM_IDS } from "~~/shared/constants/platforms";
-import type { DashboardGamesRequestBody } from "~~/shared/types/queries";
 
 export default defineCachedEventHandler(
   async event => {
     const query = getQuery(event);
-    const parseArrayParam = (param?: string) =>
-      param ? decodeURIComponent(param).split(",").map(Number) : undefined;
 
-    const {
-      gameModes,
-      genres,
-      limit = 60,
-      offset = 0,
-      platforms,
-      playerPerspectives,
-      search,
-      sort = "aggregated_rating desc",
-      themes,
-    }: DashboardGamesRequestBody = {
-      ...query,
-      platforms: parseArrayParam(query.platforms as string),
-      gameModes: parseArrayParam(query.gameModes as string),
-      playerPerspectives: parseArrayParam(query.playerPerspectives as string),
-      genres: parseArrayParam(query.genres as string),
-      themes: parseArrayParam(query.themes as string),
-      search: query.search
-        ? decodeURIComponent(query.search as string)
-        : undefined,
-    };
+    const limit = clampInteger(query.limit, 60, 1, 100);
+    const offset = clampInteger(query.offset, 0, 0, 5000);
+    const sort = parseIgdbSort(query.sort);
+    const platforms = parseIgdbNumberList(query.platforms);
+    const gameModes = parseIgdbNumberList(query.gameModes);
+    const playerPerspectives = parseIgdbNumberList(query.playerPerspectives);
+    const genres = parseIgdbNumberList(query.genres);
+    const themes = parseIgdbNumberList(query.themes);
+    const rawSearch =
+      typeof query.search === "string" ? query.search.trim() : "";
+    const search = rawSearch ? escapeApicalypseString(rawSearch) : undefined;
 
     const tenYearsAgoUnix =
       new Date(new Date().getFullYear() - 10, 0, 1).getTime() / 1000;
