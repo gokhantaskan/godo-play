@@ -279,6 +279,7 @@ export default defineCachedEventHandler(
     }
   },
   {
+    name: GAME_CACHE_HANDLERS.recommendations,
     maxAge: process.env.NODE_ENV === "production" ? 5 * 60 * 60 : 3,
     swr: false,
   }

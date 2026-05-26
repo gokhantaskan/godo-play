@@ -45,6 +45,9 @@ export default defineEventHandler(async event => {
       return game;
     });
 
+    // Purge cached public game responses so the deletion surfaces
+    await invalidateGameCaches();
+
     return result;
   } catch (error) {
     throwApiError(error);

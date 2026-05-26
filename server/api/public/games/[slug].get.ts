@@ -37,6 +37,8 @@ export default defineCachedEventHandler(
     }
   },
   {
+    name: GAME_CACHE_HANDLERS.bySlug,
+    getKey: event => getRouterParam(event, "slug") ?? "index",
     maxAge: process.env.NODE_ENV === "production" ? 5 * 60 * 60 : 3,
     swr: false,
   }

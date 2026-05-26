@@ -28,9 +28,31 @@ interface PlatformInfo {
 export function getConsolidatedPlatformGroups(
   platformGroups: GameWithRelations["platformGroups"]
 ) {
-  const isSingleGroup = platformGroups.length === 1;
+  // Defend against bad data: drop groups with no platforms and collapse
+  // duplicate groups (identical platform sets) so they don't render as empty
+  // or repeated platform boxes.
+  const seenGroupSignatures = new Set<string>();
+  const validGroups = platformGroups.filter(group => {
+    if (group.platformGroupPlatforms.length === 0) {
+      return false;
+    }
 
-  const groupsWithPlatforms = platformGroups.map(group => {
+    const signature = group.platformGroupPlatforms
+      .map(({ platform }) => platform.slug)
+      .sort()
+      .join(",");
+
+    if (seenGroupSignatures.has(signature)) {
+      return false;
+    }
+
+    seenGroupSignatures.add(signature);
+    return true;
+  });
+
+  const isSingleGroup = validGroups.length === 1;
+
+  const groupsWithPlatforms = validGroups.map(group => {
     const groupResult: Record<string, PlatformInfo> = {};
 
     // Handle PlayStation consolidation

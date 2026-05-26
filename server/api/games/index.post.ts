@@ -71,9 +71,20 @@ export default defineEventHandler(async event => {
         });
       }
 
+      const sanitizedPlatformGroups = sanitizePlatformGroups(
+        body.platformGroups
+      );
+
+      if (sanitizedPlatformGroups.length === 0) {
+        throw createError({
+          statusCode: 400,
+          message: "At least one non-empty platform group is required",
+        });
+      }
+
       // Collect and validate platform IDs
       const platformIdsSet = new Set<number>();
-      body.platformGroups.forEach(group => {
+      sanitizedPlatformGroups.forEach(group => {
         group.forEach(platformId => platformIdsSet.add(platformId));
       });
       Object.values(body.storesPlatforms).forEach(storeData => {
@@ -106,7 +117,7 @@ export default defineEventHandler(async event => {
       }
 
       // Process platform groups sequentially instead of Promise.all
-      for (const groupPlatforms of body.platformGroups) {
+      for (const groupPlatforms of sanitizedPlatformGroups) {
         const [group] = await tx
           .insert(platformGroups)
           .values(
@@ -205,6 +216,9 @@ export default defineEventHandler(async event => {
 
       return game;
     });
+
+    // Purge cached public game responses so new submissions surface
+    await invalidateGameCaches();
 
     return result;
   } catch (error) {

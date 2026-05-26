@@ -87,12 +87,21 @@ export default defineEventHandler(async event => {
 
       // Delete and process platform groups only if provided
       if (body.platformGroups) {
+        const sanitizedGroups = sanitizePlatformGroups(body.platformGroups);
+
+        if (sanitizedGroups.length === 0) {
+          throw createError({
+            statusCode: 400,
+            message: "At least one non-empty platform group is required",
+          });
+        }
+
         await tx
           .delete(platformGroups)
           .where(eq(platformGroups.gameId, gameId));
 
         // Process all insertions sequentially to maintain atomicity
-        for (const groupPlatforms of body.platformGroups) {
+        for (const groupPlatforms of sanitizedGroups) {
           const [group] = await tx
             .insert(platformGroups)
             .values(
@@ -281,6 +290,9 @@ export default defineEventHandler(async event => {
 
       return currentGame;
     });
+
+    // Purge cached public game responses so edits surface immediately
+    await invalidateGameCaches();
 
     return result;
   } catch (error) {
