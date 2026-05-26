@@ -12,7 +12,7 @@
     "dev:db": "./scripts/dev-setup.sh",
     "dev:clean": "nuxt cleanup && pnpm dev",
     "generate": "nuxt generate",
-    "preview": "cross-env NITRO_SSL_CERT=$(cat localhost+2.pem) NITRO_SSL_KEY=$(cat localhost+2-key.pem) nuxt preview",
+    "preview": "bash scripts/preview.sh",
     "test:server": "tsx --test tests/server-utils.test.ts",
     "typecheck": "nuxt typecheck",
     "clean": "pnpm clean:nuxt && rimraf --glob **/dist **/node_modules **/.nuxt **/inspect",
@@ -30,6 +30,11 @@
   "packageManager": "pnpm@10.29.3",
   "engines": {
     "node": ">=22"
+  },
+  "pnpm": {
+    "overrides": {
+      "html-encoding-sniffer": "4.0.0"
+    }
   },
   "dependencies": {
     "@floating-ui/vue": "^1.1.11",
@@ -56,7 +61,7 @@
     "drizzle-seed": "^0.3.1",
     "eslint": "^10.2.0",
     "ioredis": "^5.10.1",
-    "jsdom": "^29.0.2",
+    "jsdom": "~26.1.0",
     "lodash": "^4.18.1",
     "nuxt": "^4.4.2",
     "nuxt-gtag": "3.0.2",
